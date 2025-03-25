@@ -18,6 +18,67 @@ interface ChartsProps {
   onChartClick: (index: number) => void;
 }
 
+// Reusable chart options
+function getBaseChartOptions(onClick: (event: any, elements: any[]) => void) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        mode: 'index' as const,
+        intersect: false,
+        backgroundColor: 'hsl(var(--card))',
+        titleColor: 'hsl(var(--card-foreground))',
+        bodyColor: 'hsl(var(--card-foreground))',
+        borderColor: 'hsl(var(--border))',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        titleFont: {
+          family: 'Inter, sans-serif',
+          size: 14,
+          weight: 'bold' as const
+        },
+        bodyFont: {
+          family: 'Inter, sans-serif',
+          size: 12,
+          weight: 'normal' as const
+        }
+      },
+      legend: {
+        position: 'top' as const,
+        labels: {
+          font: {
+            family: 'Inter, sans-serif',
+            size: 12
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          color: 'hsl(var(--foreground))'
+        }
+      },
+      y: {
+        grid: {
+          borderDash: [2, 2],
+          color: 'hsl(var(--border))'
+        },
+        ticks: {
+          color: 'hsl(var(--foreground))'
+        }
+      }
+    },
+    onClick: onClick
+  };
+}
+
 export default function Charts({ gpxData, forecastPoints, weatherData, selectedMarker, onChartClick }: ChartsProps) {
   const tempChartRef = useRef<HTMLCanvasElement | null>(null);
   const precipChartRef = useRef<HTMLCanvasElement | null>(null);
@@ -103,11 +164,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Temperature (°C)',
                 data: tempData,
-                borderColor: '#FF6E40',
-                backgroundColor: ctx ? createTemperatureGradient(ctx, minTemp, maxTemp) : 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'hsl(265, 60%, 75%)',
+                backgroundColor: 'hsla(265, 60%, 75%, 0.2)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#FF6E40',
+                pointBackgroundColor: 'hsl(265, 60%, 75%)',
                 pointRadius: (ctx) => {
                   const index = ctx.dataIndex;
                   return index === selectedMarker ? 6 : 3;
@@ -118,67 +179,18 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Feels Like (°C)',
                 data: feelsLikeData,
-                borderColor: '#FFA726',
+                borderColor: 'hsl(225, 25%, 45%)',
                 borderDash: [5, 5],
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#FFA726',
+                pointBackgroundColor: 'hsl(225, 25%, 45%)',
                 pointRadius: 0,
                 pointHoverRadius: 5,
                 fill: false,
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Temperature (°C)',
-                  color: '#e0e0e0',
-                },
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }
@@ -202,67 +214,17 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
                 backgroundColor: (context) => {
                   const index = context.dataIndex;
                   const value = context.dataset.data[index] as number;
-                  if (value > 5) return 'rgba(103, 58, 183, 0.8)'; // Heavy rain
-                  if (value > 2) return 'rgba(103, 58, 183, 0.6)'; // Moderate rain
-                  return 'rgba(103, 58, 183, 0.4)'; // Light rain
+                  if (value > 5) return 'hsla(195, 60%, 80%, 0.8)'; // Heavy rain
+                  if (value > 2) return 'hsla(195, 60%, 80%, 0.6)'; // Moderate rain
+                  return 'hsla(195, 60%, 80%, 0.4)'; // Light rain
                 },
-                borderColor: 'rgba(103, 58, 183, 1)',
+                borderColor: 'hsl(195, 60%, 80%)',
                 borderWidth: 1,
                 borderRadius: 5,
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Precipitation (mm)',
-                  color: '#e0e0e0',
-                },
-                beginAtZero: true,
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }
@@ -283,11 +245,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Wind Speed (m/s)',
                 data: windSpeedData,
-                borderColor: '#FFC107',
-                backgroundColor: 'rgba(255, 193, 7, 0.3)',
+                borderColor: 'hsl(45, 70%, 85%)',
+                backgroundColor: 'hsla(45, 70%, 85%, 0.3)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#FFC107',
+                pointBackgroundColor: 'hsl(45, 70%, 85%)',
                 pointRadius: (ctx) => {
                   const index = ctx.dataIndex;
                   return index === selectedMarker ? 6 : 3;
@@ -297,66 +259,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                  afterLabel: (context) => {
-                    const index = context.dataIndex;
-                    const direction = windDirectionData[index];
-                    const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-                    const ix = Math.floor((direction + 22.5) / 45) % 8;
-                    return `Direction: ${dirs[ix]} (${Math.round(direction)}°)`;
-                  },
-                },
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Wind Speed (m/s)',
-                  color: '#e0e0e0',
-                },
-                beginAtZero: true,
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }
@@ -377,11 +280,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Humidity (%)',
                 data: humidityData,
-                borderColor: '#29B6F6',
-                backgroundColor: 'rgba(41, 182, 246, 0.3)',
+                borderColor: 'hsl(195, 60%, 80%)',
+                backgroundColor: 'hsla(195, 60%, 80%, 0.3)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#29B6F6',
+                pointBackgroundColor: 'hsl(195, 60%, 80%)',
                 pointRadius: (ctx) => {
                   const index = ctx.dataIndex;
                   return index === selectedMarker ? 6 : 3;
@@ -391,58 +294,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Humidity (%)',
-                  color: '#e0e0e0',
-                },
-                beginAtZero: true,
-                max: 100,
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }
@@ -463,11 +315,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Pressure (hPa)',
                 data: pressureData,
-                borderColor: '#7E57C2',
-                backgroundColor: 'rgba(126, 87, 194, 0.3)',
+                borderColor: 'hsl(345, 60%, 75%)',
+                backgroundColor: 'hsla(345, 60%, 75%, 0.3)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#7E57C2',
+                pointBackgroundColor: 'hsl(345, 60%, 75%)',
                 pointRadius: (ctx) => {
                   const index = ctx.dataIndex;
                   return index === selectedMarker ? 6 : 3;
@@ -477,56 +329,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Pressure (hPa)',
-                  color: '#e0e0e0',
-                },
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }
@@ -547,11 +350,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Elevation (m)',
                 data: elevationData,
-                borderColor: '#4CAF50',
-                backgroundColor: 'rgba(76, 175, 80, 0.3)',
+                borderColor: 'hsl(160, 50%, 75%)',
+                backgroundColor: 'hsla(160, 50%, 75%, 0.3)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: '#4CAF50',
+                pointBackgroundColor: 'hsl(160, 50%, 75%)',
                 pointRadius: (ctx) => {
                   const index = ctx.dataIndex;
                   return index === selectedMarker ? 6 : 3;
@@ -561,56 +364,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               },
             ],
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-              legend: {
-                position: 'top',
-                labels: {
-                  color: '#e0e0e0',
-                  font: {
-                    size: 12,
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#9e9e9e',
-                  maxRotation: 0,
-                  autoSkip: true,
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-              },
-              y: {
-                ticks: {
-                  color: '#9e9e9e',
-                },
-                grid: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                },
-                title: {
-                  display: true,
-                  text: 'Elevation (m)',
-                  color: '#e0e0e0',
-                },
-              },
-            },
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                onChartClick(index);
-              }
-            },
-          },
+          options: getBaseChartOptions(onChartClick),
         });
       }
     }

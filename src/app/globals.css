@@ -45,91 +45,106 @@
 
 :root {
   --radius: 0.75rem;
-  --background: 210 20% 98%;
-  --foreground: 215 25% 27%;
+  
+  /* Light mode - pastel colors */
+  --background: 200 30% 96%;
+  --foreground: 225 25% 25%;
   
   --card: 0 0% 100%;
-  --card-foreground: 215 25% 27%;
+  --card-foreground: 225 25% 25%;
   
   --popover: 0 0% 100%;
-  --popover-foreground: 215 25% 27%;
+  --popover-foreground: 225 25% 25%;
   
-  --primary: 25 95% 53%;
-  --primary-foreground: 210 40% 98%;
+  /* Pastel lavender as primary */
+  --primary: 265 60% 75%;
+  --primary-foreground: 0 0% 100%;
   
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 215 25% 27%;
+  /* Pastel mint */
+  --secondary: 160 50% 92%;
+  --secondary-foreground: 160 50% 25%;
   
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215 25% 40%;
+  --muted: 200 30% 96%;
+  --muted-foreground: 225 25% 45%;
   
-  --accent: 215 100% 96%;
-  --accent-foreground: 215 45% 30%;
+  /* Pastel rose */
+  --accent: 345 60% 90%;
+  --accent-foreground: 345 60% 35%;
   
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
+  /* Pastel red */
+  --destructive: 0 65% 85%;
+  --destructive-foreground: 0 65% 35%;
   
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 25 95% 53%;
+  --border: 225 15% 90%;
+  --input: 225 15% 90%;
+  --ring: 265 60% 75%;
   
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Chart colors - pastel palette */
+  --chart-1: 265 60% 75%; /* Lavender */
+  --chart-2: 160 50% 75%; /* Mint */
+  --chart-3: 345 60% 75%; /* Rose */
+  --chart-4: 45 70% 85%;  /* Pastel yellow */
+  --chart-5: 195 60% 80%; /* Pastel blue */
+  
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 225 25% 25%;
+  --sidebar-primary: 265 60% 75%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 160 50% 92%;
+  --sidebar-accent-foreground: 160 50% 25%;
+  --sidebar-border: 225 15% 90%;
+  --sidebar-ring: 265 60% 75%;
 }
 
 .dark {
-  --background: 215 28% 12%;
-  --foreground: 210 40% 98%;
+  /* Dark mode - pastel colors */
+  --background: 225 30% 18%;
+  --foreground: 225 15% 95%;
   
-  --card: 215 32% 17%;
-  --card-foreground: 210 40% 98%;
+  --card: 225 25% 22%;
+  --card-foreground: 225 15% 95%;
   
-  --popover: 215 32% 17%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 225 25% 22%;
+  --popover-foreground: 225 15% 95%;
   
-  --primary: 25 95% 53%;
-  --primary-foreground: 215 28% 17%;
+  /* Pastel lavender as primary */
+  --primary: 265 50% 70%;
+  --primary-foreground: 0 0% 100%;
   
-  --secondary: 215 25% 26%;
-  --secondary-foreground: 210 40% 98%;
+  /* Pastel mint */
+  --secondary: 160 30% 35%;
+  --secondary-foreground: 225 15% 95%;
   
-  --muted: 215 25% 26%;
-  --muted-foreground: 210 40% 80%;
+  --muted: 225 25% 28%;
+  --muted-foreground: 225 15% 80%;
   
-  --accent: 215 30% 26%;
-  --accent-foreground: 210 40% 98%;
+  /* Pastel rose */
+  --accent: 345 30% 40%;
+  --accent-foreground: 345 15% 90%;
   
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
+  /* Pastel red */
+  --destructive: 0 50% 60%;
+  --destructive-foreground: 0 0% 98%;
   
-  --border: 215 28% 25%;
-  --input: 215 28% 25%;
-  --ring: 25 95% 53%;
+  --border: 225 25% 30%;
+  --input: 225 25% 30%;
+  --ring: 265 50% 70%;
   
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Chart colors - dark pastel palette */
+  --chart-1: 265 50% 70%; /* Lavender */
+  --chart-2: 160 40% 60%; /* Mint */
+  --chart-3: 345 40% 65%; /* Rose */
+  --chart-4: 45 60% 70%;  /* Yellow */
+  --chart-5: 195 50% 65%; /* Blue */
+  
+  --sidebar: 225 25% 22%;
+  --sidebar-foreground: 225 15% 95%;
+  --sidebar-primary: 265 50% 70%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 160 30% 35%;
+  --sidebar-accent-foreground: 225 15% 95%;
+  --sidebar-border: 225 25% 30%;
+  --sidebar-ring: 265 50% 70%;
 }
 
 @tailwind base;
