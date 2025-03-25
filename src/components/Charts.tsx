@@ -372,7 +372,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Temperature</CardTitle>
         </CardHeader>
@@ -383,7 +383,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Precipitation</CardTitle>
         </CardHeader>
@@ -394,7 +394,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Wind</CardTitle>
         </CardHeader>
@@ -405,7 +405,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Humidity</CardTitle>
         </CardHeader>
@@ -416,7 +416,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Pressure</CardTitle>
         </CardHeader>
@@ -427,7 +427,7 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
         </CardContent>
       </Card>
 
-      <Card className="bg-[#1c1c1e] border-neutral-800">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Elevation</CardTitle>
         </CardHeader>
