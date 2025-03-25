@@ -39,7 +39,8 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
       const leafletInstance = L.default || L;
       
       // Fix icon paths
-      delete leafletInstance.Icon.Default.prototype._getIconUrl;
+      const iconDefault = leafletInstance.Icon.Default as any;
+      delete iconDefault.prototype._getIconUrl;
       leafletInstance.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',

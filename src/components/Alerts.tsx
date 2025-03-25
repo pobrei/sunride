@@ -100,59 +100,66 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps) {
   }
 
   return (
-    <div className="space-y-2 mt-4">
-      <h2 className="text-lg font-semibold">Weather Alerts</h2>
+    <div className="space-y-3 mt-4 animate-slide-up">
+      <h2 className="text-lg font-semibold flex items-center">
+        <AlertTriangle className="mr-2 h-5 w-5 text-primary" />
+        Weather Alerts
+      </h2>
       
-      <div className="space-y-2">
+      <div className="space-y-3">
         {alerts.map(alert => {
           const { id, type, point, weather } = alert;
           
-          let icon, title, variant, description;
+          let icon, title, color, description;
           
           switch (type) {
             case 'extremeHeat':
-              icon = <Thermometer className="h-5 w-5 text-red-500" />;
+              icon = <Thermometer className="h-5 w-5" />;
               title = 'Extreme Heat';
-              variant = 'destructive';
+              color = 'text-destructive';
               description = `Temperature of ${Math.round(weather.temperature)}°C at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             case 'freezing':
-              icon = <Thermometer className="h-5 w-5 text-blue-500" />;
+              icon = <Thermometer className="h-5 w-5" />;
               title = 'Freezing Temperature';
-              variant = 'default';
+              color = 'text-blue-500';
               description = `Temperature of ${Math.round(weather.temperature)}°C at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             case 'highWind':
-              icon = <Wind className="h-5 w-5 text-amber-500" />;
+              icon = <Wind className="h-5 w-5" />;
               title = 'High Wind';
-              variant = 'default';
+              color = 'text-amber-500';
               description = `Wind speed of ${weather.windSpeed.toFixed(1)} m/s at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             case 'heavyRain':
-              icon = <Droplets className="h-5 w-5 text-purple-500" />;
+              icon = <Droplets className="h-5 w-5" />;
               title = 'Heavy Rain';
-              variant = 'default';
+              color = 'text-purple-500';
               description = `Precipitation of ${weather.rain.toFixed(1)} mm at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             default:
               icon = <AlertCircle className="h-5 w-5" />;
               title = 'Weather Alert';
-              variant = 'default';
+              color = 'text-primary';
               description = `Alert at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
           }
           
           return (
             <Alert 
-              key={id} 
-              variant={variant as any}
-              className="weather-alert bg-[#1c1c1e] border-neutral-800"
+              key={id}
+              className={`weather-alert border-l-4 micro-shadow hover-lift transition-smooth ${
+                type === 'extremeHeat' ? 'border-l-destructive' :
+                type === 'freezing' ? 'border-l-blue-500' :
+                type === 'highWind' ? 'border-l-amber-500' :
+                type === 'heavyRain' ? 'border-l-purple-500' :
+                'border-l-primary'
+              }`}
             >
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              <AlertTitle className="flex items-center font-medium">
+              <AlertTitle className={`flex items-center font-medium ${color}`}>
                 {icon}
                 <span className="ml-2">{title}</span>
               </AlertTitle>
-              <AlertDescription className="ml-7 text-sm text-neutral-300">
+              <AlertDescription className="ml-7 text-sm text-muted-foreground">
                 {description}
               </AlertDescription>
             </Alert>

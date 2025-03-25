@@ -50,7 +50,7 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
   }
 
   return (
-    <Card className="bg-[#1c1c1e] border-neutral-800 mt-4">
+    <Card className="mt-4">
       <CardContent className="p-4">
         <ScrollArea className="w-full">
           <div className="flex space-x-2 py-2" ref={timelineRef}>
@@ -65,17 +65,19 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
                 <div
                   key={index}
                   ref={el => { timelineItems.current[index] = el; }}
-                  className={`timeline-item flex-shrink-0 w-36 p-2 rounded-lg cursor-pointer hover:bg-neutral-800 transition-colors ${
-                    selectedMarker === index ? 'bg-neutral-800 ring-2 ring-orange-500' : 'bg-neutral-900'
+                  className={`timeline-item flex-shrink-0 w-36 p-3 rounded-lg cursor-pointer hover:bg-accent transition-smooth micro-shadow ${
+                    selectedMarker === index
+                      ? 'bg-accent ring-2 ring-primary shadow-md'
+                      : 'bg-card hover:scale-105'
                   }`}
                   onClick={() => onTimelineClick(index)}
                 >
-                  <div className="flex justify-between items-start mb-1">
+                  <div className="flex justify-between items-start mb-2">
                     <div className="font-medium text-sm">{formatTime(point.timestamp)}</div>
-                    <div className="text-xs text-neutral-400">{formatDistance(point.distance)}</div>
+                    <div className="text-xs text-muted-foreground">{formatDistance(point.distance)}</div>
                   </div>
                   
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-2">
                     <img 
                       src={getWeatherIconUrl(weather.weatherIcon)} 
                       alt={weather.weatherDescription}
