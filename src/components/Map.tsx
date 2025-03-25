@@ -58,12 +58,14 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   // If still loading libraries or no gpx data, show loading state
   if (isLoading || !reactLeafletComponents || !leaflet || !gpxData) {
     return (
-      <div className="relative h-[500px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="p-4 rounded-lg bg-neutral-900 shadow-lg">
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-white">{isLoading ? 'Loading map components...' : 'Waiting for route data...'}</span>
+      <div className="relative h-[500px] rounded-xl overflow-hidden border border-border bg-card card-shadow animate-fade-in transition-smooth">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+          <div className="p-6 rounded-xl bg-card shadow-lg animate-pulse">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-foreground font-medium text-lg">
+                {isLoading ? 'Loading map components...' : 'Waiting for route data...'}
+              </span>
             </div>
           </div>
         </div>
@@ -174,7 +176,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
     return (
       <Button 
         onClick={centerMap}
-        className="absolute bottom-4 right-4 bg-orange-600 hover:bg-orange-700 shadow-lg z-[1000]"
+        className="absolute bottom-4 right-4 bg-primary hover:bg-primary/90 shadow-lg z-[1000] transition-all hover:scale-105 active:scale-95"
       >
         <Crosshair className="mr-2 h-4 w-4" />
         Center Map
@@ -183,7 +185,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   };
 
   return (
-    <div className="relative h-[500px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900">
+    <div className="relative h-[500px] rounded-xl overflow-hidden border border-border bg-card card-shadow animate-fade-in transition-smooth">
       <MapContainer 
         center={[51.505, -0.09]} 
         zoom={13} 
@@ -195,7 +197,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
         />
-        <Polyline positions={routePath} color="orange" weight={5} />
+        <Polyline positions={routePath} color="hsl(var(--primary))" weight={5} opacity={0.8} />
         <MapMarkers />
         <MapController />
         <CenterMapButton />
