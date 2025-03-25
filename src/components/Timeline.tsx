@@ -30,18 +30,24 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
   // Animate timeline items on mount
   useEffect(() => {
     if (timelineRef.current && forecastPoints.length > 0) {
-      gsap.fromTo(
-        '.timeline-item',
-        { y: 20, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          stagger: 0.05, 
-          duration: 0.3, 
-          ease: 'power1.out',
-          overwrite: true
+      // Wait for DOM to be updated
+      setTimeout(() => {
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        if (timelineItems.length > 0) {
+          gsap.fromTo(
+            '.timeline-item',
+            { y: 20, opacity: 0 },
+            { 
+              y: 0, 
+              opacity: 1, 
+              stagger: 0.05, 
+              duration: 0.3, 
+              ease: 'power1.out',
+              overwrite: true
+            }
+          );
         }
-      );
+      }, 0);
     }
   }, [forecastPoints]);
 

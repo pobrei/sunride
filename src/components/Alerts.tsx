@@ -80,18 +80,24 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps) {
   // Animate alerts on mount
   useEffect(() => {
     if (alerts.length > 0) {
-      gsap.fromTo(
-        '.weather-alert',
-        { x: -20, opacity: 0 },
-        { 
-          x: 0, 
-          opacity: 1, 
-          stagger: 0.1, 
-          duration: 0.4, 
-          ease: 'back.out(1.2)',
-          overwrite: true
+      // Wait for DOM to be updated
+      setTimeout(() => {
+        const alertElements = document.querySelectorAll('.weather-alert');
+        if (alertElements.length > 0) {
+          gsap.fromTo(
+            '.weather-alert',
+            { x: -20, opacity: 0 },
+            { 
+              x: 0, 
+              opacity: 1, 
+              stagger: 0.1, 
+              duration: 0.4, 
+              ease: 'back.out(1.2)',
+              overwrite: true
+            }
+          );
         }
-      );
+      }, 0);
     }
   }, [alerts]);
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { getMultipleForecastPoints } from '@/lib/weatherAPI';
 import { generateForecastPoints } from '@/utils/gpxParser';
+import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 import GPXUploader from '@/components/GPXUploader';
 import Map from '@/components/Map';
 import Charts from '@/components/Charts';
@@ -13,7 +13,6 @@ import PDFExport from '@/components/PDFExport';
 import type { GPXData } from '@/utils/gpxParser';
 import type { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import gsap from 'gsap';
-import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 
 export default function Home() {
   // State variables
@@ -44,12 +43,17 @@ export default function Home() {
     setWeatherData([]);
     setSelectedMarker(null);
     
-    // Animate the appearance of the map section
-    gsap.fromTo(
-      '.map-container',
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-    );
+    // Wait for component to render before animating
+    setTimeout(() => {
+      const mapContainer = document.querySelector('.map-container');
+      if (mapContainer) {
+        gsap.fromTo(
+          '.map-container',
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
+        );
+      }
+    }, 0);
   };
   
   // Handle route settings update
@@ -72,16 +76,21 @@ export default function Home() {
       
       setForecastPoints(points);
       
-      // Fetch weather data for each point
+      // Fetch weather data for each point using client API
       const data = await fetchWeatherForPoints(points);
       setWeatherData(data);
       
-      // Animate the appearance of charts and timeline
-      gsap.fromTo(
-        '.charts-container',
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.2 }
-      );
+      // Wait for component to render before animating
+      setTimeout(() => {
+        const chartsContainer = document.querySelector('.charts-container');
+        if (chartsContainer) {
+          gsap.fromTo(
+            '.charts-container',
+            { y: 50, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.2 }
+          );
+        }
+      }, 0);
     } catch (error) {
       console.error('Error generating forecast:', error);
     } finally {
