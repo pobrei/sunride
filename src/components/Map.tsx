@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { Button } from '@/components/ui/button';
-import { Crosshair } from 'lucide-react';
 import { GPXData, RoutePoint } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { formatDistance, formatDateTime, formatTemperature, formatWind, formatPrecipitation, getWeatherIconUrl, getMarkerColor } from '@/utils/helpers';
+import { Button } from '@/components/ui/button';
+import { Crosshair } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
 interface MapProps {
   gpxData: GPXData | null;
@@ -17,190 +16,197 @@ interface MapProps {
   selectedMarker: number | null;
 }
 
-// Need to fix Leaflet icon paths in Next.js
-function fixLeafletIcons() {
-  // @ts-ignore
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  });
-}
-
-export default function Map({ gpxData, forecastPoints, weatherData, onMarkerClick, selectedMarker }: MapProps) {
-  const mapRef = useRef<L.Map | null>(null);
+// Create a client-only map wrapper that will only load on the client
+const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selectedMarker }: MapProps) => {
+  const [isLoading, setIsLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const routeLayerRef = useRef<L.Polyline | null>(null);
-  const markersLayerRef = useRef<L.LayerGroup | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Initialize map
+  const [reactLeafletComponents, setReactLeafletComponents] = useState<any>(null);
+  const [leaflet, setLeaflet] = useState<any>(null);
+
+  // Load Leaflet and React-Leaflet dynamically on the client
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    console.log('Loading Leaflet and React Leaflet dynamically...');
     
-    // Fix Leaflet icon paths
-    fixLeafletIcons();
-    
-    // Create map
-    const map = L.map(mapContainerRef.current).setView([51.505, -0.09], 13);
-    
-    // Add tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(map);
-    
-    // Create layers
-    routeLayerRef.current = L.polyline([], { color: 'orange', weight: 5 }).addTo(map);
-    markersLayerRef.current = L.layerGroup().addTo(map);
-    
-    // Store map reference
-    mapRef.current = map;
-    
-    // Cleanup
-    return () => {
-      map.remove();
-      mapRef.current = null;
-    };
-  }, []);
-  
-  // Update route when GPX data changes
-  useEffect(() => {
-    if (!mapRef.current || !routeLayerRef.current || !gpxData) return;
-    
-    setIsLoading(true);
-    
-    try {
-      const map = mapRef.current;
-      const routeLayer = routeLayerRef.current;
-      const routePoints = gpxData.points;
+    Promise.all([
+      import('leaflet'),
+      import('react-leaflet'),
+      // @ts-ignore - CSS import
+      import('leaflet/dist/leaflet.css')
+    ]).then(([L, ReactLeaflet]) => {
+      console.log('Leaflet loaded:', L);
+      console.log('React Leaflet loaded:', ReactLeaflet);
       
-      // Create route path
-      const routePath = routePoints.map(point => [point.lat, point.lon] as L.LatLngExpression);
-      routeLayer.setLatLngs(routePath);
+      const leafletInstance = L.default || L;
       
-      // Fit map to route bounds
-      map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
-      
-      // Animate route drawing
-      const animate = () => {
-        const length = routePath.length;
-        let count = 0;
-        
-        const timer = setInterval(() => {
-          count += Math.max(1, Math.floor(length / 100));
-          if (count > length) {
-            clearInterval(timer);
-            setIsLoading(false);
-            return;
-          }
-          
-          routeLayer.setLatLngs(routePath.slice(0, count));
-        }, 10);
-      };
-      
-      animate();
-    } catch (error) {
-      console.error('Error updating route:', error);
-      setIsLoading(false);
-    }
-  }, [gpxData]);
-  
-  // Update forecast markers when forecast data changes
-  useEffect(() => {
-    if (!mapRef.current || !markersLayerRef.current || forecastPoints.length === 0 || weatherData.length === 0) return;
-    
-    try {
-      const markersLayer = markersLayerRef.current;
-      
-      // Clear existing markers
-      markersLayer.clearLayers();
-      
-      // Add new markers
-      forecastPoints.forEach((point, index) => {
-        const weather = weatherData[index];
-        if (!weather) return;
-        
-        // Create marker icon with custom color
-        const markerColor = getMarkerColor(weather);
-        const markerIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="background-color: ${markerColor}; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);">${index + 1}</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-        
-        // Create marker with popup
-        const marker = L.marker([point.lat, point.lon], { icon: markerIcon })
-          .addTo(markersLayer)
-          .on('click', () => onMarkerClick(index));
-        
-        // Create popup content
-        const popupContent = `
-          <div style="min-width: 200px;">
-            <div style="display: flex; align-items: center; margin-bottom: 8px;">
-              <img src="${getWeatherIconUrl(weather.weatherIcon)}" alt="${weather.weatherDescription}" style="width: 50px; height: 50px;">
-              <div>
-                <div style="font-weight: bold; font-size: 16px;">${formatTemperature(weather.temperature)}</div>
-                <div style="font-size: 12px;">Feels like: ${formatTemperature(weather.feelsLike)}</div>
-              </div>
-            </div>
-            <div style="font-size: 14px; margin-bottom: 5px;"><b>Time:</b> ${formatDateTime(point.timestamp)}</div>
-            <div style="font-size: 14px; margin-bottom: 5px;"><b>Distance:</b> ${formatDistance(point.distance)}</div>
-            <div style="font-size: 14px; margin-bottom: 5px;"><b>Weather:</b> ${weather.weatherDescription}</div>
-            <div style="font-size: 14px; margin-bottom: 5px;"><b>Wind:</b> ${formatWind(weather.windSpeed, weather.windDirection)}</div>
-            <div style="font-size: 14px; margin-bottom: 5px;"><b>Humidity:</b> ${weather.humidity}%</div>
-            <div style="font-size: 14px;"><b>Precipitation:</b> ${formatPrecipitation(weather.rain)}</div>
-          </div>
-        `;
-        
-        marker.bindPopup(popupContent);
-        
-        // If this is the selected marker, highlight it and open the popup
-        if (selectedMarker === index) {
-          // Center map on selected marker
-          mapRef.current?.setView([point.lat, point.lon], mapRef.current.getZoom());
-          
-          // Open popup
-          marker.openPopup();
-        }
+      // Fix icon paths
+      delete leafletInstance.Icon.Default.prototype._getIconUrl;
+      leafletInstance.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
-    } catch (error) {
-      console.error('Error updating markers:', error);
-    }
-  }, [forecastPoints, weatherData, selectedMarker, onMarkerClick]);
+      
+      setLeaflet(leafletInstance);
+      setReactLeafletComponents(ReactLeaflet);
+      setIsLoading(false);
+    }).catch(error => {
+      console.error('Error loading Leaflet or React Leaflet:', error);
+      setIsLoading(false);
+    });
+  }, []);
+
+  // If still loading libraries or no gpx data, show loading state
+  if (isLoading || !reactLeafletComponents || !leaflet || !gpxData) {
+    return (
+      <div className="relative h-[500px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="p-4 rounded-lg bg-neutral-900 shadow-lg">
+            <div className="flex items-center space-x-3">
+              <div className="w-5 h-5 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-white">{isLoading ? 'Loading map components...' : 'Waiting for route data...'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Once libraries are loaded and data is available, render the map
+  const { MapContainer, TileLayer, Polyline, LayerGroup, Marker, Popup, useMap } = reactLeafletComponents;
+  const L = leaflet;
+
+  // Create route path
+  const routePath = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
   
-  // Center map function
-  const centerMap = () => {
-    if (!mapRef.current || !routeLayerRef.current || !gpxData) return;
+  // Find bounds of the route
+  const bounds = L.latLngBounds(routePath);
+
+  // Component to center map on bounds
+  const MapController = () => {
+    const map = useMap();
     
-    mapRef.current.fitBounds(routeLayerRef.current.getBounds(), { padding: [50, 50] });
+    useEffect(() => {
+      if (map && bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, [map]);
+    
+    return null;
   };
   
-  return (
-    <div className="relative h-[500px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900">
-      <div ref={mapContainerRef} className="h-full w-full" />
-      
+  // Component to handle marker click
+  const MapMarkers = () => {
+    const map = useMap();
+    
+    useEffect(() => {
+      // If there's a selected marker, center the map on it
+      if (selectedMarker !== null && forecastPoints[selectedMarker]) {
+        const point = forecastPoints[selectedMarker];
+        map.setView([point.lat, point.lon], map.getZoom());
+      }
+    }, [selectedMarker, map]);
+    
+    return (
+      <LayerGroup>
+        {forecastPoints.map((point, index) => {
+          const weather = weatherData[index];
+          if (!weather) return null;
+          
+          // Create marker icon with custom color
+          const markerColor = getMarkerColor(weather);
+          const markerIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color: ${markerColor}; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);">${index + 1}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          });
+          
+          // Create popup content
+          const popupContent = `
+            <div style="min-width: 200px;">
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <img src="${getWeatherIconUrl(weather.weatherIcon)}" alt="${weather.weatherDescription}" style="width: 50px; height: 50px;">
+                <div>
+                  <div style="font-weight: bold; font-size: 16px;">${formatTemperature(weather.temperature)}</div>
+                  <div style="font-size: 12px;">Feels like: ${formatTemperature(weather.feelsLike)}</div>
+                </div>
+              </div>
+              <div style="font-size: 14px; margin-bottom: 5px;"><b>Time:</b> ${formatDateTime(point.timestamp)}</div>
+              <div style="font-size: 14px; margin-bottom: 5px;"><b>Distance:</b> ${formatDistance(point.distance)}</div>
+              <div style="font-size: 14px; margin-bottom: 5px;"><b>Weather:</b> ${weather.weatherDescription}</div>
+              <div style="font-size: 14px; margin-bottom: 5px;"><b>Wind:</b> ${formatWind(weather.windSpeed, weather.windDirection)}</div>
+              <div style="font-size: 14px; margin-bottom: 5px;"><b>Humidity:</b> ${weather.humidity}%</div>
+              <div style="font-size: 14px;"><b>Precipitation:</b> ${formatPrecipitation(weather.rain)}</div>
+            </div>
+          `;
+          
+          return (
+            <Marker 
+              key={`marker-${index}`}
+              position={[point.lat, point.lon]} 
+              icon={markerIcon}
+              eventHandlers={{
+                click: () => {
+                  onMarkerClick(index);
+                }
+              }}
+            >
+              <Popup>
+                <div dangerouslySetInnerHTML={{ __html: popupContent }} />
+              </Popup>
+            </Marker>
+          );
+        })}
+      </LayerGroup>
+    );
+  };
+  
+  // Custom center map button component
+  const CenterMapButton = () => {
+    const map = useMap();
+    
+    const centerMap = () => {
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    };
+    
+    return (
       <Button 
         onClick={centerMap}
         className="absolute bottom-4 right-4 bg-orange-600 hover:bg-orange-700 shadow-lg z-[1000]"
-        disabled={!gpxData}
       >
         <Crosshair className="mr-2 h-4 w-4" />
         Center Map
       </Button>
-      
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[1001]">
-          <div className="p-4 rounded-lg bg-neutral-900 shadow-lg">
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-white">Loading route...</span>
-            </div>
-          </div>
-        </div>
-      )}
+    );
+  };
+
+  return (
+    <div className="relative h-[500px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900">
+      <MapContainer 
+        center={[51.505, -0.09]} 
+        zoom={13} 
+        style={{ height: '100%', width: '100%' }}
+        className="z-10"
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={19}
+        />
+        <Polyline positions={routePath} color="orange" weight={5} />
+        <MapMarkers />
+        <MapController />
+        <CenterMapButton />
+      </MapContainer>
     </div>
   );
-} 
+};
+
+// Create a dynamic component with SSR disabled
+const Map = dynamic(() => Promise.resolve(MapContent), {
+  ssr: false,
+}) as React.ComponentType<MapProps>;
+
+export default Map; 
