@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  nextjs:
+    container_name: weatherapp-nextjs
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+        - MONGODB_URI=${MONGODB_URI}
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - MONGODB_URI=${MONGODB_URI}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-60}
+      - RATE_LIMIT_WINDOW=${RATE_LIMIT_WINDOW:-60000}
+      - CACHE_DURATION=${CACHE_DURATION:-3600000}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+
+  nginx:
+    container_name: weatherapp-nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/var/www/html
+    depends_on:
+      - nextjs
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

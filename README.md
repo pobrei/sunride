@@ -13,6 +13,9 @@ A robust and production-ready Next.js application for planning routes with detai
 - **Timeline & Alerts**: Scrollable timeline of forecast points and important weather alerts (high wind, extreme heat, freezing temperatures, heavy rain).
 - **PDF Export**: Generate comprehensive PDF reports of your route with weather data.
 - **Mobile-Responsive Design**: Fully responsive layout that works on all devices.
+- **Security**: Rate limiting, input validation, and secure API integrations.
+- **Error Handling**: Robust error handling with informative user feedback.
+- **Caching**: Efficient caching system to minimize API calls and improve performance.
 
 ## Tech Stack
 
@@ -24,6 +27,8 @@ A robust and production-ready Next.js application for planning routes with detai
 - **PDF Generation**: jsPDF and html2canvas
 - **Database**: MongoDB for weather data caching
 - **APIs**: OpenWeather API
+- **Containerization**: Docker and Docker Compose
+- **Reverse Proxy**: Nginx with SSL termination and security headers
 
 ## Getting Started
 
@@ -37,28 +42,33 @@ A robust and production-ready Next.js application for planning routes with detai
 ### Installation
 
 1. Clone the repository:
-   ```
+   ```bash
    git clone https://github.com/yourusername/weatherapp.git
    cd weatherapp
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
-3. Create a `.env.local` file in the root directory with the following:
+3. Set up your environment variables by copying the example file:
+   ```bash
+   cp env.example .env.local
+   ```
+
+4. Edit `.env.local` with your actual credentials:
    ```
    MONGODB_URI=your_mongodb_connection_string
    OPENWEATHER_API_KEY=your_openweather_api_key
    ```
 
-4. Run the development server:
-   ```
+5. Run the development server:
+   ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 
@@ -75,9 +85,35 @@ A robust and production-ready Next.js application for planning routes with detai
    - Note any weather alerts that may affect your journey
 5. **Export to PDF**: Click "Export PDF" to save a comprehensive report.
 
-## Deployment
+## Deployment Options
 
-### Deploying to Vercel
+### 1. Docker Deployment (Recommended for Production)
+
+The application includes Docker support for easy deployment. This method includes Nginx as a reverse proxy with SSL termination, rate limiting, and security headers.
+
+1. Make sure you have Docker and Docker Compose installed on your server.
+
+2. Copy the example environment file:
+   ```bash
+   cp env.example .env
+   ```
+
+3. Edit `.env` with your actual credentials.
+
+4. Create self-signed SSL certificates or add your own:
+   ```bash
+   mkdir -p nginx/ssl
+   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/ssl/server.key -out nginx/ssl/server.crt
+   ```
+
+5. Build and start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+6. Access your application at `https://your-server-domain`.
+
+### 2. Deploying to Vercel
 
 1. Push your code to a GitHub repository.
 2. Connect your repository to Vercel.
@@ -85,6 +121,37 @@ A robust and production-ready Next.js application for planning routes with detai
    - `MONGODB_URI`
    - `OPENWEATHER_API_KEY`
 4. Deploy.
+
+## Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|:--------:|
+| `MONGODB_URI` | MongoDB connection string | - | Yes |
+| `OPENWEATHER_API_KEY` | API key for OpenWeather | - | Yes |
+| `PORT` | Port for Next.js to run on | 3000 | No |
+| `RATE_LIMIT_MAX` | Maximum requests per minute per IP | 60 | No |
+| `RATE_LIMIT_WINDOW` | Time window for rate limiting (ms) | 60000 | No |
+| `CACHE_DURATION` | Cache duration in milliseconds | 3600000 | No |
+| `DEBUG` | Enable detailed logging | false | No |
+| `NODE_ENV` | Environment (development/production) | development | No |
+
+## Security Features
+
+- **Rate Limiting**: Protection against API abuse with configurable limits
+- **Input Validation**: Thorough validation of all user inputs
+- **Secure Headers**: HTTP security headers via Nginx
+- **HTTPS Enforcement**: Automatic HTTP to HTTPS redirection
+- **API Key Protection**: Server-side only access to API keys
+- **Error Handling**: Sanitized error messages to prevent information leakage
+
+## Error Handling
+
+The application includes comprehensive error handling with:
+
+- User-friendly error notifications with clear messages
+- Detailed console logging for debugging
+- Automatic retry mechanisms for API failures
+- Graceful fallbacks when services are unavailable
 
 ## Contributing
 
@@ -106,3 +173,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - GPX file format specifications
 - Shadcn UI for the beautiful component library
 - Next.js team for the fantastic framework
+

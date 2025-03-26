@@ -21,7 +21,9 @@ const nextConfig = {
       },
     ],
   },
-  output: 'standalone',
+  output: 'standalone', // Optimized for Docker deployments
+  poweredByHeader: false, // Removes the X-Powered-By header for security
+  compress: true, // Enables gzip compression
 };
 
 module.exports = nextConfig; 

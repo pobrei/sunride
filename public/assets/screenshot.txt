@@ -1,0 +1,2 @@
+This file is a placeholder for the application screenshot.
+After launching the application, take a screenshot and save it as "screenshot.png" in the public/assets directory. 

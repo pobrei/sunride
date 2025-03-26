@@ -13,7 +13,62 @@ import PDFExport from '@/components/PDFExport';
 import type { GPXData } from '@/utils/gpxParser';
 import type { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import gsap from 'gsap';
-import { AlertCircle, X } from 'lucide-react';
+import { AlertCircle, X, Clock, Info, CheckCircle } from 'lucide-react';
+
+// Toast notification component
+const Toast = ({ type, message, onDismiss }: { type: 'error' | 'info' | 'success', message: string, onDismiss: () => void }) => {
+  useEffect(() => {
+    // Auto-dismiss success and info toasts after 5 seconds
+    if (type !== 'error') {
+      const timer = setTimeout(onDismiss, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [onDismiss, type]);
+  
+  const bgColor = type === 'error' ? 'bg-red-500/10 border-red-500' :
+                 type === 'success' ? 'bg-green-500/10 border-green-500' :
+                 'bg-blue-500/10 border-blue-500';
+                 
+  const iconColor = type === 'error' ? 'text-red-500' :
+                  type === 'success' ? 'text-green-500' :
+                  'text-blue-500';
+  
+  const Icon = type === 'error' ? AlertCircle :
+              type === 'success' ? CheckCircle :
+              Info;
+  
+  return (
+    <div className={`mb-6 ${bgColor} border rounded-lg p-4 flex items-start animate-in fade-in slide-in-from-top-5`}>
+      <Icon className={`h-5 w-5 ${iconColor} mt-0.5 mr-2 flex-shrink-0`} />
+      <div className="flex-1">
+        <p className={`${iconColor} font-medium`}>
+          {type === 'error' ? 'Error: ' : type === 'success' ? 'Success: ' : 'Info: '}
+          {message}
+        </p>
+        {type === 'error' && (
+          <p className="text-muted-foreground text-sm mt-1">
+            There was a problem retrieving weather data. This might be due to API limit restrictions or connection issues.
+          </p>
+        )}
+      </div>
+      <button 
+        onClick={onDismiss}
+        className="p-1 hover:bg-background rounded-full"
+        aria-label="Dismiss"
+      >
+        <X className="h-5 w-5 text-muted-foreground" />
+      </button>
+    </div>
+  );
+};
+
+// Loading spinner component
+const LoadingSpinner = ({ message }: { message: string }) => (
+  <div className="flex items-center space-x-2 text-muted-foreground animate-pulse">
+    <Clock className="animate-spin h-5 w-5" />
+    <span>{message}</span>
+  </div>
+);
 
 export default function Home() {
   // State variables
@@ -23,7 +78,11 @@ export default function Home() {
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<{id: string, type: 'error' | 'info' | 'success', message: string}[]>([]);
+  const [loadingState, setLoadingState] = useState<{isLoading: boolean, message: string}>({
+    isLoading: false,
+    message: ''
+  });
   
   // Refs for PDF export
   const mapRef = useRef<HTMLDivElement>(null);
@@ -38,13 +97,28 @@ export default function Home() {
     chartsRef: chartsRef as React.RefObject<HTMLDivElement>
   });
   
+  // Add a notification
+  const addNotification = (type: 'error' | 'info' | 'success', message: string) => {
+    const id = Date.now().toString();
+    setNotifications(prev => [...prev, { id, type, message }]);
+    return id;
+  };
+  
+  // Remove a notification
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+  
   // Handle GPX file upload
   const handleGPXLoaded = (data: GPXData) => {
     setGpxData(data);
     setForecastPoints([]);
     setWeatherData([]);
     setSelectedMarker(null);
-    setErrorMessage(null);
+    setNotifications([]);
+    
+    // Show success notification
+    addNotification('success', `Route loaded successfully: ${data.name || 'Unnamed route'} (${data.points.length} points)`);
     
     // Wait for component to render before animating
     setTimeout(() => {
@@ -61,13 +135,20 @@ export default function Home() {
   
   // Handle route settings update
   const handleUpdateSettings = async (settings: RouteSettings) => {
-    if (!gpxData) return;
+    if (!gpxData) {
+      addNotification('error', 'Please upload a GPX file first');
+      return;
+    }
     
     setIsGenerating(true);
     setWeatherData([]);
     setForecastPoints([]);
     setSelectedMarker(null);
-    setErrorMessage(null);
+    setNotifications([]);
+    setLoadingState({
+      isLoading: true,
+      message: 'Generating forecast points...'
+    });
     
     try {
       // Generate forecast points at intervals along the route
@@ -79,34 +160,62 @@ export default function Home() {
       );
       
       setForecastPoints(points);
+      setLoadingState({
+        isLoading: true,
+        message: `Fetching weather data for ${points.length} points...`
+      });
       
       // Fetch weather data for each point using client API
-      const data = await fetchWeatherForPoints(points);
+      try {
+        const data = await fetchWeatherForPoints(points);
+        
+        // Check if we got data back
+        const hasValidData = data.some(item => item !== null);
+        if (!hasValidData) {
+          throw new Error('Failed to fetch weather data. Please try again later.');
+        }
+        
+        setWeatherData(data);
+        addNotification('success', 'Weather forecast generated successfully');
+        
+        // Wait for component to render before animating
+        setTimeout(() => {
+          const chartsContainer = document.querySelector('.charts-container');
+          if (chartsContainer) {
+            gsap.fromTo(
+              '.charts-container',
+              { y: 50, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.2 }
+            );
+          }
+        }, 0);
+      } catch (error) {
+        // Handle network or API errors
+        let errorMessage = 'Failed to fetch weather data';
+        
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        
+        addNotification('error', errorMessage);
+        console.error('Error fetching weather data:', error);
+      }
+    } catch (error) {
+      // Handle GPX processing errors
+      let errorMessage = 'Failed to process route data';
       
-      // Check if we got data back
-      const hasValidData = data.some(item => item !== null);
-      if (!hasValidData) {
-        throw new Error('Failed to fetch weather data. Please try again later.');
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
       
-      setWeatherData(data);
-      
-      // Wait for component to render before animating
-      setTimeout(() => {
-        const chartsContainer = document.querySelector('.charts-container');
-        if (chartsContainer) {
-          gsap.fromTo(
-            '.charts-container',
-            { y: 50, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.2 }
-          );
-        }
-      }, 0);
-    } catch (error) {
-      console.error('Error generating forecast:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate weather forecast');
+      addNotification('error', errorMessage);
+      console.error('Error processing route:', error);
     } finally {
       setIsGenerating(false);
+      setLoadingState({
+        isLoading: false,
+        message: ''
+      });
     }
   };
   
@@ -127,21 +236,39 @@ export default function Home() {
   
   // Handle PDF export
   const handleExportPDF = async () => {
-    if (!gpxData || weatherData.length === 0) return;
+    if (!gpxData || weatherData.length === 0) {
+      addNotification('error', 'No weather data available for export');
+      return;
+    }
     
     setIsExporting(true);
-    setErrorMessage(null);
+    setLoadingState({
+      isLoading: true,
+      message: 'Generating PDF...'
+    });
     
     try {
       const success = await generatePDF();
       if (!success) {
         throw new Error('Failed to generate PDF');
       }
+      
+      addNotification('success', 'PDF exported successfully');
     } catch (error) {
+      let errorMessage = 'Failed to export PDF';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      addNotification('error', errorMessage);
       console.error('Error exporting PDF:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to export PDF');
     } finally {
       setIsExporting(false);
+      setLoadingState({
+        isLoading: false,
+        message: ''
+      });
     }
   };
   
@@ -165,21 +292,20 @@ export default function Home() {
       </header>
       
       <main className="max-w-7xl mx-auto">
-        {errorMessage && (
-          <div className="mb-6 bg-red-500/10 border border-red-500 rounded-lg p-4 flex items-start">
-            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-red-500 font-medium">Error: {errorMessage}</p>
-              <p className="text-muted-foreground text-sm mt-1">
-                There was a problem retrieving weather data. This might be due to API limit restrictions or connection issues.
-              </p>
-            </div>
-            <button 
-              onClick={() => setErrorMessage(null)}
-              className="p-1 hover:bg-background rounded-full"
-            >
-              <X className="h-5 w-5 text-muted-foreground" />
-            </button>
+        {/* Notification area */}
+        {notifications.map(notification => (
+          <Toast
+            key={notification.id}
+            type={notification.type}
+            message={notification.message}
+            onDismiss={() => removeNotification(notification.id)}
+          />
+        ))}
+        
+        {/* Loading state indicator */}
+        {loadingState.isLoading && (
+          <div className="mb-6">
+            <LoadingSpinner message={loadingState.message} />
           </div>
         )}
         
