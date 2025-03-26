@@ -91,12 +91,12 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
                     />
                     <div>
                       <div className="font-semibold text-lg">{formatTemperature(weather.temperature)}</div>
-                      <div className="text-xs text-neutral-400">{formatWind(weather.windSpeed, weather.windDirection)}</div>
+                      <div className="text-xs text-muted-foreground">{formatWind(weather.windSpeed, weather.windDirection)}</div>
                     </div>
                     
                     {hasAlert && (
                       <div className="ml-auto">
-                        <AlertTriangle className="h-5 w-5 text-orange-500" />
+                        <AlertTriangle className="h-5 w-5 text-amber-500" />
                       </div>
                     )}
                   </div>

@@ -13,6 +13,7 @@ import PDFExport from '@/components/PDFExport';
 import type { GPXData } from '@/utils/gpxParser';
 import type { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import gsap from 'gsap';
+import { AlertCircle, X } from 'lucide-react';
 
 export default function Home() {
   // State variables
@@ -22,6 +23,7 @@ export default function Home() {
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Refs for PDF export
   const mapRef = useRef<HTMLDivElement>(null);
@@ -42,6 +44,7 @@ export default function Home() {
     setForecastPoints([]);
     setWeatherData([]);
     setSelectedMarker(null);
+    setErrorMessage(null);
     
     // Wait for component to render before animating
     setTimeout(() => {
@@ -64,6 +67,7 @@ export default function Home() {
     setWeatherData([]);
     setForecastPoints([]);
     setSelectedMarker(null);
+    setErrorMessage(null);
     
     try {
       // Generate forecast points at intervals along the route
@@ -78,6 +82,13 @@ export default function Home() {
       
       // Fetch weather data for each point using client API
       const data = await fetchWeatherForPoints(points);
+      
+      // Check if we got data back
+      const hasValidData = data.some(item => item !== null);
+      if (!hasValidData) {
+        throw new Error('Failed to fetch weather data. Please try again later.');
+      }
+      
       setWeatherData(data);
       
       // Wait for component to render before animating
@@ -93,6 +104,7 @@ export default function Home() {
       }, 0);
     } catch (error) {
       console.error('Error generating forecast:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to generate weather forecast');
     } finally {
       setIsGenerating(false);
     }
@@ -118,6 +130,7 @@ export default function Home() {
     if (!gpxData || weatherData.length === 0) return;
     
     setIsExporting(true);
+    setErrorMessage(null);
     
     try {
       const success = await generatePDF();
@@ -126,6 +139,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error exporting PDF:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to export PDF');
     } finally {
       setIsExporting(false);
     }
@@ -137,20 +151,38 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#121214] text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <header className="mb-6">
         <h1 
-          className="text-3xl font-bold text-orange-500 cursor-pointer hover:text-orange-400 transition-colors"
+          className="text-3xl font-bold text-primary cursor-pointer hover:opacity-90 transition-colors"
           onClick={handleTitleClick}
         >
           RideWeather Planner
         </h1>
-        <p className="text-neutral-400 mt-1">
+        <p className="text-muted-foreground mt-1">
           Plan your route with real-time weather forecasting
         </p>
       </header>
       
       <main className="max-w-7xl mx-auto">
+        {errorMessage && (
+          <div className="mb-6 bg-red-500/10 border border-red-500 rounded-lg p-4 flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-red-500 font-medium">Error: {errorMessage}</p>
+              <p className="text-muted-foreground text-sm mt-1">
+                There was a problem retrieving weather data. This might be due to API limit restrictions or connection issues.
+              </p>
+            </div>
+            <button 
+              onClick={() => setErrorMessage(null)}
+              className="p-1 hover:bg-background rounded-full"
+            >
+              <X className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
+        )}
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="md:col-span-2">
             <GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={isGenerating} />
@@ -205,7 +237,7 @@ export default function Home() {
         )}
       </main>
       
-      <footer className="mt-12 text-center text-neutral-500 text-sm">
+      <footer className="mt-12 text-center text-muted-foreground text-sm">
         <p>RideWeather Planner &copy; {new Date().getFullYear()} | Data from OpenWeather API</p>
       </footer>
     </div>

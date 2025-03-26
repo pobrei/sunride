@@ -128,7 +128,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps) {
             case 'freezing':
               icon = <Thermometer className="h-5 w-5" />;
               title = 'Freezing Temperature';
-              color = 'text-blue-500';
+              color = 'text-primary';
               description = `Temperature of ${Math.round(weather.temperature)}°C at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             case 'highWind':
@@ -140,7 +140,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps) {
             case 'heavyRain':
               icon = <Droplets className="h-5 w-5" />;
               title = 'Heavy Rain';
-              color = 'text-purple-500';
+              color = 'text-secondary';
               description = `Precipitation of ${weather.rain.toFixed(1)} mm at ${formatTime(point.timestamp)} (${formatDistance(point.distance)})`;
               break;
             default:
@@ -155,9 +155,9 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps) {
               key={id}
               className={`weather-alert border-l-4 micro-shadow hover-lift transition-smooth ${
                 type === 'extremeHeat' ? 'border-l-destructive' :
-                type === 'freezing' ? 'border-l-blue-500' :
+                type === 'freezing' ? 'border-l-primary' :
                 type === 'highWind' ? 'border-l-amber-500' :
-                type === 'heavyRain' ? 'border-l-purple-500' :
+                type === 'heavyRain' ? 'border-l-secondary' :
                 'border-l-primary'
               }`}
             >

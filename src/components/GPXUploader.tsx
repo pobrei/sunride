@@ -46,14 +46,14 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
   };
 
   return (
-    <Card className="bg-[#1c1c1e] border-neutral-800">
+    <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold">Upload GPX File</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="fileInput" className="text-sm text-neutral-400">
+            <Label htmlFor="fileInput" className="text-sm">
               Select GPX file
             </Label>
             <div className="flex gap-2">
@@ -62,23 +62,22 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
                 type="file"
                 accept=".gpx"
                 onChange={handleFileChange}
-                className="bg-neutral-900 border-neutral-700 text-sm file:bg-orange-600 file:text-white file:border-none file:rounded file:px-2.5 file:py-1.5 file:font-medium hover:file:bg-orange-700 cursor-pointer"
+                className="cursor-pointer file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2.5 file:py-1.5 file:font-medium hover:file:bg-primary/90"
               />
               <Button 
                 disabled={isLoading || !fileName}
-                className="bg-orange-600 hover:bg-orange-700"
               >
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
               </Button>
             </div>
             {fileName && !error && (
-              <p className="text-xs text-green-500 mt-1">
+              <p className="text-xs text-secondary mt-1">
                 {fileName} selected
               </p>
             )}
             {error && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-destructive mt-1">
                 {error}
               </p>
             )}

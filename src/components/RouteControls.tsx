@@ -70,7 +70,7 @@ export default function RouteControls({
   const formatSpeedValue = (value: number) => `${value} km/h`;
 
   return (
-    <Card className="bg-[#1c1c1e] border-neutral-800">
+    <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold">Route Settings</CardTitle>
       </CardHeader>
@@ -83,14 +83,13 @@ export default function RouteControls({
               type="datetime-local"
               value={formatDateForInput(startTime)}
               onChange={handleStartTimeChange}
-              className="bg-neutral-900 border-neutral-700"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="weatherInterval">Weather Interval</Label>
-              <span className="text-sm text-neutral-400">{formatIntervalValue(weatherInterval)}</span>
+              <span className="text-sm text-muted-foreground">{formatIntervalValue(weatherInterval)}</span>
             </div>
             <Slider
               id="weatherInterval"
@@ -106,7 +105,7 @@ export default function RouteControls({
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="avgSpeed">Average Speed</Label>
-              <span className="text-sm text-neutral-400">{formatSpeedValue(avgSpeed)}</span>
+              <span className="text-sm text-muted-foreground">{formatSpeedValue(avgSpeed)}</span>
             </div>
             <Slider
               id="avgSpeed"
@@ -123,7 +122,7 @@ export default function RouteControls({
             <Button 
               onClick={handleGenerateForecast}
               disabled={isGenerating}
-              className="bg-orange-600 hover:bg-orange-700 flex-1"
+              className="flex-1"
             >
               {isGenerating ? (
                 <>
@@ -139,7 +138,6 @@ export default function RouteControls({
               onClick={onExportPDF}
               disabled={isExporting || isGenerating}
               variant="outline"
-              className="border-neutral-700 hover:bg-neutral-800"
             >
               {isExporting ? (
                 <>

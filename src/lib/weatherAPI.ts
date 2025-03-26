@@ -1,13 +1,17 @@
 // Add 'server-only' marker at the top of the file to prevent client usage
 import 'server-only';
-import clientPromise from './mongodb';
+// No longer importing clientPromise
 
+// Validate OpenWeather API key
 if (!process.env.OPENWEATHER_API_KEY) {
   throw new Error('Please add your OpenWeather API key to .env.local');
 }
 
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const CACHE_DURATION = 3600 * 1000; // 1 hour in milliseconds
+
+// In-memory cache to replace MongoDB
+const memoryCache: Map<string, { data: WeatherData, timestamp: number }> = new Map();
 
 interface ForecastPoint {
   lat: number;
@@ -28,23 +32,17 @@ interface WeatherData {
   weatherDescription: string;
 }
 
-// Fetch weather data for a specific point with caching
+// Fetch weather data for a specific point with in-memory caching
 export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherData | null> {
   try {
     const hour = Math.floor(point.timestamp / 3600) * 3600;
     const cacheKey = `${point.lat.toFixed(4)},${point.lon.toFixed(4)},${hour}h`;
     
-    // Check cache in MongoDB
-    const client = await clientPromise;
-    const db = client.db('weatherCache');
-    const cachedData = await db.collection('forecasts').findOne({ 
-      key: cacheKey,
-      timestamp: { $gt: Date.now() - CACHE_DURATION }
-    });
-
-    if (cachedData) {
+    // Check in-memory cache
+    const cachedEntry = memoryCache.get(cacheKey);
+    if (cachedEntry && cachedEntry.timestamp > Date.now() - CACHE_DURATION) {
       console.log('Cache hit for', cacheKey);
-      return cachedData.data as WeatherData;
+      return cachedEntry.data;
     }
 
     // Cache miss, fetch from API
@@ -61,7 +59,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
       apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${point.lat}&lon=${point.lon}&units=metric&appid=${OPENWEATHER_API_KEY}`;
     }
 
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl, { next: { revalidate: 3600 } }); // Cache for 1 hour
     if (!response.ok) {
       throw new Error(`OpenWeather API error: ${response.statusText}`);
     }
@@ -102,18 +100,11 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
       };
     }
 
-    // Save to cache
-    await db.collection('forecasts').updateOne(
-      { key: cacheKey },
-      { 
-        $set: {
-          key: cacheKey,
-          data: weatherData,
-          timestamp: Date.now()
-        }
-      },
-      { upsert: true }
-    );
+    // Save to in-memory cache
+    memoryCache.set(cacheKey, {
+      data: weatherData,
+      timestamp: Date.now()
+    });
 
     return weatherData;
   } catch (error) {
@@ -124,7 +115,25 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
 
 // Get multiple forecast points
 export async function getMultipleForecastPoints(points: ForecastPoint[]): Promise<(WeatherData | null)[]> {
-  return Promise.all(points.map(point => getWeatherForecast(point)));
+  // Process points in batches to avoid rate limiting
+  const batchSize = 5;
+  const results: (WeatherData | null)[] = new Array(points.length).fill(null);
+  
+  for (let i = 0; i < points.length; i += batchSize) {
+    const batch = points.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(point => getWeatherForecast(point)));
+    
+    for (let j = 0; j < batchResults.length; j++) {
+      results[i + j] = batchResults[j];
+    }
+    
+    // Small delay between batches to prevent rate limiting
+    if (i + batchSize < points.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+  }
+  
+  return results;
 }
 
 // Export types for use in other files
