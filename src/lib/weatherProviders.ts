@@ -1,12 +1,74 @@
 import { validateWeatherData, WeatherData } from './weatherService';
 
 /**
+ * Custom error types for better error handling
+ */
+export class WeatherApiError extends Error {
+  constructor(message: string, public statusCode: number) {
+    super(message);
+    this.name = 'WeatherApiError';
+  }
+}
+
+export class WeatherProviderError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'WeatherProviderError';
+  }
+}
+
+/**
+ * Rate limiter interface
+ */
+interface RateLimiter {
+  acquire(): Promise<void>;
+}
+
+/**
+ * Simple rate limiter implementation with concurrent request handling
+ */
+export class SimpleRateLimiter implements RateLimiter {
+  private lastRequest: number = 0;
+  private minInterval: number;
+  private queue: Set<Promise<void>> = new Set();
+
+  constructor(requestsPerSecond: number) {
+    this.minInterval = 1000 / requestsPerSecond;
+  }
+
+  async acquire(): Promise<void> {
+    // Add to queue
+    const promise = new Promise<void>((resolve) => {
+      const now = Date.now();
+      const timeSinceLast = now - this.lastRequest;
+      
+      if (timeSinceLast < this.minInterval) {
+        setTimeout(resolve, this.minInterval - timeSinceLast);
+      } else {
+        resolve();
+      }
+    });
+
+    // Track this promise
+    this.queue.add(promise);
+    await promise;
+    
+    // Update last request time
+    this.lastRequest = Date.now();
+    
+    // Clean up queue by removing resolved promises
+    this.queue.delete(promise);
+  }
+}
+
+/**
  * Weather provider interface
  */
 interface WeatherProvider {
   name: string;
   getWeather(lat: number, lon: number, time: Date): Promise<WeatherData>;
   isAvailable(): Promise<boolean>;
+  rateLimiter: RateLimiter;
 }
 
 /**
@@ -14,25 +76,47 @@ interface WeatherProvider {
  */
 class OpenWeatherProvider implements WeatherProvider {
   private apiKey: string;
+  rateLimiter: RateLimiter;
   
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+    this.rateLimiter = new SimpleRateLimiter(10); // 10 requests per second
   }
   
   name = 'OpenWeather';
+  
+  private async makeRequest(url: string): Promise<any> {
+    try {
+      await this.rateLimiter.acquire();
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new WeatherApiError(
+          `OpenWeather API error (${response.status}): ${errorData.message || 'Unknown error'}`,
+          response.status
+        );
+      }
+      
+      return await response.json();
+    } catch (error) {
+      if (error instanceof WeatherApiError) {
+        throw error;
+      }
+      throw new WeatherProviderError('Failed to make request to OpenWeather API');
+    }
+  }
   
   async getWeather(lat: number, lon: number, time: Date): Promise<WeatherData> {
     try {
       const timestamp = Math.floor(time.getTime() / 1000);
       const url = `https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${timestamp}&appid=${this.apiKey}&units=metric`;
       
-      const response = await fetch(url);
+      const data = await this.makeRequest(url);
       
-      if (!response.ok) {
-        throw new Error(`OpenWeather API error: ${response.status}`);
+      if (!data.data || data.data.length === 0) {
+        throw new WeatherProviderError('No weather data available for the requested time');
       }
-      
-      const data = await response.json();
       
       // Transform API response to our schema
       const weatherData = {
@@ -56,10 +140,8 @@ class OpenWeatherProvider implements WeatherProvider {
   
   async isAvailable(): Promise<boolean> {
     try {
-      // Simple test call to check if API is responsive
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=London&appid=${this.apiKey}`
-      );
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=London&appid=${this.apiKey}`;
+      const response = await fetch(url);
       return response.ok;
     } catch {
       return false;
@@ -72,29 +154,58 @@ class OpenWeatherProvider implements WeatherProvider {
  */
 class VisualCrossingProvider implements WeatherProvider {
   private apiKey: string;
+  rateLimiter: RateLimiter;
   
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+    this.rateLimiter = new SimpleRateLimiter(5); // 5 requests per second
   }
   
   name = 'Visual Crossing';
+  
+  private async makeRequest(url: string): Promise<any> {
+    try {
+      await this.rateLimiter.acquire();
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new WeatherApiError(
+          `Visual Crossing API error (${response.status}): ${errorData.message || 'Unknown error'}`,
+          response.status
+        );
+      }
+      
+      return await response.json();
+    } catch (error) {
+      if (error instanceof WeatherApiError) {
+        throw error;
+      }
+      throw new WeatherProviderError('Failed to make request to Visual Crossing API');
+    }
+  }
   
   async getWeather(lat: number, lon: number, time: Date): Promise<WeatherData> {
     try {
       const dateStr = time.toISOString().split('T')[0];
       const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${lon}/${dateStr}?key=${this.apiKey}&include=hours&elements=temp,humidity,windspeed,pressure,cloudcover,precip`;
       
-      const response = await fetch(url);
+      const data = await this.makeRequest(url);
       
-      if (!response.ok) {
-        throw new Error(`Visual Crossing API error: ${response.status}`);
+      if (!data.days || data.days.length === 0) {
+        throw new WeatherProviderError('No weather data available for the requested time');
       }
-      
-      const data = await response.json();
       
       // Find the closest hour to the requested time
       const targetHour = time.getHours();
-      const hourData = data.days[0].hours.find((h: { datetime: string }) => parseInt(h.datetime.split(':')[0]) === targetHour) || data.days[0].hours[0];
+      const hourData = data.days[0].hours.find((h: { datetime: string }) => {
+        const hour = parseInt(h.datetime.split(':')[0]);
+        return Math.abs(hour - targetHour) <= 1; // Allow 1 hour tolerance
+      });
+      
+      if (!hourData) {
+        throw new WeatherProviderError('No weather data available for the requested hour');
+      }
       
       // Transform API response to our schema
       const weatherData = {
@@ -118,10 +229,8 @@ class VisualCrossingProvider implements WeatherProvider {
   
   async isAvailable(): Promise<boolean> {
     try {
-      // Simple test call to check if API is responsive
-      const response = await fetch(
-        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London?key=${this.apiKey}&include=current`
-      );
+      const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London?key=${this.apiKey}&include=current`;
+      const response = await fetch(url);
       return response.ok;
     } catch {
       return false;
@@ -172,13 +281,19 @@ export class WeatherService {
             return data;
           }
         } catch (error) {
-          console.warn(`Provider ${provider.name} failed:`, error);
+          if (error instanceof WeatherApiError) {
+            console.warn(`Provider ${provider.name} API error (status ${error.statusCode}):`, error.message);
+          } else if (error instanceof WeatherProviderError) {
+            console.warn(`Provider ${provider.name} error:`, error.message);
+          } else {
+            console.warn(`Provider ${provider.name} failed with unknown error:`, error);
+          }
           // Continue to next provider
         }
       }
       
       // If all providers failed
-      throw new Error('All weather providers failed');
+      throw new Error('All weather providers failed to fetch data');
     })();
     
     // Store the promise in the active calls map
