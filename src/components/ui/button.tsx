@@ -5,27 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-w-[120px] min-h-[36px] aspect-[4/1] max-w-[300px]",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 active:translate-y-0.5 shadow-sm hover:shadow-md",
+          "bg-sky-100 text-sky-800 hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-100 dark:hover:bg-sky-800 active:translate-y-0.5 shadow-sm hover:shadow-md",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/80 active:translate-y-0.5 shadow-sm hover:shadow-md",
+          "bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-900 dark:text-rose-100 dark:hover:bg-rose-800 active:translate-y-0.5 shadow-sm hover:shadow-md",
         outline:
-          "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 active:translate-y-0.5 shadow-sm hover:shadow-md",
+          "border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white active:translate-y-0.5 shadow-sm hover:shadow-md",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:translate-y-0.5 shadow-sm hover:shadow-md",
+          "bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-900 dark:text-violet-100 dark:hover:bg-violet-800 active:translate-y-0.5 shadow-sm hover:shadow-md",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 active:translate-y-0.5",
-        link: "text-primary underline-offset-4 hover:underline hover:text-primary/80",
+          "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 active:translate-y-0.5",
+        link: "text-sky-600 dark:text-sky-400 underline-offset-4 hover:underline hover:text-sky-700 dark:hover:text-sky-300",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        default: "px-4 py-2 has-[>svg]:px-3",
+        sm: "rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 min-h-[32px] aspect-[3.5/1]",
+        lg: "rounded-md px-6 has-[>svg]:px-4 min-h-[40px] aspect-[4.5/1]",
+        icon: "aspect-square min-w-[36px] min-h-[36px] p-1",
       },
     },
     defaultVariants: {

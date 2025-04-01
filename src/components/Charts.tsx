@@ -1,14 +1,27 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Chart from 'chart.js/auto';
+import { ChartEvent, ActiveElement } from 'chart.js';
+import styles from './Charts.module.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Chart, registerables } from 'chart.js';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatTime, formatDistance, createTemperatureGradient } from '@/utils/helpers';
+import { formatTime, formatDistance } from '@/utils/helpers';
 import { GPXData } from '@/utils/gpxParser';
 
-// Register Chart.js components
-Chart.register(...registerables);
+// Define RouteInfo interface locally if needed
+interface RouteInfo {
+  name: string;
+  distance: number;
+  elevation: number;
+  duration: number;
+  points: Array<{
+    lat: number;
+    lon: number;
+    elevation?: number;
+    time?: string;
+  }>;
+}
 
 interface ChartsProps {
   gpxData: GPXData | null;
@@ -18,94 +31,108 @@ interface ChartsProps {
   onChartClick: (index: number) => void;
 }
 
-// Reusable chart options
-function getBaseChartOptions(onClick: (event: any, elements: any[]) => void) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      tooltip: {
-        mode: 'index' as const,
-        intersect: false,
-        backgroundColor: 'hsl(var(--card))',
-        titleColor: 'hsl(var(--card-foreground))',
-        bodyColor: 'hsl(var(--card-foreground))',
-        borderColor: 'hsl(var(--border))',
-        borderWidth: 1,
-        padding: 12,
-        cornerRadius: 8,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        titleFont: {
-          family: 'Inter, sans-serif',
-          size: 14,
-          weight: 'bold' as const
-        },
-        bodyFont: {
-          family: 'Inter, sans-serif',
-          size: 12,
-          weight: 'normal' as const
-        }
-      },
-      legend: {
-        position: 'top' as const,
-        labels: {
-          font: {
-            family: 'Inter, sans-serif',
-            size: 12
-          }
-        }
+const Charts: React.FC<ChartsProps> = ({
+  gpxData,
+  forecastPoints,
+  weatherData,
+  selectedMarker,
+  onChartClick,
+}) => {
+  const tempChartRef = useRef<HTMLCanvasElement>(null);
+  const humidityChartRef = useRef<HTMLCanvasElement>(null);
+  const precipChartRef = useRef<HTMLCanvasElement>(null);
+  const windChartRef = useRef<HTMLCanvasElement>(null);
+  const elevationChartRef = useRef<HTMLCanvasElement>(null);
+  const pressureChartRef = useRef<HTMLCanvasElement>(null);
+  
+  // Chart instances refs for cleanup
+  const tempChartInstance = useRef<Chart | null>(null);
+  const humidityChartInstance = useRef<Chart | null>(null);
+  const precipChartInstance = useRef<Chart | null>(null);
+  const windChartInstance = useRef<Chart | null>(null);
+  const elevationChartInstance = useRef<Chart | null>(null);
+  const pressureChartInstance = useRef<Chart | null>(null);
+  
+  // Direct click handler for charts
+  const handleChartClick = (event: MouseEvent, chart: Chart) => {
+    const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    const points = chart.getElementsAtEventForMode(
+      event,
+      'nearest',
+      { intersect: true },
+      false
+    );
+    
+    if (points.length) {
+      const firstPoint = points[0];
+      const index = firstPoint.index;
+      console.log(`Direct chart click detected at index: ${index}`);
+      onChartClick(index);
+    } else {
+      // Try using x position to determine the closest point
+      if (chart.data.labels && chart.data.labels.length > 0) {
+        const chartArea = chart.chartArea;
+        const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
+        const index = Math.min(
+          Math.max(0, Math.floor(xPercent * chart.data.labels.length)),
+          chart.data.labels.length - 1
+        );
+        console.log(`Calculated index from x position: ${index}`);
+        onChartClick(index);
       }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          color: 'hsl(var(--foreground))'
-        }
-      },
-      y: {
-        grid: {
-          borderDash: [2, 2],
-          color: 'hsl(var(--border))'
-        },
-        ticks: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
-    onClick: onClick
+    }
   };
-}
 
-export default function Charts({ gpxData, forecastPoints, weatherData, selectedMarker, onChartClick }: ChartsProps) {
-  const tempChartRef = useRef<HTMLCanvasElement | null>(null);
-  const precipChartRef = useRef<HTMLCanvasElement | null>(null);
-  const windChartRef = useRef<HTMLCanvasElement | null>(null);
-  const humidityChartRef = useRef<HTMLCanvasElement | null>(null);
-  const pressureChartRef = useRef<HTMLCanvasElement | null>(null);
-  const elevationChartRef = useRef<HTMLCanvasElement | null>(null);
+  useEffect(() => {
+    // Add direct click handler to temperature chart
+    const handleTempChartClick = (e: MouseEvent) => {
+      if (!tempChartInstance.current) return;
+      
+      const canvas = e.target as HTMLCanvasElement;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      
+      const chartArea = tempChartInstance.current.chartArea;
+      if (!chartArea) return;
+      
+      // Only handle clicks within the chart area
+      if (x >= chartArea.left && x <= chartArea.right) {
+        const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
+        const index = Math.min(
+          Math.max(0, Math.floor(xPercent * forecastPoints.length)),
+          forecastPoints.length - 1
+        );
+        
+        console.log(`Temperature chart clicked at index: ${index}`);
+        onChartClick(index);
+      }
+    };
+    
+    if (tempChartRef.current) {
+      tempChartRef.current.addEventListener('click', handleTempChartClick as any);
+    }
+    
+    return () => {
+      if (tempChartRef.current) {
+        tempChartRef.current.removeEventListener('click', handleTempChartClick as any);
+      }
+    };
+  }, [forecastPoints.length, onChartClick]);
 
-  const chartInstancesRef = useRef<{
-    tempChart?: Chart;
-    precipChart?: Chart;
-    windChart?: Chart;
-    humidityChart?: Chart;
-    pressureChart?: Chart;
-    elevationChart?: Chart;
-  }>({});
-
-  // Clean up chart instances on unmount
   useEffect(() => {
     return () => {
-      Object.values(chartInstancesRef.current).forEach(chart => {
-        chart?.destroy();
-      });
+      tempChartInstance.current?.destroy();
+      humidityChartInstance.current?.destroy();
+      precipChartInstance.current?.destroy();
+      windChartInstance.current?.destroy();
+      elevationChartInstance.current?.destroy();
+      pressureChartInstance.current?.destroy();
     };
   }, []);
 
-  // Create or update charts
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0 || !gpxData) return;
 
@@ -144,19 +171,134 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
       elevationData.push(closestPoint.elevation);
     });
 
+    // Define soft, pale color scheme for all charts
+    const chartColors = {
+      // Light mode colors
+      light: {
+        temperature: {
+          bg: 'rgba(255, 232, 238, 0.3)',
+          border: 'rgb(255, 182, 193)',
+          point: 'rgb(255, 182, 193)'
+        },
+        humidity: {
+          bg: 'rgba(230, 230, 250, 0.3)',
+          border: 'rgb(204, 204, 255)',
+          point: 'rgb(204, 204, 255)'
+        },
+        pressure: {
+          bg: 'rgba(255, 250, 205, 0.3)',
+          border: 'rgb(255, 223, 186)',
+          point: 'rgb(255, 223, 186)'
+        },
+        wind: {
+          bg: 'rgba(220, 240, 247, 0.3)',
+          border: 'rgb(173, 216, 230)',
+          point: 'rgb(173, 216, 230)'
+        },
+        rain: {
+          bg: 'rgba(255, 228, 225, 0.3)',
+          border: 'rgb(255, 182, 193)',
+          point: 'rgb(255, 182, 193)'
+        },
+        feelsLike: {
+          bg: 'rgba(220, 255, 220, 0.3)',
+          border: 'rgb(152, 251, 152)',
+          point: 'rgb(152, 251, 152)'
+        }
+      },
+      // Dark mode colors - deeper but still readable
+      dark: {
+        temperature: {
+          bg: 'rgba(130, 50, 70, 0.3)',
+          border: 'rgb(180, 70, 90)',
+          point: 'rgb(180, 70, 90)'
+        },
+        humidity: {
+          bg: 'rgba(100, 80, 140, 0.3)',
+          border: 'rgb(130, 110, 180)',
+          point: 'rgb(130, 110, 180)'
+        },
+        pressure: {
+          bg: 'rgba(130, 110, 60, 0.3)',
+          border: 'rgb(170, 150, 80)',
+          point: 'rgb(170, 150, 80)'
+        },
+        wind: {
+          bg: 'rgba(70, 130, 160, 0.3)',
+          border: 'rgb(100, 160, 190)',
+          point: 'rgb(100, 160, 190)'
+        },
+        rain: {
+          bg: 'rgba(130, 60, 70, 0.3)',
+          border: 'rgb(170, 80, 90)',
+          point: 'rgb(170, 80, 90)'
+        },
+        feelsLike: {
+          bg: 'rgba(60, 130, 80, 0.3)',
+          border: 'rgb(80, 170, 100)',
+          point: 'rgb(80, 170, 100)'
+        }
+      }
+    };
+
+    // Function to get the appropriate color scheme based on color mode
+    const getColorScheme = () => {
+      // Check if we're in dark mode
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return isDarkMode ? chartColors.dark : chartColors.light;
+    };
+
+    // Define custom tooltip styling for charts
+    const getTooltipOptions = () => {
+      // Check if we're in dark mode
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      return {
+        mode: 'index' as const,
+        intersect: false,
+        backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+        titleColor: isDarkMode ? '#111' : '#fff',
+        bodyColor: isDarkMode ? '#333' : '#fff',
+        borderColor: isDarkMode ? 'rgba(200, 200, 200, 0.8)' : 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 6,
+        titleFont: {
+          weight: 'bold' as const,
+          size: 14,
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        },
+        bodyFont: {
+          size: 12,
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        },
+        caretSize: 8,
+        displayColors: true
+      };
+    };
+
+    // For scales that need dashed grid lines, create a custom grid line function
+    const getDashedGridLines = () => {
+      return {
+        color: 'rgba(0, 0, 0, 0.1)',
+        lineWidth: 1,
+        display: true,
+        drawBorder: true,
+        drawOnChartArea: true,
+        drawTicks: true
+      };
+    };
+
     // Temperature chart
     if (tempChartRef.current) {
       const ctx = tempChartRef.current.getContext('2d');
       if (ctx) {
-        // Destroy existing chart
-        if (chartInstancesRef.current.tempChart) {
-          chartInstancesRef.current.tempChart.destroy();
+        if (tempChartInstance.current) {
+          tempChartInstance.current.destroy();
         }
 
-        const minTemp = Math.min(...tempData.filter(t => !isNaN(t)));
-        const maxTemp = Math.max(...tempData.filter(t => !isNaN(t)));
-        
-        chartInstancesRef.current.tempChart = new Chart(ctx, {
+        const colors = getColorScheme();
+        tempChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels,
@@ -164,33 +306,89 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Temperature (°C)',
                 data: tempData,
-                borderColor: 'hsl(265, 60%, 75%)',
-                backgroundColor: 'hsla(265, 60%, 75%, 0.2)',
+                borderColor: colors.temperature.border,
+                backgroundColor: colors.temperature.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(265, 60%, 75%)',
-                pointRadius: (ctx) => {
-                  const index = ctx.dataIndex;
-                  return index === selectedMarker ? 6 : 3;
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : colors.temperature.point;
                 },
-                pointHoverRadius: 8,
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : colors.temperature.border;
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
                 fill: true,
               },
               {
                 label: 'Feels Like (°C)',
                 data: feelsLikeData,
-                borderColor: 'hsl(225, 25%, 45%)',
+                borderColor: colors.feelsLike.border,
                 borderDash: [5, 5],
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(225, 25%, 45%)',
+                pointBackgroundColor: colors.feelsLike.point,
                 pointRadius: 0,
                 pointHoverRadius: 5,
                 fill: false,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: Math.min(...tempData) - 5,
+                max: Math.max(...tempData) + 5,
+                title: {
+                  display: true,
+                  text: 'Temperature (°C)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        tempChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, tempChartInstance.current as Chart);
         });
       }
     }
@@ -199,11 +397,12 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
     if (precipChartRef.current) {
       const ctx = precipChartRef.current.getContext('2d');
       if (ctx) {
-        if (chartInstancesRef.current.precipChart) {
-          chartInstancesRef.current.precipChart.destroy();
+        if (precipChartInstance.current) {
+          precipChartInstance.current.destroy();
         }
 
-        chartInstancesRef.current.precipChart = new Chart(ctx, {
+        const colors = getColorScheme();
+        precipChartInstance.current = new Chart(ctx, {
           type: 'bar',
           data: {
             labels,
@@ -218,13 +417,62 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
                   if (value > 2) return 'hsla(195, 60%, 80%, 0.6)'; // Moderate rain
                   return 'hsla(195, 60%, 80%, 0.4)'; // Light rain
                 },
-                borderColor: 'hsl(195, 60%, 80%)',
+                borderColor: colors.rain.border,
                 borderWidth: 1,
                 borderRadius: 5,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: 0,
+                max: Math.max(...precipData) + 5,
+                title: {
+                  display: true,
+                  text: 'Precipitation (mm)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        precipChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, precipChartInstance.current as Chart);
         });
       }
     }
@@ -233,11 +481,12 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
     if (windChartRef.current) {
       const ctx = windChartRef.current.getContext('2d');
       if (ctx) {
-        if (chartInstancesRef.current.windChart) {
-          chartInstancesRef.current.windChart.destroy();
+        if (windChartInstance.current) {
+          windChartInstance.current.destroy();
         }
 
-        chartInstancesRef.current.windChart = new Chart(ctx, {
+        const colors = getColorScheme();
+        windChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels,
@@ -245,21 +494,77 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Wind Speed (m/s)',
                 data: windSpeedData,
-                borderColor: 'hsl(45, 70%, 85%)',
-                backgroundColor: 'hsla(45, 70%, 85%, 0.3)',
+                borderColor: colors.wind.border,
+                backgroundColor: colors.wind.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(45, 70%, 85%)',
-                pointRadius: (ctx) => {
-                  const index = ctx.dataIndex;
-                  return index === selectedMarker ? 6 : 3;
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : colors.wind.point;
                 },
-                pointHoverRadius: 8,
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : colors.wind.border;
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
                 fill: true,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: Math.min(...windSpeedData) - 5,
+                max: Math.max(...windSpeedData) + 5,
+                title: {
+                  display: true,
+                  text: 'Wind Speed (m/s)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        windChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, windChartInstance.current as Chart);
         });
       }
     }
@@ -268,11 +573,12 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
     if (humidityChartRef.current) {
       const ctx = humidityChartRef.current.getContext('2d');
       if (ctx) {
-        if (chartInstancesRef.current.humidityChart) {
-          chartInstancesRef.current.humidityChart.destroy();
+        if (humidityChartInstance.current) {
+          humidityChartInstance.current.destroy();
         }
 
-        chartInstancesRef.current.humidityChart = new Chart(ctx, {
+        const colors = getColorScheme();
+        humidityChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels,
@@ -280,21 +586,77 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Humidity (%)',
                 data: humidityData,
-                borderColor: 'hsl(195, 60%, 80%)',
-                backgroundColor: 'hsla(195, 60%, 80%, 0.3)',
+                borderColor: colors.humidity.border,
+                backgroundColor: colors.humidity.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(195, 60%, 80%)',
-                pointRadius: (ctx) => {
-                  const index = ctx.dataIndex;
-                  return index === selectedMarker ? 6 : 3;
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : colors.humidity.point;
                 },
-                pointHoverRadius: 8,
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : colors.humidity.border;
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
                 fill: true,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: 0,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Humidity (%)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        humidityChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, humidityChartInstance.current as Chart);
         });
       }
     }
@@ -303,11 +665,12 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
     if (pressureChartRef.current) {
       const ctx = pressureChartRef.current.getContext('2d');
       if (ctx) {
-        if (chartInstancesRef.current.pressureChart) {
-          chartInstancesRef.current.pressureChart.destroy();
+        if (pressureChartInstance.current) {
+          pressureChartInstance.current.destroy();
         }
 
-        chartInstancesRef.current.pressureChart = new Chart(ctx, {
+        const colors = getColorScheme();
+        pressureChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels,
@@ -315,21 +678,77 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
               {
                 label: 'Pressure (hPa)',
                 data: pressureData,
-                borderColor: 'hsl(345, 60%, 75%)',
-                backgroundColor: 'hsla(345, 60%, 75%, 0.3)',
+                borderColor: colors.pressure.border,
+                backgroundColor: colors.pressure.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(345, 60%, 75%)',
-                pointRadius: (ctx) => {
-                  const index = ctx.dataIndex;
-                  return index === selectedMarker ? 6 : 3;
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : colors.pressure.point;
                 },
-                pointHoverRadius: 8,
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : colors.pressure.border;
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
                 fill: true,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: Math.min(...pressureData) - 5,
+                max: Math.max(...pressureData) + 5,
+                title: {
+                  display: true,
+                  text: 'Pressure (hPa)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        pressureChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, pressureChartInstance.current as Chart);
         });
       }
     }
@@ -338,11 +757,11 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
     if (elevationChartRef.current) {
       const ctx = elevationChartRef.current.getContext('2d');
       if (ctx) {
-        if (chartInstancesRef.current.elevationChart) {
-          chartInstancesRef.current.elevationChart.destroy();
+        if (elevationChartInstance.current) {
+          elevationChartInstance.current.destroy();
         }
 
-        chartInstancesRef.current.elevationChart = new Chart(ctx, {
+        elevationChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels,
@@ -354,17 +773,73 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
                 backgroundColor: 'hsla(160, 50%, 75%, 0.3)',
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: 'hsl(160, 50%, 75%)',
-                pointRadius: (ctx) => {
-                  const index = ctx.dataIndex;
-                  return index === selectedMarker ? 6 : 3;
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : 'hsl(160, 50%, 75%)';
                 },
-                pointHoverRadius: 8,
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : 'hsl(160, 50%, 75%)';
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
                 fill: true,
               },
             ],
           },
-          options: getBaseChartOptions(onChartClick),
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: getTooltipOptions()
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: Math.min(...elevationData) - 5,
+                max: Math.max(...elevationData) + 5,
+                title: {
+                  display: true,
+                  text: 'Elevation (m)'
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+        
+        // Add direct click handler
+        elevationChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, elevationChartInstance.current as Chart);
         });
       }
     }
@@ -439,4 +914,6 @@ export default function Charts({ gpxData, forecastPoints, weatherData, selectedM
       </Card>
     </div>
   );
-} 
+};
+
+export default Charts;
