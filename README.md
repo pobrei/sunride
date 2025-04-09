@@ -1,6 +1,6 @@
 # RideWeather Planner
 
-A robust and production-ready Next.js application for planning routes with detailed weather forecasts. Upload GPX files, analyze weather conditions along your path, and make informed decisions for your outdoor activities.
+A premium, beautifully designed Next.js application for planning routes with detailed weather forecasts. Upload GPX files, analyze weather conditions along your path, and make informed decisions for your outdoor activities with a delightful user experience.
 
 ![RideWeather Planner screenshot](./public/assets/screenshot.png)
 
@@ -12,7 +12,12 @@ A robust and production-ready Next.js application for planning routes with detai
 - **Detailed Data Visualization**: View weather patterns through interactive charts (temperature, precipitation, wind, humidity, pressure, elevation).
 - **Timeline & Alerts**: Scrollable timeline of forecast points and important weather alerts (high wind, extreme heat, freezing temperatures, heavy rain).
 - **PDF Export**: Generate comprehensive PDF reports of your route with weather data.
+- **Premium UI/UX Design**: Clean visual hierarchy, consistent spacing, and thoughtful animations for a delightful user experience.
 - **Mobile-Responsive Design**: Fully responsive layout that works on all devices.
+- **Interactive Timeline**: Horizontally scrollable timeline with drag-to-scroll functionality and visual feedback.
+- **Microinteractions**: Subtle animations and transitions for a more engaging experience.
+- **Accessibility**: Keyboard navigation, proper contrast ratios, and semantic HTML.
+- **Dark Mode**: Toggle between light and dark themes.
 - **Security**: Rate limiting, input validation, and secure API integrations.
 - **Error Handling**: Robust error handling with informative user feedback.
 - **Caching**: Efficient caching system to minimize API calls and improve performance.
@@ -27,9 +32,10 @@ Try the live demo: [RideWeather Planner Demo](https://rideweather.vercel.app)
 
 - **Framework**: Next.js with App Router
 - **Styling**: Tailwind CSS and Shadcn UI
-- **Maps**: Leaflet.js
-- **Charts**: Chart.js
-- **Animation**: GSAP
+- **Design System**: Custom design tokens, consistent spacing, and typography
+- **Maps**: Leaflet.js with custom styled controls
+- **Charts**: Chart.js with custom theming
+- **Animation**: GSAP for smooth transitions and microinteractions
 - **PDF Generation**: jsPDF and html2canvas
 - **Database**: MongoDB for weather data caching
 - **APIs**: OpenWeather API
@@ -72,7 +78,7 @@ RATE_LIMIT_WINDOW=60000
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - MongoDB connection string
 - OpenWeather API key

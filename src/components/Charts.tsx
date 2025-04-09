@@ -44,7 +44,8 @@ const Charts: React.FC<ChartsProps> = ({
   const windChartRef = useRef<HTMLCanvasElement>(null);
   const elevationChartRef = useRef<HTMLCanvasElement>(null);
   const pressureChartRef = useRef<HTMLCanvasElement>(null);
-  
+  const uvIndexChartRef = useRef<HTMLCanvasElement>(null);
+
   // Chart instances refs for cleanup
   const tempChartInstance = useRef<Chart | null>(null);
   const humidityChartInstance = useRef<Chart | null>(null);
@@ -52,20 +53,21 @@ const Charts: React.FC<ChartsProps> = ({
   const windChartInstance = useRef<Chart | null>(null);
   const elevationChartInstance = useRef<Chart | null>(null);
   const pressureChartInstance = useRef<Chart | null>(null);
-  
+  const uvIndexChartInstance = useRef<Chart | null>(null);
+
   // Direct click handler for charts
   const handleChartClick = (event: MouseEvent, chart: Chart) => {
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-    
+
     const points = chart.getElementsAtEventForMode(
       event,
       'nearest',
       { intersect: true },
       false
     );
-    
+
     if (points.length) {
       const firstPoint = points[0];
       const index = firstPoint.index;
@@ -90,14 +92,14 @@ const Charts: React.FC<ChartsProps> = ({
     // Add direct click handler to temperature chart
     const handleTempChartClick = (e: MouseEvent) => {
       if (!tempChartInstance.current) return;
-      
+
       const canvas = e.target as HTMLCanvasElement;
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
-      
+
       const chartArea = tempChartInstance.current.chartArea;
       if (!chartArea) return;
-      
+
       // Only handle clicks within the chart area
       if (x >= chartArea.left && x <= chartArea.right) {
         const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
@@ -105,16 +107,16 @@ const Charts: React.FC<ChartsProps> = ({
           Math.max(0, Math.floor(xPercent * forecastPoints.length)),
           forecastPoints.length - 1
         );
-        
+
         console.log(`Temperature chart clicked at index: ${index}`);
         onChartClick(index);
       }
     };
-    
+
     if (tempChartRef.current) {
       tempChartRef.current.addEventListener('click', handleTempChartClick as any);
     }
-    
+
     return () => {
       if (tempChartRef.current) {
         tempChartRef.current.removeEventListener('click', handleTempChartClick as any);
@@ -130,6 +132,7 @@ const Charts: React.FC<ChartsProps> = ({
       windChartInstance.current?.destroy();
       elevationChartInstance.current?.destroy();
       pressureChartInstance.current?.destroy();
+      uvIndexChartInstance.current?.destroy();
     };
   }, []);
 
@@ -151,15 +154,16 @@ const Charts: React.FC<ChartsProps> = ({
     const windDirectionData = forecastPoints.map((_, i) => weatherData[i]?.windDirection ?? 0);
     const humidityData = forecastPoints.map((_, i) => weatherData[i]?.humidity ?? 0);
     const pressureData = forecastPoints.map((_, i) => weatherData[i]?.pressure ?? 0);
-    
+    const uvIndexData = forecastPoints.map((_, i) => weatherData[i]?.uvIndex ?? 0);
+
     // Get elevation data for each forecast point
     const elevationData: number[] = [];
-    
+
     forecastPoints.forEach(point => {
       // Find closest GPX point by distance
       let closestPoint = gpxData.points[0];
       let closestDistance = Math.abs(point.distance - closestPoint.distance);
-      
+
       for (const gpxPoint of gpxData.points) {
         const distance = Math.abs(point.distance - gpxPoint.distance);
         if (distance < closestDistance) {
@@ -167,7 +171,7 @@ const Charts: React.FC<ChartsProps> = ({
           closestPoint = gpxPoint;
         }
       }
-      
+
       elevationData.push(closestPoint.elevation);
     });
 
@@ -204,6 +208,11 @@ const Charts: React.FC<ChartsProps> = ({
           bg: 'rgba(220, 255, 220, 0.3)',
           border: 'rgb(152, 251, 152)',
           point: 'rgb(152, 251, 152)'
+        },
+        uvIndex: {
+          bg: 'rgba(255, 220, 255, 0.3)',
+          border: 'rgb(255, 105, 180)',
+          point: 'rgb(255, 105, 180)'
         }
       },
       // Dark mode colors - deeper but still readable
@@ -237,22 +246,31 @@ const Charts: React.FC<ChartsProps> = ({
           bg: 'rgba(60, 130, 80, 0.3)',
           border: 'rgb(80, 170, 100)',
           point: 'rgb(80, 170, 100)'
+        },
+        uvIndex: {
+          bg: 'rgba(130, 60, 130, 0.3)',
+          border: 'rgb(180, 70, 180)',
+          point: 'rgb(180, 70, 180)'
         }
       }
     };
 
     // Function to get the appropriate color scheme based on color mode
     const getColorScheme = () => {
-      // Check if we're in dark mode
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      // Check if we're in dark mode - safely check for window object
+      const isDarkMode = typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
       return isDarkMode ? chartColors.dark : chartColors.light;
     };
 
     // Define custom tooltip styling for charts
     const getTooltipOptions = () => {
-      // Check if we're in dark mode
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+      // Check if we're in dark mode - safely check for window object
+      const isDarkMode = typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+
       return {
         mode: 'index' as const,
         intersect: false,
@@ -385,7 +403,7 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         tempChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, tempChartInstance.current as Chart);
@@ -469,7 +487,7 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         precipChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, precipChartInstance.current as Chart);
@@ -561,7 +579,7 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         windChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, windChartInstance.current as Chart);
@@ -653,7 +671,7 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         humidityChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, humidityChartInstance.current as Chart);
@@ -745,7 +763,7 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         pressureChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, pressureChartInstance.current as Chart);
@@ -836,10 +854,127 @@ const Charts: React.FC<ChartsProps> = ({
             }
           },
         });
-        
+
         // Add direct click handler
         elevationChartRef.current.addEventListener('click', (event) => {
           handleChartClick(event, elevationChartInstance.current as Chart);
+        });
+      }
+    }
+
+    // UV Index chart
+    if (uvIndexChartRef.current) {
+      const ctx = uvIndexChartRef.current.getContext('2d');
+      if (ctx) {
+        if (uvIndexChartInstance.current) {
+          uvIndexChartInstance.current.destroy();
+        }
+
+        const colors = getColorScheme();
+        uvIndexChartInstance.current = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'UV Index',
+                data: uvIndexData,
+                borderColor: colors.uvIndex.border,
+                backgroundColor: colors.uvIndex.bg,
+                tension: 0.3,
+                borderWidth: 2,
+                pointBackgroundColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'blue' : colors.uvIndex.point;
+                },
+                pointBorderColor: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 'white' : colors.uvIndex.border;
+                },
+                pointRadius: (context) => {
+                  const index = context.dataIndex;
+                  return selectedMarker === index ? 8 : 4;
+                },
+                pointHoverRadius: 10,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Inter, sans-serif',
+                    size: 12
+                  }
+                }
+              },
+              tooltip: {
+                ...getTooltipOptions(),
+                callbacks: {
+                  label: function(context) {
+                    const value = context.parsed.y;
+                    let riskLevel = '';
+                    if (value >= 11) riskLevel = ' (Extreme Risk)';
+                    else if (value >= 8) riskLevel = ' (Very High Risk)';
+                    else if (value >= 6) riskLevel = ' (High Risk)';
+                    else if (value >= 3) riskLevel = ' (Moderate Risk)';
+                    else riskLevel = ' (Low Risk)';
+
+                    return `UV Index: ${value}${riskLevel}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: 'rgba(0, 0, 0, 0.1)',
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: 'hsl(var(--foreground))'
+                }
+              },
+              y: {
+                grid: getDashedGridLines(),
+                min: 0,
+                max: Math.max(Math.max(...uvIndexData) + 1, 11), // Ensure scale shows at least up to extreme (11+)
+                title: {
+                  display: true,
+                  text: 'UV Index'
+                },
+                ticks: {
+                  callback: function(value) {
+                    if (value === 0) return '0 (Low)';
+                    if (value === 3) return '3 (Moderate)';
+                    if (value === 6) return '6 (High)';
+                    if (value === 8) return '8 (Very High)';
+                    if (value === 11) return '11+ (Extreme)';
+                    return value;
+                  }
+                }
+              }
+            },
+            onClick: function(event: ChartEvent, elements: ActiveElement[]) {
+              console.log('Chart clicked!', elements);
+              if (elements && elements.length > 0) {
+                const clickedIndex = elements[0].index;
+                console.log('Clicked chart point at index:', clickedIndex);
+                onChartClick(clickedIndex);
+              }
+            }
+          },
+        });
+
+        // Add direct click handler
+        uvIndexChartRef.current.addEventListener('click', (event) => {
+          handleChartClick(event, uvIndexChartInstance.current as Chart);
         });
       }
     }
@@ -852,7 +987,11 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Temperature</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Temperature chart showing values from ${Math.min(...(weatherData.filter(Boolean).map(w => w?.temperature || 0)))}°C to ${Math.max(...(weatherData.filter(Boolean).map(w => w?.temperature || 0)))}°C`}
+          >
             <canvas ref={tempChartRef} />
           </div>
         </CardContent>
@@ -863,7 +1002,11 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Precipitation</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Precipitation chart showing rainfall amounts along the route`}
+          >
             <canvas ref={precipChartRef} />
           </div>
         </CardContent>
@@ -874,7 +1017,11 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Wind</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Wind chart showing wind speeds from ${Math.min(...(weatherData.filter(Boolean).map(w => w?.windSpeed || 0)))} to ${Math.max(...(weatherData.filter(Boolean).map(w => w?.windSpeed || 0)))} km/h`}
+          >
             <canvas ref={windChartRef} />
           </div>
         </CardContent>
@@ -885,7 +1032,11 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Humidity</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Humidity chart showing humidity levels from ${Math.min(...(weatherData.filter(Boolean).map(w => w?.humidity || 0)))}% to ${Math.max(...(weatherData.filter(Boolean).map(w => w?.humidity || 0)))}%`}
+          >
             <canvas ref={humidityChartRef} />
           </div>
         </CardContent>
@@ -896,7 +1047,11 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Pressure</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Pressure chart showing atmospheric pressure along the route`}
+          >
             <canvas ref={pressureChartRef} />
           </div>
         </CardContent>
@@ -907,8 +1062,27 @@ const Charts: React.FC<ChartsProps> = ({
           <CardTitle className="text-lg">Elevation</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px] w-full">
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`Elevation chart showing the route profile with elevations`}
+          >
             <canvas ref={elevationChartRef} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">UV Index</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div
+            className="h-[250px] w-full"
+            role="img"
+            aria-label={`UV Index chart showing UV radiation levels along the route`}
+          >
+            <canvas ref={uvIndexChartRef} />
           </div>
         </CardContent>
       </Card>

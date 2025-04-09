@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +18,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              const theme = localStorage.getItem('theme') || 'system';
+              const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+              document.documentElement.classList.add(theme === 'system' ? systemTheme : theme);
+            } catch (e) {
+              console.error('Error applying theme:', e);
+              document.documentElement.classList.add('dark');
+            }
+          })()
+        ` }} />
+      </head>
+      <body className={inter.className}>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }
