@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { GPXData } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import SimpleMap from '@/components/SimpleMap';
+import OpenLayersMap from '@/components/OpenLayersMap';
 import { useSafeData } from '@/components/SafeDataProvider';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -73,9 +73,9 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
     );
   }
 
-  // Always use the SimpleMap component to avoid Leaflet-related errors
+  // Use the OpenLayersMap component for a better map experience
   return (
-    <SimpleMap
+    <OpenLayersMap
       gpxData={validGpxData}
       forecastPoints={validForecastPoints}
       weatherData={validWeatherData}
