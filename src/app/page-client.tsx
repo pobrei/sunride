@@ -5,8 +5,11 @@ import { useWeather } from '@/context/WeatherContext';
 import { useNotifications } from '@/components/NotificationProvider';
 import GPXUploader from '@/components/GPXUploader';
 import Map from '@/components/Map';
+import SafeMapWrapper from '@/components/SafeMapWrapper';
 import Charts from '@/components/Charts';
+import SafeChartsWrapper from '@/components/SafeChartsWrapper';
 import Timeline from '@/components/Timeline';
+import SafeTimelineWrapper from '@/components/SafeTimelineWrapper';
 import Alerts from '@/components/Alerts';
 import RouteControls, { RouteSettings } from '@/components/RouteControls';
 import PDFExport from '@/components/PDFExport';
@@ -132,7 +135,7 @@ export default function Home() {
           ) : (
             <>
               <div ref={mapRef}>
-                <Map
+                <SafeMapWrapper
                   gpxData={gpxData}
                   forecastPoints={forecastPoints}
                   weatherData={weatherData}
@@ -143,7 +146,7 @@ export default function Home() {
 
               {forecastPoints.length > 0 && weatherData.length > 0 && (
                 <>
-                  <Timeline
+                  <SafeTimelineWrapper
                     forecastPoints={forecastPoints}
                     weatherData={weatherData}
                     selectedMarker={selectedMarker}
@@ -156,7 +159,7 @@ export default function Home() {
                   />
 
                   <div ref={chartsRef}>
-                    <Charts
+                    <SafeChartsWrapper
                       gpxData={gpxData}
                       forecastPoints={forecastPoints}
                       weatherData={weatherData}

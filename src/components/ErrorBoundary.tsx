@@ -3,6 +3,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import FallbackUI from '@/components/FallbackUI';
 
 interface Props {
   children: ReactNode;
@@ -72,23 +73,7 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      return (
-        <div className="p-6 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 flex flex-col items-center justify-center text-center space-y-4">
-          <AlertTriangle className="h-12 w-12 text-red-500" />
-          <h2 className="text-xl font-semibold text-red-800 dark:text-red-300">Something went wrong</h2>
-          <p className="text-red-600 dark:text-red-400 max-w-md">
-            {this.state.error?.message || 'An unexpected error occurred'}
-          </p>
-          <Button
-            onClick={this.reset}
-            variant="outline"
-            className="mt-4 border-red-300 hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-800/50"
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Try again
-          </Button>
-        </div>
-      );
+      return <FallbackUI error={this.state.error} resetErrorBoundary={this.reset} />;
     }
 
     return this.props.children;
