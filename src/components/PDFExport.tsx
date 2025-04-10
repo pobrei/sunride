@@ -81,10 +81,42 @@ export default function PDFExport({
             scale: 2,
             allowTaint: true,
             logging: false,
+            onclone: (document, clone) => {
+              // Find and modify problematic elements in the cloned document
+              const mapElement = clone.querySelector('[class*="ol-"]')?.parentElement;
+              if (mapElement) {
+                // Create a simplified version of the map for export
+                const simplifiedMap = document.createElement('div');
+                simplifiedMap.style.width = '100%';
+                simplifiedMap.style.height = '100%';
+                simplifiedMap.style.backgroundColor = '#f3f4f6';
+                simplifiedMap.style.position = 'relative';
+                simplifiedMap.style.borderRadius = '0.75rem';
+                simplifiedMap.style.overflow = 'hidden';
+
+                // Add a message
+                const message = document.createElement('div');
+                message.style.position = 'absolute';
+                message.style.top = '50%';
+                message.style.left = '50%';
+                message.style.transform = 'translate(-50%, -50%)';
+                message.style.textAlign = 'center';
+                message.style.color = '#6b7280';
+                message.style.padding = '1rem';
+                message.innerHTML = '<strong>Map Preview</strong><br>Interactive map not available in PDF export';
+
+                simplifiedMap.appendChild(message);
+
+                // Replace the map with our simplified version
+                mapElement.parentNode.replaceChild(simplifiedMap, mapElement);
+              }
+            },
             ignoreElements: (element) => {
               // Ignore elements that might cause CSS parsing issues
-              return element.classList?.contains('leaflet-control-attribution') ||
-                     element.classList?.contains('leaflet-control-scale') ||
+              return element.classList?.contains('ol-control') ||
+                     element.classList?.contains('ol-attribution') ||
+                     element.classList?.contains('ol-scale') ||
+                     element.tagName === 'CANVAS' ||
                      element.tagName === 'BUTTON';
             }
           });
