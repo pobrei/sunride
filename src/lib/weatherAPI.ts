@@ -1,9 +1,11 @@
 // Add 'server-only' marker at the top of the file to prevent client usage
 import 'server-only';
 
-// Validate OpenWeather API key
-if (!process.env.OPENWEATHER_API_KEY) {
-  throw new Error('Please add your OpenWeather API key to .env.local');
+// Check for OpenWeather API key
+const USE_MOCK_DATA = !process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_API_KEY === 'placeholder_key';
+
+if (USE_MOCK_DATA) {
+  console.warn('Using mock weather data because no valid OpenWeather API key was provided');
 }
 
 // Get environment variables with defaults
@@ -82,6 +84,44 @@ function checkRateLimit(): boolean {
   return true;
 }
 
+// Generate mock weather data for testing
+function generateMockWeatherData(point: ForecastPoint): WeatherData {
+  // Use the point's coordinates to generate deterministic but varied mock data
+  const seed = (point.lat * 10 + point.lon * 5 + point.timestamp / 3600) % 100;
+
+  // Generate weather conditions based on seed
+  const conditions = [
+    { icon: '01d', desc: 'clear sky' },
+    { icon: '02d', desc: 'few clouds' },
+    { icon: '03d', desc: 'scattered clouds' },
+    { icon: '04d', desc: 'broken clouds' },
+    { icon: '09d', desc: 'shower rain' },
+    { icon: '10d', desc: 'rain' },
+    { icon: '11d', desc: 'thunderstorm' },
+    { icon: '13d', desc: 'snow' },
+    { icon: '50d', desc: 'mist' }
+  ];
+
+  const conditionIndex = Math.floor(seed % conditions.length);
+  const temp = 15 + Math.sin(seed) * 15; // Temperature between 0 and 30°C
+  const rain = conditionIndex >= 4 ? (conditionIndex - 3) * 2 : 0; // Rain for rainy conditions
+
+  return {
+    temperature: parseFloat(temp.toFixed(1)),
+    feelsLike: parseFloat((temp - 2 + Math.random() * 4).toFixed(1)),
+    humidity: Math.floor(40 + seed % 60), // Humidity between 40% and 99%
+    pressure: Math.floor(980 + seed % 40), // Pressure between 980 and 1020 hPa
+    windSpeed: parseFloat((2 + seed % 8).toFixed(1)), // Wind speed between 2 and 10 m/s
+    windDirection: Math.floor(seed * 3.6) % 360, // Wind direction between 0 and 359 degrees
+    rain: rain,
+    weatherIcon: conditions[conditionIndex].icon,
+    weatherDescription: conditions[conditionIndex].desc,
+    uvIndex: Math.floor(seed % 11), // UV index between 0 and 10
+    windGust: parseFloat((4 + seed % 10).toFixed(1)), // Wind gust between 4 and 14 m/s
+    precipitationProbability: Math.floor(seed % 100) / 100 // Probability between 0 and 0.99
+  };
+}
+
 // Fetch weather data for a specific point with in-memory caching
 export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherData | null> {
   try {
@@ -93,6 +133,13 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
 
     if (point.lat < -90 || point.lat > 90 || point.lon < -180 || point.lon > 180) {
       throw new Error('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.');
+    }
+
+    // If using mock data, return it immediately
+    if (USE_MOCK_DATA) {
+      const mockData = generateMockWeatherData(point);
+      log('Using mock data for', `${point.lat.toFixed(4)},${point.lon.toFixed(4)}`);
+      return mockData;
     }
 
     const hour = Math.floor(point.timestamp / 3600) * 3600;
