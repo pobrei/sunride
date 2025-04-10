@@ -225,7 +225,7 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
     }, 100); // Small delay to ensure DOM is ready
   }, [forecastPoints]); // Re-run when forecast points change
 
-  if (forecastPoints.length === 0 || weatherData.length === 0) {
+  if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) {
     return null;
   }
 
@@ -276,8 +276,9 @@ export default function Timeline({ forecastPoints, weatherData, selectedMarker, 
             onMouseLeave={handleMouseUp}
             ref={timelineRef}
           >
-            {forecastPoints.map((point, index) => {
-              const weather = weatherData[index];
+            {forecastPoints && forecastPoints.map((point, index) => {
+              if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
+              const weather = weatherData && weatherData[index];
               if (!weather) return null;
 
               const alerts = checkWeatherAlerts(weather);

@@ -103,6 +103,8 @@ const Charts: React.FC<ChartsProps> = ({
       // Only handle clicks within the chart area
       if (x >= chartArea.left && x <= chartArea.right) {
         const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
+        if (!forecastPoints || forecastPoints.length === 0) return;
+
         const index = Math.min(
           Math.max(0, Math.floor(xPercent * forecastPoints.length)),
           forecastPoints.length - 1
@@ -137,13 +139,16 @@ const Charts: React.FC<ChartsProps> = ({
   }, []);
 
   useEffect(() => {
-    if (forecastPoints.length === 0 || weatherData.length === 0 || !gpxData) return;
+    if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0 || !gpxData) return;
 
     // Prepare data
     const validWeatherData = weatherData.filter(data => data !== null) as WeatherData[];
     if (validWeatherData.length === 0) return;
 
     const labels = forecastPoints.map((point, i) => {
+      if (!point || typeof point.timestamp !== 'number' || typeof point.distance !== 'number') {
+        return 'N/A';
+      }
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
