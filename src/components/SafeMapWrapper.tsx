@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { GPXData } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import Map from '@/components/Map';
+import SimpleMap from '@/components/SimpleMap';
 import { useSafeData } from '@/components/SafeDataProvider';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,23 +25,23 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false);
   const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
-  
+
   // Validate the data
   const validGpxData = validateGPXData(gpxData);
   const validForecastPoints = validateForecastPoints(forecastPoints);
   const validWeatherData = validateWeatherData(weatherData);
-  
+
   // Check if the data is valid
   useEffect(() => {
-    const isDataValid = 
-      validGpxData !== null && 
+    const isDataValid =
+      validGpxData !== null &&
       validGpxData.points.length > 0 &&
       validForecastPoints.length > 0 &&
       validWeatherData.some(item => item !== null);
-      
+
     setHasError(!isDataValid);
   }, [validGpxData, validForecastPoints, validWeatherData]);
-  
+
   // If the data is invalid, show a fallback UI
   if (hasError) {
     return (
@@ -61,8 +61,8 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
                 <li>Refresh the page and try again</li>
               </ul>
             </div>
-            <Button 
-              onClick={() => window.location.reload()} 
+            <Button
+              onClick={() => window.location.reload()}
               className="w-full"
             >
               Reload Page
@@ -72,10 +72,10 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
       </div>
     );
   }
-  
-  // If the data is valid, render the map
+
+  // Always use the SimpleMap component to avoid Leaflet-related errors
   return (
-    <Map
+    <SimpleMap
       gpxData={validGpxData}
       forecastPoints={validForecastPoints}
       weatherData={validWeatherData}
