@@ -194,11 +194,23 @@ The application includes Docker support for easy deployment. This method include
 ### 2. Deploying to Vercel
 
 1. Push your code to a GitHub repository.
-2. Connect your repository to Vercel.
-3. Add the environment variables:
-   - `MONGODB_URI`
-   - `OPENWEATHER_API_KEY`
-4. Deploy.
+2. Connect your repository to Vercel:
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click on "Add New..." and select "Project"
+   - Connect to your GitHub account
+   - Select the repository
+3. Configure project settings:
+   - Framework Preset: Next.js
+   - Root Directory: Leave as is
+   - Build Command: `npm run build`
+   - Install Command: `npm install --legacy-peer-deps`
+   - Output Directory: `.next`
+4. Add the environment variables:
+   - `MONGODB_URI`: Your MongoDB connection string
+   - `OPENWEATHER_API_KEY`: Your OpenWeather API key
+5. Select the branch for deployment.
+6. Click "Deploy" and wait for the deployment to complete.
+7. Once deployed, Vercel will provide a URL to access your application.
 
 ## Deployment Additions
 
