@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Crosshair } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
+import { useSafeData } from '@/components/SafeDataProvider';
 
 interface MapProps {
   gpxData: GPXData | null;
@@ -23,6 +24,14 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [reactLeafletComponents, setReactLeafletComponents] = useState<any>(null);
   const [leaflet, setLeaflet] = useState<any>(null);
+
+  // Use the SafeDataProvider
+  const { validateGPXData, validateForecastPoints, validateWeatherData, validatePoint } = useSafeData();
+
+  // Validate the input data
+  const validGpxData = validateGPXData(gpxData);
+  const validForecastPoints = validateForecastPoints(forecastPoints);
+  const validWeatherData = validateWeatherData(weatherData);
 
   // Load Leaflet and React-Leaflet dynamically on the client
   useEffect(() => {
@@ -58,7 +67,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   }, []);
 
   // If still loading libraries or no gpx data, show loading state
-  if (isLoading || !reactLeafletComponents || !leaflet || !gpxData) {
+  if (isLoading || !reactLeafletComponents || !leaflet || !validGpxData) {
     return (
       <div className="relative h-[500px] rounded-xl overflow-hidden border border-border bg-card card-shadow animate-fade-in transition-smooth">
         <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
@@ -80,7 +89,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   const L = leaflet;
 
   // Create route path
-  const routePath = gpxData?.points?.map(point => [point.lat, point.lon] as [number, number]) || [];
+  const routePath = validGpxData?.points?.map(point => [point.lat, point.lon] as [number, number]) || [];
 
   // Find bounds of the route
   const bounds = routePath.length > 0 ? L.latLngBounds(routePath) : L.latLngBounds([[0, 0], [0, 0]]);
@@ -104,8 +113,8 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
 
     useEffect(() => {
       // If there's a selected marker, center the map on it
-      if (selectedMarker !== null && forecastPoints && forecastPoints[selectedMarker]) {
-        const point = forecastPoints[selectedMarker];
+      if (selectedMarker !== null && validForecastPoints && validForecastPoints[selectedMarker]) {
+        const point = validForecastPoints[selectedMarker];
         if (point && typeof point.lat === 'number' && typeof point.lon === 'number') {
           map.setView([point.lat, point.lon], map.getZoom());
 
@@ -115,13 +124,13 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
           }, 100);
         }
       }
-    }, [selectedMarker, map, forecastPoints]);
+    }, [selectedMarker, map, validForecastPoints]);
 
     return (
       <LayerGroup>
-        {forecastPoints && forecastPoints.map((point, index) => {
+        {validForecastPoints && validForecastPoints.map((point, index) => {
           if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
-          const weather = weatherData && weatherData[index];
+          const weather = validWeatherData && validWeatherData[index];
           if (!weather) return null;
 
           // Create marker icon with custom color

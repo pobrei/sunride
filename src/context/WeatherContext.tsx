@@ -6,6 +6,7 @@ import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 import { captureException, captureMessage } from '@/lib/sentry';
 import { useNotifications } from '@/components/NotificationProvider';
+import { useSafeData } from '@/components/SafeDataProvider';
 
 interface WeatherContextType {
   gpxData: GPXData | null;
@@ -31,9 +32,9 @@ interface WeatherContextType {
 const WeatherContext = createContext<WeatherContextType | undefined>(undefined);
 
 export function WeatherProvider({ children }: { children: ReactNode }) {
-  const [gpxData, setGpxData] = useState<GPXData | null>(null);
-  const [forecastPoints, setForecastPoints] = useState<ForecastPoint[]>([]);
-  const [weatherData, setWeatherData] = useState<(WeatherData | null)[]>([]);
+  const [gpxData, setGpxDataInternal] = useState<GPXData | null>(null);
+  const [forecastPoints, setForecastPointsInternal] = useState<ForecastPoint[]>([]);
+  const [weatherData, setWeatherDataInternal] = useState<(WeatherData | null)[]>([]);
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -43,6 +44,22 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
 
   // Use the NotificationProvider
   const { addNotification } = useNotifications();
+
+  // Use the SafeDataProvider
+  const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
+
+  // Wrap the state setters with validation
+  const setGpxData = (data: GPXData | null) => {
+    setGpxDataInternal(validateGPXData(data));
+  };
+
+  const setForecastPoints = (points: ForecastPoint[]) => {
+    setForecastPointsInternal(validateForecastPoints(points));
+  };
+
+  const setWeatherData = (data: (WeatherData | null)[]) => {
+    setWeatherDataInternal(validateWeatherData(data));
+  };
 
   // Generate weather forecast for the route
   const generateWeatherForecast = async (weatherInterval: number, startTime: Date, avgSpeed: number) => {

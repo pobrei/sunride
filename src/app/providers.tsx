@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect } from 'react';
 import { WeatherProvider } from '@/context/WeatherContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { NotificationProvider } from '@/components/NotificationProvider';
+import { SafeDataProvider } from '@/components/SafeDataProvider';
 import { initSentry } from '@/lib/sentry';
 
 interface ProvidersProps {
@@ -19,9 +20,11 @@ export default function Providers({ children }: ProvidersProps) {
   return (
     <ErrorBoundary>
       <NotificationProvider>
-        <WeatherProvider>
-          {children}
-        </WeatherProvider>
+        <SafeDataProvider>
+          <WeatherProvider>
+            {children}
+          </WeatherProvider>
+        </SafeDataProvider>
       </NotificationProvider>
     </ErrorBoundary>
   );
