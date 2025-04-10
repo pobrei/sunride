@@ -80,10 +80,10 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   const L = leaflet;
 
   // Create route path
-  const routePath = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
+  const routePath = gpxData?.points?.map(point => [point.lat, point.lon] as [number, number]) || [];
 
   // Find bounds of the route
-  const bounds = L.latLngBounds(routePath);
+  const bounds = routePath.length > 0 ? L.latLngBounds(routePath) : L.latLngBounds([[0, 0], [0, 0]]);
 
   // Component to center map on bounds
   const MapController = () => {
@@ -104,21 +104,24 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
 
     useEffect(() => {
       // If there's a selected marker, center the map on it
-      if (selectedMarker !== null && forecastPoints[selectedMarker]) {
+      if (selectedMarker !== null && forecastPoints && forecastPoints[selectedMarker]) {
         const point = forecastPoints[selectedMarker];
-        map.setView([point.lat, point.lon], map.getZoom());
-
-        // Add a timeout to ensure the map is centered after any animations
-        setTimeout(() => {
+        if (point && typeof point.lat === 'number' && typeof point.lon === 'number') {
           map.setView([point.lat, point.lon], map.getZoom());
-        }, 100);
+
+          // Add a timeout to ensure the map is centered after any animations
+          setTimeout(() => {
+            map.setView([point.lat, point.lon], map.getZoom());
+          }, 100);
+        }
       }
     }, [selectedMarker, map, forecastPoints]);
 
     return (
       <LayerGroup>
-        {forecastPoints.map((point, index) => {
-          const weather = weatherData[index];
+        {forecastPoints && forecastPoints.map((point, index) => {
+          if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
+          const weather = weatherData && weatherData[index];
           if (!weather) return null;
 
           // Create marker icon with custom color
