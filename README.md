@@ -1,5 +1,7 @@
 # RideWeather Planner
 
+> A premium weather planning application for outdoor activities
+
 A premium, beautifully designed Next.js application for planning routes with detailed weather forecasts. Upload GPX files, analyze weather conditions along your path, and make informed decisions for your outdoor activities with a delightful user experience.
 
 ![RideWeather Planner screenshot](./public/assets/screenshot.png)
@@ -50,6 +52,7 @@ Try the live demo: [RideWeather Planner Demo](https://rideweather.vercel.app)
 ## GPX File Compatibility
 
 Supports GPX 1.1 format with these requirements:
+
 - Must contain `<trkpt>` elements with valid lat/lon coordinates
 - Supports up to 500 waypoints per file
 - Maximum file size: 1MB
@@ -61,10 +64,12 @@ Supports GPX 1.1 format with these requirements:
 Requires OpenWeather One Call API 3.0 (Free tier available)
 
 **Rate Limits**:
+
 - 60 calls/minute (default)
 - 1,000,000 calls/month (free tier)
 
 Configure in `.env.local`:
+
 ```
 RATE_LIMIT_MAX=30
 RATE_LIMIT_WINDOW=60000
@@ -86,28 +91,33 @@ RATE_LIMIT_WINDOW=60000
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/weatherapp.git
    cd weatherapp
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Set up your environment variables by copying the example file:
+
    ```bash
    cp env.example .env.local
    ```
 
 4. Edit `.env.local` with your actual credentials:
+
    ```
    MONGODB_URI=your_mongodb_connection_string
    OPENWEATHER_API_KEY=your_openweather_api_key
    ```
 
 5. Run the development server:
+
    ```bash
    npm run dev
    ```
@@ -132,6 +142,7 @@ RATE_LIMIT_WINDOW=60000
 ## Advanced Configuration
 
 For production builds:
+
 ```bash
 npm run build && npm run start
 ```
@@ -139,6 +150,7 @@ npm run build && npm run start
 ## Testing
 
 Run unit and integration tests:
+
 ```bash
 npm test
 ```
@@ -146,6 +158,7 @@ npm test
 ## Troubleshooting
 
 Common issues:
+
 - **GPX parsing failed**: Ensure valid GPX 1.1 format
 - **No weather data**: Verify OpenWeather API key permissions
 
@@ -157,6 +170,7 @@ Common issues:
 ## Security Examples
 
 GPX file validation:
+
 ```javascript
 if (!gpxFile.includes('<trkpt')) {
   throw new Error('Invalid GPX structure');
@@ -172,6 +186,7 @@ The application includes Docker support for easy deployment. This method include
 1. Make sure you have Docker and Docker Compose installed on your server.
 
 2. Copy the example environment file:
+
    ```bash
    cp env.example .env
    ```
@@ -179,12 +194,14 @@ The application includes Docker support for easy deployment. This method include
 3. Edit `.env` with your actual credentials.
 
 4. Create self-signed SSL certificates or add your own:
+
    ```bash
    mkdir -p nginx/ssl
    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/ssl/server.key -out nginx/ssl/server.crt
    ```
 
 5. Build and start the containers:
+
    ```bash
    docker-compose up -d
    ```
@@ -215,26 +232,28 @@ The application includes Docker support for easy deployment. This method include
 ## Deployment Additions
 
 For cloud deployments:
+
 - Persistent storage for MongoDB data
 - Minimum 1GB RAM allocation
 
 Alternative SSL setup:
+
 ```bash
 certbot certonly --nginx -d yourdomain.com
 ```
 
 ## Environment Variables
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|:--------:|
-| `MONGODB_URI` | MongoDB connection string | - | Yes |
-| `OPENWEATHER_API_KEY` | API key for OpenWeather | - | Yes |
-| `PORT` | Port for Next.js to run on | 3000 | No |
-| `RATE_LIMIT_MAX` | Maximum requests per minute per IP | 60 | No |
-| `RATE_LIMIT_WINDOW` | Time window for rate limiting (ms) | 60000 | No |
-| `CACHE_DURATION` | Cache duration in milliseconds | 3600000 | No |
-| `DEBUG` | Enable detailed logging | false | No |
-| `NODE_ENV` | Environment (development/production) | development | No |
+| Variable              | Description                          | Default     | Required |
+| --------------------- | ------------------------------------ | ----------- | :------: |
+| `MONGODB_URI`         | MongoDB connection string            | -           |   Yes    |
+| `OPENWEATHER_API_KEY` | API key for OpenWeather              | -           |   Yes    |
+| `PORT`                | Port for Next.js to run on           | 3000        |    No    |
+| `RATE_LIMIT_MAX`      | Maximum requests per minute per IP   | 60          |    No    |
+| `RATE_LIMIT_WINDOW`   | Time window for rate limiting (ms)   | 60000       |    No    |
+| `CACHE_DURATION`      | Cache duration in milliseconds       | 3600000     |    No    |
+| `DEBUG`               | Enable detailed logging              | false       |    No    |
+| `NODE_ENV`            | Environment (development/production) | development |    No    |
 
 ## Security Features
 
