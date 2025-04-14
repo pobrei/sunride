@@ -6,7 +6,7 @@ import { ChartEvent, ActiveElement } from 'chart.js';
 import styles from './Charts.module.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatTime, formatDistance } from '@/utils/helpers';
+import { formatTime, formatDistance } from '@/utils/formatUtils';
 import { GPXData } from '@/utils/gpxParser';
 
 // Define RouteInfo interface locally if needed

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { GPXData, generateForecastPoints } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { fetchWeatherForPoints } from '@/lib/mongodb-api';
@@ -53,13 +53,13 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     setGpxDataInternal(validateGPXData(data));
   };
 
-  const setForecastPoints = (points: ForecastPoint[]) => {
+  const setForecastPoints = useCallback((points: ForecastPoint[]) => {
     setForecastPointsInternal(validateForecastPoints(points));
-  };
+  }, [validateForecastPoints]);
 
-  const setWeatherData = (data: (WeatherData | null)[]) => {
+  const setWeatherData = useCallback((data: (WeatherData | null)[]) => {
     setWeatherDataInternal(validateWeatherData(data));
-  };
+  }, [validateWeatherData]);
 
   // Generate weather forecast for the route
   const generateWeatherForecast = async (weatherInterval: number, startTime: Date, avgSpeed: number) => {
@@ -159,7 +159,7 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       setSelectedMarker(null);
       setError(null);
     }
-  }, [gpxData]);
+  }, [gpxData, setForecastPoints, setWeatherData, setSelectedMarker, setError]);
 
   const value = {
     gpxData,

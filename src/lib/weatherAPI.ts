@@ -5,7 +5,7 @@ import 'server-only';
 const USE_MOCK_DATA = !process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_API_KEY === 'placeholder_key';
 
 if (USE_MOCK_DATA) {
-  console.warn('Using mock weather data because no valid OpenWeather API key was provided');
+  console.warn('Using mock weather data because no valid OpenWeather API key was provided. Please update your .env.local file with a valid API key.');
 }
 
 // Get environment variables with defaults
@@ -86,39 +86,62 @@ function checkRateLimit(): boolean {
 
 // Generate mock weather data for testing
 function generateMockWeatherData(point: ForecastPoint): WeatherData {
-  // Use the point's coordinates to generate deterministic but varied mock data
+  // Use timestamp to simulate time-of-day and seasonal variations
+  const date = new Date(point.timestamp * 1000);
+  const hour = date.getHours();
+  const month = date.getMonth();
+
+  // Seasonal temperature variations (Northern Hemisphere)
+  const isSummer = month >= 5 && month <= 8;
+  const isWinter = month <= 1 || month >= 10;
+
+  // Base temperature varies by season
+  let baseTemp = 20; // Spring/Fall
+  if (isSummer) baseTemp = 28;
+  if (isWinter) baseTemp = 5;
+
+  // Temperature varies by time of day
+  const hourFactor = Math.sin((hour - 6) * Math.PI / 12); // Peak at noon
+  const tempVariation = hourFactor * 8; // 8°C variation throughout the day
+
+  // Latitude affects temperature (colder at higher latitudes)
+  const latitudeFactor = Math.abs(point.lat) / 90; // 0 at equator, 1 at poles
+  const latitudeEffect = -latitudeFactor * 20; // Up to 20°C colder at poles
+
+  // Calculate final temperature
+  const temperature = baseTemp + tempVariation + latitudeEffect;
+
+  // Weather conditions based on temperature and randomness
   const seed = (point.lat * 10 + point.lon * 5 + point.timestamp / 3600) % 100;
+  const isRainy = seed < 30; // 30% chance of rain
+  const isCloudy = seed < 60; // 60% chance of clouds
 
-  // Generate weather conditions based on seed
-  const conditions = [
-    { icon: '01d', desc: 'clear sky' },
-    { icon: '02d', desc: 'few clouds' },
-    { icon: '03d', desc: 'scattered clouds' },
-    { icon: '04d', desc: 'broken clouds' },
-    { icon: '09d', desc: 'shower rain' },
-    { icon: '10d', desc: 'rain' },
-    { icon: '11d', desc: 'thunderstorm' },
-    { icon: '13d', desc: 'snow' },
-    { icon: '50d', desc: 'mist' }
-  ];
-
-  const conditionIndex = Math.floor(seed % conditions.length);
-  const temp = 15 + Math.sin(seed) * 15; // Temperature between 0 and 30°C
-  const rain = conditionIndex >= 4 ? (conditionIndex - 3) * 2 : 0; // Rain for rainy conditions
+  // Weather icon and description
+  let weatherIcon, weatherDescription;
+  if (isRainy) {
+    weatherIcon = hour >= 6 && hour < 18 ? '10d' : '10n'; // Rain
+    weatherDescription = 'rain';
+  } else if (isCloudy) {
+    weatherIcon = hour >= 6 && hour < 18 ? '03d' : '03n'; // Scattered clouds
+    weatherDescription = 'scattered clouds';
+  } else {
+    weatherIcon = hour >= 6 && hour < 18 ? '01d' : '01n'; // Clear sky
+    weatherDescription = 'clear sky';
+  }
 
   return {
-    temperature: parseFloat(temp.toFixed(1)),
-    feelsLike: parseFloat((temp - 2 + Math.random() * 4).toFixed(1)),
-    humidity: Math.floor(40 + seed % 60), // Humidity between 40% and 99%
-    pressure: Math.floor(980 + seed % 40), // Pressure between 980 and 1020 hPa
-    windSpeed: parseFloat((2 + seed % 8).toFixed(1)), // Wind speed between 2 and 10 m/s
-    windDirection: Math.floor(seed * 3.6) % 360, // Wind direction between 0 and 359 degrees
-    rain: rain,
-    weatherIcon: conditions[conditionIndex].icon,
-    weatherDescription: conditions[conditionIndex].desc,
-    uvIndex: Math.floor(seed % 11), // UV index between 0 and 10
-    windGust: parseFloat((4 + seed % 10).toFixed(1)), // Wind gust between 4 and 14 m/s
-    precipitationProbability: Math.floor(seed % 100) / 100 // Probability between 0 and 0.99
+    temperature: parseFloat(temperature.toFixed(1)),
+    feelsLike: parseFloat((temperature - 2 + Math.random() * 4).toFixed(1)),
+    humidity: Math.floor(isRainy ? 70 + Math.random() * 25 : 40 + Math.random() * 30),
+    pressure: Math.floor(1000 + Math.sin(seed) * 20),
+    windSpeed: parseFloat((2 + Math.random() * 8).toFixed(1)),
+    windDirection: Math.floor(seed * 3.6) % 360,
+    rain: isRainy ? parseFloat((Math.random() * 5).toFixed(1)) : 0,
+    weatherIcon,
+    weatherDescription,
+    uvIndex: isCloudy ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 10),
+    windGust: parseFloat((4 + Math.random() * 10).toFixed(1)),
+    precipitationProbability: isRainy ? 0.3 + Math.random() * 0.7 : Math.random() * 0.3
   };
 }
 
@@ -175,6 +198,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
     try {
+      console.log('Fetching weather data from:', apiUrl);
       const response = await fetch(apiUrl, {
         next: { revalidate: 3600 },
         signal: controller.signal
@@ -184,12 +208,14 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
 
       if (!response.ok) {
         const responseText = await response.text();
+        console.error('API error:', response.status, responseText);
         log('API error:', response.status, responseText);
 
         throw new Error(`OpenWeather API error: ${response.status} - ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('OpenWeather API response:', data);
 
       let weatherData: WeatherData;
 
@@ -212,7 +238,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           throw new Error('Invalid forecast data received from API');
         }
 
-        let closestForecast = forecastList.reduce((prev: any, curr: any) => {
+        const closestForecast = forecastList.reduce((prev: any, curr: any) => {
           return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp) ? curr : prev;
         }, forecastList[0]);
 

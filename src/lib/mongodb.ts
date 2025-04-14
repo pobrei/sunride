@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db, Collection, Document } from 'mongodb';
 
 // Check if we have a valid MongoDB URI
 const USE_MOCK_DB = !process.env.MONGODB_URI ||
@@ -9,16 +9,26 @@ if (USE_MOCK_DB) {
   console.warn('Using in-memory storage because no valid MongoDB URI was provided');
 }
 
-// Create a mock client for testing without MongoDB
-class MockMongoClient {
-  async connect() {
+/**
+ * Mock MongoDB client for testing without a real database
+ */
+class MockMongoClient implements Pick<MongoClient, 'connect' | 'db'> {
+  /**
+   * Mock connect method
+   * @returns The mock client instance
+   */
+  async connect(): Promise<this> {
     console.log('Connected to mock MongoDB');
     return this;
   }
 
-  db() {
+  /**
+   * Mock db method
+   * @returns A mock database object
+   */
+  db(): Pick<Db, 'collection'> {
     return {
-      collection: () => ({
+      collection: (): Pick<Collection<Document>, 'findOne' | 'find' | 'insertOne' | 'updateOne' | 'deleteOne'> => ({
         // Mock collection methods
         findOne: async () => null,
         find: () => ({
@@ -32,17 +42,17 @@ class MockMongoClient {
   }
 }
 
-let client;
+let client: MongoClient | MockMongoClient;
 let clientPromise: Promise<MongoClient | MockMongoClient>;
 
 if (USE_MOCK_DB) {
   // Use mock client
   client = new MockMongoClient();
-  clientPromise = client.connect() as Promise<any>;
+  clientPromise = client.connect();
 } else {
   // Use real MongoDB client
-  const uri = process.env.MONGODB_URI!;
-  const options = {};
+  const uri: string = process.env.MONGODB_URI!;
+  const options: Record<string, unknown> = {};
 
   if (process.env.NODE_ENV === 'development') {
     // In development mode, use a global variable so that the value

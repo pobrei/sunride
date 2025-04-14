@@ -10,7 +10,7 @@ export interface NotificationProps {
   type: 'error' | 'info' | 'success';
   message: string;
   duration?: number;
-  onDismiss: (id: string) => void;
+  onDismiss: (id: string) => void; // TODO: Rename to onDismissClick in a future update
 }
 
 const Notification: React.FC<NotificationProps> = ({
@@ -30,12 +30,12 @@ const Notification: React.FC<NotificationProps> = ({
 
     const startTime = Date.now();
     const endTime = startTime + duration;
-    
+
     const updateProgress = () => {
       const now = Date.now();
       const remaining = endTime - now;
       const newProgress = (remaining / duration) * 100;
-      
+
       if (remaining <= 0) {
         setIsVisible(false);
         setTimeout(() => onDismiss(id), 300); // Allow time for exit animation
@@ -44,9 +44,9 @@ const Notification: React.FC<NotificationProps> = ({
         requestAnimationFrame(updateProgress);
       }
     };
-    
+
     const animationId = requestAnimationFrame(updateProgress);
-    
+
     return () => {
       cancelAnimationFrame(animationId);
     };
@@ -131,11 +131,14 @@ const Notification: React.FC<NotificationProps> = ({
           <X className="h-4 w-4" />
         </Button>
       </div>
-      
+
       {/* Progress bar */}
-      <div 
-        className={cn('h-1 transition-all', getProgressColor())} 
-        style={{ width: `${progress}%` }}
+      <div
+        className={cn(
+          'h-1 transition-all',
+          getProgressColor(),
+          `w-[${progress}%]`
+        )}
       />
     </div>
   );

@@ -10,6 +10,22 @@ export const metadata: Metadata = {
   description: "Plan your routes with detailed weather forecasts along the way",
   keywords: ["weather", "planning", "GPX", "route", "cycling", "hiking", "forecast"],
   authors: [{ name: "Filipp Shamshin" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "RideWeather",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "white" }, { media: "(prefers-color-scheme: dark)", color: "#111" }],
 };
 
 export default function RootLayout({
@@ -35,7 +51,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          {children}
+          <div className="relative flex min-h-screen flex-col">
+            {/* We'll add the Header component in the client component */}
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

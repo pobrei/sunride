@@ -5,7 +5,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { GPXData } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatDistance, formatDateTime, formatTemperature, formatWind, formatElevation, formatPrecipitation } from '@/utils/helpers';
+import { formatDistance, formatDateTime, formatTemperature, formatWind, formatElevation, formatPrecipitation } from '@/utils/formatUtils';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
 

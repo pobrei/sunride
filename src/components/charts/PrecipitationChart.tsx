@@ -3,8 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatTime, formatDistance } from '@/utils/helpers';
+import { ForecastPoint, WeatherData } from '@/types';
+import { formatTime, formatDistance } from '@/utils/formatters';
 
 interface PrecipitationChartProps {
   forecastPoints: ForecastPoint[];
@@ -22,36 +22,45 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
-  // Function to handle chart click
-  const handleChartClick = (event: MouseEvent) => {
+  /**
+   * Function to handle chart click events
+   * @param event - Mouse event from the chart canvas
+   */
+  const handleChartClick = (event: MouseEvent): void => {
     if (!chartInstance.current) return;
-    
-    const canvas = event.target as HTMLCanvasElement;
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    
-    const chartArea = chartInstance.current.chartArea;
+
+    const canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
+    const rect: DOMRect = canvas.getBoundingClientRect();
+    const x: number = event.clientX - rect.left;
+
+    const chartArea: Chart.ChartArea = chartInstance.current.chartArea;
     if (!chartArea) return;
-    
+
     // Only handle clicks within the chart area
     if (x >= chartArea.left && x <= chartArea.right) {
-      const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
-      const index = Math.min(
+      const xPercent: number = (x - chartArea.left) / (chartArea.right - chartArea.left);
+      const index: number = Math.min(
         Math.max(0, Math.floor(xPercent * forecastPoints.length)),
         forecastPoints.length - 1
       );
-      
+
       console.log(`Precipitation chart clicked at index: ${index}`);
       onChartClick(index);
     }
   };
 
-  // Get color scheme based on dark/light mode
-  const getColorScheme = () => {
+  /**
+   * Get color scheme based on dark/light mode
+   * @returns Object containing color schemes for precipitation and probability
+   */
+  const getColorScheme = (): {
+    precipitation: { bg: string; border: string; point: string };
+    probability: { bg: string; border: string; point: string };
+  } => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    return isDarkMode 
+    const isDarkMode: boolean = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    return isDarkMode
       ? {
           precipitation: {
             bg: 'rgba(65, 105, 225, 0.3)',
@@ -92,16 +101,16 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels: string[] = forecastPoints.map((point) => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
-    const precipitationData = forecastPoints.map((_, i) => weatherData[i]?.precipitation ?? 0);
-    const probabilityData = forecastPoints.map((_, i) => (weatherData[i]?.precipitationProbability ?? 0) * 100);
+    const precipitationData: number[] = forecastPoints.map((_, i) => weatherData[i]?.precipitation ?? 0);
+    const probabilityData: number[] = forecastPoints.map((_, i) => (weatherData[i]?.precipitationProbability ?? 0) * 100);
 
     // Create or update chart
     if (chartRef.current) {
-      const ctx = chartRef.current.getContext('2d');
+      const ctx: CanvasRenderingContext2D | null = chartRef.current.getContext('2d');
       if (ctx) {
         if (chartInstance.current) {
           chartInstance.current.destroy();
@@ -215,16 +224,16 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
             },
           },
         });
-        
+
         // Add direct click handler
-        chartRef.current.addEventListener('click', handleChartClick as any);
+        chartRef.current.addEventListener('click', handleChartClick as EventListener);
       }
     }
 
     // Clean up event listener
     return () => {
       if (chartRef.current) {
-        chartRef.current.removeEventListener('click', handleChartClick as any);
+        chartRef.current.removeEventListener('click', handleChartClick as EventListener);
       }
     };
   }, [forecastPoints, weatherData, selectedMarker, onChartClick]);
@@ -235,9 +244,9 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
         <CardTitle className="text-lg">Precipitation</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          className="h-[250px] w-full" 
-          role="img" 
+        <div
+          className="h-[250px] w-full"
+          role="img"
           aria-label="Precipitation chart showing rainfall and probability along the route"
         >
           <canvas ref={chartRef} />

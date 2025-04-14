@@ -33,9 +33,9 @@ Try the live demo: [RideWeather Planner Demo](https://rideweather.vercel.app)
 - **Framework**: Next.js with App Router
 - **Styling**: Tailwind CSS and Shadcn UI
 - **Design System**: Custom design tokens, consistent spacing, and typography
-- **Maps**: Leaflet.js with custom styled controls
+- **Maps**: OpenLayers with custom styled controls
 - **Charts**: Chart.js with custom theming
-- **Animation**: GSAP for smooth transitions and microinteractions
+- **Animation**: CSS transitions for smooth animations and microinteractions
 - **PDF Generation**: jsPDF and html2canvas
 - **Database**: MongoDB for weather data caching
 - **APIs**: OpenWeather API
@@ -264,6 +264,37 @@ graph TD
   D --> E[Data Processing]
   E --> F[Interactive Map/Charts]
 ```
+
+## Project Structure
+
+The project follows a feature-based folder structure for better organization and maintainability:
+
+```plaintext
+src/
+├── app/                 # Next.js App Router
+├── components/          # Shared UI components
+│   ├── common/          # Common components
+│   ├── layout/          # Layout components
+│   └── ui/              # Basic UI components
+├── features/            # Feature-based modules
+│   ├── gpx/             # GPX file handling
+│   ├── weather/         # Weather data and forecasting
+│   ├── map/             # Map visualization
+│   ├── charts/          # Data visualization
+│   ├── timeline/        # Timeline visualization
+│   ├── route/           # Route settings
+│   ├── export/          # Data export
+│   ├── data-validation/ # Data validation
+│   ├── notifications/   # User notifications
+│   ├── help/            # User help
+│   └── navigation/      # Application navigation
+├── hooks/               # Shared React hooks
+├── lib/                 # Library code
+├── types/               # TypeScript types
+└── utils/               # Utility functions
+```
+
+Each feature folder contains its own components, utilities, types, and documentation. See the [Features README](./src/features/README.md) for more details.
 
 ## Contributing
 

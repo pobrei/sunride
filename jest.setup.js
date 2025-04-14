@@ -61,6 +61,15 @@ Object.defineProperty(window, 'ResizeObserver', {
 // Mock scrollTo
 window.scrollTo = jest.fn();
 
+// Mock fetch
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  })
+);
+
 // Mock console.error to fail tests on prop type errors
 const originalConsoleError = console.error;
 console.error = (...args) => {
@@ -68,10 +77,10 @@ console.error = (...args) => {
   const isPropTypeError = args.some(
     arg => typeof arg === 'string' && arg.includes('Failed prop type')
   );
-  
+
   if (isPropTypeError) {
     throw new Error(args.join(' '));
   }
-  
+
   originalConsoleError(...args);
 };

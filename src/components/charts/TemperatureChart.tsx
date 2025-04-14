@@ -3,8 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatTime, formatDistance } from '@/utils/helpers';
+import { ForecastPoint, WeatherData } from '@/types';
+import { formatTime, formatDistance } from '@/utils/formatters';
 
 interface TemperatureChartProps {
   forecastPoints: ForecastPoint[];
@@ -25,14 +25,14 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   // Function to handle chart click
   const handleChartClick = (event: MouseEvent) => {
     if (!chartInstance.current) return;
-    
+
     const canvas = event.target as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
-    
+
     const chartArea = chartInstance.current.chartArea;
     if (!chartArea) return;
-    
+
     // Only handle clicks within the chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
@@ -40,7 +40,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
         Math.max(0, Math.floor(xPercent * forecastPoints.length)),
         forecastPoints.length - 1
       );
-      
+
       console.log(`Temperature chart clicked at index: ${index}`);
       onChartClick(index);
     }
@@ -50,8 +50,8 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   const getColorScheme = () => {
     // Check if we're in dark mode
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    return isDarkMode 
+
+    return isDarkMode
       ? {
           temperature: {
             bg: 'rgba(130, 50, 70, 0.3)',
@@ -81,7 +81,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   // Define custom tooltip styling
   const getTooltipOptions = () => {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     return {
       mode: 'index' as const,
       intersect: false,
@@ -227,7 +227,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
             },
           },
         });
-        
+
         // Add direct click handler
         chartRef.current.addEventListener('click', handleChartClick as any);
       }
@@ -247,9 +247,9 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
         <CardTitle className="text-lg">Temperature</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          className="h-[250px] w-full" 
-          role="img" 
+        <div
+          className="h-[250px] w-full"
+          role="img"
           aria-label="Temperature chart showing weather data along the route"
         >
           <canvas ref={chartRef} />

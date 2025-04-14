@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Map from '@/components/Map';
-import { WeatherProvider } from '@/context/WeatherContext';
-import { NotificationProvider } from '@/components/NotificationProvider';
+import { Map } from '@/features/map/components';
+import { WeatherProvider } from '@/features/weather/context';
+import { NotificationProvider } from '@/features/notifications/context';
 
 // Mock the dynamic import
 jest.mock('next/dynamic', () => ({

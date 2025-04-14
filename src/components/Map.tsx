@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { GPXData, RoutePoint } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatDistance, formatDateTime, formatTemperature, formatWind, formatPrecipitation, getWeatherIconUrl, getMarkerColor } from '@/utils/helpers';
+import { formatDistance, formatDateTime, formatTemperature, formatWind, formatPrecipitation, getWeatherIconUrl, getMarkerColor } from '@/utils/formatUtils';
 import { Button } from '@/components/ui/button';
 import { Crosshair } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -144,27 +144,27 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
 
           const markerIcon = L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background-color: ${markerColor}; width: ${markerSize}px; height: ${markerSize}px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: ${borderWidth}px solid ${borderColor}; box-shadow: ${boxShadow}; font-size: ${fontSize}; font-weight: ${isSelected ? 'bold' : 'normal'};">${index + 1}</div>`,
+            html: `<div class="map-marker ${isSelected ? 'map-marker-selected' : 'map-marker-normal'}" style="background-color: ${markerColor};">${index + 1}</div>`,
             iconSize: [markerSize, markerSize],
             iconAnchor: [markerSize/2, markerSize/2]
           });
 
           // Create popup content
           const popupContent = `
-            <div style="min-width: 200px;">
-              <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                <img src="${getWeatherIconUrl(weather.weatherIcon)}" alt="${weather.weatherDescription}" style="width: 50px; height: 50px;">
+            <div class="map-popup">
+              <div class="map-popup-header">
+                <img src="${getWeatherIconUrl(weather.weatherIcon)}" alt="${weather.weatherDescription}" class="map-popup-icon">
                 <div>
-                  <div style="font-weight: bold; font-size: 16px;">${formatTemperature(weather.temperature)}</div>
-                  <div style="font-size: 12px;">Feels like: ${formatTemperature(weather.feelsLike)}</div>
+                  <div class="map-popup-temp">${formatTemperature(weather.temperature)}</div>
+                  <div class="map-popup-feels">Feels like: ${formatTemperature(weather.feelsLike)}</div>
                 </div>
               </div>
-              <div style="font-size: 14px; margin-bottom: 5px;"><b>Time:</b> ${formatDateTime(point.timestamp)}</div>
-              <div style="font-size: 14px; margin-bottom: 5px;"><b>Distance:</b> ${formatDistance(point.distance)}</div>
-              <div style="font-size: 14px; margin-bottom: 5px;"><b>Weather:</b> ${weather.weatherDescription}</div>
-              <div style="font-size: 14px; margin-bottom: 5px;"><b>Wind:</b> ${formatWind(weather.windSpeed, weather.windDirection)}</div>
-              <div style="font-size: 14px; margin-bottom: 5px;"><b>Humidity:</b> ${weather.humidity}%</div>
-              <div style="font-size: 14px;"><b>Precipitation:</b> ${formatPrecipitation(weather.rain)}</div>
+              <div class="map-popup-detail"><b>Time:</b> ${formatDateTime(point.timestamp)}</div>
+              <div class="map-popup-detail"><b>Distance:</b> ${formatDistance(point.distance)}</div>
+              <div class="map-popup-detail"><b>Weather:</b> ${weather.weatherDescription}</div>
+              <div class="map-popup-detail"><b>Wind:</b> ${formatWind(weather.windSpeed, weather.windDirection)}</div>
+              <div class="map-popup-detail"><b>Humidity:</b> ${weather.humidity}%</div>
+              <div class="map-popup-detail"><b>Precipitation:</b> ${formatPrecipitation(weather.rain)}</div>
             </div>
           `;
 
@@ -265,8 +265,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
       <MapContainer
         center={[51.505, -0.09]}
         zoom={13}
-        style={{ height: '100%', width: '100%' }}
-        className="z-10"
+        className="z-10 h-full w-full"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

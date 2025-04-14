@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -40,19 +41,54 @@ function Button({
   variant,
   size,
   asChild = false,
+  isLoading = false,
+  loadingText,
+  leftIcon,
+  rightIcon,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    isLoading?: boolean
+    loadingText?: string
+    leftIcon?: React.ReactNode
+    rightIcon?: React.ReactNode
   }) {
   const Comp = asChild ? Slot : "button"
 
+  // If asChild is true, we need to clone the child element and pass our props to it
+  if (asChild) {
+    return (
+      <Comp
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        disabled={isLoading || props.disabled}
+        {...props}
+      />
+    )
+  }
+
+  // Otherwise, render a regular button with our content
   return (
-    <Comp
+    <button
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isLoading || props.disabled}
       {...props}
-    />
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {loadingText || props.children}
+        </>
+      ) : (
+        <>
+          {leftIcon && <span className="inline-flex">{leftIcon}</span>}
+          {props.children}
+          {rightIcon && <span className="inline-flex">{rightIcon}</span>}
+        </>
+      )}
+    </button>
   )
 }
 

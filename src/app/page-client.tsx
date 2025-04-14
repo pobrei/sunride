@@ -1,33 +1,40 @@
 'use client';
 
 import { useRef } from 'react';
-import { useWeather } from '@/context/WeatherContext';
-import { useNotifications } from '@/components/NotificationProvider';
-import GPXUploader from '@/components/GPXUploader';
-import Map from '@/components/Map';
-import SafeMapWrapper from '@/components/SafeMapWrapper';
-import Charts from '@/components/Charts';
-import SafeChartsWrapper from '@/components/SafeChartsWrapper';
-import Timeline from '@/components/Timeline';
-import SafeTimelineWrapper from '@/components/SafeTimelineWrapper';
-import Alerts from '@/components/Alerts';
-import RouteControls, { RouteSettings } from '@/components/RouteControls';
-import PDFExport from '@/components/PDFExport';
-import type { GPXData } from '@/utils/gpxParser';
 import { Clock } from 'lucide-react';
-import WeatherProviderComparison from '@/components/WeatherProviderComparison';
-import RouteSharing from '@/components/RouteSharing';
-import UserGuide from '@/components/UserGuide';
-import ThemeToggle from '@/components/ThemeToggle';
 import gsap from 'gsap';
 
-// Loading spinner component
-const LoadingSpinner = ({ message }: { message: string }) => (
-  <div className="flex items-center space-x-2 text-muted-foreground animate-pulse">
-    <Clock className="animate-spin h-5 w-5" />
-    <span>{message}</span>
-  </div>
-);
+// Import from feature folders
+import { useWeather } from '@/features/weather/context';
+import { WeatherProviderComparison, Alerts } from '@/features/weather/components';
+import { GPXUploader as FeatureGPXUploader } from '@/features/gpx/components';
+import { Map, SafeMapWrapper } from '@/features/map/components';
+import { RouteControls, TripSummary } from '@/features/route/components';
+import { PDFExport } from '@/features/export/components';
+import { ChartContainer, SafeChartsWrapper } from '@/features/charts/components';
+import { Timeline, SafeTimelineWrapper } from '@/features/timeline/components';
+import { useNotifications } from '@/features/notifications/context';
+import { useSafeData } from '@/features/data-validation/context';
+import { UserGuide as FeatureUserGuide } from '@/features/help/components';
+import { KeyboardNavigation } from '@/features/navigation/components';
+
+// Import from components
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+
+// Import types
+import type { GPXData, RouteSettings } from '@/types';
+
+// Import UI components
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import GPXUploader from '@/components/GPXUploader';
+import { ClientSideMap } from '@/components/map/ClientSideMap';
+import { ClientSideTimeline } from '@/components/timeline/ClientSideTimeline';
+import { ClientSideCharts } from '@/components/charts/ClientSideCharts';
+import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
+import { TripSummary as RouteSummary } from '@/components/route/TripSummary';
+import { UserGuide } from '@/components/help/UserGuide';
+import { PageWrapper } from '@/components/layout/page-wrapper';
 
 export default function Home() {
   const {
@@ -105,7 +112,7 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-7xl">
+    <PageWrapper>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold tracking-tight">RideWeather Planner</h1>
         <div className="flex items-center space-x-2">
@@ -116,7 +123,13 @@ export default function Home() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-4">
-          <GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={isGenerating} />
+          <GPXUploader
+            onGPXLoaded={handleGPXLoaded}
+            isLoading={isGenerating}
+            showProgress={true}
+            showSuccess={true}
+            helpText="Upload a GPX file to visualize your route with detailed weather forecasts"
+          />
           <RouteControls
             onUpdateSettings={handleUpdateSettings}
             onExportPDF={() => {}}
@@ -124,47 +137,77 @@ export default function Home() {
             isExporting={false}
           />
           <WeatherProviderComparison />
-          <RouteSharing />
         </div>
 
         <div className="lg:col-span-2 space-y-4">
           {isLoading ? (
-            <div className="flex items-center justify-center h-[400px] bg-muted rounded-lg">
-              <LoadingSpinner message={loadingMessage} />
+            <div className="flex items-center justify-center h-[400px] bg-muted/30 rounded-lg border border-border">
+              <LoadingSpinner
+                message={loadingMessage || "Loading weather data..."}
+                centered
+                variant="spinner"
+                withContainer
+                size="lg"
+              />
             </div>
           ) : (
             <>
-              <div ref={mapRef}>
-                <SafeMapWrapper
+              <div ref={mapRef} className="relative">
+                <ClientSideMap
                   gpxData={gpxData}
                   forecastPoints={forecastPoints}
                   weatherData={weatherData}
                   onMarkerClick={handleMarkerClick}
                   selectedMarker={selectedMarker}
+                  height="h-[400px]"
+                  className="map-container"
+                  showPlaceholder={true}
                 />
+
+                {forecastPoints.length > 0 && (
+                  <KeyboardNavigation
+                    onNavigate={(direction) => console.log(`Navigate ${direction}`)}
+                    onZoom={(direction) => console.log(`Zoom ${direction}`)}
+                    onSelectMarker={handleMarkerClick}
+                    markerCount={forecastPoints.length}
+                  />
+                )}
               </div>
 
               {forecastPoints.length > 0 && weatherData.length > 0 && (
                 <>
-                  <SafeTimelineWrapper
+                  <RouteSummary
+                    gpxData={gpxData}
+                    forecastPoints={forecastPoints}
+                    weatherData={weatherData}
+                    className="animate-fade-in"
+                  />
+
+                  <ClientSideTimeline
                     forecastPoints={forecastPoints}
                     weatherData={weatherData}
                     selectedMarker={selectedMarker}
                     onTimelineClick={handleTimelineClick}
+                    height="h-[150px]"
+                    showNavigation={true}
                   />
 
-                  <Alerts
+                  <WeatherAlerts
                     forecastPoints={forecastPoints}
                     weatherData={weatherData}
+                    maxInitialAlerts={3}
+                    compact={true}
+                    className="animate-fade-in"
                   />
 
                   <div ref={chartsRef}>
-                    <SafeChartsWrapper
+                    <ClientSideCharts
                       gpxData={gpxData}
                       forecastPoints={forecastPoints}
                       weatherData={weatherData}
                       selectedMarker={selectedMarker}
                       onChartClick={handleChartClick}
+                      height="h-[300px]"
                     />
                   </div>
                 </>
@@ -174,7 +217,7 @@ export default function Home() {
         </div>
       </div>
 
-      <UserGuide />
-    </main>
+      <UserGuide className="animate-fade-in" />
+    </PageWrapper>
   );
 }

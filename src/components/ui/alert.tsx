@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -10,7 +11,13 @@ const alertVariants = cva(
       variant: {
         default: "bg-card text-card-foreground",
         destructive:
-          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
+          "border-destructive/50 text-destructive bg-destructive/10 [&>svg]:text-destructive *:data-[slot=alert-description]:text-destructive/90",
+        success:
+          "border-green-500/50 text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/20 [&>svg]:text-green-500 *:data-[slot=alert-description]:text-green-700/90 dark:*:data-[slot=alert-description]:text-green-300/90",
+        warning:
+          "border-yellow-500/50 text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/20 [&>svg]:text-yellow-500 *:data-[slot=alert-description]:text-yellow-700/90 dark:*:data-[slot=alert-description]:text-yellow-300/90",
+        info:
+          "border-blue-500/50 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/20 [&>svg]:text-blue-500 *:data-[slot=alert-description]:text-blue-700/90 dark:*:data-[slot=alert-description]:text-blue-300/90",
       },
     },
     defaultVariants: {
@@ -22,15 +29,57 @@ const alertVariants = cva(
 function Alert({
   className,
   variant,
+  icon,
+  dismissible,
+  onDismiss,
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
+}: React.ComponentProps<"div"> &
+   VariantProps<typeof alertVariants> & {
+    /** Optional custom icon */
+    icon?: React.ReactNode;
+    /** Whether the alert is dismissible */
+    dismissible?: boolean;
+    /** Callback when the alert is dismissed */
+    onDismiss?: () => void;
+   }) {
+  // Get default icon based on variant
+  const getDefaultIcon = () => {
+    if (icon) return icon;
+
+    switch (variant) {
+      case 'destructive':
+        return <AlertCircle />;
+      case 'success':
+        return <CheckCircle />;
+      case 'warning':
+        return <AlertTriangle />;
+      case 'info':
+        return <Info />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
       data-slot="alert"
       role="alert"
       className={cn(alertVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {getDefaultIcon()}
+      {props.children}
+      {dismissible && onDismiss && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          aria-label="Close alert"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
+    </div>
   )
 }
 

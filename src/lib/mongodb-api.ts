@@ -100,14 +100,25 @@ export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(W
         const result = await response.json();
 
         // Validate the returned data structure
-        if (!result.data || !Array.isArray(result.data)) {
-          throw new ValidationError('Invalid data structure received from server');
+        if (!result) {
+          throw new ValidationError('No response received from server');
         }
 
-        progress.processed = result.data.length;
+        // Handle both success and error responses
+        if (result.error) {
+          throw new APIError(result.error, result.status || 500);
+        }
+
+        // Ensure data is an array (even if empty)
+        const weatherData = result.data && Array.isArray(result.data) ? result.data : [];
+
+        // Log the response for debugging
+        console.log('Weather API response:', { success: result.success, dataLength: weatherData.length });
+
+        progress.processed = weatherData.length;
         progress.status = 'completed';
 
-        return result.data;
+        return weatherData;
       } catch (error: unknown) {
         // Handle abort errors (timeouts)
         if (error instanceof Error && error.name === 'AbortError') {
@@ -208,12 +219,24 @@ export async function fetchWeatherForPoint(point: ForecastPoint): Promise<Weathe
 
         const result = await response.json();
 
-        // Validate the returned data
-        if (!result.data) {
-          throw new ValidationError('Invalid data structure received from server');
+        // Validate the returned data structure
+        if (!result) {
+          throw new ValidationError('No response received from server');
         }
 
-        return result.data;
+        // Handle both success and error responses
+        if (result.error) {
+          throw new APIError(result.error, result.status || 500);
+        }
+
+        // Ensure data is an array (even if empty)
+        const weatherData = result.data && Array.isArray(result.data) ? result.data : [];
+
+        // Log the response for debugging
+        console.log('Weather API single point response:', { success: result.success, dataLength: weatherData.length });
+
+        // The API returns an array with a single item for GET requests
+        return weatherData.length > 0 ? weatherData[0] : null;
       } catch (error: unknown) {
         // Handle abort errors (timeouts)
         if (error instanceof Error && error.name === 'AbortError') {

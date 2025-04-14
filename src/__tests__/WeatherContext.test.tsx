@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { WeatherProvider, useWeather } from '@/context/WeatherContext';
-import { NotificationProvider } from '@/components/NotificationProvider';
+import { WeatherProvider, useWeather } from '@/features/weather/context';
+import { NotificationProvider } from '@/features/notifications/context';
 
 // Mock the API functions
 jest.mock('@/lib/mongodb-api', () => ({
@@ -35,7 +35,7 @@ jest.mock('@/utils/gpxParser', () => ({
 }));
 
 // Mock the NotificationProvider
-jest.mock('@/components/NotificationProvider', () => ({
+jest.mock('@/features/notifications/context', () => ({
   useNotifications: () => ({
     addNotification: jest.fn().mockReturnValue('mock-id'),
     removeNotification: jest.fn(),
