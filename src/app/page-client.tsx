@@ -28,7 +28,10 @@ import type { GPXData, RouteSettings } from '@/types';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import GPXUploader from '@/components/GPXUploader';
-import { ClientSideMap } from '@/components/map/ClientSideMap';
+import dynamic from 'next/dynamic';
+
+// Import the map component
+import MapWrapper from '@/components/map/MapWrapper';
 import { ClientSideTimeline } from '@/components/timeline/ClientSideTimeline';
 import { ClientSideCharts } from '@/components/charts/ClientSideCharts';
 import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
@@ -153,16 +156,15 @@ export default function Home() {
           ) : (
             <>
               <div ref={mapRef} className="relative">
-                <ClientSideMap
-                  gpxData={gpxData}
-                  forecastPoints={forecastPoints}
-                  weatherData={weatherData}
-                  onMarkerClick={handleMarkerClick}
-                  selectedMarker={selectedMarker}
-                  height="h-[400px]"
-                  className="map-container"
-                  showPlaceholder={true}
-                />
+                <div className="h-[400px] rounded-lg overflow-hidden border border-border">
+                  <MapWrapper
+                    gpxData={gpxData}
+                    forecastPoints={forecastPoints}
+                    weatherData={weatherData}
+                    onMarkerClick={handleMarkerClick}
+                    selectedMarker={selectedMarker}
+                  />
+                </div>
 
                 {forecastPoints.length > 0 && (
                   <KeyboardNavigation
