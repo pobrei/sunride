@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Loader2, RefreshCw, CircleOff } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type LoadingVariant = 'spinner' | 'pulse' | 'skeleton' | 'dots';
@@ -79,9 +79,9 @@ export function LoadingSpinner({
                 'rounded-full',
                 color || 'bg-primary',
                 { 'h-2 w-2': size === 'sm', 'h-3 w-3': size === 'md', 'h-4 w-4': size === 'lg', 'h-5 w-5': size === 'xl' },
-                'animate-bounce'
+                'animate-bounce',
+                `animation-delay-${i}`
               )}
-              style={{ animationDelay: `${i * 0.15}s` }}
             />
           ))}
           {message && <p className="text-sm text-muted-foreground ml-2">{message}</p>}

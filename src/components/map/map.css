@@ -146,6 +146,7 @@
   right: 0.5rem;
   width: 16rem;
   background-color: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   padding: 0.75rem;
   border-radius: 0.375rem;
@@ -165,4 +166,115 @@
     right: 0.5rem;
     width: auto;
   }
+}
+
+/* Animation delay classes for loading spinner dots */
+.animation-delay-0 {
+  animation-delay: 0s;
+}
+
+.animation-delay-1 {
+  animation-delay: 0.15s;
+}
+
+.animation-delay-2 {
+  animation-delay: 0.3s;
+}
+
+/* Dynamic positioning classes for map elements */
+.map-marker-position {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+/* For BasicMap markers that only need horizontal positioning */
+.marker-top-offset {
+  position: absolute;
+  top: -0.75rem; /* equivalent to -top-3 in Tailwind */
+  transform: translateX(-50%);
+}
+
+/* Position classes for markers (0-100%) */
+.marker-pos-0 { left: 0%; }
+.marker-pos-5 { left: 5%; }
+.marker-pos-10 { left: 10%; }
+.marker-pos-15 { left: 15%; }
+.marker-pos-20 { left: 20%; }
+.marker-pos-25 { left: 25%; }
+.marker-pos-30 { left: 30%; }
+.marker-pos-35 { left: 35%; }
+.marker-pos-40 { left: 40%; }
+.marker-pos-45 { left: 45%; }
+.marker-pos-50 { left: 50%; }
+.marker-pos-55 { left: 55%; }
+.marker-pos-60 { left: 60%; }
+.marker-pos-65 { left: 65%; }
+.marker-pos-70 { left: 70%; }
+.marker-pos-75 { left: 75%; }
+.marker-pos-80 { left: 80%; }
+.marker-pos-85 { left: 85%; }
+.marker-pos-90 { left: 90%; }
+.marker-pos-95 { left: 95%; }
+.marker-pos-100 { left: 100%; }
+
+/* Position classes for 2D markers */
+.marker-x-0 { left: 0%; }
+.marker-x-10 { left: 10%; }
+.marker-x-20 { left: 20%; }
+.marker-x-30 { left: 30%; }
+.marker-x-40 { left: 40%; }
+.marker-x-50 { left: 50%; }
+.marker-x-60 { left: 60%; }
+.marker-x-70 { left: 70%; }
+.marker-x-80 { left: 80%; }
+.marker-x-90 { left: 90%; }
+.marker-x-100 { left: 100%; }
+
+.marker-y-0 { top: 0%; }
+.marker-y-10 { top: 10%; }
+.marker-y-20 { top: 20%; }
+.marker-y-30 { top: 30%; }
+.marker-y-40 { top: 40%; }
+.marker-y-50 { top: 50%; }
+.marker-y-60 { top: 60%; }
+.marker-y-70 { top: 70%; }
+.marker-y-80 { top: 80%; }
+.marker-y-90 { top: 90%; }
+.marker-y-100 { top: 100%; }
+
+/* Grid line positioning classes */
+.grid-line-vertical-25 {
+  position: absolute;
+  left: 25%;
+  height: 100%;
+}
+
+.grid-line-vertical-50 {
+  position: absolute;
+  left: 50%;
+  height: 100%;
+}
+
+.grid-line-vertical-75 {
+  position: absolute;
+  left: 75%;
+  height: 100%;
+}
+
+.grid-line-horizontal-25 {
+  position: absolute;
+  top: 25%;
+  width: 100%;
+}
+
+.grid-line-horizontal-50 {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+
+.grid-line-horizontal-75 {
+  position: absolute;
+  top: 75%;
+  width: 100%;
 }

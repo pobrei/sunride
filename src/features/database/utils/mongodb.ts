@@ -1,9 +1,10 @@
 import { MongoClient } from 'mongodb';
+import { envConfig } from '@/lib/env';
 
 // Check if we have a valid MongoDB URI
-const USE_MOCK_DB: boolean = !process.env.MONGODB_URI ||
-                   process.env.MONGODB_URI === 'mongodb://localhost:27017/weatherapp' ||
-                   process.env.MONGODB_URI.includes('your_mongodb_connection_string_here');
+const USE_MOCK_DB: boolean = !envConfig.mongodbUri ||
+                   envConfig.mongodbUri === 'mongodb://localhost:27017/weatherapp' ||
+                   envConfig.mongodbUri.includes('your_mongodb_connection_string_here');
 
 if (USE_MOCK_DB) {
   console.warn('Using in-memory storage because no valid MongoDB URI was provided');
@@ -52,7 +53,7 @@ if (USE_MOCK_DB) {
   clientPromise = client.connect();
 } else {
   // Use real MongoDB client
-  const uri: string = process.env.MONGODB_URI!;
+  const uri: string = envConfig.mongodbUri;
   const options: Record<string, unknown> = {};
 
   if (process.env.NODE_ENV === 'development') {

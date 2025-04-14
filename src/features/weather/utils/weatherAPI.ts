@@ -1,17 +1,19 @@
 // Add 'server-only' marker at the top of the file to prevent client usage
 import 'server-only';
+import { envConfig } from '@/lib/env';
 
 // Check for OpenWeather API key
-const USE_MOCK_DATA = !process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_API_KEY === 'placeholder_key';
+const USE_MOCK_DATA = !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
 
 if (USE_MOCK_DATA) {
   console.warn('Using mock weather data because no valid OpenWeather API key was provided');
 }
 
-// Get environment variables with defaults
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const CACHE_DURATION = parseInt(process.env.CACHE_DURATION || '3600000', 10); // Default: 1 hour in milliseconds
-const DEBUG = process.env.DEBUG === 'true';
+// Get environment variables from envConfig
+const OPENWEATHER_API_KEY = envConfig.openWeatherApiKey;
+// Use environment variables from envConfig
+const CACHE_DURATION = envConfig.cacheDuration;
+const DEBUG = envConfig.debug;
 
 // Tracking API usage for rate limiting
 interface RateLimitTracker {
@@ -25,8 +27,8 @@ interface RateLimitTracker {
 const rateLimitTracker: RateLimitTracker = {
   lastReset: Date.now(),
   callCount: 0,
-  maxCalls: parseInt(process.env.RATE_LIMIT_MAX || '60', 10), // Default: 60 calls
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '60000', 10), // Default: 1 minute window
+  maxCalls: envConfig.apiRateLimit, // From envConfig
+  windowMs: envConfig.apiRateLimitWindowMs, // From envConfig
 };
 
 // In-memory cache to replace MongoDB

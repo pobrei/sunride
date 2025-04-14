@@ -1,17 +1,19 @@
 // Add 'server-only' marker at the top of the file to prevent client usage
 import 'server-only';
+import { envConfig } from '@/lib/env';
 
 // Check for OpenWeather API key
-const USE_MOCK_DATA = !process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_API_KEY === 'placeholder_key';
+const USE_MOCK_DATA = !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
 
 if (USE_MOCK_DATA) {
   console.warn('Using mock weather data because no valid OpenWeather API key was provided. Please update your .env.local file with a valid API key.');
 }
 
-// Get environment variables with defaults
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const CACHE_DURATION = parseInt(process.env.CACHE_DURATION || '3600000', 10); // Default: 1 hour in milliseconds
-const DEBUG = process.env.DEBUG === 'true';
+// Get environment variables from envConfig
+const OPENWEATHER_API_KEY = envConfig.openWeatherApiKey;
+// Use environment variables from envConfig
+const CACHE_DURATION = envConfig.cacheDuration;
+const DEBUG = envConfig.debug;
 
 // Tracking API usage for rate limiting
 interface RateLimitTracker {
@@ -25,8 +27,8 @@ interface RateLimitTracker {
 const rateLimitTracker: RateLimitTracker = {
   lastReset: Date.now(),
   callCount: 0,
-  maxCalls: parseInt(process.env.RATE_LIMIT_MAX || '60', 10), // Default: 60 calls
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || '60000', 10), // Default: 1 minute window
+  maxCalls: envConfig.apiRateLimit, // From envConfig
+  windowMs: envConfig.apiRateLimitWindowMs, // From envConfig
 };
 
 // In-memory cache to replace MongoDB
@@ -56,7 +58,7 @@ interface WeatherData {
 }
 
 // Logger function that respects DEBUG flag
-function log(...args: any[]) {
+function log(...args: unknown[]) {
   if (DEBUG) {
     console.log('[WeatherAPI]', ...args);
   }
@@ -238,9 +240,31 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           throw new Error('Invalid forecast data received from API');
         }
 
-        const closestForecast = forecastList.reduce((prev: any, curr: any) => {
+        // Define a type for the forecast entry
+        interface ForecastEntry {
+          dt: number;
+          main?: {
+            temp?: number;
+            feels_like?: number;
+            humidity?: number;
+            pressure?: number;
+          };
+          wind?: {
+            speed?: number;
+            deg?: number;
+          };
+          rain?: {
+            '3h'?: number;
+          };
+          weather?: Array<{
+            icon?: string;
+            description?: string;
+          }>;
+        }
+
+        const closestForecast = forecastList.reduce((prev: ForecastEntry, curr: ForecastEntry) => {
           return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp) ? curr : prev;
-        }, forecastList[0]);
+        }, forecastList[0] as ForecastEntry);
 
         weatherData = {
           temperature: closestForecast.main?.temp ?? 0,
@@ -302,7 +326,12 @@ export async function getMultipleForecastPoints(points: ForecastPoint[]): Promis
       for (let retry = 0; retry < MAX_RETRIES; retry++) {
         try {
           return await getWeatherForecast(point);
-        } catch (error) {
+        } catch (err) {
+          // Log the error if debugging is enabled
+          if (DEBUG) {
+            console.error(`Error fetching forecast (attempt ${retry + 1}/${MAX_RETRIES}):`, err);
+          }
+
           // If we've exhausted retries, give up
           if (retry === MAX_RETRIES - 1) {
             log(`Failed to fetch forecast for point at index ${i + batchIndex} after ${MAX_RETRIES} retries`);

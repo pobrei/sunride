@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
 
 interface BasicMapProps {
@@ -28,7 +28,7 @@ export default function BasicMap({
 }: BasicMapProps) {
   // Calculate total distance
   const totalDistance = gpxData ? Math.round(gpxData.totalDistance / 1000) : 0;
-  
+
   return (
     <div className="h-full w-full bg-blue-50 dark:bg-blue-900 rounded-lg overflow-hidden p-4 relative">
       <div className="text-center mb-4">
@@ -39,7 +39,7 @@ export default function BasicMap({
           </p>
         )}
       </div>
-      
+
       {/* Simple route visualization */}
       <div className="h-[200px] bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 relative overflow-hidden">
         {gpxData && gpxData.points.length > 0 ? (
@@ -47,28 +47,27 @@ export default function BasicMap({
             <div className="w-full h-[2px] bg-blue-500 relative">
               {/* Route line */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-500 to-green-500"></div>
-              
+
               {/* Start marker */}
               <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-600 rounded-full border-2 border-white dark:border-gray-800"></div>
-              
+
               {/* End marker */}
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-600 rounded-full border-2 border-white dark:border-gray-800"></div>
-              
+
               {/* Forecast points */}
               {forecastPoints.map((_, index) => {
-                const position = (index / (forecastPoints.length - 1)) * 100;
+                const position = Math.round((index / (forecastPoints.length - 1)) * 100 / 5) * 5;
                 const isSelected = index === selectedMarker;
-                
+
                 return (
                   <button
                     key={index}
                     type="button"
-                    className={`absolute -top-3 w-6 h-6 rounded-full flex items-center justify-center text-xs text-white font-medium transform -translate-x-1/2 transition-all ${
-                      isSelected 
-                        ? 'bg-red-500 border-2 border-white dark:border-gray-800 z-20' 
+                    className={`marker-top-offset marker-pos-${position} w-6 h-6 rounded-full flex items-center justify-center text-xs text-white font-medium transition-all ${
+                      isSelected
+                        ? 'bg-red-500 border-2 border-white dark:border-gray-800 z-20'
                         : 'bg-gray-500 hover:bg-gray-600 z-10'
                     }`}
-                    style={{ left: `${position}%` }}
                     onClick={() => onMarkerClick(index)}
                     aria-label={`Map point ${index + 1}`}
                   >
@@ -84,7 +83,7 @@ export default function BasicMap({
           </div>
         )}
       </div>
-      
+
       {/* Weather info for selected point */}
       {selectedMarker !== null && weatherData[selectedMarker] && (
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
@@ -109,7 +108,7 @@ export default function BasicMap({
           </div>
         </div>
       )}
-      
+
       {/* Map attribution */}
       <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-400">
         Basic Map View

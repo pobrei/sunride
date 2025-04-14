@@ -56,7 +56,7 @@ function Input({
           isValid && "border-green-500",
           className
         )}
-        aria-invalid={isInvalid ? 'true' : undefined}
+        {...(isInvalid ? { 'aria-invalid': 'true' } : {})}
         {...props}
       />
       {isValid && !rightIcon && (

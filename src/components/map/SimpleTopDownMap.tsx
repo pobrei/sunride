@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
 import './map.css';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { cn } from '@/lib/utils';
 
 interface SimpleTopDownMapProps {
   /** GPX data containing route points */
@@ -147,18 +146,15 @@ export default function SimpleTopDownMap({
 
         {/* Markers */}
         {mapPoints.map((point) => {
-          // Create style object
-          const markerStyle: CSSProperties = {
-            left: `${point.x}%`,
-            top: `${point.y}%`
-          };
+          // Round to nearest 10% for positioning
+          const xPos = Math.round(point.x / 10) * 10;
+          const yPos = Math.round(point.y / 10) * 10;
 
           return (
             <button
               key={point.index}
               type="button"
-              className={`map-marker ${point.index === selectedMarker ? 'map-marker-selected' : 'map-marker-normal'}`}
-              style={markerStyle}
+              className={`map-marker marker-x-${xPos} marker-y-${yPos} ${point.index === selectedMarker ? 'map-marker-selected' : 'map-marker-normal'}`}
               onClick={() => onMarkerClick(point.index)}
               aria-label={`Map point ${point.index + 1}`}
             >

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getWeatherForecast, getMultipleForecastPoints } from '@/lib/weatherAPI';
 import type { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { ApiResponse, WeatherApiRequest, WeatherApiResponse } from '@/types/api-types';
+import { envConfig } from '@/lib/env';
 
 // Simple in-memory rate limiter
 interface RateLimitEntry {
@@ -10,8 +11,8 @@ interface RateLimitEntry {
 }
 
 const rateLimits: Map<string, RateLimitEntry> = new Map<string, RateLimitEntry>();
-const RATE_LIMIT_WINDOW: number = parseInt(process.env.RATE_LIMIT_WINDOW || '60000', 10); // 1 minute
-const RATE_LIMIT_MAX: number = parseInt(process.env.RATE_LIMIT_MAX || '60', 10); // 60 requests per minute
+const RATE_LIMIT_WINDOW: number = envConfig.apiRateLimitWindowMs; // From envConfig
+const RATE_LIMIT_MAX: number = envConfig.apiRateLimit; // From envConfig
 
 /**
  * Check if a request exceeds rate limits
