@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { GPXUploader } from '@/features/gpx/components';
+import { GPXUploader } from '@frontend/features/gpx/components';
 import { mockGPXFileContent, mockGPXData } from '../../mocks/mockData';
 import { parseGPX } from '@/utils';
 import { useFileUpload } from '@/hooks';

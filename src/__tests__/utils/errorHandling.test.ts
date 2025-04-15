@@ -14,7 +14,7 @@ import {
 } from '@/utils';
 
 // Mock Sentry
-jest.mock('@/lib/sentry', () => ({
+jest.mock('@shared/lib/sentry', () => ({
   captureException: jest.fn(),
   captureMessage: jest.fn(),
 }));

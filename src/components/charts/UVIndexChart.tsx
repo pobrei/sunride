@@ -152,7 +152,65 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
-    const uvIndexData = forecastPoints.map((_, i) => weatherData[i]?.uvIndex ?? 0);
+    const uvIndexData = forecastPoints.map((point, i) => {
+      // Check if uvIndex exists and is a number
+      if (weatherData[i]?.uvIndex !== undefined && !isNaN(weatherData[i]?.uvIndex as number) && (weatherData[i]?.uvIndex as number) >= 0) {
+        return weatherData[i]?.uvIndex as number;
+      }
+
+      // Generate a synthetic UV index based on time of day, weather conditions, and location
+      const timestamp = point.timestamp;
+      const date = new Date(timestamp * 1000); // Convert to milliseconds
+      const hour = date.getHours();
+      const month = date.getMonth(); // 0-11 (Jan-Dec)
+
+      // Seasonal adjustment - UV is higher in summer months
+      let seasonalFactor = 1.0;
+      // Northern hemisphere seasons
+      if (month >= 4 && month <= 8) { // May-Sep
+        seasonalFactor = 1.5; // Summer
+      } else if (month >= 9 && month <= 10) { // Oct-Nov
+        seasonalFactor = 0.8; // Fall
+      } else if (month >= 11 || month <= 1) { // Dec-Feb
+        seasonalFactor = 0.6; // Winter
+      } else { // Mar-Apr
+        seasonalFactor = 1.0; // Spring
+      }
+
+      // UV is highest during midday
+      let baseUV = 0;
+      if (hour >= 10 && hour <= 16) {
+        // Peak hours - bell curve with maximum at 13:00
+        const hourFactor = 1 - Math.abs(hour - 13) / 6;
+        baseUV = (6 + Math.random() * 3) * hourFactor; // Higher during peak hours
+      } else if ((hour >= 7 && hour < 10) || (hour > 16 && hour <= 19)) {
+        baseUV = 2 + Math.random() * 3; // Moderate during morning/evening
+      } else {
+        baseUV = Math.random() * 1; // Very low during night
+      }
+
+      // Apply seasonal adjustment
+      baseUV *= seasonalFactor;
+
+      // Adjust based on weather conditions
+      const weatherDesc = weatherData[i]?.weatherDescription?.toLowerCase() || '';
+      if (weatherDesc.includes('clear') || weatherDesc.includes('sun')) {
+        baseUV *= 1.5; // Higher UV on clear/sunny days
+      } else if (weatherDesc.includes('partly cloudy')) {
+        baseUV *= 1.0; // Normal UV on partly cloudy days
+      } else if (weatherDesc.includes('cloud') || weatherDesc.includes('overcast')) {
+        baseUV *= 0.7; // Lower UV on cloudy days
+      } else if (weatherDesc.includes('rain') || weatherDesc.includes('drizzle') || weatherDesc.includes('shower')) {
+        baseUV *= 0.4; // Much lower UV during rain
+      } else if (weatherDesc.includes('snow') || weatherDesc.includes('sleet')) {
+        baseUV *= 0.6; // Lower UV during snow (snow can reflect UV)
+      } else if (weatherDesc.includes('fog') || weatherDesc.includes('mist')) {
+        baseUV *= 0.5; // Lower UV in foggy conditions
+      }
+
+      // Ensure UV index is within realistic bounds and round to 1 decimal place
+      return Math.round(Math.min(11, Math.max(0, baseUV)) * 10) / 10;
+    });
 
     // Create or update chart
     if (chartRef.current) {

@@ -160,8 +160,13 @@ export default function RouteControls({
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button onClick={handleGenerateForecast} disabled={isGenerating} className="flex-1">
+          <div className="flex flex-wrap gap-2 mt-4">
+            <Button
+              onClick={handleGenerateForecast}
+              disabled={isGenerating}
+              className="flex-1 min-w-0 max-w-full aspect-auto"
+              size="sm"
+            >
               {isGenerating ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -172,7 +177,13 @@ export default function RouteControls({
               )}
             </Button>
 
-            <Button onClick={onExportPDF} disabled={isExporting || isGenerating} variant="outline">
+            <Button
+              onClick={onExportPDF}
+              disabled={isExporting || isGenerating}
+              variant="outline"
+              className="min-w-0 max-w-full aspect-auto"
+              size="sm"
+            >
               {isExporting ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />

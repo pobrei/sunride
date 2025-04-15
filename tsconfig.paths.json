@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@frontend/*": ["./frontend/*"],
+      "@backend/*": ["./backend/*"],
+      "@shared/*": ["./shared/*"],
+
+      "@frontend/components/*": ["./frontend/components/components/*"],
+      "@frontend/features/*": ["./frontend/features/features/*"],
+      "@frontend/hooks/*": ["./frontend/hooks/hooks/*"],
+      "@frontend/context/*": ["./frontend/context/*"],
+      "@frontend/utils/*": ["./frontend/utils/*"],
+      "@frontend/types/*": ["./frontend/types/*"],
+
+      "@backend/api/*": ["./backend/api/*"],
+      "@backend/lib/*": ["./backend/lib/*"],
+      "@backend/utils/*": ["./backend/utils/*"],
+
+      "@shared/utils/*": ["./shared/utils/*"],
+      "@shared/types/*": ["./shared/types/*"],
+      "@shared/lib/*": ["./shared/lib/*"],
+      "@shared/workers/*": ["./shared/workers/*"],
+
+      "@test/*": ["./src/__tests__/*", "./frontend/__tests__/*", "./shared/__tests__/*"]
+    }
+  }
+}

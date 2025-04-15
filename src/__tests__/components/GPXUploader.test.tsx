@@ -1,29 +1,29 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { GPXUploader } from '@/features/gpx/components';
+import { GPXUploader } from '@frontend/features/gpx/components';
 import { mockGPXFileContent, mockGPXData } from '../mocks/mockData';
-import { parseGPX } from '@/features/gpx/utils/gpxParser';
-import { useNotifications } from '@/features/notifications/context';
+import { parseGPX } from '@frontend/features/gpx/utils/gpxParser';
+import { useNotifications } from '@frontend/features/notifications/context';
 
 // Mock the hooks and utilities
-jest.mock('@/features/notifications/context', () => ({
+jest.mock('@frontend/features/notifications/context', () => ({
   useNotifications: jest.fn(),
   useSimpleNotifications: jest.fn().mockReturnValue({
     addNotification: jest.fn(),
   }),
 }));
 
-jest.mock('@/features/gpx/utils/gpxParser', () => ({
+jest.mock('@frontend/features/gpx/utils/gpxParser', () => ({
   parseGPX: jest.fn(),
 }));
 
-jest.mock('@/utils/errorHandlers', () => ({
+jest.mock('@shared/utils/errorHandlers', () => ({
   handleError: jest.fn().mockImplementation(err => err.message),
   ErrorType: { GPX: 'GPX_ERROR' },
 }));
 
-jest.mock('@/features/monitoring', () => ({
+jest.mock('@frontend/features/monitoring', () => ({
   captureException: jest.fn(),
 }));
 

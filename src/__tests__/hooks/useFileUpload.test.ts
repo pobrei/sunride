@@ -1,15 +1,15 @@
 import { renderHook, act } from '@testing-library/react';
 import { useFileUpload } from '@/hooks';
-import { useNotifications } from '@/components/providers';
+import { useNotifications } from '@frontend/components/providers';
 import { ValidationError } from '@/utils';
 
 // Mock the useNotifications hook
-jest.mock('@/components/providers', () => ({
+jest.mock('@frontend/components/providers', () => ({
   useNotifications: jest.fn(),
 }));
 
 // Mock the captureException function
-jest.mock('@/lib/sentry', () => ({
+jest.mock('@shared/lib/sentry', () => ({
   captureException: jest.fn(),
 }));
 

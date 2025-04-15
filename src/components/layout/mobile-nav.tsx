@@ -27,38 +27,7 @@ interface NavItem {
 export function MobileNav({ className }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
-  const navItems: NavItem[] = [
-    {
-      label: 'Home',
-      href: '/',
-      icon: <Home className="h-5 w-5" />,
-    },
-    {
-      label: 'Map',
-      href: '/map',
-      icon: <Map className="h-5 w-5" />,
-    },
-    {
-      label: 'Weather',
-      href: '/weather',
-      icon: <Cloud className="h-5 w-5" />,
-    },
-    {
-      label: 'Charts',
-      href: '/charts',
-      icon: <BarChart className="h-5 w-5" />,
-    },
-    {
-      label: 'Enhanced Visualization',
-      href: '/enhanced-visualization',
-      icon: <BarChart className="h-5 w-5 text-primary" />,
-    },
-    {
-      label: 'About',
-      href: '/about',
-      icon: <Info className="h-5 w-5" />,
-    },
-  ];
+  const navItems: NavItem[] = [];
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

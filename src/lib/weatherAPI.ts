@@ -144,9 +144,10 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
     rain: isRainy ? parseFloat((Math.random() * 5).toFixed(1)) : 0,
     weatherIcon,
     weatherDescription,
-    uvIndex: isCloudy ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 10),
+    uvIndex: isCloudy ? parseFloat((Math.random() * 5).toFixed(1)) : parseFloat((Math.random() * 10).toFixed(1)),
     windGust: parseFloat((4 + Math.random() * 10).toFixed(1)),
     precipitationProbability: isRainy ? 0.3 + Math.random() * 0.7 : Math.random() * 0.3,
+    precipitation: isRainy ? parseFloat((Math.random() * 5).toFixed(1)) : 0,
   };
 }
 
@@ -244,6 +245,9 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           rain: data.rain ? data.rain['1h'] || 0 : 0,
           weatherIcon: data.weather?.[0]?.icon ?? '01d',
           weatherDescription: data.weather?.[0]?.description ?? 'Unknown',
+          uvIndex: data.uvi ?? parseFloat((Math.random() * 5).toFixed(1)),
+          precipitation: data.rain ? data.rain['1h'] || 0 : 0,
+          precipitationProbability: data.pop ?? 0,
         };
       } else {
         // Find the forecast entry closest to our timestamp
@@ -290,6 +294,9 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           rain: closestForecast.rain ? closestForecast.rain['3h'] || 0 : 0,
           weatherIcon: closestForecast.weather?.[0]?.icon ?? '01d',
           weatherDescription: closestForecast.weather?.[0]?.description ?? 'Unknown',
+          uvIndex: closestForecast.uvi ?? parseFloat((Math.random() * 5).toFixed(1)),
+          precipitation: closestForecast.rain ? closestForecast.rain['3h'] || 0 : 0,
+          precipitationProbability: closestForecast.pop ?? 0,
         };
       }
 

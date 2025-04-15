@@ -286,34 +286,29 @@ graph TD
 
 ## Project Structure
 
-The project follows a feature-based folder structure for better organization and maintainability:
+The project follows a modular structure for better organization and maintainability:
 
 ```plaintext
-src/
-├── app/                 # Next.js App Router
-├── components/          # Shared UI components
-│   ├── common/          # Common components
-│   ├── layout/          # Layout components
-│   └── ui/              # Basic UI components
-├── features/            # Feature-based modules
-│   ├── gpx/             # GPX file handling
-│   ├── weather/         # Weather data and forecasting
-│   ├── map/             # Map visualization
-│   ├── charts/          # Data visualization
-│   ├── timeline/        # Timeline visualization
-│   ├── route/           # Route settings
-│   ├── export/          # Data export
-│   ├── data-validation/ # Data validation
-│   ├── notifications/   # User notifications
-│   ├── help/            # User help
-│   └── navigation/      # Application navigation
-├── hooks/               # Shared React hooks
-├── lib/                 # Library code
-├── types/               # TypeScript types
-└── utils/               # Utility functions
+/
+├── frontend/           # Next.js app and UI components
+│   ├── app/            # Next.js App Router pages
+│   ├── components/     # UI components
+│   ├── features/       # Feature-based modules
+│   └── hooks/          # React hooks
+│
+├── backend/            # API routes and server-side logic
+│   ├── api/            # Next.js API routes
+│   ├── lib/            # Backend utilities
+│   └── services/       # Backend services
+│
+├── shared/             # Shared code used by both frontend and backend
+│   ├── types/          # TypeScript type definitions
+│   ├── utils/          # Utility functions
+│   ├── lib/            # Shared libraries
+│   └── constants/      # Shared constants
 ```
 
-Each feature folder contains its own components, utilities, types, and documentation. See the [Features README](./src/features/README.md) for more details.
+Each feature folder contains its own components, utilities, types, and documentation. See the [Project Structure](./PROJECT_STRUCTURE.md) document for more details.
 
 ## Contributing
 

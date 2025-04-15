@@ -4,16 +4,12 @@ This folder contains components and utilities related to map visualization.
 
 ## Components
 
-- `Map`: The main map component that displays GPX routes and weather data.
-- `OpenLayersMap`: Implementation of the map using OpenLayers.
-- `SafeMapWrapper`: A wrapper component that handles error boundaries and loading states.
-- `DynamicMap`: A dynamically loaded map component for client-side rendering.
-- `SimpleMap`: A simplified map component for fallback or low-resource environments.
+- `SimpleMap`: The main map component that displays GPX routes and weather data.
 
 ## Usage
 
 ```tsx
-import { SafeMapWrapper } from '@/features/map/components';
+import { SimpleMap } from '@/features/map/components';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 
@@ -25,7 +21,7 @@ const MyComponent = () => {
   };
 
   return (
-    <SafeMapWrapper
+    <SimpleMap
       gpxData={gpxData}
       forecastPoints={forecastPoints}
       weatherData={weatherData}
@@ -36,9 +32,9 @@ const MyComponent = () => {
 };
 ```
 
-## OpenLayers Integration
+## Leaflet Integration
 
-The map components use OpenLayers for rendering interactive maps. Key features include:
+The map component uses Leaflet for rendering interactive maps. Key features include:
 
 - Displaying GPX routes as polylines
 - Showing weather data as markers

@@ -101,7 +101,7 @@ const WeatherInfoPanel: React.FC<WeatherInfoPanelProps> = ({ point, weather, onC
         <div className={cn(layout.flexRow, effects.cardInner)}>
           <Sun className="h-4 w-4 mr-2 text-yellow-500" />
           <div>
-            <div className={cn(typography.bodySm, typography.strong)}>{weather.uvIndex}</div>
+            <div className={cn(typography.bodySm, typography.strong)}>{weather.uvIndex !== undefined ? weather.uvIndex.toFixed(1) : 'N/A'}</div>
             <div className={cn(typography.bodyXs, typography.muted)}>UV Index</div>
           </div>
         </div>

@@ -12,8 +12,18 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@frontend/(.*)$': '<rootDir>/frontend/$1',
+    '^@backend/(.*)$': '<rootDir>/backend/$1',
+    '^@shared/(.*)$': '<rootDir>/shared/$1',
   },
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/.next/',
+    '/out/',
+    '/coverage/',
+    '/public/',
+    '/scripts/',
+  ],
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
@@ -21,12 +31,15 @@ const customJestConfig = {
   transformIgnorePatterns: ['/node_modules/', '^.+\\.module\\.(css|sass|scss)$'],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/_*.{js,jsx,ts,tsx}',
-    '!src/**/index.{js,jsx,ts,tsx}',
-    '!src/**/*.stories.{js,jsx,ts,tsx}',
-    '!src/pages/_app.tsx',
-    '!src/pages/_document.tsx',
+    'frontend/**/*.{js,jsx,ts,tsx}',
+    'backend/**/*.{js,jsx,ts,tsx}',
+    'shared/**/*.{js,jsx,ts,tsx}',
+    '!**/*.d.ts',
+    '!**/_*.{js,jsx,ts,tsx}',
+    '!**/index.{js,jsx,ts,tsx}',
+    '!**/*.stories.{js,jsx,ts,tsx}',
+    '!**/pages/_app.tsx',
+    '!**/pages/_document.tsx',
     '!**/node_modules/**',
   ],
   coverageThreshold: {

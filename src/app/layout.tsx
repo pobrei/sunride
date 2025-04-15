@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
-import { MainNav } from '@/components/layout';
-import { SkipToContent } from '@/components/ui';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,7 +24,7 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: '#111' },
@@ -60,10 +58,8 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <SkipToContent contentId="main-content" />
           <div className="relative flex min-h-screen flex-col">
-            <MainNav />
-            <main id="main-content" className="flex-1" tabIndex={-1} aria-label="Main content">
+            <main className="flex-1">
               {children}
             </main>
           </div>

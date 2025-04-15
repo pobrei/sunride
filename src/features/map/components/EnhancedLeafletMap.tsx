@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 // Note: leaflet.heat is imported dynamically in the HeatmapLayer component
@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Crosshair, Layers, Thermometer, Wind, TrendingUp, Droplets, Sun, Mountain, Play, Pause, SkipForward, SkipBack, Clock } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import CenterMapButton from './CenterMapButton';
 import { KeyboardNavigation } from '@/features/navigation/components';
 
 // Types for the map props
@@ -368,8 +369,20 @@ const MapContent = ({
   };
 
   // Component to create a button to center the map on the route
-  const CenterMapButton = () => {
+  const CenterMapControl = () => {
     const map = useMap();
+
+    const handleCenterMap = useCallback(() => {
+      if (bounds.isValid() && hasValidRoutePath) {
+        console.log('Centering map on route bounds:', bounds.toBBoxString());
+        map.fitBounds(bounds, { padding: [50, 50] });
+      } else if (hasValidRoutePath && routePath.length > 0) {
+        // If bounds are not valid but we have route points, try to center on the first point
+        const firstPoint = routePath[0] as [number, number];
+        console.log('Centering map on first point:', firstPoint);
+        map.setView(firstPoint, 13);
+      }
+    }, [map]);
 
     return (
       <div className="leaflet-top leaflet-right">
@@ -377,11 +390,7 @@ const MapContent = ({
           <button
             type="button"
             className="flex items-center justify-center w-8 h-8 bg-white text-black"
-            onClick={() => {
-              if (bounds.isValid()) {
-                map.fitBounds(bounds, { padding: [50, 50] });
-              }
-            }}
+            onClick={handleCenterMap}
             title="Center map on route"
           >
             <Crosshair className="w-4 h-4" />
@@ -835,8 +844,88 @@ const MapContent = ({
     );
   };
 
+  // Add custom CSS for route animations
+  useEffect(() => {
+    // Create a style element for custom animations
+    const styleId = 'map-route-animations';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.innerHTML = `
+        @keyframes pulse-subtle {
+          0% { stroke-opacity: 0.8; }
+          50% { stroke-opacity: 1; }
+          100% { stroke-opacity: 0.8; }
+        }
+        .route-main {
+          animation: pulse-subtle 3s infinite ease-in-out;
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          animation: dash 1.5s ease-in-out forwards;
+        }
+        @keyframes dash {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+        .route-shadow {
+          filter: blur(4px);
+        }
+        .route-segment-enhanced {
+          transition: all 0.3s ease;
+        }
+        .route-segment-enhanced:hover {
+          stroke-width: 7px;
+        }
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+          .leaflet-touch .leaflet-control-layers,
+          .leaflet-touch .leaflet-bar {
+            border: 2px solid rgba(0,0,0,0.2);
+          }
+          .leaflet-touch .leaflet-control-zoom-in,
+          .leaflet-touch .leaflet-control-zoom-out {
+            font-size: 22px;
+          }
+          .leaflet-touch .leaflet-bar a {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      // Clean up styles on unmount
+      const styleElement = document.getElementById(styleId);
+      if (styleElement) {
+        styleElement.remove();
+      }
+    };
+  }, []);
+
+  // Function to center the map on the route
+  const handleCenterMap = useCallback(() => {
+    if (bounds.isValid() && hasValidRoutePath) {
+      console.log('Centering map on route bounds from external button');
+      // We need to access the map instance from the MapController
+      // Use any type to access the _leaflet_map property
+      const container = document.querySelector('.leaflet-container') as any;
+      if (container && container._leaflet_map) {
+        container._leaflet_map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }
+  }, [bounds, hasValidRoutePath]);
+
   return (
     <div className="relative h-[500px] w-full rounded-xl overflow-hidden border border-border bg-card card-shadow animate-fade-in transition-smooth">
+      {/* External Center Map Button */}
+      <CenterMapButton
+        onClick={handleCenterMap}
+        className="absolute top-4 right-4 z-50"
+      />
       <MapContainer
         center={routePath.length > 0 ? routePath[0] : [51.505, -0.09]}
         zoom={13}
@@ -860,18 +949,98 @@ const MapContent = ({
           />
         )}
 
-        {/* Standard route line (when elevation layer is off) */}
+        {/* Enhanced route line (when elevation layer is off) */}
         {!visibleLayers.elevation && hasValidRoutePath && (
+          <React.Fragment>
+            {/* Shadow/glow effect for the route */}
+            <Polyline
+              positions={routePath}
+              color="rgba(0,0,0,0.3)"
+              weight={8}
+              opacity={0.5}
+              smoothFactor={1}
+              className="route-shadow"
+            />
+            {/* Main route line with improved styling */}
+            <Polyline
+              positions={routePath}
+              color="hsl(var(--primary))"
+              weight={5}
+              opacity={0.9}
+              smoothFactor={1}
+              lineCap="round"
+              lineJoin="round"
+              className="route-main animate-pulse-subtle"
+              eventHandlers={{
+                click: (e) => {
+                  // Find the closest point on the route
+                  if (!validGpxData) return;
+
+                  const clickLatLng = e.latlng;
+                  let closestPointIndex = 0;
+                  let minDistance = Infinity;
+
+                  validGpxData.points.forEach((point, index) => {
+                    const distance = L.latLng(point.lat, point.lon).distanceTo(clickLatLng);
+                    if (distance < minDistance) {
+                      minDistance = distance;
+                      closestPointIndex = index;
+                    }
+                  });
+
+                  handleRouteSegmentSelection(closestPointIndex);
+                }
+              }}
+            />
+          </React.Fragment>
+        )}
+
+        {/* Enhanced elevation-colored route segments (when elevation layer is on) */}
+        {visibleLayers.elevation && hasValidRoutePath && elevationSegments && elevationSegments.length > 0 && elevationSegments.map((segment, index) => (
+          <React.Fragment key={`segment-group-${index}`}>
+            {/* Shadow effect for each segment */}
+            <Polyline
+              key={`segment-shadow-${index}`}
+              positions={segment.positions}
+              color="rgba(0,0,0,0.3)"
+              weight={8}
+              opacity={0.5}
+              smoothFactor={1}
+            />
+            {/* Main segment with improved styling */}
+            <Polyline
+              key={`segment-${index}`}
+              positions={segment.positions}
+              color={segment.color}
+              weight={5}
+              opacity={0.9}
+              smoothFactor={1}
+              lineCap="round"
+              lineJoin="round"
+              className="route-segment-enhanced"
+              eventHandlers={{
+                click: () => handleRouteSegmentSelection(segment.index)
+              }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* Temperature heatmap layer */}
+        {visibleLayers.heatmap && <HeatmapLayer />}
+
+        {/* Route segment selection */}
+        <RouteSegment />
+
+        {/* Touch-friendly route hitbox for mobile - wider clickable area */}
+        {hasValidRoutePath && (
           <Polyline
             positions={routePath}
-            color="hsl(var(--primary))"
-            weight={5}
-            opacity={0.8}
+            color="transparent"
+            weight={20} /* Much wider for easier touch */
+            opacity={0}
             eventHandlers={{
               click: (e) => {
-                // Find the closest point on the route
                 if (!validGpxData) return;
-
                 const clickLatLng = e.latlng;
                 let closestPointIndex = 0;
                 let minDistance = Infinity;
@@ -890,29 +1059,9 @@ const MapContent = ({
           />
         )}
 
-        {/* Elevation-colored route segments (when elevation layer is on) */}
-        {visibleLayers.elevation && hasValidRoutePath && elevationSegments && elevationSegments.length > 0 && elevationSegments.map((segment, index) => (
-          <Polyline
-            key={`segment-${index}`}
-            positions={segment.positions}
-            color={segment.color}
-            weight={5}
-            opacity={0.8}
-            eventHandlers={{
-              click: () => handleRouteSegmentSelection(segment.index)
-            }}
-          />
-        ))}
-
-        {/* Temperature heatmap layer */}
-        {visibleLayers.heatmap && <HeatmapLayer />}
-
-        {/* Route segment selection */}
-        <RouteSegment />
-
         <MapMarkers />
         <MapController />
-        <CenterMapButton />
+        <CenterMapControl />
         <MapKeyboardNavigation />
       </MapContainer>
 

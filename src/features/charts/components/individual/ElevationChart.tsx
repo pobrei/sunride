@@ -69,7 +69,10 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
         return currentDiff < closestDiff ? point : closest;
       }, gpxData.points[0]);
 
-      return closestPoint.elevation;
+      // Ensure we have a valid elevation value
+      return typeof closestPoint.elevation === 'number' && !isNaN(closestPoint.elevation)
+        ? closestPoint.elevation
+        : gpxData.minElevation || 0;
     });
 
     // Calculate min and max for y-axis with some padding

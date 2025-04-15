@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Cloud, CloudRain, BarChart } from 'lucide-react';
 import { EnhancedThemeToggle } from '@/components/ui/enhanced-theme-toggle';
-import { MobileNav } from '@/components/layout/mobile-nav';
+
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
@@ -28,7 +28,6 @@ export function Header({ className }: HeaderProps) {
     >
       <div className={cn(layout.container, layout.flexBetween, "h-16")}>
         <div className={cn(layout.flexRow, "gap-2")}>
-          <MobileNav />
           <Link href="/" className={cn(layout.flexRow, "gap-2", animation.linkHover)}>
             <div className={cn(layout.flexCenter, "w-8 h-8 rounded-full bg-primary/10", animation.pulse)}>
               <CloudRain className="h-5 w-5 text-primary" />
@@ -36,30 +35,6 @@ export function Header({ className }: HeaderProps) {
             <span className={cn(typography.h5, "hidden sm:inline-block")}>RideWeather</span>
           </Link>
         </div>
-
-        <nav className={cn(layout.flexRow, "hidden md:flex gap-1")}>
-          <Button variant="ghost" asChild className={effects.buttonHover}>
-            <Link href="/">Home</Link>
-          </Button>
-          <Button variant="ghost" asChild className={effects.buttonHover}>
-            <Link href="/map">Map</Link>
-          </Button>
-          <Button variant="ghost" asChild className={effects.buttonHover}>
-            <Link href="/weather">Weather</Link>
-          </Button>
-          <Button variant="ghost" asChild className={effects.buttonHover}>
-            <Link href="/charts">Charts</Link>
-          </Button>
-          <Button variant="ghost" asChild className={cn(effects.buttonHover, "text-primary")}>
-            <Link href="/enhanced-visualization" className="flex items-center gap-1">
-              <BarChart className="h-4 w-4" />
-              Enhanced Viz
-            </Link>
-          </Button>
-          <Button variant="ghost" asChild className={effects.buttonHover}>
-            <Link href="/about">About</Link>
-          </Button>
-        </nav>
 
         <div className={cn(layout.flexRow, "gap-2")}>
           <EnhancedThemeToggle />

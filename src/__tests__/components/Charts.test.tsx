@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ChartContainer } from '@/features/charts/components';
+import { ChartContainer } from '@frontend/features/charts/components';
 import { mockGPXData, mockForecastPoints, mockWeatherData } from '../mocks/mockData';
-import { WeatherProvider } from '@/features/weather/context';
-import { NotificationProvider } from '@/features/notifications/context';
+import { WeatherProvider } from '@frontend/features/weather/context';
+import { NotificationProvider } from '@frontend/features/notifications/context';
 
 // Mock Chart.js
 jest.mock('chart.js/auto', () => {
@@ -15,7 +15,7 @@ jest.mock('chart.js/auto', () => {
 });
 
 // Mock the individual chart components
-jest.mock('@/features/charts/components/individual/TemperatureChart', () => {
+jest.mock('@frontend/features/charts/components/individual/TemperatureChart', () => {
   return {
     __esModule: true,
     default: ({ forecastPoints, weatherData, selectedMarker, onChartClick }) => (
@@ -28,7 +28,7 @@ jest.mock('@/features/charts/components/individual/TemperatureChart', () => {
   };
 });
 
-jest.mock('@/features/charts/components/individual/PrecipitationChart', () => {
+jest.mock('@frontend/features/charts/components/individual/PrecipitationChart', () => {
   return {
     __esModule: true,
     default: ({ forecastPoints, weatherData, selectedMarker, onChartClick }) => (
@@ -41,7 +41,7 @@ jest.mock('@/features/charts/components/individual/PrecipitationChart', () => {
   };
 });
 
-jest.mock('@/features/charts/components/individual/WindChart', () => {
+jest.mock('@frontend/features/charts/components/individual/WindChart', () => {
   return {
     __esModule: true,
     default: ({ forecastPoints, weatherData, selectedMarker, onChartClick }) => (
@@ -55,28 +55,28 @@ jest.mock('@/features/charts/components/individual/WindChart', () => {
 });
 
 // Mock the other chart components
-jest.mock('@/features/charts/components/individual/HumidityChart', () => {
+jest.mock('@frontend/features/charts/components/individual/HumidityChart', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="humidity-chart">Humidity Chart</div>,
   };
 });
 
-jest.mock('@/features/charts/components/individual/PressureChart', () => {
+jest.mock('@frontend/features/charts/components/individual/PressureChart', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="pressure-chart">Pressure Chart</div>,
   };
 });
 
-jest.mock('@/features/charts/components/individual/ElevationChart', () => {
+jest.mock('@frontend/features/charts/components/individual/ElevationChart', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="elevation-chart">Elevation Chart</div>,
   };
 });
 
-jest.mock('@/features/charts/components/individual/UVIndexChart', () => {
+jest.mock('@frontend/features/charts/components/individual/UVIndexChart', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="uv-index-chart">UV Index Chart</div>,

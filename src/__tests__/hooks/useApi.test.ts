@@ -1,15 +1,15 @@
 import { renderHook, act } from '@testing-library/react';
 import { useApi } from '@/hooks';
 import { mockFetch, mockFetchWithError, mockFetchWithNetworkError } from '../mocks/mockFetch';
-import { useNotifications } from '@/components/providers';
+import { useNotifications } from '@frontend/components/providers';
 
 // Mock useNotifications hook
-jest.mock('@/components/providers', () => ({
+jest.mock('@frontend/components/providers', () => ({
   useNotifications: jest.fn(),
 }));
 
 // Mock Sentry
-jest.mock('@/lib/sentry', () => ({
+jest.mock('@shared/lib/sentry', () => ({
   captureException: jest.fn(),
 }));
 

@@ -61,12 +61,15 @@ export function formatWindSpeed(speed: number): string {
 }
 
 /**
- * Format precipitation probability as a percentage
- * @param probability - Precipitation probability (0-1)
- * @returns Formatted precipitation string (e.g., "30%")
+ * Format precipitation amount in mm
+ * @param amount - Precipitation amount in mm
+ * @returns Formatted precipitation string (e.g., "3.2 mm")
  */
-export function formatPrecipitation(probability: number): string {
-  return `${Math.round(probability * 100)}%`;
+export function formatPrecipitation(amount: number): string {
+  if (amount === undefined || amount === null) {
+    return 'N/A mm';
+  }
+  return `${amount.toFixed(1)} mm`;
 }
 
 /**
