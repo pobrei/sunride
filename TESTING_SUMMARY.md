@@ -7,12 +7,14 @@ We've implemented a comprehensive testing strategy for the Weather App project, 
 ## Test Structure
 
 - **Unit Tests**: Test individual functions and components in isolation
+
   - GPX parser
   - Weather data validation
   - Distance calculations
   - API hooks
 
 - **Component Tests**: Test UI components
+
   - GPX Uploader
   - Map
   - Timeline
@@ -28,14 +30,17 @@ We've implemented a comprehensive testing strategy for the Weather App project, 
 We've created the following test files:
 
 1. **GPX Parser Tests**
+
    - `gpxParser.test.ts`: Tests for parsing GPX files, calculating distances, and generating forecast points
 
 2. **Weather Service Tests**
+
    - `weatherService.test.ts`: Tests for validating weather data and synchronizing time zones
    - `weatherDataMerging.test.ts`: Tests for merging weather data with route points
    - `distanceSampling.test.ts`: Tests for sampling route points at regular intervals
 
 3. **Component Tests**
+
    - `GPXUploader.test.tsx`: Tests for the GPX file upload component
    - `Map.test.tsx`: Tests for the map visualization component
    - `Timeline.test.tsx`: Tests for the timeline navigation component
@@ -43,6 +48,7 @@ We've created the following test files:
    - `SafeChartsWrapper.test.tsx`: Tests for the chart error boundary component
 
 4. **API Hook Tests**
+
    - `useWeatherAPI.test.ts`: Tests for the weather API hook
 
 5. **Integration Tests**
@@ -81,9 +87,11 @@ npm run test:file -- <pattern>
 We've added specific tests for error handling:
 
 1. **GPX Parser Error Tests**
+
    - `gpxParserErrors.test.ts`: Tests for handling invalid GPX files, missing data, and format errors
 
 2. **Weather API Error Tests**
+
    - `weatherAPIErrors.test.ts`: Tests for handling network errors, API errors, and invalid responses
 
 3. **UI Error Handling Tests**
@@ -95,6 +103,7 @@ We've added specific tests for error handling:
 We've set up GitHub Actions workflows for continuous integration and deployment:
 
 1. **Test Workflow**
+
    - Runs on push to main and pull requests
    - Runs linting, type checking, and tests
    - Generates and uploads coverage reports

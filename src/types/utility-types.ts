@@ -25,7 +25,7 @@ export function createSuccessResult<T>(data: T): Result<T> {
   return {
     data,
     error: null,
-    success: true
+    success: true,
   };
 }
 
@@ -40,7 +40,7 @@ export function createErrorResult<T>(error: Error, status?: number): Result<T> {
     data: null,
     error,
     success: false,
-    status
+    status,
   };
 }
 

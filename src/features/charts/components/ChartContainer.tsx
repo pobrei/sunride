@@ -10,7 +10,7 @@ import {
   HumidityChart,
   PressureChart,
   ElevationChart,
-  UVIndexChart
+  UVIndexChart,
 } from './individual';
 
 interface ChartContainerProps {

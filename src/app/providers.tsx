@@ -10,7 +10,9 @@ import { SafeDataProvider } from '@/features/data-validation/context';
 // Import from components
 import { ErrorBoundary } from '@/components/common';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { PerformanceProvider } from '@/components/providers/performance-provider';
 import { ToastProvider } from '@/components/ui/toast';
+import { KeyboardFocusOutline } from '@/components/ui/KeyboardFocusOutline';
 
 // Import from lib
 import { initSentry } from '@/lib/sentry';
@@ -28,17 +30,18 @@ export default function Providers({ children }: ProvidersProps) {
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ToastProvider>
+        <PerformanceProvider>
+          <KeyboardFocusOutline />
+          <ToastProvider>
           <NotificationProvider>
             <SimpleNotificationProvider>
               <SafeDataProvider>
-                <WeatherProvider>
-                  {children}
-                </WeatherProvider>
+                <WeatherProvider>{children}</WeatherProvider>
               </SafeDataProvider>
             </SimpleNotificationProvider>
           </NotificationProvider>
-        </ToastProvider>
+          </ToastProvider>
+        </PerformanceProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

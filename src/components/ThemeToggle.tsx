@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 type Theme = 'light' | 'dark' | 'system';
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('system');
   const [mounted, setMounted] = useState(false);
 
@@ -21,7 +21,9 @@ export default function ThemeToggle() {
         setTheme(savedTheme);
       } else {
         // Check system preference
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
         setTheme(systemTheme);
       }
     }
@@ -34,7 +36,9 @@ export default function ThemeToggle() {
     const root = document.documentElement;
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
       root.classList.remove('light', 'dark');
       root.classList.add(systemTheme);
     } else {

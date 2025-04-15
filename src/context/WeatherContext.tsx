@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { GPXData, generateForecastPoints } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { fetchWeatherForPoints } from '@/lib/mongodb-api';
@@ -24,7 +31,11 @@ interface WeatherContextType {
   setSelectedMarker: (index: number | null) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: Error | null) => void;
-  generateWeatherForecast: (weatherInterval: number, startTime: Date, avgSpeed: number) => Promise<void>;
+  generateWeatherForecast: (
+    weatherInterval: number,
+    startTime: Date,
+    avgSpeed: number
+  ) => Promise<void>;
   setIsExporting: (isExporting: boolean) => void;
   setLoadingMessage: (message: string) => void;
 }
@@ -53,16 +64,26 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     setGpxDataInternal(validateGPXData(data));
   };
 
-  const setForecastPoints = useCallback((points: ForecastPoint[]) => {
-    setForecastPointsInternal(validateForecastPoints(points));
-  }, [validateForecastPoints]);
+  const setForecastPoints = useCallback(
+    (points: ForecastPoint[]) => {
+      setForecastPointsInternal(validateForecastPoints(points));
+    },
+    [validateForecastPoints]
+  );
 
-  const setWeatherData = useCallback((data: (WeatherData | null)[]) => {
-    setWeatherDataInternal(validateWeatherData(data));
-  }, [validateWeatherData]);
+  const setWeatherData = useCallback(
+    (data: (WeatherData | null)[]) => {
+      setWeatherDataInternal(validateWeatherData(data));
+    },
+    [validateWeatherData]
+  );
 
   // Generate weather forecast for the route
-  const generateWeatherForecast = async (weatherInterval: number, startTime: Date, avgSpeed: number) => {
+  const generateWeatherForecast = async (
+    weatherInterval: number,
+    startTime: Date,
+    avgSpeed: number
+  ) => {
     if (!gpxData) {
       addNotification('error', 'Please upload a GPX file first');
       return;
@@ -77,12 +98,7 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
 
     try {
       // Generate forecast points at intervals along the route
-      const points = generateForecastPoints(
-        gpxData,
-        weatherInterval,
-        startTime,
-        avgSpeed
-      );
+      const points = generateForecastPoints(gpxData, weatherInterval, startTime, avgSpeed);
 
       setForecastPoints(points);
       setLoadingMessage(`Fetching weather data for ${points.length} points...`);
@@ -110,12 +126,12 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
           captureException(error, {
             context: 'fetchWeatherForPoints',
             points: points.length,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         } else {
           captureException(new Error('Unknown error fetching weather data'), {
             context: 'fetchWeatherForPoints',
-            originalError: error
+            originalError: error,
           });
         }
 
@@ -133,12 +149,12 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
           context: 'generateForecastPoints',
           weatherInterval,
           avgSpeed,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       } else {
         captureException(new Error('Unknown error processing route data'), {
           context: 'generateForecastPoints',
-          originalError: error
+          originalError: error,
         });
       }
 

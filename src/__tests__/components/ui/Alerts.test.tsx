@@ -5,12 +5,7 @@ import { mockForecastPoints, mockWeatherData } from '../../mocks/mockData';
 
 describe('Alerts Component', () => {
   it('should render without crashing', () => {
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={mockWeatherData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={mockWeatherData} />);
 
     // Component should be in the document
     expect(screen.getByTestId('weather-alerts')).toBeInTheDocument();
@@ -25,12 +20,7 @@ describe('Alerts Component', () => {
       rain: 0, // No rain
     }));
 
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={safeWeatherData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={safeWeatherData} />);
 
     expect(screen.getByText(/No weather alerts/i)).toBeInTheDocument();
   });
@@ -43,12 +33,7 @@ describe('Alerts Component', () => {
       temperature: 35, // Very hot
     };
 
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={extremeHeatData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={extremeHeatData} />);
 
     expect(screen.getByText(/Extreme heat/i)).toBeInTheDocument();
   });
@@ -61,12 +46,7 @@ describe('Alerts Component', () => {
       temperature: -5, // Below freezing
     };
 
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={freezingData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={freezingData} />);
 
     expect(screen.getByText(/Freezing conditions/i)).toBeInTheDocument();
   });
@@ -79,12 +59,7 @@ describe('Alerts Component', () => {
       windSpeed: 20, // Very windy
     };
 
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={highWindData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={highWindData} />);
 
     expect(screen.getByText(/High wind/i)).toBeInTheDocument();
   });
@@ -97,23 +72,13 @@ describe('Alerts Component', () => {
       rain: 10, // Heavy rain
     };
 
-    render(
-      <Alerts
-        forecastPoints={mockForecastPoints}
-        weatherData={heavyRainData}
-      />
-    );
+    render(<Alerts forecastPoints={mockForecastPoints} weatherData={heavyRainData} />);
 
     expect(screen.getByText(/Heavy rain/i)).toBeInTheDocument();
   });
 
   it('should handle empty data gracefully', () => {
-    render(
-      <Alerts
-        forecastPoints={[]}
-        weatherData={[]}
-      />
-    );
+    render(<Alerts forecastPoints={[]} weatherData={[]} />);
 
     expect(screen.getByText(/No weather alerts/i)).toBeInTheDocument();
   });

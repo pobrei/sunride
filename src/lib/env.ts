@@ -59,11 +59,7 @@ interface Env {
 }
 
 // Define the required environment variables
-const requiredEnvVars: Array<keyof Env> = [
-  'OPENWEATHER_API_KEY',
-  'MONGODB_URI',
-  'NODE_ENV',
-];
+const requiredEnvVars: Array<keyof Env> = ['OPENWEATHER_API_KEY', 'MONGODB_URI', 'NODE_ENV'];
 
 // Get the environment variables
 const env = process.env as unknown as Env;
@@ -77,7 +73,9 @@ for (const envVar of requiredEnvVars) {
 
 // Parse numeric environment variables
 const apiRateLimit = env.API_RATE_LIMIT ? parseInt(env.API_RATE_LIMIT, 10) : 100;
-const apiRateLimitWindowMs = env.API_RATE_LIMIT_WINDOW_MS ? parseInt(env.API_RATE_LIMIT_WINDOW_MS, 10) : 60000;
+const apiRateLimitWindowMs = env.API_RATE_LIMIT_WINDOW_MS
+  ? parseInt(env.API_RATE_LIMIT_WINDOW_MS, 10)
+  : 60000;
 const cacheDuration = env.CACHE_DURATION ? parseInt(env.CACHE_DURATION, 10) : 3600000; // Default: 1 hour
 
 // Parse boolean environment variables

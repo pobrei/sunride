@@ -11,17 +11,17 @@ import { GPXData, RoutePoint } from '@/features/gpx/types';
  */
 export function isForecastPoint(value: unknown): value is ForecastPoint {
   if (!value || typeof value !== 'object') return false;
-  
+
   const point = value as Partial<ForecastPoint>;
-  
+
   return (
-    typeof point.lat === 'number' && 
-    typeof point.lon === 'number' && 
-    !isNaN(point.lat) && 
+    typeof point.lat === 'number' &&
+    typeof point.lon === 'number' &&
+    !isNaN(point.lat) &&
     !isNaN(point.lon) &&
-    point.lat >= -90 && 
-    point.lat <= 90 && 
-    point.lon >= -180 && 
+    point.lat >= -90 &&
+    point.lat <= 90 &&
+    point.lon >= -180 &&
     point.lon <= 180 &&
     typeof point.timestamp === 'number' &&
     typeof point.distance === 'number'
@@ -35,33 +35,28 @@ export function isForecastPoint(value: unknown): value is ForecastPoint {
  */
 export function isWeatherData(value: unknown): value is WeatherData {
   if (!value || typeof value !== 'object') return false;
-  
+
   const data = value as Partial<WeatherData>;
-  
+
   const requiredNumericProps: Array<keyof WeatherData> = [
-    'temperature', 
-    'feelsLike', 
-    'humidity', 
-    'pressure', 
-    'windSpeed', 
-    'rain'
+    'temperature',
+    'feelsLike',
+    'humidity',
+    'pressure',
+    'windSpeed',
+    'rain',
   ];
-  
-  const requiredStringProps: Array<keyof WeatherData> = [
-    'weatherIcon',
-    'weatherDescription'
-  ];
-  
+
+  const requiredStringProps: Array<keyof WeatherData> = ['weatherIcon', 'weatherDescription'];
+
   // Check required numeric properties
   const hasRequiredNumericProps = requiredNumericProps.every(
     prop => typeof data[prop] === 'number' && !isNaN(data[prop] as number)
   );
-  
+
   // Check required string properties
-  const hasRequiredStringProps = requiredStringProps.every(
-    prop => typeof data[prop] === 'string'
-  );
-  
+  const hasRequiredStringProps = requiredStringProps.every(prop => typeof data[prop] === 'string');
+
   return hasRequiredNumericProps && hasRequiredStringProps;
 }
 
@@ -72,17 +67,17 @@ export function isWeatherData(value: unknown): value is WeatherData {
  */
 export function isRoutePoint(value: unknown): value is RoutePoint {
   if (!value || typeof value !== 'object') return false;
-  
+
   const point = value as Partial<RoutePoint>;
-  
+
   return (
-    typeof point.lat === 'number' && 
-    typeof point.lon === 'number' && 
-    !isNaN(point.lat) && 
+    typeof point.lat === 'number' &&
+    typeof point.lon === 'number' &&
+    !isNaN(point.lat) &&
     !isNaN(point.lon) &&
-    point.lat >= -90 && 
-    point.lat <= 90 && 
-    point.lon >= -180 && 
+    point.lat >= -90 &&
+    point.lat <= 90 &&
+    point.lon >= -180 &&
     point.lon <= 180 &&
     typeof point.elevation === 'number' &&
     typeof point.distance === 'number'
@@ -96,28 +91,28 @@ export function isRoutePoint(value: unknown): value is RoutePoint {
  */
 export function isGPXData(value: unknown): value is GPXData {
   if (!value || typeof value !== 'object') return false;
-  
+
   const data = value as Partial<GPXData>;
-  
+
   // Check if name is a string
   if (typeof data.name !== 'string') return false;
-  
+
   // Check if points is an array
   if (!Array.isArray(data.points)) return false;
-  
+
   // Check numeric properties
   const numericProps: Array<keyof GPXData> = [
     'totalDistance',
     'elevationGain',
     'elevationLoss',
     'maxElevation',
-    'minElevation'
+    'minElevation',
   ];
-  
+
   const hasNumericProps = numericProps.every(
     prop => typeof data[prop] === 'number' && !isNaN(data[prop] as number)
   );
-  
+
   return hasNumericProps;
 }
 

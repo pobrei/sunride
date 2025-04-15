@@ -1,8 +1,10 @@
 'use client';
 
 import { useRef } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Map as MapIcon, Upload, CloudRain, BarChart } from 'lucide-react';
 import gsap from 'gsap';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
 // Import from feature folders
 import { useWeather } from '@/features/weather/context';
@@ -20,6 +22,10 @@ import { KeyboardNavigation } from '@/features/navigation/components';
 
 // Import from components
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { ProgressSteps } from '@/components/ui/progress-steps';
 
 // Import types
 import type { GPXData, RouteSettings } from '@/types';
@@ -28,7 +34,9 @@ import type { GPXData, RouteSettings } from '@/types';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import GPXUploader from '@/components/GPXUploader';
-import dynamic from 'next/dynamic';
+
+// Import layout components
+import { ResponsiveLayout } from '@/components/layout/responsive-layout';
 
 // Import the map component
 import MapWrapper from '@/components/map/MapWrapper';
@@ -37,7 +45,7 @@ import { ClientSideCharts } from '@/components/charts/ClientSideCharts';
 import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
 import { TripSummary as RouteSummary } from '@/components/route/TripSummary';
 import { UserGuide } from '@/components/help/UserGuide';
-import { PageWrapper } from '@/components/layout/page-wrapper';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const {
@@ -50,7 +58,7 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useNotifications();
@@ -65,7 +73,7 @@ export default function Home() {
     forecastPoints,
     weatherData,
     mapRef: mapRef as React.RefObject<HTMLDivElement>,
-    chartsRef: chartsRef as React.RefObject<HTMLDivElement>
+    chartsRef: chartsRef as React.RefObject<HTMLDivElement>,
   };
 
   // Handle GPX file upload
@@ -74,7 +82,10 @@ export default function Home() {
     setSelectedMarker(null);
 
     // Show success notification
-    addNotification('success', `Route loaded successfully: ${data.name || 'Unnamed route'} (${data.points.length} points)`);
+    addNotification(
+      'success',
+      `Route loaded successfully: ${data.name || 'Unnamed route'} (${data.points.length} points)`
+    );
 
     // Wait for component to render before animating
     setTimeout(() => {
@@ -92,11 +103,7 @@ export default function Home() {
   // Handle route settings update
   const handleUpdateSettings = async (settings: RouteSettings) => {
     // Use the generateWeatherForecast function from context
-    await generateWeatherForecast(
-      settings.weatherInterval,
-      settings.startTime,
-      settings.avgSpeed
-    );
+    await generateWeatherForecast(settings.weatherInterval, settings.startTime, settings.avgSpeed);
   };
 
   // Handle marker click on map
@@ -114,112 +121,195 @@ export default function Home() {
     setSelectedMarker(index);
   };
 
-  return (
-    <PageWrapper>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">RideWeather Planner</h1>
+  // Define the processing steps for GPX upload
+  const uploadSteps = [
+    {
+      label: 'Upload GPX',
+      description: 'Select and upload a GPX file',
+      status: gpxData ? 'complete' : 'pending',
+      icon: <Upload className="h-3 w-3" />
+    },
+    {
+      label: 'Process Route',
+      description: 'Extract route data from GPX',
+      status: gpxData ? 'complete' : 'pending',
+      icon: <MapIcon className="h-3 w-3" />
+    },
+    {
+      label: 'Get Weather',
+      description: 'Fetch weather data for route points',
+      status: isGenerating ? 'in-progress' : (weatherData.length > 0 ? 'complete' : 'pending'),
+      icon: <CloudRain className="h-3 w-3" />
+    },
+    {
+      label: 'Visualize',
+      description: 'Display route with weather data',
+      status: (forecastPoints.length > 0 && weatherData.length > 0) ? 'complete' : 'pending',
+      icon: <BarChart className="h-3 w-3" />
+    }
+  ];
+
+  // Determine the active step
+  const getActiveStep = () => {
+    if (!gpxData) return 0;
+    if (gpxData && !weatherData.length) return 1;
+    if (isGenerating) return 2;
+    if (forecastPoints.length > 0 && weatherData.length > 0) return 3;
+    return 0;
+  };
+
+  // Create sidebar content
+  const sidebarContent = (
+    <div className="space-y-4">
+      <GPXUploader
+        onGPXLoaded={handleGPXLoaded}
+        isLoading={isGenerating}
+        showProgress={true}
+        showSuccess={true}
+        helpText="Upload a GPX file to visualize your route with detailed weather forecasts"
+      />
+      <RouteControls
+        onUpdateSettings={handleUpdateSettings}
+        onExportPDF={() => {}}
+        isGenerating={isGenerating}
+        isExporting={false}
+      />
+      <WeatherProviderComparison />
+    </div>
+  );
+
+  // Create header content with breadcrumb and progress steps
+  const headerContent = (
+    <div className="flex flex-col space-y-4">
+      <div className="flex justify-between items-center">
+        <Breadcrumb
+          segments={[
+            { label: 'Home', href: '/' },
+            { label: 'Route Planner', href: '#' }
+          ]}
+        />
         <div className="flex items-center space-x-2">
           <ThemeToggle />
           <PDFExport {...pdfExportProps} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-4">
-          <GPXUploader
-            onGPXLoaded={handleGPXLoaded}
-            isLoading={isGenerating}
-            showProgress={true}
-            showSuccess={true}
-            helpText="Upload a GPX file to visualize your route with detailed weather forecasts"
-          />
-          <RouteControls
-            onUpdateSettings={handleUpdateSettings}
-            onExportPDF={() => {}}
-            isGenerating={isGenerating}
-            isExporting={false}
-          />
-          <WeatherProviderComparison />
-        </div>
+      {gpxData && (
+        <ProgressSteps
+          steps={uploadSteps}
+          activeStep={getActiveStep()}
+          showStepNumbers={false}
+          showDescriptions={true}
+          className="mt-2"
+        />
+      )}
+    </div>
+  );
 
-        <div className="lg:col-span-2 space-y-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-[400px] bg-muted/30 rounded-lg border border-border">
-              <LoadingSpinner
-                message={loadingMessage || "Loading weather data..."}
-                centered
-                variant="spinner"
-                withContainer
-                size="lg"
-              />
-            </div>
-          ) : (
-            <>
-              <div ref={mapRef} className="relative">
-                <div className="h-[400px] rounded-lg overflow-hidden border border-border">
-                  <MapWrapper
-                    gpxData={gpxData}
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
-                    onMarkerClick={handleMarkerClick}
-                    selectedMarker={selectedMarker}
-                  />
-                </div>
-
-                {forecastPoints.length > 0 && (
-                  <KeyboardNavigation
-                    onNavigate={(direction) => console.log(`Navigate ${direction}`)}
-                    onZoom={(direction) => console.log(`Zoom ${direction}`)}
-                    onSelectMarker={handleMarkerClick}
-                    markerCount={forecastPoints.length}
-                  />
-                )}
+  return (
+    <ResponsiveLayout
+      sidebarContent={sidebarContent}
+      headerContent={headerContent}
+      sidebarTitle="Route Controls"
+      sidebarIcon={<MapIcon className="h-5 w-5 text-primary" />}
+      sidebarCollapsible={true}
+      sidebarDefaultCollapsed={false}
+    >
+      <div className="space-y-6">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-[500px] bg-muted/30 rounded-lg border border-border">
+            <LoadingSpinner
+              message={loadingMessage || 'Loading weather data...'}
+              centered
+              variant="spinner"
+              withContainer
+              size="lg"
+            />
+          </div>
+        ) : (
+          <>
+            <div ref={mapRef} className="relative">
+              <div className="h-[500px] rounded-lg overflow-hidden border border-border">
+                <MapWrapper
+                  gpxData={gpxData}
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  onMarkerClick={handleMarkerClick}
+                  selectedMarker={selectedMarker}
+                />
               </div>
 
-              {forecastPoints.length > 0 && weatherData.length > 0 && (
-                <>
-                  <RouteSummary
+              {forecastPoints.length > 0 && (
+                <KeyboardNavigation
+                  onNavigate={direction => console.log(`Navigate ${direction}`)}
+                  onZoom={direction => console.log(`Zoom ${direction}`)}
+                  onSelectMarker={handleMarkerClick}
+                  markerCount={forecastPoints.length}
+                />
+              )}
+            </div>
+
+            {forecastPoints.length > 0 && weatherData.length > 0 && (
+              <div className="space-y-6">
+                <RouteSummary
+                  gpxData={gpxData}
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  className="animate-fade-in"
+                />
+
+                <ClientSideTimeline
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  selectedMarker={selectedMarker}
+                  onTimelineClick={handleTimelineClick}
+                  height="h-[150px]"
+                  showNavigation={true}
+                />
+
+                <WeatherAlerts
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  maxInitialAlerts={3}
+                  compact={true}
+                  className="animate-fade-in"
+                />
+
+                <div ref={chartsRef}>
+                  <ClientSideCharts
                     gpxData={gpxData}
                     forecastPoints={forecastPoints}
                     weatherData={weatherData}
-                    className="animate-fade-in"
-                  />
-
-                  <ClientSideTimeline
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
                     selectedMarker={selectedMarker}
-                    onTimelineClick={handleTimelineClick}
-                    height="h-[150px]"
-                    showNavigation={true}
+                    onChartClick={handleChartClick}
+                    height="h-[300px]"
                   />
+                </div>
+              </div>
+            )}
+          </>
+        )}
 
-                  <WeatherAlerts
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
-                    maxInitialAlerts={3}
-                    compact={true}
-                    className="animate-fade-in"
-                  />
+        <UserGuide className="animate-fade-in" />
 
-                  <div ref={chartsRef}>
-                    <ClientSideCharts
-                      gpxData={gpxData}
-                      forecastPoints={forecastPoints}
-                      weatherData={weatherData}
-                      selectedMarker={selectedMarker}
-                      onChartClick={handleChartClick}
-                      height="h-[300px]"
-                    />
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div>
+        {/* Enhanced Visualization Demo Link */}
+        <Card className="p-6 border border-border rounded-lg bg-muted/10 hover:bg-muted/20 transition-colors animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Enhanced Data Visualization Demo</h3>
+              <p className="text-muted-foreground">
+                Check out our enhanced map and chart visualizations with interactive features
+              </p>
+            </div>
+            <Button asChild>
+              <Link href="/enhanced-visualization">
+                <BarChart className="mr-2 h-4 w-4" />
+                View Demo
+              </Link>
+            </Button>
+          </div>
+        </Card>
       </div>
-
-      <UserGuide className="animate-fade-in" />
-    </PageWrapper>
+    </ResponsiveLayout>
   );
 }

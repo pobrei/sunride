@@ -38,7 +38,7 @@ export function useToast() {
       onDismiss: options.onDismiss,
     };
 
-    setToasts((prevToasts) => [...prevToasts, newToast]);
+    setToasts(prevToasts => [...prevToasts, newToast]);
 
     return {
       id,
@@ -48,18 +48,18 @@ export function useToast() {
   };
 
   const dismissToast = (id: string) => {
-    setToasts((prevToasts) => {
-      const toast = prevToasts.find((t) => t.id === id);
+    setToasts(prevToasts => {
+      const toast = prevToasts.find(t => t.id === id);
       if (toast?.onDismiss) {
         toast.onDismiss();
       }
-      return prevToasts.filter((t) => t.id !== id);
+      return prevToasts.filter(t => t.id !== id);
     });
   };
 
   const updateToast = (id: string, options: ToastOptions) => {
-    setToasts((prevToasts) =>
-      prevToasts.map((t) =>
+    setToasts(prevToasts =>
+      prevToasts.map(t =>
         t.id === id
           ? {
               ...t,
@@ -78,7 +78,7 @@ export function useToast() {
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
 
-    toasts.forEach((toast) => {
+    toasts.forEach(toast => {
       if (toast.duration) {
         const timer = setTimeout(() => {
           dismissToast(toast.id);
@@ -88,7 +88,7 @@ export function useToast() {
     });
 
     return () => {
-      timers.forEach((timer) => clearTimeout(timer));
+      timers.forEach(timer => clearTimeout(timer));
     };
   }, [toasts]);
 

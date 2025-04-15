@@ -1,5 +1,3 @@
 import PDFExport from './PDFExport';
 
-export {
-  PDFExport
-};
+export { PDFExport };

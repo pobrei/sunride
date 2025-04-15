@@ -42,7 +42,7 @@ export default function OpenLayersMap({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }: OpenLayersMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
@@ -59,18 +59,18 @@ export default function OpenLayersMap({
       target: mapRef.current,
       layers: [
         new TileLayer({
-          source: new OSM()
-        })
+          source: new OSM(),
+        }),
       ],
       controls: defaultControls({
         zoom: true,
         rotate: false,
-        attribution: false
+        attribution: false,
       }),
       view: new View({
         center: [0, 0],
-        zoom: 2
-      })
+        zoom: 2,
+      }),
     });
 
     // Create popup overlay
@@ -79,17 +79,17 @@ export default function OpenLayersMap({
         element: popupRef.current,
         positioning: 'bottom-center',
         stopEvent: false,
-        offset: [0, -10]
+        offset: [0, -10],
       });
       mapInstance.current.addOverlay(popupOverlay.current);
     }
 
     // Add click handler
-    mapInstance.current.on('click', (evt) => {
+    mapInstance.current.on('click', evt => {
       const map = mapInstance.current;
       if (!map) return;
 
-      const feature = map.forEachFeatureAtPixel(evt.pixel, (feature) => feature);
+      const feature = map.forEachFeatureAtPixel(evt.pixel, feature => feature);
 
       if (feature && feature.get('type') === 'marker') {
         const index = feature.get('index');
@@ -114,7 +114,9 @@ export default function OpenLayersMap({
     const map = mapInstance.current;
 
     // Clear existing layers
-    map.getLayers().getArray()
+    map
+      .getLayers()
+      .getArray()
       .filter(layer => layer instanceof VectorLayer)
       .forEach(layer => map.removeLayer(layer));
 
@@ -125,16 +127,16 @@ export default function OpenLayersMap({
       style: new Style({
         stroke: new Stroke({
           color: '#3b82f6',
-          width: 4
-        })
-      })
+          width: 4,
+        }),
+      }),
     });
 
     // Create markers layer
     const markersSource = new VectorSource();
     const markersLayer = new VectorLayer({
       source: markersSource,
-      style: (feature) => {
+      style: feature => {
         const index = feature.get('index');
         const isSelected = index === selectedMarker;
 
@@ -142,33 +144,31 @@ export default function OpenLayersMap({
           image: new Circle({
             radius: isSelected ? 10 : 8,
             fill: new Fill({
-              color: isSelected ? '#3b82f6' : '#64748b'
+              color: isSelected ? '#3b82f6' : '#64748b',
             }),
             stroke: new Stroke({
               color: '#ffffff',
-              width: 2
-            })
+              width: 2,
+            }),
           }),
           text: new Text({
             text: `${index + 1}`,
             fill: new Fill({
-              color: '#ffffff'
+              color: '#ffffff',
             }),
             font: 'bold 12px sans-serif',
-            offsetY: 1
-          })
+            offsetY: 1,
+          }),
         });
-      }
+      },
     });
 
     // Add route line
     if (gpxData.points.length > 0) {
-      const routeCoords = gpxData.points.map(point =>
-        fromLonLat([point.lon, point.lat])
-      );
+      const routeCoords = gpxData.points.map(point => fromLonLat([point.lon, point.lat]));
 
       const routeFeature = new Feature({
-        geometry: new LineString(routeCoords)
+        geometry: new LineString(routeCoords),
       });
 
       routeSource.addFeature(routeFeature);
@@ -179,7 +179,7 @@ export default function OpenLayersMap({
       const markerFeature = new Feature({
         geometry: new Point(fromLonLat([point.lon, point.lat])),
         type: 'marker',
-        index: index
+        index: index,
       });
 
       markersSource.addFeature(markerFeature);
@@ -193,9 +193,8 @@ export default function OpenLayersMap({
     const extent = routeSource.getExtent();
     map.getView().fit(extent, {
       padding: [50, 50, 50, 50],
-      maxZoom: 16
+      maxZoom: 16,
     });
-
   }, [gpxData, forecastPoints, selectedMarker]);
 
   // Update popup when selected marker changes
@@ -203,23 +202,20 @@ export default function OpenLayersMap({
     if (!mapInstance.current || !popupOverlay.current || selectedMarker === null) return;
 
     if (selectedMarker !== null && forecastPoints[selectedMarker]) {
-      const coords = fromLonLat([forecastPoints[selectedMarker].lon, forecastPoints[selectedMarker].lat]);
+      const coords = fromLonLat([
+        forecastPoints[selectedMarker].lon,
+        forecastPoints[selectedMarker].lat,
+      ]);
       popupOverlay.current.setPosition(coords);
     } else {
       popupOverlay.current.setPosition(undefined);
     }
-
   }, [selectedMarker, forecastPoints]);
 
   if (isLoading) {
     return (
       <div className="h-full w-full bg-muted/20 flex items-center justify-center">
-        <LoadingSpinner
-          message="Initializing map..."
-          centered
-          variant="spinner"
-          size="lg"
-        />
+        <LoadingSpinner message="Initializing map..." centered variant="spinner" size="lg" />
       </div>
     );
   }
@@ -236,7 +232,9 @@ export default function OpenLayersMap({
       >
         {selectedMarker !== null && weatherData[selectedMarker] && (
           <div className="text-center whitespace-nowrap">
-            <div className="font-medium">{weatherData[selectedMarker]?.temperature.toFixed(1)}°C</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.temperature.toFixed(1)}°C
+            </div>
             <div className="text-xs text-muted-foreground">
               {weatherData[selectedMarker]?.windSpeed.toFixed(1)} km/h
             </div>
@@ -247,19 +245,27 @@ export default function OpenLayersMap({
       {/* Weather info panel */}
       {selectedMarker !== null && weatherData[selectedMarker] && (
         <div className="map-info-panel">
-          <div className="font-medium mb-1">Point {selectedMarker + 1} of {forecastPoints.length}</div>
+          <div className="font-medium mb-1">
+            Point {selectedMarker + 1} of {forecastPoints.length}
+          </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             <div>Temperature:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.temperature.toFixed(1)}°C</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.temperature.toFixed(1)}°C
+            </div>
 
             <div>Feels Like:</div>
             <div className="font-medium">{weatherData[selectedMarker]?.feelsLike.toFixed(1)}°C</div>
 
             <div>Wind:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.windSpeed.toFixed(1)} km/h</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.windSpeed.toFixed(1)} km/h
+            </div>
 
             <div>Precipitation:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.precipitation.toFixed(1)} mm</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.precipitation.toFixed(1)} mm
+            </div>
 
             <div>Humidity:</div>
             <div className="font-medium">{weatherData[selectedMarker]?.humidity}%</div>

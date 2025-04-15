@@ -5,7 +5,12 @@ import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { cn } from '@/styles/tailwind-utils';
 import { Cloud, CloudRain, Thermometer, Wind } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/simple-tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/simple-tooltip';
 
 interface TimelineProps {
   /** Forecast points along the route */
@@ -28,7 +33,7 @@ export function Timeline({
   weatherData,
   selectedMarker,
   onTimelineClick,
-  timelineRef: externalTimelineRef
+  timelineRef: externalTimelineRef,
 }: TimelineProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -71,7 +76,7 @@ export function Timeline({
       extremeHeat: weather.temperature > 35,
       freezing: weather.temperature < 0,
       highWind: weather.windSpeed > 30,
-      heavyRain: weather.precipitation > 5
+      heavyRain: weather.precipitation > 5,
     };
   };
 
@@ -94,12 +99,15 @@ export function Timeline({
           if (!weather) return null;
 
           const alerts = checkWeatherAlerts(weather);
-          const hasAlert = alerts.extremeHeat || alerts.freezing || alerts.highWind || alerts.heavyRain;
+          const hasAlert =
+            alerts.extremeHeat || alerts.freezing || alerts.highWind || alerts.heavyRain;
 
           return (
             <div
               key={index}
-              ref={el => { timelineItemsRef.current[index] = el; }}
+              ref={el => {
+                timelineItemsRef.current[index] = el;
+              }}
               className={cn(
                 'timeline-item flex-shrink-0 w-36 p-3 rounded-lg cursor-pointer transition-all duration-200',
                 selectedMarker === index
@@ -111,7 +119,9 @@ export function Timeline({
             >
               <div className="flex justify-between items-start mb-2">
                 <div className="font-medium text-sm">{formatTime(point.timestamp)}</div>
-                <div className="text-xs text-muted-foreground">{formatDistance(point.distance)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {formatDistance(point.distance)}
+                </div>
               </div>
 
               <div className="space-y-2">

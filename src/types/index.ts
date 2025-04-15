@@ -7,13 +7,7 @@ import { RouteSettings } from '@/features/route/components';
 import * as UtilityTypes from './utility-types';
 
 // Re-export feature types
-export type {
-  ForecastPoint,
-  WeatherData,
-  GPXData,
-  RoutePoint,
-  RouteSettings
-};
+export type { ForecastPoint, WeatherData, GPXData, RoutePoint, RouteSettings };
 
 // Re-export utility types
 export * from './utility-types';
@@ -153,7 +147,15 @@ export interface MapLayer {
 }
 
 // Chart Types
-export type ChartType = 'line' | 'bar' | 'radar' | 'pie' | 'doughnut' | 'polarArea' | 'scatter' | 'bubble';
+export type ChartType =
+  | 'line'
+  | 'bar'
+  | 'radar'
+  | 'pie'
+  | 'doughnut'
+  | 'polarArea'
+  | 'scatter'
+  | 'bubble';
 
 export interface ChartDataset {
   /** Dataset label */

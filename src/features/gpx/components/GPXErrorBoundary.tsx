@@ -37,9 +37,9 @@ export class GPXErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log the error to Sentry with GPX-specific context
-    captureException(error, { 
+    captureException(error, {
       tags: { feature: 'gpx' },
-      extra: errorInfo 
+      extra: errorInfo,
     });
 
     // Call the optional error handler
@@ -66,14 +66,14 @@ export class GPXErrorBoundary extends Component<Props, State> {
 
       // Otherwise use the GPX-specific fallback UI
       return (
-        <GPXErrorFallback 
-          error={this.state.error} 
+        <GPXErrorFallback
+          error={this.state.error}
           onRetry={() => {
             this.reset();
             if (this.props.onRetry) {
               this.props.onRetry();
             }
-          }} 
+          }}
         />
       );
     }
@@ -90,7 +90,7 @@ export class GPXErrorBoundary extends Component<Props, State> {
 export function withGPXErrorBoundary<P extends object>(
   Component: React.ComponentType<P>
 ): React.FC<P & { onError?: (error: Error, errorInfo: ErrorInfo) => void; onRetry?: () => void }> {
-  return (props) => (
+  return props => (
     <GPXErrorBoundary onError={props.onError} onRetry={props.onRetry}>
       <Component {...props} />
     </GPXErrorBoundary>

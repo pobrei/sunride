@@ -23,6 +23,6 @@ interface ClientSideChartsProps {
   onChartClick: (index: number) => void;
 }
 
-export const ClientSideCharts: React.FC<ClientSideChartsProps> = (props) => {
+export const ClientSideCharts: React.FC<ClientSideChartsProps> = props => {
   return <SafeChartsWrapper {...props} />;
 };

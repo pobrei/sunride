@@ -12,7 +12,7 @@ import {
   Thermometer,
   AlertTriangle,
   Clock,
-  Mountain
+  Mountain,
 } from 'lucide-react';
 import { formatDistance, formatDuration } from '@/utils/formatUtils';
 
@@ -45,7 +45,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
   }
 
   // Filter out null weather data
-  const validWeatherData: WeatherData[] = weatherData.filter((data): data is WeatherData => data !== null);
+  const validWeatherData: WeatherData[] = weatherData.filter(
+    (data): data is WeatherData => data !== null
+  );
 
   if (validWeatherData.length === 0) {
     return null;
@@ -91,10 +93,8 @@ const TripSummary: React.FC<TripSummaryProps> = ({
     // Calculate overall route direction
     const startPoint: ForecastPoint = forecastPoints[0];
     const endPoint: ForecastPoint = forecastPoints[forecastPoints.length - 1];
-    const routeDirection: number = Math.atan2(
-      endPoint.lat - startPoint.lat,
-      endPoint.lon - startPoint.lon
-    ) * (180 / Math.PI);
+    const routeDirection: number =
+      Math.atan2(endPoint.lat - startPoint.lat, endPoint.lon - startPoint.lon) * (180 / Math.PI);
 
     // Count points where wind direction is opposite to route direction (±45°)
     const headwindPoints: WeatherData[] = validWeatherData.filter(data => {
@@ -103,7 +103,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
       return directionDiff > 135 && directionDiff < 225;
     });
 
-    headwindHours = Math.round(headwindPoints.length * (estimatedDuration / validWeatherData.length));
+    headwindHours = Math.round(
+      headwindPoints.length * (estimatedDuration / validWeatherData.length)
+    );
   }
 
   // Count and categorize weather alerts
@@ -123,21 +125,24 @@ const TripSummary: React.FC<TripSummaryProps> = ({
     highUV: number;
   }
 
-  const weatherAlerts: WeatherAlerts = validWeatherData.reduce((alerts, data) => {
-    // Check for extreme conditions
-    if (data.temperature > 35) alerts.extremeHeat++;
-    if (data.temperature < 0) alerts.freezing++;
-    if (data.windSpeed > 15) alerts.highWind++;
-    if (data.rain > 10) alerts.heavyRain++;
-    if (data.uvIndex && data.uvIndex > 8) alerts.highUV++;
-    return alerts;
-  }, {
-    extremeHeat: 0,
-    freezing: 0,
-    highWind: 0,
-    heavyRain: 0,
-    highUV: 0
-  });
+  const weatherAlerts: WeatherAlerts = validWeatherData.reduce(
+    (alerts, data) => {
+      // Check for extreme conditions
+      if (data.temperature > 35) alerts.extremeHeat++;
+      if (data.temperature < 0) alerts.freezing++;
+      if (data.windSpeed > 15) alerts.highWind++;
+      if (data.rain > 10) alerts.heavyRain++;
+      if (data.uvIndex && data.uvIndex > 8) alerts.highUV++;
+      return alerts;
+    },
+    {
+      extremeHeat: 0,
+      freezing: 0,
+      highWind: 0,
+      heavyRain: 0,
+      highUV: 0,
+    }
+  );
 
   // Total number of alerts
   const totalAlerts: number = Object.values(weatherAlerts).reduce((sum, count) => sum + count, 0);
@@ -182,7 +187,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Elevation</p>
-              <p className="font-medium">+{Math.round(elevationGain)}m / -{Math.round(elevationLoss)}m</p>
+              <p className="font-medium">
+                +{Math.round(elevationGain)}m / -{Math.round(elevationLoss)}m
+              </p>
             </div>
           </div>
 
@@ -193,7 +200,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Temperature</p>
-              <p className="font-medium">{avgTemperature}°C (min: {minTemperature}°C, max: {maxTemperature}°C)</p>
+              <p className="font-medium">
+                {avgTemperature}°C (min: {minTemperature}°C, max: {maxTemperature}°C)
+              </p>
             </div>
           </div>
 
@@ -204,7 +213,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Wind</p>
-              <p className="font-medium">{avgWindSpeed} m/s (max: {maxWindSpeed} m/s)</p>
+              <p className="font-medium">
+                {avgWindSpeed} m/s (max: {maxWindSpeed} m/s)
+              </p>
             </div>
           </div>
 
@@ -248,7 +259,9 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Max UV Index</p>
-              <p className="font-medium">{maxUvIndex} {maxUvIndex > 7 ? '(High Protection Needed)' : ''}</p>
+              <p className="font-medium">
+                {maxUvIndex} {maxUvIndex > 7 ? '(High Protection Needed)' : ''}
+              </p>
             </div>
           </div>
 

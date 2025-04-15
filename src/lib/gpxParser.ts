@@ -9,10 +9,10 @@ interface GPXResult {
     trk: Array<{
       trkseg: Array<{
         trkpt: Array<{
-          $: { lat: string; lon: string }
-        }>
-      }>
-    }>
+          $: { lat: string; lon: string };
+        }>;
+      }>;
+    }>;
   };
 }
 

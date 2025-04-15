@@ -8,7 +8,7 @@ export const gpxPointSchema = z.object({
   lon: z.number().min(-180).max(180),
   elevation: z.number(),
   time: z.date().optional(),
-  distance: z.number().min(0)
+  distance: z.number().min(0),
 });
 
 /**
@@ -21,7 +21,7 @@ export const gpxDataSchema = z.object({
   elevationGain: z.number().min(0),
   elevationLoss: z.number().min(0),
   maxElevation: z.number(),
-  minElevation: z.number()
+  minElevation: z.number(),
 });
 
 /**
@@ -31,7 +31,7 @@ export const forecastPointSchema = z.object({
   lat: z.number().min(-90).max(90),
   lon: z.number().min(-180).max(180),
   timestamp: z.number(),
-  distance: z.number().min(0)
+  distance: z.number().min(0),
 });
 
 /**
@@ -51,7 +51,7 @@ export const weatherDataSchema = z.object({
   windGust: z.number().min(0).optional(),
   precipitationProbability: z.number().min(0).max(1).optional(),
   precipitation: z.number().min(0).optional(),
-  snow: z.number().min(0).optional()
+  snow: z.number().min(0).optional(),
 });
 
 /**
@@ -63,7 +63,7 @@ export const routeSettingsSchema = z.object({
   avgSpeed: z.number().min(1).max(100),
   routeName: z.string().optional(),
   routeDescription: z.string().optional(),
-  routeColor: z.string().optional()
+  routeColor: z.string().optional(),
 });
 
 /**
@@ -79,7 +79,7 @@ export const routeMetricsSchema = z.object({
   endTime: z.string(),
   estimatedDuration: z.number().min(0).optional(),
   estimatedCalories: z.number().min(0).optional(),
-  difficultyRating: z.number().min(1).max(5).optional()
+  difficultyRating: z.number().min(1).max(5).optional(),
 });
 
 /**
@@ -93,7 +93,7 @@ export const notificationSchema = z.object({
   title: z.string().optional(),
   actionText: z.string().optional(),
   onAction: z.function().optional(),
-  onDismiss: z.function().optional()
+  onDismiss: z.function().optional(),
 });
 
 /**
@@ -103,7 +103,7 @@ export const mapViewportSchema = z.object({
   center: z.tuple([z.number(), z.number()]),
   zoom: z.number().min(0).max(20),
   rotation: z.number().optional(),
-  pitch: z.number().optional()
+  pitch: z.number().optional(),
 });
 
 /**
@@ -116,7 +116,7 @@ export const mapMarkerSchema = z.object({
   color: z.string().optional(),
   icon: z.string().optional(),
   size: z.enum(['small', 'medium', 'large']).optional(),
-  data: z.record(z.unknown()).optional()
+  data: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -129,15 +129,13 @@ export const mapLayerSchema = z.object({
   visible: z.boolean(),
   opacity: z.number().min(0).max(1),
   zIndex: z.number(),
-  style: z.record(z.unknown()).optional()
+  style: z.record(z.unknown()).optional(),
 });
 
 /**
  * Schema for export format
  */
-export const exportFormatSchema = z.enum([
-  'pdf', 'png', 'jpg', 'svg', 'csv', 'json', 'gpx'
-]);
+export const exportFormatSchema = z.enum(['pdf', 'png', 'jpg', 'svg', 'csv', 'json', 'gpx']);
 
 /**
  * Schema for weather provider
@@ -152,10 +150,12 @@ export const weatherProviderSchema = z.object({
   logoUrl: z.string().url().optional(),
   attribution: z.string().optional(),
   pricingTier: z.enum(['free', 'basic', 'premium', 'enterprise']).optional(),
-  rateLimit: z.object({
-    maxRequests: z.number().min(1),
-    timeWindow: z.number().min(1000)
-  }).optional()
+  rateLimit: z
+    .object({
+      maxRequests: z.number().min(1),
+      timeWindow: z.number().min(1000),
+    })
+    .optional(),
 });
 
 // Export types derived from schemas

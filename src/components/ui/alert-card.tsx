@@ -2,10 +2,18 @@
 
 import React from 'react';
 import { AlertTriangle, AlertCircle, Info, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/styles/tailwind-utils';
+import { cn } from '@/lib/utils';
+import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
 
 type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
 
@@ -51,15 +59,15 @@ export function AlertCard({
   details,
   timestamp,
   location,
-  badge
+  badge,
 }: AlertCardProps) {
   const [isOpen, setIsOpen] = React.useState(true);
   const [showDetails, setShowDetails] = React.useState(false);
-  
+
   // Determine icon based on severity
   let IconComponent = Info;
   let severityColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-  
+
   switch (severity) {
     case 'error':
       IconComponent = AlertCircle;
@@ -78,15 +86,15 @@ export function AlertCard({
       IconComponent = Info;
       severityColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
   }
-  
+
   if (!isOpen) return null;
-  
+
   return (
-    <Card className={cn('overflow-hidden border', severityColor, className)}>
-      <CardHeader className="pb-2 flex flex-row items-start justify-between space-y-0">
-        <div className="flex items-center gap-2">
+    <Card className={cn('overflow-hidden border', severityColor, animation.fadeIn, className)}>
+      <CardHeader className={cn("pb-2", layout.flexBetween, "items-start space-y-0")}>
+        <div className={cn(layout.flexRow, "gap-2")}>
           {icon || <IconComponent className="h-5 w-5" />}
-          <CardTitle className="text-base font-medium">{title}</CardTitle>
+          <CardTitle className={cn(typography.h6)}>{title}</CardTitle>
           {badge && (
             <Badge variant="outline" className={cn('ml-2', severityColor)}>
               {badge}
@@ -94,10 +102,10 @@ export function AlertCard({
           )}
         </div>
         {dismissible && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn("h-8 w-8 p-0", effects.buttonHover)}
             onClick={() => {
               setIsOpen(false);
               onDismiss?.();
@@ -109,21 +117,21 @@ export function AlertCard({
         )}
       </CardHeader>
       <CardContent className="pb-3">
-        <CardDescription className="text-sm mt-1">{description}</CardDescription>
-        
+        <CardDescription className={cn(typography.bodySm, "mt-1")}>{description}</CardDescription>
+
         {(timestamp || location) && (
-          <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+          <div className={cn(layout.flexRow, "gap-4 mt-2", typography.bodySm, typography.muted)}>
             {timestamp && <div>{timestamp}</div>}
             {location && <div>{location}</div>}
           </div>
         )}
-        
+
         {details && (
           <>
             <Button
               variant="ghost"
               size="sm"
-              className="mt-2 h-8 px-2 text-xs"
+              className={cn("mt-2 h-8 px-2", typography.bodySm, effects.buttonHover)}
               onClick={() => setShowDetails(!showDetails)}
             >
               {showDetails ? (
@@ -138,21 +146,15 @@ export function AlertCard({
                 </>
               )}
             </Button>
-            
+
             {showDetails && (
-              <div className="mt-2 p-2 text-xs bg-background/50 rounded-md">
-                {details}
-              </div>
+              <div className={cn("mt-2 p-2 bg-background/50", typography.bodySm, effects.rounded, animation.fadeInSlideDown)}>{details}</div>
             )}
           </>
         )}
       </CardContent>
-      
-      {actions && (
-        <CardFooter className="pt-0 flex justify-end gap-2">
-          {actions}
-        </CardFooter>
-      )}
+
+      {actions && <CardFooter className={cn("pt-0", layout.flexEnd, "gap-2")}>{actions}</CardFooter>}
     </Card>
   );
 }

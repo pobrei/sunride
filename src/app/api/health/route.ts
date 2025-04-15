@@ -7,6 +7,6 @@ export async function GET() {
     status: 'ok',
     timestamp: new Date().toISOString(),
     version: process.env.npm_package_version || '0.1.0',
-    environment: envConfig.nodeEnv
+    environment: envConfig.nodeEnv,
   });
 }

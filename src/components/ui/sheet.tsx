@@ -79,11 +79,7 @@ export function SheetTrigger({
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => onOpenChange(true)}
-      {...props}
-    >
+    <button type="button" onClick={() => onOpenChange(true)} {...props}>
       {children}
     </button>
   );
@@ -149,31 +145,15 @@ export function SheetContent({
 /**
  * The header of the sheet
  */
-export function SheetHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn('flex flex-col space-y-2', className)}
-      {...props}
-    />
-  );
+export function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('flex flex-col space-y-2', className)} {...props} />;
 }
 
 /**
  * The title of the sheet
  */
-export function SheetTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h2
-      className={cn('text-lg font-semibold', className)}
-      {...props}
-    />
-  );
+export function SheetTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h2 className={cn('text-lg font-semibold', className)} {...props} />;
 }
 
 /**
@@ -183,21 +163,13 @@ export function SheetDescription({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return (
-    <p
-      className={cn('text-sm text-muted-foreground', className)}
-      {...props}
-    />
-  );
+  return <p className={cn('text-sm text-muted-foreground', className)} {...props} />;
 }
 
 /**
  * The footer of the sheet
  */
-export function SheetFooter({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
@@ -209,15 +181,15 @@ export function SheetFooter({
 /**
  * The close button of the sheet
  */
-export function SheetClose({
-  className,
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function SheetClose({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { onOpenChange } = useSheetContext();
 
   return (
     <button
-      className={cn('absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none', className)}
+      className={cn(
+        'absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none',
+        className
+      )}
       onClick={() => onOpenChange(false)}
       {...props}
     >

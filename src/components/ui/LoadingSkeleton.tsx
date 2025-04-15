@@ -82,9 +82,7 @@ export function LoadingSkeleton({
         );
       case 'image':
         return (
-          <Skeleton
-            className={classNames('h-48 w-full rounded-lg', height, width, className)}
-          />
+          <Skeleton className={classNames('h-48 w-full rounded-lg', height, width, className)} />
         );
       case 'chart':
         return (
@@ -94,17 +92,9 @@ export function LoadingSkeleton({
           </div>
         );
       default:
-        return (
-          <Skeleton
-            className={classNames('h-16 w-full', height, width, className)}
-          />
-        );
+        return <Skeleton className={classNames('h-16 w-full', height, width, className)} />;
     }
   };
 
-  return (
-    <div data-testid="loading-skeleton">
-      {renderSkeleton()}
-    </div>
-  );
+  return <div data-testid="loading-skeleton">{renderSkeleton()}</div>;
 }

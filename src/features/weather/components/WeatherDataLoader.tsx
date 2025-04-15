@@ -50,9 +50,9 @@ export function WeatherDataLoader({
       const timer = setTimeout(() => {
         handleRetry();
       }, retryDelay);
-      
+
       setRetryTimer(timer);
-      
+
       return () => {
         clearTimeout(timer);
       };
@@ -65,7 +65,7 @@ export function WeatherDataLoader({
       clearTimeout(retryTimer);
       setRetryTimer(null);
     }
-    
+
     setRetryCount(prev => prev + 1);
     generateForecast();
   };
@@ -88,12 +88,9 @@ export function WeatherDataLoader({
   // Show error state
   if (error || !weatherData) {
     return compact ? (
-      <WeatherWidgetFallback 
-        error={error} 
-        onRetry={handleRetry} 
-      />
+      <WeatherWidgetFallback error={error} onRetry={handleRetry} />
     ) : (
-      <WeatherFallbackUI 
+      <WeatherFallbackUI
         error={error}
         onRetry={handleRetry}
         fullSize={true}

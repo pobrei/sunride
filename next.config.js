@@ -26,4 +26,4 @@ const nextConfig = {
   compress: true, // Enables gzip compression
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;

@@ -25,14 +25,14 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
   // Function to handle chart click
   const handleChartClick = (event: MouseEvent) => {
     if (!chartInstance.current) return;
-    
+
     const canvas = event.target as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
-    
+
     const chartArea = chartInstance.current.chartArea;
     if (!chartArea) return;
-    
+
     // Only handle clicks within the chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
@@ -40,7 +40,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
         Math.max(0, Math.floor(xPercent * forecastPoints.length)),
         forecastPoints.length - 1
       );
-      
+
       console.log(`Humidity chart clicked at index: ${index}`);
       onChartClick(index);
     }
@@ -49,29 +49,31 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
   // Get color scheme based on dark/light mode
   const getColorScheme = () => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    return isDarkMode 
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    return isDarkMode
       ? {
           humidity: {
             bg: 'rgba(70, 130, 180, 0.3)',
             border: 'rgb(100, 149, 237)',
-            point: 'rgb(100, 149, 237)'
-          }
+            point: 'rgb(100, 149, 237)',
+          },
         }
       : {
           humidity: {
             bg: 'rgba(220, 240, 255, 0.3)',
             border: 'rgb(135, 206, 250)',
-            point: 'rgb(135, 206, 250)'
-          }
+            point: 'rgb(135, 206, 250)',
+          },
         };
   };
 
   // Define custom tooltip styling
   const getTooltipOptions = () => {
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     return {
       mode: 'index' as const,
       intersect: false,
@@ -85,14 +87,14 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
       titleFont: {
         weight: 'bold' as const,
         size: 14,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       bodyFont: {
         size: 12,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       caretSize: 8,
-      displayColors: true
+      displayColors: true,
     };
   };
 
@@ -104,7 +106,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
       display: true,
       drawBorder: true,
       drawOnChartArea: true,
-      drawTicks: true
+      drawTicks: true,
     };
   };
 
@@ -122,7 +124,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
@@ -149,21 +151,21 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
                 backgroundColor: colors.humidity.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: (context) => {
+                pointBackgroundColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'blue' : colors.humidity.point;
                 },
-                pointBorderColor: (context) => {
+                pointBorderColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'white' : colors.humidity.border;
                 },
-                pointRadius: (context) => {
+                pointRadius: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 8 : 4;
                 },
                 pointHoverRadius: 10,
                 fill: true,
-              }
+              },
             ],
           },
           options: {
@@ -175,22 +177,22 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
-              tooltip: getTooltipOptions()
+              tooltip: getTooltipOptions(),
             },
             scales: {
               x: {
                 grid: {
                   display: true,
                   color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: getDashedGridLines(),
@@ -198,13 +200,13 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
                 max: 100,
                 title: {
                   display: true,
-                  text: 'Humidity (%)'
-                }
-              }
+                  text: 'Humidity (%)',
+                },
+              },
             },
           },
         });
-        
+
         // Add direct click handler
         chartRef.current.addEventListener('click', handleChartClick as any);
       }
@@ -224,9 +226,9 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
         <CardTitle className="text-lg">Humidity</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          className="h-[250px] w-full" 
-          role="img" 
+        <div
+          className="h-[250px] w-full"
+          role="img"
           aria-label="Humidity chart showing weather data along the route"
         >
           <canvas ref={chartRef} />

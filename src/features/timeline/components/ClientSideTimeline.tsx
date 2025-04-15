@@ -22,6 +22,6 @@ interface ClientSideTimelineProps {
   onTimelineClick: (index: number) => void;
 }
 
-export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = (props) => {
+export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = props => {
   return <SafeTimelineWrapper {...props} />;
 };

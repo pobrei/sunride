@@ -64,14 +64,12 @@ export function OfflineDetector({
           <div className="text-center mb-6">
             <WifiOff className="h-12 w-12 text-amber-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">You're Offline</h2>
-            <p className="text-muted-foreground mb-4">
-              {offlineMessage}
-            </p>
+            <p className="text-muted-foreground mb-4">{offlineMessage}</p>
           </div>
-          
+
           <div className="flex flex-col gap-3">
-            <Button 
-              onClick={checkConnection} 
+            <Button
+              onClick={checkConnection}
               className="w-full flex items-center justify-center gap-2"
             >
               <Wifi className="h-4 w-4" />
@@ -99,12 +97,7 @@ export function OfflineDetector({
         <AlertTitle>You're Offline</AlertTitle>
         <AlertDescription className="flex flex-col gap-2">
           <p>{offlineMessage}</p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-fit mt-2"
-            onClick={checkConnection}
-          >
+          <Button variant="outline" size="sm" className="w-fit mt-2" onClick={checkConnection}>
             <Wifi className="h-3 w-3 mr-2" />
             {retryText}
           </Button>

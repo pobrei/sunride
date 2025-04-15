@@ -3,22 +3,22 @@ import { parseGPX } from '@/features/gpx/utils/gpxParser';
 describe('GPX Parser Error Handling', () => {
   it('should throw an error for empty GPX content', () => {
     const emptyGPX = '';
-    
+
     expect(() => parseGPX(emptyGPX)).toThrow();
   });
-  
+
   it('should throw an error for invalid XML', () => {
     const invalidXML = '<gpx><invalid>';
-    
+
     expect(() => parseGPX(invalidXML)).toThrow();
   });
-  
+
   it('should throw an error for non-GPX XML', () => {
     const nonGPXXML = '<someOtherTag><content>Not a GPX file</content></someOtherTag>';
-    
+
     expect(() => parseGPX(nonGPXXML)).toThrow();
   });
-  
+
   it('should throw an error for GPX without track points', () => {
     const gpxWithoutPoints = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -35,10 +35,10 @@ describe('GPX Parser Error Handling', () => {
         </trk>
       </gpx>
     `;
-    
+
     expect(() => parseGPX(gpxWithoutPoints)).toThrow();
   });
-  
+
   it('should throw an error for GPX with invalid coordinates', () => {
     const gpxWithInvalidCoords = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -58,10 +58,10 @@ describe('GPX Parser Error Handling', () => {
         </trk>
       </gpx>
     `;
-    
+
     expect(() => parseGPX(gpxWithInvalidCoords)).toThrow();
   });
-  
+
   it('should throw an error for GPX with invalid time format', () => {
     const gpxWithInvalidTime = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -81,10 +81,10 @@ describe('GPX Parser Error Handling', () => {
         </trk>
       </gpx>
     `;
-    
+
     expect(() => parseGPX(gpxWithInvalidTime)).toThrow();
   });
-  
+
   it('should handle GPX with missing elevation data', () => {
     const gpxWithoutElevation = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -103,7 +103,7 @@ describe('GPX Parser Error Handling', () => {
         </trk>
       </gpx>
     `;
-    
+
     // Should not throw, but should set elevation to 0
     const result = parseGPX(gpxWithoutElevation);
     expect(result.points[0].elevation).toBe(0);

@@ -33,7 +33,7 @@ describe('SafeChartsWrapper Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset window.location.reload
     Object.defineProperty(window, 'location', {
       value: { reload: jest.fn() },
@@ -131,11 +131,11 @@ describe('SafeChartsWrapper Component', () => {
     // Check that the error UI is rendered
     expect(screen.getByText('Chart Data Error')).toBeInTheDocument();
     expect(screen.getByText(/we couldn't display the charts/i)).toBeInTheDocument();
-    
+
     // Check that the reload button is rendered
     const reloadButton = screen.getByText('Reload Page');
     expect(reloadButton).toBeInTheDocument();
-    
+
     // Click the reload button
     fireEvent.click(reloadButton);
     expect(window.location.reload).toHaveBeenCalled();

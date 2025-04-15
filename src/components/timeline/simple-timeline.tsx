@@ -19,9 +19,7 @@ export default function SimpleTimeline(props: SimpleTimelineProps) {
     return (
       <div className="h-[150px] bg-muted flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
-            No forecast data available
-          </p>
+          <p className="text-sm text-muted-foreground">No forecast data available</p>
         </div>
       </div>
     );
@@ -54,9 +52,7 @@ export default function SimpleTimeline(props: SimpleTimelineProps) {
               )}
               {weather.precipitation !== undefined && (
                 <div className="text-xs text-muted-foreground">
-                  {weather.precipitation > 0
-                    ? `${weather.precipitation.toFixed(1)} mm`
-                    : 'No rain'}
+                  {weather.precipitation > 0 ? `${weather.precipitation.toFixed(1)} mm` : 'No rain'}
                 </div>
               )}
             </div>

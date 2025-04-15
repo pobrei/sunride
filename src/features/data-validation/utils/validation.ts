@@ -4,7 +4,7 @@ import * as schemas from './schemas';
 
 /**
  * Validates data against a Zod schema
- * 
+ *
  * @template T - The type of the validated data
  * @param data - The data to validate
  * @param schema - The Zod schema to validate against
@@ -16,37 +16,39 @@ export function validateWithSchema<T>(data: unknown, schema: z.ZodType<T>): Vali
     return {
       isValid: true,
       data: validData,
-      errors: []
+      errors: [],
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: ValidationError[] = error.errors.map(err => ({
         field: err.path.join('.'),
         message: err.message,
-        value: err.input
+        value: err.input,
       }));
-      
+
       return {
         isValid: false,
         data: null,
-        errors
+        errors,
       };
     }
-    
+
     return {
       isValid: false,
       data: null,
-      errors: [{
-        field: 'unknown',
-        message: error instanceof Error ? error.message : 'Unknown validation error'
-      }]
+      errors: [
+        {
+          field: 'unknown',
+          message: error instanceof Error ? error.message : 'Unknown validation error',
+        },
+      ],
     };
   }
 }
 
 /**
  * Validates GPX data
- * 
+ *
  * @param data - The GPX data to validate
  * @returns A validation result
  */
@@ -56,7 +58,7 @@ export function validateGPXData(data: unknown): ValidationResult<schemas.GPXData
 
 /**
  * Validates a forecast point
- * 
+ *
  * @param data - The forecast point to validate
  * @returns A validation result
  */
@@ -66,7 +68,7 @@ export function validateForecastPoint(data: unknown): ValidationResult<schemas.F
 
 /**
  * Validates an array of forecast points
- * 
+ *
  * @param data - The forecast points to validate
  * @returns A validation result
  */
@@ -76,7 +78,7 @@ export function validateForecastPoints(data: unknown): ValidationResult<schemas.
 
 /**
  * Validates weather data
- * 
+ *
  * @param data - The weather data to validate
  * @returns A validation result
  */
@@ -86,17 +88,19 @@ export function validateWeatherData(data: unknown): ValidationResult<schemas.Wea
 
 /**
  * Validates an array of weather data
- * 
+ *
  * @param data - The weather data array to validate
  * @returns A validation result
  */
-export function validateWeatherDataArray(data: unknown): ValidationResult<(schemas.WeatherData | null)[]> {
+export function validateWeatherDataArray(
+  data: unknown
+): ValidationResult<(schemas.WeatherData | null)[]> {
   return validateWithSchema(data, z.array(z.union([schemas.weatherDataSchema, z.null()])));
 }
 
 /**
  * Validates route settings
- * 
+ *
  * @param data - The route settings to validate
  * @returns A validation result
  */
@@ -106,7 +110,7 @@ export function validateRouteSettings(data: unknown): ValidationResult<schemas.R
 
 /**
  * Validates route metrics
- * 
+ *
  * @param data - The route metrics to validate
  * @returns A validation result
  */
@@ -116,7 +120,7 @@ export function validateRouteMetrics(data: unknown): ValidationResult<schemas.Ro
 
 /**
  * Validates a notification
- * 
+ *
  * @param data - The notification to validate
  * @returns A validation result
  */
@@ -126,7 +130,7 @@ export function validateNotification(data: unknown): ValidationResult<schemas.No
 
 /**
  * Validates map viewport
- * 
+ *
  * @param data - The map viewport to validate
  * @returns A validation result
  */
@@ -136,7 +140,7 @@ export function validateMapViewport(data: unknown): ValidationResult<schemas.Map
 
 /**
  * Validates a map marker
- * 
+ *
  * @param data - The map marker to validate
  * @returns A validation result
  */
@@ -146,7 +150,7 @@ export function validateMapMarker(data: unknown): ValidationResult<schemas.MapMa
 
 /**
  * Validates a map layer
- * 
+ *
  * @param data - The map layer to validate
  * @returns A validation result
  */
@@ -156,7 +160,7 @@ export function validateMapLayer(data: unknown): ValidationResult<schemas.MapLay
 
 /**
  * Validates an export format
- * 
+ *
  * @param data - The export format to validate
  * @returns A validation result
  */
@@ -166,7 +170,7 @@ export function validateExportFormat(data: unknown): ValidationResult<schemas.Ex
 
 /**
  * Validates a weather provider
- * 
+ *
  * @param data - The weather provider to validate
  * @returns A validation result
  */

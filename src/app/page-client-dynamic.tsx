@@ -12,31 +12,31 @@ import { LoadingSpinner, UserGuide, Alerts } from '@/components/ui';
 import type { GPXData, RouteSettings } from '@/types';
 
 // Dynamically import components that use client-side libraries
-const Map = dynamic(() => import('@/components/map/Map'), { 
+const Map = dynamic(() => import('@/components/map/Map'), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading map..." centered />
     </div>
-  )
+  ),
 });
 
-const Timeline = dynamic(() => import('@/components/timeline/Timeline'), { 
+const Timeline = dynamic(() => import('@/components/timeline/Timeline'), {
   ssr: false,
   loading: () => (
     <div className="h-[150px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading timeline..." centered />
     </div>
-  )
+  ),
 });
 
-const Charts = dynamic(() => import('@/components/charts/Charts'), { 
+const Charts = dynamic(() => import('@/components/charts/Charts'), {
   ssr: false,
   loading: () => (
     <div className="h-[300px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading charts..." centered />
     </div>
-  )
+  ),
 });
 
 export default function Home() {
@@ -50,11 +50,11 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
-  
+
   // Refs for scrolling
   const mapRef = useRef<HTMLDivElement>(null);
   const chartsRef = useRef<HTMLDivElement>(null);
@@ -62,10 +62,10 @@ export default function Home() {
   // Handle GPX file upload
   const handleGPXLoaded = (data: GPXData) => {
     setGpxData(data);
-    
+
     // Generate weather forecast
     generateWeatherForecast(data.points);
-    
+
     // Show notification
     addNotification('success', 'GPX file loaded successfully');
   };
@@ -100,7 +100,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (
@@ -133,7 +133,10 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <div ref={mapRef} className="h-[400px] rounded-lg overflow-hidden border border-border">
+              <div
+                ref={mapRef}
+                className="h-[400px] rounded-lg overflow-hidden border border-border"
+              >
                 {gpxData && (
                   <Map
                     gpxData={gpxData}
@@ -156,10 +159,7 @@ export default function Home() {
                     />
                   </div>
 
-                  <Alerts
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
-                  />
+                  <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
 
                   <div ref={chartsRef} className="rounded-lg overflow-hidden border border-border">
                     <Charts

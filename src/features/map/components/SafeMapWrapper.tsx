@@ -25,7 +25,7 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }) => {
   const [hasError, setHasError] = useState(false);
   const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
@@ -65,10 +65,7 @@ const SafeMapWrapper: React.FC<SafeMapWrapperProps> = ({
                 <li>Refresh the page and try again</li>
               </ul>
             </div>
-            <Button
-              onClick={() => window.location.reload()}
-              className="w-full"
-            >
+            <Button onClick={() => window.location.reload()} className="w-full">
               Reload Page
             </Button>
           </div>

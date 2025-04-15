@@ -12,9 +12,7 @@ This folder contains components for providing help and documentation to users.
 import { UserGuide } from '@/features/help/components';
 
 const MyComponent = () => {
-  return (
-    <UserGuide />
-  );
+  return <UserGuide />;
 };
 ```
 

@@ -1,10 +1,19 @@
 'use client';
 
 import React from 'react';
-import { AlertCircle, RefreshCw, AlertTriangle, XCircle, Info, ExternalLink, Home } from 'lucide-react';
+import {
+  AlertCircle,
+  RefreshCw,
+  AlertTriangle,
+  XCircle,
+  Info,
+  ExternalLink,
+  Home,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { typography, animation, effects, status, layout } from '@/styles/tailwind-utils';
 
 type ErrorSeverity = 'error' | 'warning' | 'info';
 type ErrorSize = 'sm' | 'md' | 'lg';
@@ -62,7 +71,8 @@ export function ErrorMessage({
   const [showDetails, setShowDetails] = React.useState(showDetailsDefault);
 
   // Determine title based on severity if not provided
-  const errorTitle = title || (severity === 'error' ? 'Error' : severity === 'warning' ? 'Warning' : 'Information');
+  const errorTitle =
+    title || (severity === 'error' ? 'Error' : severity === 'warning' ? 'Warning' : 'Information');
 
   // Determine icon based on severity
   let Icon = AlertCircle;
@@ -85,9 +95,9 @@ export function ErrorMessage({
 
   // Determine size classes
   const sizeClasses = {
-    sm: 'text-sm p-3',
+    sm: cn(typography.bodySm, 'p-3'),
     md: 'p-4',
-    lg: 'p-5 text-lg',
+    lg: cn(typography.bodyLg, 'p-5'),
   }[size];
 
   const iconSize = { sm: 16, md: 20, lg: 24 }[size];
@@ -95,22 +105,19 @@ export function ErrorMessage({
   const errorContent = (
     <div
       className={cn(
-        withContainer && 'rounded-lg border border-border bg-card shadow-sm overflow-hidden',
+        withContainer && cn(effects.card, 'overflow-hidden'),
+        animation.fadeIn,
         className
       )}
       data-testid="error-message"
     >
-      <Alert
-        variant={variant}
-        className={cn(
-          'flex flex-col items-start',
-          sizeClasses
-        )}
-      >
+      <Alert variant={variant} className={cn('flex flex-col items-start', sizeClasses)}>
         <div className="flex items-center gap-2 w-full justify-between">
           <div className="flex items-center gap-2">
-            <Icon className={`h-${Math.floor(iconSize/4)} w-${Math.floor(iconSize/4)}`} />
-            <AlertTitle className={size === 'lg' ? 'text-lg font-semibold' : ''}>{errorTitle}</AlertTitle>
+            <Icon className={`h-${Math.floor(iconSize / 4)} w-${Math.floor(iconSize / 4)}`} />
+            <AlertTitle className={size === 'lg' ? typography.h5 : typography.h6}>
+              {errorTitle}
+            </AlertTitle>
           </div>
           {details && (
             <Button
@@ -124,10 +131,13 @@ export function ErrorMessage({
           )}
         </div>
 
-        <AlertDescription className="mt-2">{message}</AlertDescription>
+        <AlertDescription className={cn(size === 'sm' ? typography.bodySm : typography.body, "mt-2")}>{message}</AlertDescription>
 
         {details && showDetails && (
-          <div className="mt-3 p-3 bg-muted/50 rounded-md text-sm font-mono w-full overflow-auto max-h-[200px]">
+          <div className={cn(
+            "mt-3 p-3 bg-muted/50 rounded-md font-mono w-full overflow-auto max-h-[200px]",
+            typography.code
+          )}>
             {details}
           </div>
         )}
@@ -146,12 +156,7 @@ export function ErrorMessage({
           )}
 
           {helpLink && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-              asChild
-            >
+            <Button variant="outline" size="sm" className="flex items-center gap-2" asChild>
               <a href={helpLink} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-4 w-4" />
                 {helpLinkText}
@@ -177,10 +182,8 @@ export function ErrorMessage({
 
   if (fullPage) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] p-4">
-        <div className="max-w-md w-full">
-          {errorContent}
-        </div>
+      <div className={cn(layout.flexCenter, "min-h-[50vh] p-4")}>
+        <div className="max-w-md w-full">{errorContent}</div>
       </div>
     );
   }

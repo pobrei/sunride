@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { RoutePoint } from '@/features/gpx/types';
-import { formatDistance, formatDateTime, formatTemperature, formatWind, formatPrecipitation, getWeatherIconUrl, getMarkerColor } from '@/utils/formatUtils';
+import {
+  formatDistance,
+  formatDateTime,
+  formatTemperature,
+  formatWind,
+  formatPrecipitation,
+  getWeatherIconUrl,
+  getMarkerColor,
+} from '@/utils/formatUtils';
 import { Button } from '@/components/ui/button';
 import { Crosshair } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -11,18 +19,27 @@ import { useSafeData } from '@/features/data-validation/context';
 import { MapProps } from '../types';
 
 // Create a client-only map wrapper that will only load on the client
-const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selectedMarker }: MapProps) => {
+const MapContent = ({
+  gpxData,
+  forecastPoints,
+  weatherData,
+  onMarkerClick,
+  selectedMarker,
+}: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   // Define types for dynamically loaded libraries
   type LeafletType = typeof import('leaflet');
   type ReactLeafletType = typeof import('react-leaflet');
 
-  const [reactLeafletComponents, setReactLeafletComponents] = useState<ReactLeafletType | null>(null);
+  const [reactLeafletComponents, setReactLeafletComponents] = useState<ReactLeafletType | null>(
+    null
+  );
   const [leaflet, setLeaflet] = useState<LeafletType | null>(null);
 
   // Use the SafeDataProvider
-  const { validateGPXData, validateForecastPoints, validateWeatherData, validatePoint } = useSafeData();
+  const { validateGPXData, validateForecastPoints, validateWeatherData, validatePoint } =
+    useSafeData();
 
   // Validate the input data
   const validGpxData = validateGPXData(gpxData);
@@ -38,30 +55,32 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
       import('leaflet'),
       import('react-leaflet'),
       // Import CSS - TypeScript doesn't need to type check this
-      import('leaflet/dist/leaflet.css' as unknown as string)
-    ]).then(([L, ReactLeaflet]) => {
-      console.log('Leaflet loaded:', L);
-      console.log('React Leaflet loaded:', ReactLeaflet);
+      import('leaflet/dist/leaflet.css' as unknown as string),
+    ])
+      .then(([L, ReactLeaflet]) => {
+        console.log('Leaflet loaded:', L);
+        console.log('React Leaflet loaded:', ReactLeaflet);
 
-      const leafletInstance = L.default || L;
+        const leafletInstance = L.default || L;
 
-      // Fix icon paths
-      // Cast to appropriate type for icon configuration
-      const iconDefault = leafletInstance.Icon.Default as { prototype: { _getIconUrl: unknown } };
-      delete iconDefault.prototype._getIconUrl;
-      leafletInstance.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        // Fix icon paths
+        // Cast to appropriate type for icon configuration
+        const iconDefault = leafletInstance.Icon.Default as { prototype: { _getIconUrl: unknown } };
+        delete iconDefault.prototype._getIconUrl;
+        leafletInstance.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+
+        setLeaflet(leafletInstance);
+        setReactLeafletComponents(ReactLeaflet);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading Leaflet or React Leaflet:', error);
+        setIsLoading(false);
       });
-
-      setLeaflet(leafletInstance);
-      setReactLeafletComponents(ReactLeaflet);
-      setIsLoading(false);
-    }).catch(error => {
-      console.error('Error loading Leaflet or React Leaflet:', error);
-      setIsLoading(false);
-    });
   }, []);
 
   // If still loading libraries or no gpx data, show loading state
@@ -83,14 +102,22 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   }
 
   // Once libraries are loaded and data is available, render the map
-  const { MapContainer, TileLayer, Polyline, LayerGroup, Marker, Popup, useMap } = reactLeafletComponents;
+  const { MapContainer, TileLayer, Polyline, LayerGroup, Marker, Popup, useMap } =
+    reactLeafletComponents;
   const L = leaflet;
 
   // Create route path
-  const routePath = validGpxData?.points?.map(point => [point.lat, point.lon] as [number, number]) || [];
+  const routePath =
+    validGpxData?.points?.map(point => [point.lat, point.lon] as [number, number]) || [];
 
   // Find bounds of the route
-  const bounds = routePath.length > 0 ? L.latLngBounds(routePath) : L.latLngBounds([[0, 0], [0, 0]]);
+  const bounds =
+    routePath.length > 0
+      ? L.latLngBounds(routePath)
+      : L.latLngBounds([
+          [0, 0],
+          [0, 0],
+        ]);
 
   // Component to center map on bounds
   const MapController = () => {
@@ -126,29 +153,31 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
 
     return (
       <LayerGroup>
-        {validForecastPoints && validForecastPoints.map((point, index) => {
-          if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
-          const weather = validWeatherData && validWeatherData[index];
-          if (!weather) return null;
+        {validForecastPoints &&
+          validForecastPoints.map((point, index) => {
+            if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number')
+              return null;
+            const weather = validWeatherData && validWeatherData[index];
+            if (!weather) return null;
 
-          // Create marker icon with custom color
-          const markerColor = getMarkerColor(weather);
-          const isSelected = selectedMarker === index;
-          const markerSize = isSelected ? 32 : 24;
-          const fontSize = isSelected ? '14px' : '12px';
-          const borderWidth = isSelected ? 3 : 2;
-          const borderColor = isSelected ? '#ffffff' : 'white';
-          const boxShadow = isSelected ? '0 0 15px rgba(0,0,0,0.7)' : '0 0 10px rgba(0,0,0,0.5)';
+            // Create marker icon with custom color
+            const markerColor = getMarkerColor(weather);
+            const isSelected = selectedMarker === index;
+            const markerSize = isSelected ? 32 : 24;
+            const fontSize = isSelected ? '14px' : '12px';
+            const borderWidth = isSelected ? 3 : 2;
+            const borderColor = isSelected ? '#ffffff' : 'white';
+            const boxShadow = isSelected ? '0 0 15px rgba(0,0,0,0.7)' : '0 0 10px rgba(0,0,0,0.5)';
 
-          const markerIcon = L.divIcon({
-            className: 'custom-marker',
-            html: `<div class="map-marker ${isSelected ? 'map-marker-selected' : 'map-marker-normal'}" style="background-color: ${markerColor};">${index + 1}</div>`,
-            iconSize: [markerSize, markerSize],
-            iconAnchor: [markerSize/2, markerSize/2]
-          });
+            const markerIcon = L.divIcon({
+              className: 'custom-marker',
+              html: `<div class="map-marker ${isSelected ? 'map-marker-selected' : 'map-marker-normal'}" style="background-color: ${markerColor};">${index + 1}</div>`,
+              iconSize: [markerSize, markerSize],
+              iconAnchor: [markerSize / 2, markerSize / 2],
+            });
 
-          // Create popup content
-          const popupContent = `
+            // Create popup content
+            const popupContent = `
             <div class="map-popup">
               <div class="map-popup-header">
                 <img src="${getWeatherIconUrl(weather.weatherIcon)}" alt="${weather.weatherDescription}" class="map-popup-icon">
@@ -166,23 +195,23 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
             </div>
           `;
 
-          return (
-            <Marker
-              key={`marker-${index}`}
-              position={[point.lat, point.lon]}
-              icon={markerIcon}
-              eventHandlers={{
-                click: () => {
-                  onMarkerClick(index);
-                }
-              }}
-            >
-              <Popup>
-                <div dangerouslySetInnerHTML={{ __html: popupContent }} />
-              </Popup>
-            </Marker>
-          );
-        })}
+            return (
+              <Marker
+                key={`marker-${index}`}
+                position={[point.lat, point.lon]}
+                icon={markerIcon}
+                eventHandlers={{
+                  click: () => {
+                    onMarkerClick(index);
+                  },
+                }}
+              >
+                <Popup>
+                  <div dangerouslySetInnerHTML={{ __html: popupContent }} />
+                </Popup>
+              </Marker>
+            );
+          })}
       </LayerGroup>
     );
   };
@@ -212,43 +241,49 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
   const MapKeyboardNavigation = () => {
     const map = useMap();
 
-    const handleNavigate = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
-      const center = map.getCenter();
-      const zoom = map.getZoom();
-      const offset = 100 / Math.pow(2, zoom); // Adjust movement based on zoom level
+    const handleNavigate = useCallback(
+      (direction: 'up' | 'down' | 'left' | 'right') => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        const offset = 100 / Math.pow(2, zoom); // Adjust movement based on zoom level
 
-      let newLat = center.lat;
-      let newLng = center.lng;
+        let newLat = center.lat;
+        let newLng = center.lng;
 
-      switch (direction) {
-        case 'up':
-          newLat += offset;
-          break;
-        case 'down':
-          newLat -= offset;
-          break;
-        case 'left':
-          newLng -= offset;
-          break;
-        case 'right':
-          newLng += offset;
-          break;
-      }
+        switch (direction) {
+          case 'up':
+            newLat += offset;
+            break;
+          case 'down':
+            newLat -= offset;
+            break;
+          case 'left':
+            newLng -= offset;
+            break;
+          case 'right':
+            newLng += offset;
+            break;
+        }
 
-      map.setView([newLat, newLng], zoom);
-    }, [map]);
+        map.setView([newLat, newLng], zoom);
+      },
+      [map]
+    );
 
-    const handleZoom = useCallback((direction: 'in' | 'out') => {
-      const zoom = map.getZoom();
-      const newZoom = direction === 'in' ? zoom + 1 : zoom - 1;
-      map.setZoom(newZoom);
-    }, [map]);
+    const handleZoom = useCallback(
+      (direction: 'in' | 'out') => {
+        const zoom = map.getZoom();
+        const newZoom = direction === 'in' ? zoom + 1 : zoom - 1;
+        map.setZoom(newZoom);
+      },
+      [map]
+    );
 
     return (
       <KeyboardNavigation
         onNavigate={handleNavigate}
         onZoom={handleZoom}
-        onSelectMarker={(index) => {
+        onSelectMarker={index => {
           if (index !== null) {
             onMarkerClick(index);
           }
@@ -260,11 +295,7 @@ const MapContent = ({ gpxData, forecastPoints, weatherData, onMarkerClick, selec
 
   return (
     <div className="relative h-[500px] rounded-xl overflow-hidden border border-border bg-card card-shadow animate-fade-in transition-smooth">
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
-        className="z-10 h-full w-full"
-      >
+      <MapContainer center={[51.505, -0.09]} zoom={13} className="z-10 h-full w-full">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

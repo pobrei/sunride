@@ -63,12 +63,7 @@ export function ErrorCard({
             </Button>
           )}
           {onHome && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={onHome}
-            >
+            <Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={onHome}>
               <Home className="h-4 w-4" />
               {homeText}
             </Button>

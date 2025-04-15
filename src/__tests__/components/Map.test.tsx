@@ -111,7 +111,7 @@ jest.mock('ol/Overlay', () => {
 });
 
 jest.mock('ol/proj', () => ({
-  fromLonLat: jest.fn().mockImplementation((coords) => coords),
+  fromLonLat: jest.fn().mockImplementation(coords => coords),
 }));
 
 describe('Map Component', () => {
@@ -166,7 +166,7 @@ describe('Map Component', () => {
 
   it('calls onMarkerClick when a marker is clicked', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <NotificationProvider>
         <WeatherProvider>

@@ -29,7 +29,11 @@ interface ToastContextType {
 const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
 
 // Toast provider
-export function SimpleToastProvider({ children }: { children: React.ReactNode }): React.ReactElement {
+export function SimpleToastProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
   const [toasts, setToasts] = React.useState<ToastProps[]>([]);
 
   const addToast = React.useCallback((toast: Omit<ToastProps, 'id'>): void => {
@@ -111,7 +115,7 @@ export function SimpleToast({
   id,
   variant,
   className,
-  children
+  children,
 }: React.PropsWithChildren<{
   id: string;
   variant?: ToastType;
@@ -121,7 +125,11 @@ export function SimpleToast({
 
   return (
     <div
-      className={classNames(toastVariants({ variant }), 'animate-in slide-in-from-right-full', className)}
+      className={classNames(
+        toastVariants({ variant }),
+        'animate-in slide-in-from-right-full',
+        className
+      )}
     >
       <div className="flex items-center">
         <ToastIcon variant={variant} />
@@ -142,14 +150,20 @@ export function SimpleToast({
 /**
  * Component for toast title
  */
-export function SimpleToastTitle({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
+export function SimpleToastTitle({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return <div className={classNames('text-sm font-semibold', className)} {...props} />;
 }
 
 /**
  * Component for toast description
  */
-export function SimpleToastDescription({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
+export function SimpleToastDescription({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return <div className={classNames('text-sm opacity-90', className)} {...props} />;
 }
 
@@ -162,15 +176,12 @@ export function SimpleToastViewport(): React.ReactElement {
   return (
     <div className="fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]">
       {toasts.map(toast => (
-        <SimpleToast
-          key={toast.id}
-          id={toast.id}
-          variant={toast.variant}
-          className="mb-2"
-        >
+        <SimpleToast key={toast.id} id={toast.id} variant={toast.variant} className="mb-2">
           <div className="grid gap-1">
             {toast.title && <SimpleToastTitle>{toast.title}</SimpleToastTitle>}
-            {toast.description && <SimpleToastDescription>{toast.description}</SimpleToastDescription>}
+            {toast.description && (
+              <SimpleToastDescription>{toast.description}</SimpleToastDescription>
+            )}
           </div>
           {toast.action}
         </SimpleToast>

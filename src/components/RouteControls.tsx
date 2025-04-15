@@ -21,11 +21,11 @@ export interface RouteSettings {
   avgSpeed: number;
 }
 
-export default function RouteControls({ 
-  onUpdateSettings, 
-  onExportPDF, 
+export default function RouteControls({
+  onUpdateSettings,
+  onExportPDF,
   isGenerating,
-  isExporting
+  isExporting,
 }: RouteControlsProps) {
   // Get tomorrow at 8:00 AM for default start time
   const getDefaultStartTime = () => {
@@ -46,7 +46,7 @@ export default function RouteControls({
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
@@ -61,7 +61,7 @@ export default function RouteControls({
     onUpdateSettings({
       startTime,
       weatherInterval,
-      avgSpeed
+      avgSpeed,
     });
   };
 
@@ -89,7 +89,9 @@ export default function RouteControls({
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="weatherInterval">Weather Interval</Label>
-              <span className="text-sm text-muted-foreground">{formatIntervalValue(weatherInterval)}</span>
+              <span className="text-sm text-muted-foreground">
+                {formatIntervalValue(weatherInterval)}
+              </span>
             </div>
             <Slider
               id="weatherInterval"
@@ -97,7 +99,7 @@ export default function RouteControls({
               max={20}
               step={1}
               value={[weatherInterval]}
-              onValueChange={(value) => setWeatherInterval(value[0])}
+              onValueChange={value => setWeatherInterval(value[0])}
               className="py-2"
             />
           </div>
@@ -113,17 +115,13 @@ export default function RouteControls({
               max={50}
               step={1}
               value={[avgSpeed]}
-              onValueChange={(value) => setAvgSpeed(value[0])}
+              onValueChange={value => setAvgSpeed(value[0])}
               className="py-2"
             />
           </div>
 
           <div className="flex gap-2">
-            <Button 
-              onClick={handleGenerateForecast}
-              disabled={isGenerating}
-              className="flex-1"
-            >
+            <Button onClick={handleGenerateForecast} disabled={isGenerating} className="flex-1">
               {isGenerating ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -133,12 +131,8 @@ export default function RouteControls({
                 'Generate Forecast'
               )}
             </Button>
-            
-            <Button 
-              onClick={onExportPDF}
-              disabled={isExporting || isGenerating}
-              variant="outline"
-            >
+
+            <Button onClick={onExportPDF} disabled={isExporting || isGenerating} variant="outline">
               {isExporting ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -156,4 +150,4 @@ export default function RouteControls({
       </CardContent>
     </Card>
   );
-} 
+}

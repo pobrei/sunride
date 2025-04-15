@@ -17,7 +17,9 @@ export function LoadingSpinner({ message, centered = false, size = 'md' }: Loadi
 
   const spinner = (
     <div className={`relative ${centered ? 'flex flex-col items-center justify-center' : ''}`}>
-      <div className={`animate-spin rounded-full border-t-transparent border-primary ${sizeClasses[size]}`}></div>
+      <div
+        className={`animate-spin rounded-full border-t-transparent border-primary ${sizeClasses[size]}`}
+      ></div>
       {message && <p className="mt-2 text-sm text-muted-foreground">{message}</p>}
     </div>
   );

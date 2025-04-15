@@ -14,7 +14,7 @@ import { useSafeData } from '@/features/data-validation/context';
 
 const MyComponent = () => {
   const { validateData, handleError } = useSafeData();
-  
+
   const processData = (data: unknown) => {
     try {
       const validData = validateData(data, 'mySchema');

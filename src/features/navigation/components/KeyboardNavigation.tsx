@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ArrowUp, 
-  ArrowDown, 
-  ArrowLeft, 
-  ArrowRight, 
-  ZoomIn, 
-  ZoomOut, 
-  Keyboard, 
-  X 
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ZoomIn,
+  ZoomOut,
+  Keyboard,
+  X,
 } from 'lucide-react';
 
 // Import from features
@@ -17,6 +17,10 @@ import { useWeather } from '@/features/weather/context';
 
 // Import from components
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { effects, typography, layout, animation } from '@/styles/tailwind-utils';
 
 interface KeyboardNavigationProps {
   onNavigate: (direction: 'up' | 'down' | 'left' | 'right') => void;
@@ -85,7 +89,10 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
         case 'P':
           e.preventDefault();
           if (markerCount > 0) {
-            const prevMarker = currentMarker === null ? markerCount - 1 : (currentMarker - 1 + markerCount) % markerCount;
+            const prevMarker =
+              currentMarker === null
+                ? markerCount - 1
+                : (currentMarker - 1 + markerCount) % markerCount;
             setCurrentMarker(prevMarker);
             onSelectMarker(prevMarker);
           }
@@ -108,7 +115,10 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
       <Button
         variant="outline"
         size="icon"
-        className="absolute bottom-4 left-4 z-[1000] bg-background/80 backdrop-blur-sm"
+        className={cn(
+          "absolute bottom-4 left-4 z-[1000]",
+          effects.glassmorphism
+        )}
         onClick={() => setIsOpen(true)}
         aria-label="Enable keyboard navigation"
       >
@@ -118,20 +128,32 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   }
 
   return (
-    <div className="absolute bottom-4 left-4 z-[1000] p-4 bg-background/80 backdrop-blur-sm rounded-lg border border-border">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-sm font-medium">Keyboard Navigation</h3>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6"
-          onClick={() => setIsOpen(false)}
-          aria-label="Close keyboard navigation"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-      
+    <Card
+      className={cn(
+        "absolute bottom-4 left-4 z-[1000]",
+        effects.glassmorphism,
+        animation.fadeIn
+      )}
+      variant="ghost"
+      size="sm"
+    >
+      <CardHeader className="py-2 px-4">
+        <div className="flex justify-between items-center">
+          <CardTitle className={cn(typography.h6)}>Keyboard Navigation</CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close keyboard navigation"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="py-2 px-4">
+
       <div className="grid grid-cols-3 gap-2 mb-4">
         <div></div>
         <Button
@@ -144,7 +166,7 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
           <ArrowUp className="h-4 w-4" />
         </Button>
         <div></div>
-        
+
         <Button
           variant="outline"
           size="icon"
@@ -164,7 +186,7 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
         >
           <ArrowRight className="h-4 w-4" />
         </Button>
-        
+
         <div></div>
         <Button
           variant="outline"
@@ -177,7 +199,7 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
         </Button>
         <div></div>
       </div>
-      
+
       <div className="flex justify-center gap-2 mb-4">
         <Button
           variant="outline"
@@ -198,14 +220,17 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
           <ZoomOut className="h-4 w-4" />
         </Button>
       </div>
-      
+
       {markerCount > 0 && (
         <div className="flex justify-between items-center">
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
-              const prevMarker = currentMarker === null ? markerCount - 1 : (currentMarker - 1 + markerCount) % markerCount;
+              const prevMarker =
+                currentMarker === null
+                  ? markerCount - 1
+                  : (currentMarker - 1 + markerCount) % markerCount;
               setCurrentMarker(prevMarker);
               onSelectMarker(prevMarker);
             }}
@@ -214,7 +239,9 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
             Prev (P)
           </Button>
           <span className="text-xs">
-            {currentMarker !== null ? `Marker ${currentMarker + 1}/${markerCount}` : 'No marker selected'}
+            {currentMarker !== null
+              ? `Marker ${currentMarker + 1}/${markerCount}`
+              : 'No marker selected'}
           </span>
           <Button
             variant="outline"
@@ -230,11 +257,15 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
           </Button>
         </div>
       )}
-      
-      <div className="mt-4 text-xs text-muted-foreground">
-        <p>Press <kbd className="px-1 py-0.5 bg-muted rounded">Esc</kbd> to close</p>
-      </div>
-    </div>
+
+      </CardContent>
+
+      <CardFooter className="py-2 px-4">
+        <div className={cn(typography.bodySm, typography.muted)}>
+          Press <kbd className="px-1 py-0.5 bg-muted rounded">Esc</kbd> to close
+        </div>
+      </CardFooter>
+    </Card>
   );
 };
 

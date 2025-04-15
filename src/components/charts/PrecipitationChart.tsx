@@ -58,32 +58,33 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
     probability: { bg: string; border: string; point: string };
   } => {
     // Check if we're in dark mode
-    const isDarkMode: boolean = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode: boolean =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return isDarkMode
       ? {
           precipitation: {
             bg: 'rgba(65, 105, 225, 0.3)',
             border: 'rgb(65, 105, 225)',
-            point: 'rgb(65, 105, 225)'
+            point: 'rgb(65, 105, 225)',
           },
           probability: {
             bg: 'rgba(100, 149, 237, 0.3)',
             border: 'rgb(100, 149, 237)',
-            point: 'rgb(100, 149, 237)'
-          }
+            point: 'rgb(100, 149, 237)',
+          },
         }
       : {
           precipitation: {
             bg: 'rgba(135, 206, 250, 0.3)',
             border: 'rgb(30, 144, 255)',
-            point: 'rgb(30, 144, 255)'
+            point: 'rgb(30, 144, 255)',
           },
           probability: {
             bg: 'rgba(176, 224, 230, 0.3)',
             border: 'rgb(70, 130, 180)',
-            point: 'rgb(70, 130, 180)'
-          }
+            point: 'rgb(70, 130, 180)',
+          },
         };
   };
 
@@ -101,12 +102,16 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels: string[] = forecastPoints.map((point) => {
+    const labels: string[] = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
-    const precipitationData: number[] = forecastPoints.map((_, i) => weatherData[i]?.precipitation ?? 0);
-    const probabilityData: number[] = forecastPoints.map((_, i) => (weatherData[i]?.precipitationProbability ?? 0) * 100);
+    const precipitationData: number[] = forecastPoints.map(
+      (_, i) => weatherData[i]?.precipitation ?? 0
+    );
+    const probabilityData: number[] = forecastPoints.map(
+      (_, i) => (weatherData[i]?.precipitationProbability ?? 0) * 100
+    );
 
     // Create or update chart
     if (chartRef.current) {
@@ -141,15 +146,15 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                 borderColor: colors.probability.border,
                 backgroundColor: colors.probability.bg,
                 borderWidth: 2,
-                pointBackgroundColor: (context) => {
+                pointBackgroundColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'blue' : colors.probability.point;
                 },
-                pointBorderColor: (context) => {
+                pointBorderColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'white' : colors.probability.border;
                 },
-                pointRadius: (context) => {
+                pointRadius: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 8 : 4;
                 },
@@ -174,9 +179,9 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
               tooltip: {
                 mode: 'index',
@@ -190,8 +195,8 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                   color: 'rgba(0, 0, 0, 0.1)',
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 type: 'linear',

@@ -9,14 +9,8 @@ import { LoadingSpinner, UserGuide } from '@/components/ui';
 import type { GPXData } from '@/types';
 
 export default function Home() {
-  const {
-    gpxData,
-    setGpxData,
-    generateWeatherForecast,
-    isLoading,
-    isGenerating,
-    loadingMessage
-  } = useWeather();
+  const { gpxData, setGpxData, generateWeatherForecast, isLoading, isGenerating, loadingMessage } =
+    useWeather();
 
   const { addNotification } = useSimpleNotifications();
 
@@ -39,7 +33,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (

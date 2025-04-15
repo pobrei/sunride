@@ -24,7 +24,7 @@ export default function BasicMap({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }: BasicMapProps) {
   // Calculate total distance
   const totalDistance = gpxData ? Math.round(gpxData.totalDistance / 1000) : 0;
@@ -56,7 +56,7 @@ export default function BasicMap({
 
               {/* Forecast points */}
               {forecastPoints.map((_, index) => {
-                const position = Math.round((index / (forecastPoints.length - 1)) * 100 / 5) * 5;
+                const position = Math.round(((index / (forecastPoints.length - 1)) * 100) / 5) * 5;
                 const isSelected = index === selectedMarker;
 
                 return (
@@ -91,15 +91,21 @@ export default function BasicMap({
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex items-center">
               <span className="w-24 text-gray-600 dark:text-gray-400">Temperature:</span>
-              <span className="font-medium">{weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C</span>
+              <span className="font-medium">
+                {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
+              </span>
             </div>
             <div className="flex items-center">
               <span className="w-24 text-gray-600 dark:text-gray-400">Wind:</span>
-              <span className="font-medium">{weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h</span>
+              <span className="font-medium">
+                {weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h
+              </span>
             </div>
             <div className="flex items-center">
               <span className="w-24 text-gray-600 dark:text-gray-400">Precipitation:</span>
-              <span className="font-medium">{weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm</span>
+              <span className="font-medium">
+                {weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm
+              </span>
             </div>
             <div className="flex items-center">
               <span className="w-24 text-gray-600 dark:text-gray-400">Humidity:</span>

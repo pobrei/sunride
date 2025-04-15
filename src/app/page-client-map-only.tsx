@@ -18,7 +18,7 @@ const SimpleMapWrapper = dynamic(() => import('@/components/map/SimpleMapWrapper
     <div className="h-[400px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading map..." centered />
     </div>
-  )
+  ),
 });
 
 // Dynamically import the SimpleTimelineWrapper component with no SSR
@@ -28,7 +28,7 @@ const SimpleTimelineWrapper = dynamic(() => import('@/components/timeline/Simple
     <div className="h-[150px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading timeline..." centered />
     </div>
-  )
+  ),
 });
 
 // Dynamically import the SimpleChartsWrapper component with no SSR
@@ -38,7 +38,7 @@ const SimpleChartsWrapper = dynamic(() => import('@/components/charts/SimpleChar
     <div className="h-[300px] bg-muted flex items-center justify-center">
       <LoadingSpinner message="Loading charts..." centered />
     </div>
-  )
+  ),
 });
 
 export default function Home() {
@@ -52,7 +52,7 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
@@ -101,7 +101,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (
@@ -147,29 +147,28 @@ export default function Home() {
           )}
 
           {forecastPoints.length > 0 && weatherData.length > 0 && (
-            <div className="rounded-lg overflow-hidden border border-border">
-              <SimpleTimelineWrapper
-                forecastPoints={forecastPoints}
-                weatherData={weatherData}
-                selectedMarker={selectedMarker}
-                onTimelineClick={handleTimelineClick}
-              />
-            </div>
+            <>
+              <div className="rounded-lg overflow-hidden border border-border">
+                <SimpleTimelineWrapper
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  selectedMarker={selectedMarker}
+                  onTimelineClick={handleTimelineClick}
+                />
+              </div>
 
-            <Alerts
-              forecastPoints={forecastPoints}
-              weatherData={weatherData}
-            />
+              <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
 
-            <div ref={chartsRef} className="rounded-lg overflow-hidden border border-border">
-              <SimpleChartsWrapper
-                gpxData={gpxData}
-                forecastPoints={forecastPoints}
-                weatherData={weatherData}
-                selectedMarker={selectedMarker}
-                onChartClick={handleChartClick}
-              />
-            </div>
+              <div ref={chartsRef} className="rounded-lg overflow-hidden border border-border">
+                <SimpleChartsWrapper
+                  gpxData={gpxData}
+                  forecastPoints={forecastPoints}
+                  weatherData={weatherData}
+                  selectedMarker={selectedMarker}
+                  onChartClick={handleChartClick}
+                />
+              </div>
+            </>
           )}
         </div>
       </div>

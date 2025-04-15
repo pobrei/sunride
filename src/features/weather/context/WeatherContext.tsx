@@ -25,7 +25,11 @@ interface WeatherContextType {
   setSelectedMarker: (index: number | null) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: Error | null) => void;
-  generateWeatherForecast: (weatherInterval: number, startTime: Date, avgSpeed: number) => Promise<void>;
+  generateWeatherForecast: (
+    weatherInterval: number,
+    startTime: Date,
+    avgSpeed: number
+  ) => Promise<void>;
   setIsExporting: (isExporting: boolean) => void;
   setLoadingMessage: (message: string) => void;
 }
@@ -74,7 +78,11 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
    * @param avgSpeed - Average speed in km/h
    * @returns Promise that resolves when forecast is generated
    */
-  const generateWeatherForecast = async (weatherInterval: number, startTime: Date, avgSpeed: number): Promise<void> => {
+  const generateWeatherForecast = async (
+    weatherInterval: number,
+    startTime: Date,
+    avgSpeed: number
+  ): Promise<void> => {
     if (!gpxData) {
       addNotification('error', 'Please upload a GPX file first');
       return;
@@ -89,12 +97,7 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
 
     try {
       // Generate forecast points at intervals along the route
-      const points = generateForecastPoints(
-        gpxData,
-        weatherInterval,
-        startTime,
-        avgSpeed
-      );
+      const points = generateForecastPoints(gpxData, weatherInterval, startTime, avgSpeed);
 
       setForecastPoints(points);
       setLoadingMessage(`Fetching weather data for ${points.length} points...`);
@@ -105,26 +108,73 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
         const data = await fetchWeatherForPoints(points);
 
         // Log the received data for debugging
-        console.log(`Received weather data: ${data.length} points, ${data.filter(item => item !== null).length} valid points`);
+        console.log(
+          `Received weather data: ${data.length} points, ${data.filter(item => item !== null).length} valid points`
+        );
         console.log('Weather data sample:', data[0]);
 
         // Only check for valid data if we have points to check
         if (data.length > 0) {
           const hasValidData = data.some(item => item !== null);
           if (!hasValidData) {
-            console.warn('All weather data points are null, but continuing anyway');
+            console.warn('All weather data points are null, using fallback data');
+            // Generate mock data instead of using null values
+            const mockData = points.map((point, index) => {
+              // Use the point's timestamp to create time-based variations
+              const date = new Date(point.timestamp * 1000);
+              const hour = date.getHours();
+
+              // UV index varies by time of day (higher at noon)
+              const uvIndex = Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
+
+              // Humidity varies by time (higher in morning and evening)
+              const humidity = 50 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 20) + Math.floor(Math.random() * 10);
+
+              // Pressure varies slightly throughout the day
+              const pressure = 1013 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 5) + Math.floor(Math.random() * 5);
+
+              return {
+                temperature: 15 + Math.sin(point.lat * 10) * 10,
+                feelsLike: 15 + Math.sin(point.lat * 10) * 8,
+                humidity: humidity,
+                pressure: pressure,
+                windSpeed: 5 + Math.random() * 10,
+                windDirection: Math.floor(Math.random() * 360),
+                rain: Math.random() < 0.3 ? Math.random() * 5 : 0,
+                weatherIcon: '01d',
+                weatherDescription: 'clear sky',
+                uvIndex: uvIndex,
+                windGust: 8 + Math.random() * 10,
+                precipitationProbability: Math.random(),
+                precipitation: Math.random() < 0.3 ? Math.random() * 5 : 0,
+                snow: 0
+              };
+            });
+            setWeatherData(mockData);
+            addNotification('warning', 'Weather data unavailable. Using simulated data for display.');
+            return;
           }
         } else {
           console.warn('Received empty weather data array');
           setWeatherData([]);
-          setLoadingMessage('No weather data available. Please check your OpenWeather API key in .env.local file.');
+          setLoadingMessage(
+            'No weather data available. Please check your OpenWeather API key in .env.local file.'
+          );
           setIsLoading(false);
           return;
         }
 
         setWeatherData(data);
-        addNotification('success', 'Weather forecast generated successfully');
-        captureMessage('Weather forecast generated successfully', 'info');
+
+        // Only show success if we have some valid data points
+        const validPointsCount = data.filter(item => item !== null).length;
+        if (validPointsCount > 0) {
+          addNotification('success', `Weather forecast generated with ${validPointsCount} data points`);
+          captureMessage('Weather forecast generated successfully', 'info');
+        } else {
+          addNotification('warning', 'Weather data unavailable. Using fallback display.');
+          captureMessage('Weather forecast generated with fallback data', 'warning');
+        }
       } catch (error) {
         // Handle network or API errors
         let errorMessage = 'Failed to fetch weather data';
@@ -135,16 +185,49 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
           captureException(error, {
             context: 'fetchWeatherForPoints',
             points: points.length,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         } else {
           captureException(new Error('Unknown error fetching weather data'), {
             context: 'fetchWeatherForPoints',
-            originalError: error
+            originalError: error,
           });
         }
 
-        addNotification('error', errorMessage);
+        // Generate mock data instead of using null values
+        const mockData = points.map((point, index) => {
+          // Use the point's timestamp to create time-based variations
+          const date = new Date(point.timestamp * 1000);
+          const hour = date.getHours();
+
+          // UV index varies by time of day (higher at noon)
+          const uvIndex = Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
+
+          // Humidity varies by time (higher in morning and evening)
+          const humidity = 50 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 20) + Math.floor(Math.random() * 10);
+
+          // Pressure varies slightly throughout the day
+          const pressure = 1013 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 5) + Math.floor(Math.random() * 5);
+
+          return {
+            temperature: 15 + Math.sin(point.lat * 10) * 10,
+            feelsLike: 15 + Math.sin(point.lat * 10) * 8,
+            humidity: humidity,
+            pressure: pressure,
+            windSpeed: 5 + Math.random() * 10,
+            windDirection: Math.floor(Math.random() * 360),
+            rain: Math.random() < 0.3 ? Math.random() * 5 : 0,
+            weatherIcon: '01d',
+            weatherDescription: 'clear sky',
+            uvIndex: uvIndex,
+            windGust: 8 + Math.random() * 10,
+            precipitationProbability: Math.random(),
+            precipitation: Math.random() < 0.3 ? Math.random() * 5 : 0,
+            snow: 0
+          };
+        });
+        setWeatherData(mockData);
+        addNotification('warning', 'Error fetching weather data. Using simulated data for display.');
         console.error('Error fetching weather data:', error);
       }
     } catch (error) {
@@ -158,12 +241,12 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
           context: 'generateForecastPoints',
           weatherInterval,
           avgSpeed,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       } else {
         captureException(new Error('Unknown error processing route data'), {
           context: 'generateForecastPoints',
-          originalError: error
+          originalError: error,
         });
       }
 

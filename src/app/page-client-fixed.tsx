@@ -24,7 +24,7 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
@@ -74,7 +74,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (
@@ -128,10 +128,7 @@ export default function Home() {
                 />
               </div>
 
-              <Alerts
-                forecastPoints={forecastPoints}
-                weatherData={weatherData}
-              />
+              <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
 
               <div ref={chartsRef} className="rounded-lg overflow-hidden border border-border">
                 <ClientSideCharts

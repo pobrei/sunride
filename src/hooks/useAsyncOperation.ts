@@ -58,55 +58,58 @@ export function useAsyncOperation<T = any, P extends any[] = any[]>(
   const mergedOptions: AsyncOperationOptions = { ...defaultOptions, ...options };
 
   // Function to execute the operation
-  const execute = useCallback(async (...args: P): Promise<T | null> => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+  const execute = useCallback(
+    async (...args: P): Promise<T | null> => {
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
 
-    try {
-      // Execute the operation
-      const result = await operation(...args);
-      
-      // Update state with success
-      setState({
-        result,
-        isLoading: false,
-        error: null,
-        isSuccess: true,
-      });
-      
-      // Show success notification if enabled
-      if (mergedOptions.showSuccessNotifications && mergedOptions.successMessage) {
-        addNotification('success', mergedOptions.successMessage);
-      }
-      
-      return result;
-    } catch (error) {
-      // Convert error to Error object
-      const errorObj = error instanceof Error ? error : new Error('Unknown error');
-      
-      // Report error if enabled
-      if (mergedOptions.reportErrors) {
-        captureException(errorObj, {
-          tags: { context: mergedOptions.errorContext },
-          extra: { args }
+      try {
+        // Execute the operation
+        const result = await operation(...args);
+
+        // Update state with success
+        setState({
+          result,
+          isLoading: false,
+          error: null,
+          isSuccess: true,
         });
+
+        // Show success notification if enabled
+        if (mergedOptions.showSuccessNotifications && mergedOptions.successMessage) {
+          addNotification('success', mergedOptions.successMessage);
+        }
+
+        return result;
+      } catch (error) {
+        // Convert error to Error object
+        const errorObj = error instanceof Error ? error : new Error('Unknown error');
+
+        // Report error if enabled
+        if (mergedOptions.reportErrors) {
+          captureException(errorObj, {
+            tags: { context: mergedOptions.errorContext },
+            extra: { args },
+          });
+        }
+
+        // Show error notification if enabled
+        if (mergedOptions.showErrorNotifications) {
+          addNotification('error', errorObj.message);
+        }
+
+        // Update state with error
+        setState({
+          result: null,
+          isLoading: false,
+          error: errorObj,
+          isSuccess: false,
+        });
+
+        return null;
       }
-      
-      // Show error notification if enabled
-      if (mergedOptions.showErrorNotifications) {
-        addNotification('error', errorObj.message);
-      }
-      
-      // Update state with error
-      setState({
-        result: null,
-        isLoading: false,
-        error: errorObj,
-        isSuccess: false,
-      });
-      
-      return null;
-    }
-  }, [operation, mergedOptions, addNotification]);
+    },
+    [operation, mergedOptions, addNotification]
+  );
 
   // Reset the state
   const reset = useCallback(() => {

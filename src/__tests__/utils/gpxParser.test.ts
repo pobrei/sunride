@@ -1,4 +1,8 @@
-import { parseGPX, calculateDistance, generateForecastPoints } from '@/features/gpx/utils/gpxParser';
+import {
+  parseGPX,
+  calculateDistance,
+  generateForecastPoints,
+} from '@/features/gpx/utils/gpxParser';
 import { mockGPXFileContent, mockForecastPoints } from '../mocks/mockData';
 
 describe('GPX Parser', () => {

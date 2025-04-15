@@ -7,14 +7,15 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/styles/tailwind-utils';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { typography, animation, effects, layout, loading } from '@/styles/tailwind-utils';
 
 // Dynamically import the Timeline component with no SSR
 const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
   ssr: false,
   loading: () => (
-    <div className="h-[150px] bg-muted/30 flex items-center justify-center rounded-lg border border-border">
+    <div className={cn("h-[150px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
       <LoadingSpinner
         message="Loading timeline..."
         centered
@@ -51,9 +52,9 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   selectedMarker,
   onTimelineClick,
   className,
-  height = "h-[150px]",
+  height = 'h-[150px]',
   showPlaceholder = true,
-  showNavigation = true
+  showNavigation = true,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -91,7 +92,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
         timelineItems[selectedMarker].scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
-          inline: 'center'
+          inline: 'center',
         });
       }
     }
@@ -113,17 +114,20 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   };
 
   // If there's no data, show a placeholder
-  if ((!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) && showPlaceholder) {
+  if (
+    (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) &&
+    showPlaceholder
+  ) {
     return (
-      <Card className={cn(height, 'overflow-hidden', className)}>
-        <CardContent className="p-0 h-full">
-          <div className="flex items-center justify-center h-full bg-muted/20">
-            <div className="text-center p-6">
-              <div className="mx-auto w-10 h-10 rounded-full bg-muted/40 flex items-center justify-center mb-3">
-                <Clock className="h-5 w-5 text-muted-foreground" />
+      <Card className={cn(height, 'overflow-hidden', animation.fadeIn, className)}>
+        <CardContent className={cn("p-0 h-full")}>
+          <div className={cn(layout.flexCenter, "h-full bg-muted/20")}>
+            <div className={cn(typography.center, "p-6", animation.fadeInSlideUp)}>
+              <div className={cn(layout.flexCenter, "mx-auto w-10 h-10 rounded-full bg-muted/40 mb-3", animation.fadeIn)}>
+                <Clock className={cn("h-5 w-5", typography.muted)} />
               </div>
-              <h3 className="text-base font-medium mb-1">No Timeline Data</h3>
-              <p className="text-sm text-muted-foreground max-w-xs">
+              <h3 className={cn(typography.h5, "mb-1")}>No Timeline Data</h3>
+              <p className={cn(typography.bodySm, typography.muted, "max-w-xs")}>
                 Upload a GPX file to see your route timeline with weather data
               </p>
             </div>
@@ -136,7 +140,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If there's an error, show an error message
   if (hasError) {
     return (
-      <div className={cn(height, 'overflow-hidden rounded-lg', className)}>
+      <div className={cn(height, effects.rounded, 'overflow-hidden', animation.fadeIn, className)}>
         <ErrorMessage
           title="Timeline Error"
           message={errorMessage || 'Failed to load the timeline component'}
@@ -151,14 +155,16 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
 
   // If everything is fine, render the timeline
   return (
-    <div className={cn(height, 'relative rounded-lg overflow-hidden border border-border', className)}>
+    <div
+      className={cn(height, 'relative overflow-hidden', effects.rounded, effects.border, animation.fadeIn, className)}
+    >
       {/* Navigation arrows */}
       {showNavigation && (
         <>
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm"
+            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
             onClick={() => handleScroll('left')}
             disabled={scrollPosition <= 10}
           >
@@ -168,7 +174,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm"
+            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
             onClick={() => handleScroll('right')}
           >
             <ChevronRight className="h-4 w-4" />
@@ -176,10 +182,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
         </>
       )}
 
-      <div
-        className="h-full overflow-hidden"
-        onScroll={handleScrollEvent}
-      >
+      <div className={cn("h-full overflow-hidden")} onScroll={handleScrollEvent}>
         <SafeTimelineWrapper
           forecastPoints={forecastPoints}
           weatherData={weatherData}

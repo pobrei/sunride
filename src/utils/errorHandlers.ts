@@ -10,7 +10,7 @@ export enum ErrorType {
   FILE_PROCESSING = 'FILE_PROCESSING_ERROR',
   WEATHER = 'WEATHER_ERROR',
   GPX = 'GPX_ERROR',
-  UNKNOWN = 'UNKNOWN_ERROR'
+  UNKNOWN = 'UNKNOWN_ERROR',
 }
 
 /**
@@ -35,26 +35,23 @@ export interface ErrorHandlerOptions {
 const defaultOptions: Partial<ErrorHandlerOptions> = {
   logToConsole: true,
   reportToSentry: true,
-  errorType: ErrorType.UNKNOWN
+  errorType: ErrorType.UNKNOWN,
 };
 
 /**
  * Handle errors in a standardized way across the application
- * 
+ *
  * @param error - The error to handle
  * @param options - Options for error handling
  * @returns Formatted error message
  */
-export function handleError(
-  error: unknown,
-  options: ErrorHandlerOptions
-): string {
+export function handleError(error: unknown, options: ErrorHandlerOptions): string {
   const mergedOptions = { ...defaultOptions, ...options };
-  
+
   // Format the error message
   let errorMessage: string;
   let errorObject: Error;
-  
+
   if (error instanceof Error) {
     errorMessage = error.message;
     errorObject = error;
@@ -64,33 +61,33 @@ export function handleError(
   } else {
     errorMessage = 'An unknown error occurred';
     errorObject = new Error(errorMessage);
-    
+
     // Add the original error as a property
     (errorObject as any).originalError = error;
   }
-  
+
   // Log to console if enabled
   if (mergedOptions.logToConsole) {
     console.error(`[${mergedOptions.context}] ${errorMessage}`, error);
   }
-  
+
   // Report to Sentry if enabled
   if (mergedOptions.reportToSentry) {
     captureException(errorObject, {
       tags: {
         errorType: mergedOptions.errorType,
-        context: mergedOptions.context
+        context: mergedOptions.context,
       },
-      extra: mergedOptions.additionalData
+      extra: mergedOptions.additionalData,
     });
   }
-  
+
   return errorMessage;
 }
 
 /**
  * Safely execute a function with standardized error handling
- * 
+ *
  * @param fn - Function to execute
  * @param options - Error handling options
  * @returns Result of the function or undefined if an error occurred
@@ -109,7 +106,7 @@ export async function safeExecute<T>(
 
 /**
  * Safely execute a function with a fallback value
- * 
+ *
  * @param fn - Function to execute
  * @param fallback - Fallback value to return if an error occurs
  * @param options - Error handling options
@@ -130,7 +127,7 @@ export async function safeExecuteWithFallback<T>(
 
 /**
  * Retry a function with exponential backoff
- * 
+ *
  * @param fn - Function to retry
  * @param options - Retry options
  * @returns Result of the function or throws an error after all retries fail
@@ -143,7 +140,7 @@ export async function retryWithBackoff<T>(
     maxDelay = 10000,
     factor = 2,
     context = 'retry',
-    onRetry = (attempt: number, delay: number) => {}
+    onRetry = (attempt: number, delay: number) => {},
   }: {
     maxRetries?: number;
     initialDelay?: number;
@@ -154,32 +151,32 @@ export async function retryWithBackoff<T>(
   }
 ): Promise<T> {
   let lastError: unknown;
-  
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error;
-      
+
       if (attempt < maxRetries - 1) {
         // Calculate delay with exponential backoff and jitter
         const delay = Math.min(
           initialDelay * Math.pow(factor, attempt) * (0.8 + Math.random() * 0.4),
           maxDelay
         );
-        
+
         // Log retry attempt
         console.warn(`Retry ${attempt + 1}/${maxRetries} for ${context} in ${delay.toFixed(0)}ms`);
-        
+
         // Call onRetry callback
         onRetry(attempt + 1, delay);
-        
+
         // Wait before retrying
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
-  
+
   // If we get here, all retries failed
   throw lastError;
 }

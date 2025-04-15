@@ -7,9 +7,7 @@ import { WeatherData } from '@/features/weather/types';
  * @returns Formatted distance string
  */
 export function formatDistance(distance: number): string {
-  return distance < 1
-    ? `${Math.round(distance * 1000)} m`
-    : `${distance.toFixed(1)} km`;
+  return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`;
 }
 
 /**
@@ -29,11 +27,14 @@ export function formatElevation(elevation: number): string {
  * @returns Formatted date and time string
  */
 export function formatDateTime(timestamp: number | Date): string {
-  const date: Date = timestamp instanceof Date
-    ? timestamp
-    : new Date(typeof timestamp === 'number' && timestamp < 10000000000
-        ? timestamp * 1000  // Convert seconds to milliseconds if needed
-        : timestamp);
+  const date: Date =
+    timestamp instanceof Date
+      ? timestamp
+      : new Date(
+          typeof timestamp === 'number' && timestamp < 10000000000
+            ? timestamp * 1000 // Convert seconds to milliseconds if needed
+            : timestamp
+        );
 
   return date.toLocaleString('en-US', {
     month: 'short',
@@ -50,11 +51,14 @@ export function formatDateTime(timestamp: number | Date): string {
  * @returns Formatted time string
  */
 export function formatTime(timestamp: number | Date): string {
-  const date: Date = timestamp instanceof Date
-    ? timestamp
-    : new Date(typeof timestamp === 'number' && timestamp < 10000000000
-        ? timestamp * 1000  // Convert seconds to milliseconds if needed
-        : timestamp);
+  const date: Date =
+    timestamp instanceof Date
+      ? timestamp
+      : new Date(
+          typeof timestamp === 'number' && timestamp < 10000000000
+            ? timestamp * 1000 // Convert seconds to milliseconds if needed
+            : timestamp
+        );
 
   return date.toLocaleString('en-US', {
     hour: '2-digit',
@@ -213,7 +217,7 @@ export function checkWeatherAlerts(weather: WeatherData): {
     highWind: weather.windSpeed > 10,
     extremeHeat: weather.temperature > 35,
     freezing: weather.temperature < 0,
-    heavyRain: weather.rain > 5
+    heavyRain: weather.rain > 5,
   };
 }
 
@@ -230,16 +234,19 @@ export function getWeatherIconUrl(iconCode: string): string {
 /**
  * Get the appropriate marker color based on weather conditions
  *
- * @param weather - Weather data object
+ * @param weather - Weather data object or null
  * @returns Hex color code for the marker
  */
-export function getMarkerColor(weather: WeatherData): string {
+export function getMarkerColor(weather: WeatherData | null): string {
+  // If no weather data, return a neutral gray color
+  if (!weather) return '#9E9E9E'; // Gray for no data
+
   const alerts: ReturnType<typeof checkWeatherAlerts> = checkWeatherAlerts(weather);
 
   if (alerts.extremeHeat) return '#FF5722'; // Red-orange for extreme heat
-  if (alerts.freezing) return '#2196F3';    // Blue for freezing
-  if (alerts.highWind) return '#FFC107';    // Amber for high wind
-  if (alerts.heavyRain) return '#673AB7';   // Deep purple for heavy rain
+  if (alerts.freezing) return '#2196F3'; // Blue for freezing
+  if (alerts.highWind) return '#FFC107'; // Amber for high wind
+  if (alerts.heavyRain) return '#673AB7'; // Deep purple for heavy rain
 
   // Default - normal conditions
   return '#4CAF50'; // Green
@@ -262,9 +269,9 @@ export function createTemperatureGradient(
 
   if (minTemp < 0 && maxTemp > 30) {
     // Wide range: cold to hot
-    gradient.addColorStop(0, 'rgba(255, 87, 34, 0.8)');  // Hot (red-orange)
+    gradient.addColorStop(0, 'rgba(255, 87, 34, 0.8)'); // Hot (red-orange)
     gradient.addColorStop(0.4, 'rgba(76, 175, 80, 0.5)'); // Pleasant (green)
-    gradient.addColorStop(1, 'rgba(33, 150, 243, 0.8)');  // Cold (blue)
+    gradient.addColorStop(1, 'rgba(33, 150, 243, 0.8)'); // Cold (blue)
   } else if (minTemp < 0) {
     // Cold range
     gradient.addColorStop(0, 'rgba(33, 150, 243, 0.5)');

@@ -2,9 +2,10 @@ import { MongoClient } from 'mongodb';
 import { envConfig } from '@/lib/env';
 
 // Check if we have a valid MongoDB URI
-const USE_MOCK_DB: boolean = !envConfig.mongodbUri ||
-                   envConfig.mongodbUri === 'mongodb://localhost:27017/weatherapp' ||
-                   envConfig.mongodbUri.includes('your_mongodb_connection_string_here');
+const USE_MOCK_DB: boolean =
+  !envConfig.mongodbUri ||
+  envConfig.mongodbUri === 'mongodb://localhost:27017/weatherapp' ||
+  envConfig.mongodbUri.includes('your_mongodb_connection_string_here');
 
 if (USE_MOCK_DB) {
   console.warn('Using in-memory storage because no valid MongoDB URI was provided');
@@ -34,12 +35,12 @@ class MockMongoClient {
         // Mock collection methods
         findOne: async () => null,
         find: () => ({
-          toArray: async () => []
+          toArray: async () => [],
         }),
         insertOne: async () => ({ acknowledged: true, insertedId: 'mock-id' }),
         updateOne: async () => ({ acknowledged: true, modifiedCount: 1 }),
-        deleteOne: async () => ({ acknowledged: true, deletedCount: 1 })
-      })
+        deleteOne: async () => ({ acknowledged: true, deletedCount: 1 }),
+      }),
     };
   }
 }

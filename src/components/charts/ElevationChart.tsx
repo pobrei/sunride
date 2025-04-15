@@ -17,7 +17,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
   gpxData,
   forecastPoints,
   selectedMarker,
-  onChartClick
+  onChartClick,
 }) => {
   // This is a placeholder component that would normally use a charting library
 
@@ -27,9 +27,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
         <CardContent className="p-4">
           <div className="text-lg font-medium mb-4">Elevation Chart</div>
           <div className="h-[200px] w-full bg-muted/20 rounded-md flex items-center justify-center">
-            <div className="text-muted-foreground text-sm">
-              No elevation data available
-            </div>
+            <div className="text-muted-foreground text-sm">No elevation data available</div>
           </div>
         </CardContent>
       </Card>

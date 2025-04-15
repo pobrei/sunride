@@ -17,7 +17,7 @@ const SimpleMap: React.FC<SimpleMapProps> = ({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }) => {
   // Check if we have valid data
   const hasValidData =
@@ -42,10 +42,7 @@ const SimpleMap: React.FC<SimpleMapProps> = ({
             <p className="text-sm text-muted-foreground mb-4">
               Please upload a GPX file to view route information.
             </p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="w-full"
-            >
+            <Button onClick={() => window.location.reload()} className="w-full">
               <RefreshCw className="mr-2 h-4 w-4" />
               Reload Page
             </Button>
@@ -67,11 +64,7 @@ const SimpleMap: React.FC<SimpleMapProps> = ({
             </p>
           </div>
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => window.location.reload()}
-            >
+            <Button size="sm" variant="outline" onClick={() => window.location.reload()}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Reload
             </Button>
@@ -100,7 +93,9 @@ const SimpleMap: React.FC<SimpleMapProps> = ({
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p>Time: {formatDateTime(point.timestamp)}</p>
                   <p>Distance: {formatDistance(point.distance)}</p>
-                  <p>Coordinates: {point.lat.toFixed(5)}, {point.lon.toFixed(5)}</p>
+                  <p>
+                    Coordinates: {point.lat.toFixed(5)}, {point.lon.toFixed(5)}
+                  </p>
                   <p>Temperature: {formatTemperature(weather.temperature)}</p>
                 </div>
               </div>

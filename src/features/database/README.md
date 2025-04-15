@@ -20,7 +20,7 @@ const collection = db.collection('weather');
 
 // Using API wrapper
 const points: ForecastPoint[] = [
-  { lat: 37.7749, lon: -122.4194, timestamp: 1634292000, distance: 0 }
+  { lat: 37.7749, lon: -122.4194, timestamp: 1634292000, distance: 0 },
 ];
 
 try {

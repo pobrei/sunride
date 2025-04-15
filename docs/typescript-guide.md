@@ -35,12 +35,7 @@ import { WeatherData, ForecastPoint } from '@/features/weather/types';
 import { GPXData, RoutePoint } from '@/features/gpx/types';
 
 // Re-export feature types
-export type {
-  WeatherData,
-  ForecastPoint,
-  GPXData,
-  RoutePoint
-};
+export type { WeatherData, ForecastPoint, GPXData, RoutePoint };
 
 // Define shared types
 export interface NotificationType {
@@ -61,9 +56,9 @@ Avoid using the `any` type whenever possible. Instead, use:
 // src/utils/typeGuards.ts
 export function isWeatherData(value: unknown): value is WeatherData {
   if (!value || typeof value !== 'object') return false;
-  
+
   const data = value as Partial<WeatherData>;
-  
+
   return (
     typeof data.temperature === 'number' &&
     typeof data.humidity === 'number' &&
@@ -105,11 +100,7 @@ interface WeatherCardProps {
 }
 
 // Use with function component
-const WeatherCard: React.FC<WeatherCardProps> = ({ 
-  data, 
-  onRefresh, 
-  isLoading = false 
-}) => {
+const WeatherCard: React.FC<WeatherCardProps> = ({ data, onRefresh, isLoading = false }) => {
   // ...
 };
 
@@ -163,14 +154,14 @@ function parseWeatherResponse(response: unknown): WeatherData {
   if (!response || typeof response !== 'object') {
     throw new Error('Invalid response');
   }
-  
+
   const data = response as Record<string, unknown>;
-  
+
   // Validate required fields
   if (typeof data.temperature !== 'number') {
     throw new Error('Invalid temperature');
   }
-  
+
   // Create validated object
   return {
     temperature: data.temperature,

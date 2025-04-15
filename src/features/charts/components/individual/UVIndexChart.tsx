@@ -30,12 +30,14 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
     const chartArea = chart.chartArea;
     const xAxis = chart.scales.x;
-    
+
     // Check if click is within chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       // Calculate which data point was clicked
-      const index = Math.round((x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1)));
-      
+      const index = Math.round(
+        (x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1))
+      );
+
       if (index >= 0 && index < forecastPoints.length) {
         onChartClick(index);
       }
@@ -67,7 +69,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
     // Filter out null values
     const validWeatherData = weatherData.filter((data): data is WeatherData => data !== null);
-    
+
     if (validWeatherData.length === 0) return;
 
     // Prepare data for the chart
@@ -120,13 +122,13 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
             mode: 'index',
             intersect: false,
             callbacks: {
-              title: (tooltipItems) => {
+              title: tooltipItems => {
                 const index = tooltipItems[0].dataIndex;
                 const time = formatTime(forecastPoints[index].timestamp);
                 const distance = formatDistance(forecastPoints[index].distance);
                 return `${time} (${distance})`;
               },
-              label: (context) => {
+              label: context => {
                 const value = context.raw as number;
                 const { level } = getUVRiskLevel(value);
                 return [`UV Index: ${value}`, `Risk Level: ${level}`];
@@ -156,13 +158,13 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
             max: 12,
             ticks: {
               stepSize: 1,
-              callback: function(value) {
+              callback: function (value) {
                 if (value <= 2) return `${value} (Low)`;
                 if (value <= 5) return `${value} (Moderate)`;
                 if (value <= 7) return `${value} (High)`;
                 if (value <= 10) return `${value} (Very High)`;
                 return `${value} (Extreme)`;
-              }
+              },
             },
           },
         },
@@ -174,7 +176,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
     // Add click event listener to the canvas
     const canvas = chartRef.current;
-    canvas.addEventListener('click', (event) => {
+    canvas.addEventListener('click', event => {
       if (chartInstance.current) {
         handleChartClick(event, chartInstance.current);
       }
@@ -182,7 +184,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
     // Cleanup function
     return () => {
-      canvas.removeEventListener('click', (event) => {
+      canvas.removeEventListener('click', event => {
         if (chartInstance.current) {
           handleChartClick(event, chartInstance.current);
         }
@@ -199,9 +201,9 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
         <CardTitle className="text-lg font-semibold">UV Index</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
+        <div
           className="h-[250px] w-full"
-          aria-label={`UV Index chart showing values from 0 to ${Math.max(...(weatherData.filter(Boolean).map(w => w?.uvIndex || 0)))}`}
+          aria-label={`UV Index chart showing values from 0 to ${Math.max(...weatherData.filter(Boolean).map(w => w?.uvIndex || 0))}`}
         >
           <canvas ref={chartRef} />
         </div>

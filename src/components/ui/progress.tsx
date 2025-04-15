@@ -19,47 +19,52 @@ interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
 /**
  * A progress bar component that shows completion of a task
  */
-const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(({
-  className,
-  value = 0,
-  indeterminate = false,
-  indicatorColor,
-  trackColor,
-  animation = 'none',
-  ...props
-}, ref) => {
-  // Ensure value is between 0 and 100
-  const clampedValue = Math.max(0, Math.min(100, value));
+const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
+  (
+    {
+      className,
+      value = 0,
+      indeterminate = false,
+      indicatorColor,
+      trackColor,
+      animation = 'none',
+      ...props
+    },
+    ref
+  ) => {
+    // Ensure value is between 0 and 100
+    const clampedValue = Math.max(0, Math.min(100, value));
 
-  return (
-    <div
-      ref={ref}
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={indeterminate ? undefined : clampedValue}
-      className={classNames(
-        'relative h-4 w-full overflow-hidden rounded-full',
-        trackColor || 'bg-secondary',
-        className
-      )}
-      {...props}
-    >
+    return (
       <div
+        ref={ref}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={indeterminate ? undefined : clampedValue}
         className={classNames(
-          'h-full flex-1 transition-all duration-300',
-          indicatorColor || 'bg-primary',
-          indeterminate && 'animate-indeterminate-progress',
-          animation === 'pulse' && 'animate-pulse'
+          'relative h-4 w-full overflow-hidden rounded-full',
+          trackColor || 'bg-secondary',
+          className
         )}
-        style={{
-          width: indeterminate ? '100%' : `${clampedValue}%`,
-          transform: indeterminate ? 'translateX(-100%)' : undefined,
-        }}
-      />
-    </div>
-  );
-});
+        {...props}
+      >
+        <div
+          className={classNames(
+            'h-full flex-1 transition-all duration-300',
+            indicatorColor || 'bg-primary',
+            indeterminate && 'animate-indeterminate-progress',
+            animation === 'pulse' && 'animate-pulse'
+          )}
+          style={{
+            width: indeterminate ? '100%' : `${clampedValue}%`,
+            transform: indeterminate ? 'translateX(-100%)' : undefined,
+          }}
+        />
+      </div>
+    );
+  }
+);
 Progress.displayName = 'Progress';
 
 export { Progress };

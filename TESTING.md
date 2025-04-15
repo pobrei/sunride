@@ -5,24 +5,28 @@ This document outlines the testing approach for the Weather App project.
 ## Testing Structure
 
 Tests are organized in two ways:
+
 1. **Co-located tests**: Test files placed alongside the source files they test (`Component.test.tsx` next to `Component.tsx`)
 2. **Grouped tests**: Tests placed in the `__tests__` directory, mirroring the source directory structure
 
 ## Test Types
 
 ### Unit Tests
+
 - Test individual functions and components in isolation
 - Mock all external dependencies
 - Focus on input/output and state changes
 - Located in `__tests__/unit` or co-located with source files
 
 ### Integration Tests
+
 - Test how components work together
 - May use partial mocking of external services
 - Focus on component interactions
 - Located in `__tests__/integration`
 
 ### End-to-End Tests (Future)
+
 - Test complete user flows
 - Minimal mocking, use test environments
 - Focus on user experience

@@ -28,13 +28,14 @@ const SafeChartsWrapper: React.FC<SafeChartsWrapperProps> = ({
   forecastPoints,
   weatherData,
   selectedMarker,
-  onChartClick
+  onChartClick,
 }) => {
   // Validate data
-  const hasValidData = gpxData && 
-    forecastPoints && 
-    weatherData && 
-    forecastPoints.length > 0 && 
+  const hasValidData =
+    gpxData &&
+    forecastPoints &&
+    weatherData &&
+    forecastPoints.length > 0 &&
     weatherData.length > 0 &&
     forecastPoints.length === weatherData.length;
 

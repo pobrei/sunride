@@ -25,7 +25,7 @@ export default function FallbackMap({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }: FallbackMapProps) {
   const [mapPoints, setMapPoints] = useState<{ x: number; y: number; index: number }[]>([]);
   const [routePoints, setRoutePoints] = useState<{ x: number; y: number }[]>([]);
@@ -92,8 +92,19 @@ export default function FallbackMap({
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
         <div className="text-center p-6">
           <div className="mx-auto w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-slate-500 dark:text-slate-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              />
             </svg>
           </div>
           <h3 className="text-lg font-medium mb-1">No Route Data</h3>
@@ -111,7 +122,11 @@ export default function FallbackMap({
       <div className="h-full w-full relative">
         {/* Route line */}
         {routePoints.length > 1 && (
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg
+            className="absolute inset-0 h-full w-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
             <polyline
               points={routePoints.map(p => `${p.x},${p.y}`).join(' ')}
               fill="none"
@@ -124,7 +139,7 @@ export default function FallbackMap({
         )}
 
         {/* Markers */}
-        {mapPoints.map((point) => {
+        {mapPoints.map(point => {
           const isSelected = point.index === selectedMarker;
 
           // Round to nearest 10% for positioning
@@ -137,8 +152,8 @@ export default function FallbackMap({
               type="button"
               className={`map-marker-position marker-x-${xPos} marker-y-${yPos} rounded-full flex items-center justify-center text-white font-medium transition-all ${
                 isSelected
-                  ? "bg-blue-500 w-8 h-8 text-sm z-20 ring-4 ring-blue-300 dark:ring-blue-900"
-                  : "bg-slate-500 w-6 h-6 text-xs z-10 hover:bg-slate-600"
+                  ? 'bg-blue-500 w-8 h-8 text-sm z-20 ring-4 ring-blue-300 dark:ring-blue-900'
+                  : 'bg-slate-500 w-6 h-6 text-xs z-10 hover:bg-slate-600'
               }`}
               onClick={() => onMarkerClick(point.index)}
               aria-label={`Map point ${point.index + 1}`}
@@ -167,19 +182,29 @@ export default function FallbackMap({
       {/* Weather info panel */}
       {selectedMarker !== null && weatherData[selectedMarker] && (
         <div className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-3 rounded-md shadow-md border border-slate-200 dark:border-slate-700 text-sm">
-          <div className="font-medium mb-1">Point {selectedMarker + 1} of {forecastPoints.length}</div>
+          <div className="font-medium mb-1">
+            Point {selectedMarker + 1} of {forecastPoints.length}
+          </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             <div>Temperature:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
+            </div>
 
             <div>Feels Like:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
+            </div>
 
             <div>Wind:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h
+            </div>
 
             <div>Precipitation:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm
+            </div>
 
             <div>Humidity:</div>
             <div className="font-medium">{weatherData[selectedMarker]?.humidity || 'N/A'}%</div>

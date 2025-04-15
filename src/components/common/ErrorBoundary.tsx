@@ -22,14 +22,14 @@ class ErrorBoundary extends Component<Props, State> {
     super(props);
     this.state = {
       hasError: false,
-      error: null
+      error: null,
     };
   }
 
   static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
@@ -62,7 +62,7 @@ class ErrorBoundary extends Component<Props, State> {
   reset = (): void => {
     this.setState({
       hasError: false,
-      error: null
+      error: null,
     });
   };
 

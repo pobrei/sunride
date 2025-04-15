@@ -25,12 +25,14 @@ The app requires the following environment variables to be set in Vercel:
 3. Import your Git repository.
 
 4. Configure project:
+
    - Framework Preset: Next.js
    - Root Directory: ./
    - Build Command: Vercel will automatically detect this
    - Output Directory: .next (already configured)
 
 5. Add environment variables:
+
    - Click "Environment Variables" and add the required variables mentioned above.
    - Ensure they are set for Production, Preview, and Development environments.
 
@@ -51,4 +53,4 @@ If you encounter issues during deployment, check the following:
 
 Vercel automatically sets up continuous deployment from your Git repository. Any new commits to the main branch will trigger a new deployment.
 
-If you want to change this behavior, you can configure deployment settings in your project settings on Vercel. 
+If you want to change this behavior, you can configure deployment settings in your project settings on Vercel.

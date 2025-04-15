@@ -21,7 +21,7 @@ const WeatherProviderComparison: React.FC = () => {
   const [providers, setProviders] = useState<WeatherProviderData[]>([
     { provider: 'OpenWeather', data: [], isLoading: false, error: null },
     { provider: 'WeatherAPI', data: [], isLoading: false, error: null },
-    { provider: 'VisualCrossing', data: [], isLoading: false, error: null }
+    { provider: 'VisualCrossing', data: [], isLoading: false, error: null },
   ]);
   const [activeProvider, setActiveProvider] = useState<string>('OpenWeather');
   const [isComparing, setIsComparing] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const WeatherProviderComparison: React.FC = () => {
       updated[providerIndex] = {
         ...updated[providerIndex],
         isLoading: true,
-        error: null
+        error: null,
       };
       return updated;
     });
@@ -94,7 +94,7 @@ const WeatherProviderComparison: React.FC = () => {
           cloudCover: Math.max(0, Math.min(100, Math.sin(index * 0.5) * 50 + 50)),
           visibility: 10000,
           uvIndex: 5,
-          timestamp: point.timestamp
+          timestamp: point.timestamp,
         };
       });
 
@@ -104,7 +104,7 @@ const WeatherProviderComparison: React.FC = () => {
         updated[providerIndex] = {
           ...updated[providerIndex],
           data: mockData,
-          isLoading: false
+          isLoading: false,
         };
         return updated;
       });
@@ -115,7 +115,7 @@ const WeatherProviderComparison: React.FC = () => {
         updated[providerIndex] = {
           ...updated[providerIndex],
           isLoading: false,
-          error: error instanceof Error ? error : new Error('Unknown error')
+          error: error instanceof Error ? error : new Error('Unknown error'),
         };
         return updated;
       });
@@ -137,7 +137,9 @@ const WeatherProviderComparison: React.FC = () => {
   };
 
   // Get the active provider data
-  const activeProviderData: WeatherProviderData | undefined = providers.find(p => p.provider === activeProvider);
+  const activeProviderData: WeatherProviderData | undefined = providers.find(
+    p => p.provider === activeProvider
+  );
 
   // Check if we have data to display
   const hasData: boolean = providers.some(p => p.data.length > 0);
@@ -154,15 +156,16 @@ const WeatherProviderComparison: React.FC = () => {
     const baseline: WeatherProviderData = providersWithData[0];
 
     return providersWithData.slice(1).map(provider => {
-      const avgDiff: number = provider.data.reduce((sum, data, index) => {
-        if (!data || !baseline.data[index]) return sum;
-        return sum + (data.temperature - baseline.data[index]!.temperature);
-      }, 0) / provider.data.length;
+      const avgDiff: number =
+        provider.data.reduce((sum, data, index) => {
+          if (!data || !baseline.data[index]) return sum;
+          return sum + (data.temperature - baseline.data[index]!.temperature);
+        }, 0) / provider.data.length;
 
       return {
         provider: provider.provider,
         baseline: baseline.provider,
-        avgDiff: avgDiff.toFixed(1)
+        avgDiff: avgDiff.toFixed(1),
       };
     });
   };
@@ -179,7 +182,8 @@ const WeatherProviderComparison: React.FC = () => {
         {!hasData ? (
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Compare weather data from multiple providers to see how forecasts differ along your route.
+              Compare weather data from multiple providers to see how forecasts differ along your
+              route.
             </p>
             <Button
               onClick={handleCompare}
@@ -240,19 +244,33 @@ const WeatherProviderComparison: React.FC = () => {
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Temperature</p>
                           <p className="text-2xl font-bold">
-                            {(provider.data.reduce((sum, data) => sum + (data?.temperature || 0), 0) / provider.data.length).toFixed(1)}°C
+                            {(
+                              provider.data.reduce(
+                                (sum, data) => sum + (data?.temperature || 0),
+                                0
+                              ) / provider.data.length
+                            ).toFixed(1)}
+                            °C
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Humidity</p>
                           <p className="text-2xl font-bold">
-                            {Math.round(provider.data.reduce((sum, data) => sum + (data?.humidity || 0), 0) / provider.data.length)}%
+                            {Math.round(
+                              provider.data.reduce((sum, data) => sum + (data?.humidity || 0), 0) /
+                                provider.data.length
+                            )}
+                            %
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Wind</p>
                           <p className="text-2xl font-bold">
-                            {(provider.data.reduce((sum, data) => sum + (data?.windSpeed || 0), 0) / provider.data.length).toFixed(1)} km/h
+                            {(
+                              provider.data.reduce((sum, data) => sum + (data?.windSpeed || 0), 0) /
+                              provider.data.length
+                            ).toFixed(1)}{' '}
+                            km/h
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
@@ -267,7 +285,8 @@ const WeatherProviderComparison: React.FC = () => {
                         <h4 className="font-medium mb-2">Provider Information</h4>
                         <p className="text-sm text-muted-foreground">
                           {provider.provider} provides weather forecasts with updates every 3 hours.
-                          Data includes temperature, precipitation, wind, humidity, pressure, and more.
+                          Data includes temperature, precipitation, wind, humidity, pressure, and
+                          more.
                         </p>
                       </div>
                     </div>
@@ -296,7 +315,8 @@ const WeatherProviderComparison: React.FC = () => {
                         {diff.provider} vs {diff.baseline}:
                       </span>
                       <span className={Number(diff.avgDiff) > 0 ? 'text-red-500' : 'text-blue-500'}>
-                        {Number(diff.avgDiff) > 0 ? '+' : ''}{diff.avgDiff}°C
+                        {Number(diff.avgDiff) > 0 ? '+' : ''}
+                        {diff.avgDiff}°C
                       </span>
                     </div>
                   ))}

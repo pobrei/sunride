@@ -40,13 +40,16 @@ export default function ClientCharts(props: ClientChartsProps) {
   }
 
   // Only render the charts if forecastPoints and weatherData are available
-  if (!props.forecastPoints || !props.weatherData || props.forecastPoints.length === 0 || props.weatherData.length === 0) {
+  if (
+    !props.forecastPoints ||
+    !props.weatherData ||
+    props.forecastPoints.length === 0 ||
+    props.weatherData.length === 0
+  ) {
     return (
       <div className="h-[300px] bg-muted flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
-            No forecast data available
-          </p>
+          <p className="text-sm text-muted-foreground">No forecast data available</p>
         </div>
       </div>
     );

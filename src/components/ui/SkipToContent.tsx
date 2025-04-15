@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { classNames } from '@/utils/classNames';
+import { cn } from '@/lib/utils';
+import { effects } from '@/styles/tailwind-utils';
 
 interface SkipToContentProps {
   /** The ID of the main content element */
@@ -25,25 +26,49 @@ export function SkipToContent({
 
     const element = document.getElementById(contentId);
     if (element) {
+      // Set tabindex if not already focusable
+      if (!element.hasAttribute('tabindex')) {
+        element.setAttribute('tabindex', '-1');
+      }
+
       // Set focus to the element
       element.focus();
 
       // Scroll to the element
       element.scrollIntoView({ behavior: 'smooth' });
+
+      // Announce to screen readers
+      const announcer = document.getElementById('skip-to-content-announcer');
+      if (announcer) {
+        announcer.textContent = `Skipped to ${element.getAttribute('aria-label') || 'main content'}`;
+      }
     }
   };
 
   return (
-    <a
-      href={`#${contentId}`}
-      className={classNames(
-        'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-background focus:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:rounded-md',
-        className
-      )}
-      onClick={handleClick}
-      data-testid="skip-to-content"
-    >
-      {text}
-    </a>
+    <>
+      {/* Hidden announcer for screen readers */}
+      <div
+        id="skip-to-content-announcer"
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+      ></div>
+
+      <a
+        href={`#${contentId}`}
+        className={cn(
+          'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4',
+          'focus:bg-background focus:text-foreground focus:rounded-md',
+          effects.focus,
+          className
+        )}
+        onClick={handleClick}
+        data-testid="skip-to-content"
+        aria-label={`Skip to ${contentId.replace(/-/g, ' ')}`}
+      >
+        {text}
+      </a>
+    </>
   );
 }

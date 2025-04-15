@@ -100,9 +100,13 @@ describe('Weather Data Flow Integration', () => {
     expect(screen.getByText(`Points: ${mockGPXData.points.length}`)).toBeInTheDocument();
 
     // Check that the weather data is displayed
-    expect(screen.getByText(`Temperature: ${mockWeatherData[0].temperature}°C`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Temperature: ${mockWeatherData[0].temperature}°C`)
+    ).toBeInTheDocument();
     expect(screen.getByText(`Wind: ${mockWeatherData[0].windSpeed} km/h`)).toBeInTheDocument();
-    expect(screen.getByText(`Weather: ${mockWeatherData[0].weatherDescription}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Weather: ${mockWeatherData[0].weatherDescription}`)
+    ).toBeInTheDocument();
   });
 
   it('should handle errors in the weather data flow', async () => {

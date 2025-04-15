@@ -3,10 +3,13 @@ import 'server-only';
 import { envConfig } from '@/lib/env';
 
 // Check for OpenWeather API key
-const USE_MOCK_DATA = !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
+const USE_MOCK_DATA =
+  !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
 
 if (USE_MOCK_DATA) {
-  console.warn('Using mock weather data because no valid OpenWeather API key was provided. Please update your .env.local file with a valid API key.');
+  console.warn(
+    'Using mock weather data because no valid OpenWeather API key was provided. Please update your .env.local file with a valid API key.'
+  );
 }
 
 // Get environment variables from envConfig
@@ -32,7 +35,7 @@ const rateLimitTracker: RateLimitTracker = {
 };
 
 // In-memory cache to replace MongoDB
-const memoryCache: Map<string, { data: WeatherData, timestamp: number }> = new Map();
+const memoryCache: Map<string, { data: WeatherData; timestamp: number }> = new Map();
 
 interface ForecastPoint {
   lat: number;
@@ -103,7 +106,7 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
   if (isWinter) baseTemp = 5;
 
   // Temperature varies by time of day
-  const hourFactor = Math.sin((hour - 6) * Math.PI / 12); // Peak at noon
+  const hourFactor = Math.sin(((hour - 6) * Math.PI) / 12); // Peak at noon
   const tempVariation = hourFactor * 8; // 8°C variation throughout the day
 
   // Latitude affects temperature (colder at higher latitudes)
@@ -143,7 +146,7 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
     weatherDescription,
     uvIndex: isCloudy ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 10),
     windGust: parseFloat((4 + Math.random() * 10).toFixed(1)),
-    precipitationProbability: isRainy ? 0.3 + Math.random() * 0.7 : Math.random() * 0.3
+    precipitationProbability: isRainy ? 0.3 + Math.random() * 0.7 : Math.random() * 0.3,
   };
 }
 
@@ -151,13 +154,22 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
 export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherData | null> {
   try {
     // Validate input parameters
-    if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number' ||
-        typeof point.timestamp !== 'number' || typeof point.distance !== 'number') {
-      throw new Error('Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.');
+    if (
+      !point ||
+      typeof point.lat !== 'number' ||
+      typeof point.lon !== 'number' ||
+      typeof point.timestamp !== 'number' ||
+      typeof point.distance !== 'number'
+    ) {
+      throw new Error(
+        'Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.'
+      );
     }
 
     if (point.lat < -90 || point.lat > 90 || point.lon < -180 || point.lon > 180) {
-      throw new Error('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.');
+      throw new Error(
+        'Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.'
+      );
     }
 
     // If using mock data, return it immediately
@@ -203,7 +215,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
       console.log('Fetching weather data from:', apiUrl);
       const response = await fetch(apiUrl, {
         next: { revalidate: 3600 },
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId); // Clear timeout on success
@@ -231,7 +243,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           windDirection: data.wind?.deg ?? 0,
           rain: data.rain ? data.rain['1h'] || 0 : 0,
           weatherIcon: data.weather?.[0]?.icon ?? '01d',
-          weatherDescription: data.weather?.[0]?.description ?? 'Unknown'
+          weatherDescription: data.weather?.[0]?.description ?? 'Unknown',
         };
       } else {
         // Find the forecast entry closest to our timestamp
@@ -263,7 +275,9 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
         }
 
         const closestForecast = forecastList.reduce((prev: ForecastEntry, curr: ForecastEntry) => {
-          return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp) ? curr : prev;
+          return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp)
+            ? curr
+            : prev;
         }, forecastList[0] as ForecastEntry);
 
         weatherData = {
@@ -275,14 +289,14 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           windDirection: closestForecast.wind?.deg ?? 0,
           rain: closestForecast.rain ? closestForecast.rain['3h'] || 0 : 0,
           weatherIcon: closestForecast.weather?.[0]?.icon ?? '01d',
-          weatherDescription: closestForecast.weather?.[0]?.description ?? 'Unknown'
+          weatherDescription: closestForecast.weather?.[0]?.description ?? 'Unknown',
         };
       }
 
       // Save to in-memory cache
       memoryCache.set(cacheKey, {
         data: weatherData,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return weatherData;
@@ -308,7 +322,9 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
 }
 
 // Get multiple forecast points with automatic retries
-export async function getMultipleForecastPoints(points: ForecastPoint[]): Promise<(WeatherData | null)[]> {
+export async function getMultipleForecastPoints(
+  points: ForecastPoint[]
+): Promise<(WeatherData | null)[]> {
   if (!points || !Array.isArray(points) || points.length === 0) {
     throw new Error('Invalid points array');
   }
@@ -334,7 +350,9 @@ export async function getMultipleForecastPoints(points: ForecastPoint[]): Promis
 
           // If we've exhausted retries, give up
           if (retry === MAX_RETRIES - 1) {
-            log(`Failed to fetch forecast for point at index ${i + batchIndex} after ${MAX_RETRIES} retries`);
+            log(
+              `Failed to fetch forecast for point at index ${i + batchIndex} after ${MAX_RETRIES} retries`
+            );
             return null;
           }
 

@@ -12,21 +12,21 @@ export const mockGPXData: GPXData = {
       lon: -122.3321,
       elevation: 100,
       time: new Date('2023-01-01T12:00:00Z'),
-      distance: 0
+      distance: 0,
     },
     {
       lat: 47.6063,
       lon: -122.3322,
       elevation: 110,
       time: new Date('2023-01-01T12:05:00Z'),
-      distance: 0.75
+      distance: 0.75,
     },
     {
       lat: 47.6064,
       lon: -122.3323,
       elevation: 120,
       time: new Date('2023-01-01T12:10:00Z'),
-      distance: 1.5
+      distance: 1.5,
     },
   ],
   totalDistance: 1.5,

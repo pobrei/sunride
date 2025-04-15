@@ -23,11 +23,7 @@ describe('Timeline Component', () => {
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={[]}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={null}
-          />
+          <Timeline points={[]} onPointSelect={mockOnPointSelect} selectedPoint={null} />
         </WeatherProvider>
       </NotificationProvider>
     );
@@ -39,18 +35,14 @@ describe('Timeline Component', () => {
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={null}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={null} />
         </WeatherProvider>
       </NotificationProvider>
     );
 
     // Check that the timeline container is rendered
     expect(screen.getByTestId('timeline-container')).toBeInTheDocument();
-    
+
     // Check that points are rendered
     const timelinePoints = screen.getAllByTestId(/timeline-point-/);
     expect(timelinePoints.length).toBe(mergedData.length);
@@ -58,15 +50,11 @@ describe('Timeline Component', () => {
 
   it('calls onPointSelect when a point is clicked', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={null}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={null} />
         </WeatherProvider>
       </NotificationProvider>
     );
@@ -82,11 +70,7 @@ describe('Timeline Component', () => {
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={1}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={1} />
         </WeatherProvider>
       </NotificationProvider>
     );
@@ -98,15 +82,11 @@ describe('Timeline Component', () => {
 
   it('allows navigation with arrow buttons', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={1}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={1} />
         </WeatherProvider>
       </NotificationProvider>
     );
@@ -131,11 +111,7 @@ describe('Timeline Component', () => {
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={0}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={0} />
         </WeatherProvider>
       </NotificationProvider>
     );
@@ -166,21 +142,17 @@ describe('Timeline Component', () => {
     render(
       <NotificationProvider>
         <WeatherProvider>
-          <Timeline
-            points={mergedData}
-            onPointSelect={mockOnPointSelect}
-            selectedPoint={1}
-          />
+          <Timeline points={mergedData} onPointSelect={mockOnPointSelect} selectedPoint={1} />
         </WeatherProvider>
       </NotificationProvider>
     );
 
     // Get the timeline container
     const timelineContainer = screen.getByTestId('timeline-scroll-container');
-    
+
     // Simulate horizontal scroll
     fireEvent.scroll(timelineContainer, { target: { scrollLeft: 100 } });
-    
+
     // This is mostly a visual test, but we can check that the event handler doesn't throw
     expect(timelineContainer.scrollLeft).toBe(100);
   });

@@ -53,7 +53,8 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) return;
+    if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0)
+      return;
 
     // Prepare data
     const validWeatherData = weatherData.filter(data => data !== null) as WeatherData[];
@@ -71,29 +72,33 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
     // Function to get the appropriate color scheme based on color mode
     const getColorScheme = () => {
       // Check if we're in dark mode - safely check for window object
-      const isDarkMode = typeof window !== 'undefined' &&
+      const isDarkMode =
+        typeof window !== 'undefined' &&
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      return isDarkMode ? {
-        rain: {
-          bg: 'rgba(130, 60, 70, 0.3)',
-          border: 'rgb(170, 80, 90)',
-          point: 'rgb(170, 80, 90)'
-        }
-      } : {
-        rain: {
-          bg: 'rgba(255, 228, 225, 0.3)',
-          border: 'rgb(255, 182, 193)',
-          point: 'rgb(255, 182, 193)'
-        }
-      };
+      return isDarkMode
+        ? {
+            rain: {
+              bg: 'rgba(130, 60, 70, 0.3)',
+              border: 'rgb(170, 80, 90)',
+              point: 'rgb(170, 80, 90)',
+            },
+          }
+        : {
+            rain: {
+              bg: 'rgba(255, 228, 225, 0.3)',
+              border: 'rgb(255, 182, 193)',
+              point: 'rgb(255, 182, 193)',
+            },
+          };
     };
 
     // Define custom tooltip styling for charts
     const getTooltipOptions = () => {
       // Check if we're in dark mode - safely check for window object
-      const isDarkMode = typeof window !== 'undefined' &&
+      const isDarkMode =
+        typeof window !== 'undefined' &&
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -110,14 +115,14 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
         titleFont: {
           weight: 'bold' as const,
           size: 14,
-          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         bodyFont: {
           size: 12,
-          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+          family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         },
         caretSize: 8,
-        displayColors: true
+        displayColors: true,
       };
     };
 
@@ -129,7 +134,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
         display: true,
         drawBorder: true,
         drawOnChartArea: true,
-        drawTicks: true
+        drawTicks: true,
       };
     };
 
@@ -150,7 +155,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               {
                 label: 'Precipitation (mm)',
                 data: precipData,
-                backgroundColor: (context) => {
+                backgroundColor: context => {
                   const index = context.dataIndex;
                   const value = context.dataset.data[index] as number;
                   if (value > 5) return 'hsla(195, 60%, 80%, 0.8)'; // Heavy rain
@@ -172,22 +177,22 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
-              tooltip: getTooltipOptions()
+              tooltip: getTooltipOptions(),
             },
             scales: {
               x: {
                 grid: {
                   display: true,
                   color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: getDashedGridLines(),
@@ -195,23 +200,23 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                 max: Math.max(...precipData) + 5,
                 title: {
                   display: true,
-                  text: 'Precipitation (mm)'
-                }
-              }
+                  text: 'Precipitation (mm)',
+                },
+              },
             },
-            onClick: function(event, elements) {
+            onClick: function (event, elements) {
               console.log('Chart clicked!', elements);
               if (elements && elements.length > 0) {
                 const clickedIndex = elements[0].index;
                 console.log('Clicked chart point at index:', clickedIndex);
                 onChartClick(clickedIndex);
               }
-            }
+            },
           },
         });
 
         // Add direct click handler
-        chartRef.current.addEventListener('click', (event) => {
+        chartRef.current.addEventListener('click', event => {
           handleChartClick(event, chartInstance.current as Chart);
         });
       }

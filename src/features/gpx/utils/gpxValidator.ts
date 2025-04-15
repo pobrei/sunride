@@ -16,7 +16,7 @@ export function validateGPXFile(file: File): void {
   // Check file extension
   const validExtensions = ['.gpx'];
   const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-  
+
   if (!validExtensions.includes(fileExtension)) {
     throw new Error(`Invalid file type. Expected .gpx but received ${fileExtension}`);
   }
@@ -62,7 +62,7 @@ export function validateGPXContent(content: string): void {
   // Check for track or route points
   const hasTrackPoints = content.includes('<trkpt');
   const hasRoutePoints = content.includes('<rtept');
-  
+
   if (!hasTrackPoints && !hasRoutePoints) {
     throw new Error('No track or route points found in GPX file');
   }
@@ -82,7 +82,7 @@ export function hasValidCoordinates(content: string): boolean {
   // Simple regex to check for latitude and longitude attributes
   const latRegex = /lat=["'](-?\d+(\.\d+)?)["']/;
   const lonRegex = /lon=["'](-?\d+(\.\d+)?)["']/;
-  
+
   return latRegex.test(content) && lonRegex.test(content);
 }
 
@@ -95,10 +95,10 @@ export function estimateTrackPoints(content: string): number {
   // Count occurrences of track points
   const trkptMatches = content.match(/<trkpt/g);
   const rteptMatches = content.match(/<rtept/g);
-  
+
   const trkptCount = trkptMatches ? trkptMatches.length : 0;
   const rteptCount = rteptMatches ? rteptMatches.length : 0;
-  
+
   return trkptCount + rteptCount;
 }
 

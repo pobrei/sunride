@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { Menu, X, Home, Map, BarChart, Cloud, Settings, Info, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { EnhancedThemeToggle } from '@/components/ui/enhanced-theme-toggle';
 import { cn } from '@/lib/utils';
+import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
 
 interface MobileNavProps {
   /** Optional className for styling */
@@ -48,6 +49,11 @@ export function MobileNav({ className }: MobileNavProps) {
       icon: <BarChart className="h-5 w-5" />,
     },
     {
+      label: 'Enhanced Visualization',
+      href: '/enhanced-visualization',
+      icon: <BarChart className="h-5 w-5 text-primary" />,
+    },
+    {
       label: 'About',
       href: '/about',
       icon: <Info className="h-5 w-5" />,
@@ -60,39 +66,43 @@ export function MobileNav({ className }: MobileNavProps) {
         <Button
           variant="ghost"
           size="icon"
-          className={cn('md:hidden', className)}
+          className={cn('md:hidden', animation.buttonPress, effects.buttonHover, className)}
           aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0">
-        <SheetHeader className="p-4 border-b border-border">
-          <SheetTitle className="flex items-center justify-between">
-            <span className="font-bold text-lg">RideWeather</span>
+      <SheetContent side="left" className={cn("p-0", animation.fadeInSlideUp)}>
+        <SheetHeader className={cn("p-4", effects.borderBottom)}>
+          <SheetTitle className={cn(layout.flexBetween)}>
+            <span className={cn(typography.h5)}>RideWeather</span>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setOpen(false)}
-              className="h-8 w-8"
+              className={cn("h-8 w-8", animation.buttonPress, effects.buttonHover)}
               aria-label="Close menu"
             >
               <X className="h-4 w-4" />
             </Button>
           </SheetTitle>
         </SheetHeader>
-        <div className="py-4">
-          <nav className="space-y-1">
-            {navItems.map((item) => (
+        <div className={cn("py-4", animation.fadeIn)}>
+          <nav className={cn("space-y-1")}>
+            {navItems.map(item => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors',
+                  layout.flexRow,
+                  typography.bodySm,
+                  typography.strong,
+                  animation.transition,
+                  'gap-3 px-4 py-3',
                   item.active
                     ? 'bg-accent text-accent-foreground'
-                    : 'hover:bg-muted/50'
+                    : cn(effects.hoverSubtle, animation.hoverLiftSm)
                 )}
               >
                 {item.icon}
@@ -100,8 +110,8 @@ export function MobileNav({ className }: MobileNavProps) {
               </Link>
             ))}
           </nav>
-          <div className="mt-6 px-4 pt-4 border-t border-border">
-            <ThemeToggle className="w-full justify-start" />
+          <div className={cn("mt-6 px-4 pt-4", effects.borderTop)}>
+            <EnhancedThemeToggle className="w-full justify-start" size="default" />
           </div>
         </div>
       </SheetContent>

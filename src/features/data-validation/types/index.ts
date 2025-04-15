@@ -11,21 +11,21 @@ export interface SafeDataContextType {
    * @returns Validated GPX data or null if invalid
    */
   validateGPXData: (data: GPXData | null) => GPXData | null;
-  
+
   /**
    * Validates an array of forecast points
    * @param points - The forecast points to validate
    * @returns Array of valid forecast points
    */
   validateForecastPoints: (points: ForecastPoint[]) => ForecastPoint[];
-  
+
   /**
    * Validates an array of weather data
    * @param data - The weather data to validate
    * @returns Array of validated weather data or null values
    */
   validateWeatherData: (data: (WeatherData | null)[]) => (WeatherData | null)[];
-  
+
   /**
    * Validates a single forecast point
    * @param point - The point to validate

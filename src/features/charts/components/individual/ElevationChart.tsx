@@ -35,7 +35,9 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
     // Check if click is within chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       // Calculate which data point was clicked
-      const index = Math.round((x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1)));
+      const index = Math.round(
+        (x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1))
+      );
 
       if (index >= 0 && index < forecastPoints.length) {
         onChartClick(index);
@@ -91,15 +93,15 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
             borderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 5,
-            pointBackgroundColor: (context) => {
+            pointBackgroundColor: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 'rgba(255, 99, 132, 1)' : 'rgba(255, 159, 64, 1)';
             },
-            pointBorderColor: (context) => {
+            pointBorderColor: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 'rgba(255, 99, 132, 1)' : 'rgba(255, 159, 64, 1)';
             },
-            pointBorderWidth: (context) => {
+            pointBorderWidth: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 2 : 1;
             },
@@ -120,13 +122,13 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
             mode: 'index',
             intersect: false,
             callbacks: {
-              title: (tooltipItems) => {
+              title: tooltipItems => {
                 const index = tooltipItems[0].dataIndex;
                 const time = formatTime(forecastPoints[index].timestamp);
                 const distance = formatDistance(forecastPoints[index].distance);
                 return `${time} (${distance})`;
               },
-              label: (context) => {
+              label: context => {
                 const value = context.raw as number;
                 return `Elevation: ${value} m`;
               },
@@ -163,7 +165,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
 
     // Add click event listener to the canvas
     const canvas = chartRef.current;
-    canvas.addEventListener('click', (event) => {
+    canvas.addEventListener('click', event => {
       if (chartInstance.current) {
         handleChartClick(event, chartInstance.current);
       }
@@ -171,7 +173,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
 
     // Cleanup function
     return () => {
-      canvas.removeEventListener('click', (event) => {
+      canvas.removeEventListener('click', event => {
         if (chartInstance.current) {
           handleChartClick(event, chartInstance.current);
         }

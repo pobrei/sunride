@@ -81,7 +81,7 @@ describe('GPXUploader Component', () => {
 
     // Wait for the error message to appear
     await waitFor(() => {
-      const errorElement = screen.getByText((content) => content.includes('Error'));
+      const errorElement = screen.getByText(content => content.includes('Error'));
       expect(errorElement).toBeInTheDocument();
     });
 

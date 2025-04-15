@@ -72,8 +72,9 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     const event = new CustomEvent('show-notification', {
       detail: {
         type: 'warning',
-        message: 'The error has been dismissed, but the application may still be in an unstable state.'
-      }
+        message:
+          'The error has been dismissed, but the application may still be in an unstable state.',
+      },
     });
     document.dispatchEvent(event);
   };
@@ -99,11 +100,10 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  {errorMessage}
-                </p>
+                <p className="text-muted-foreground mb-4">{errorMessage}</p>
                 <p className="text-sm text-muted-foreground">
-                  This error has been reported to our team. You can try reloading the page or going back to the home page.
+                  This error has been reported to our team. You can try reloading the page or going
+                  back to the home page.
                 </p>
               </CardContent>
               <CardFooter className="flex gap-2 justify-start">
@@ -138,9 +138,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
-              {errorMessage}
-            </p>
+            <p className="text-muted-foreground">{errorMessage}</p>
           </CardContent>
           <CardFooter className="flex gap-2 justify-start">
             <Button

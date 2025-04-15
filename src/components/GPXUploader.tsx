@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,9 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/styles/tailwind-utils';
+import { FeedbackMessage } from '@/components/ui/FeedbackMessage';
+import { cn } from '@/lib/utils';
+import { typography, animation, effects, status } from '@/styles/tailwind-utils';
 
 interface GPXUploaderProps {
   /** Callback when GPX file is loaded successfully */
@@ -33,9 +35,9 @@ export default function GPXUploader({
   onGPXLoaded,
   isLoading,
   className,
-  helpText = "Upload a GPX file to visualize your route with weather data",
+  helpText = 'Upload a GPX file to visualize your route with weather data',
   showProgress = true,
-  showSuccess = true
+  showSuccess = true,
 }: GPXUploaderProps) {
   const [fileName, setFileName] = useState<string>('');
   const [fileSize, setFileSize] = useState<number>(0);
@@ -43,6 +45,7 @@ export default function GPXUploader({
   const [isParsing, setIsParsing] = useState<boolean>(false);
   const [parseProgress, setParseProgress] = useState<number>(0);
   const [success, setSuccess] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -88,7 +91,7 @@ export default function GPXUploader({
 
     const reader = new FileReader();
 
-    reader.onprogress = (event) => {
+    reader.onprogress = event => {
       if (event.lengthComputable) {
         // Calculate progress for the file reading part (0-50%)
         const progress = Math.round((event.loaded / event.total) * 50);
@@ -96,7 +99,7 @@ export default function GPXUploader({
       }
     };
 
-    reader.onload = (event) => {
+    reader.onload = event => {
       try {
         setParseProgress(60); // Reading complete, start parsing
 
@@ -119,8 +122,15 @@ export default function GPXUploader({
         // Success!
         setParseProgress(100);
         setSuccess(true);
+        setSuccessMessage(`Successfully loaded ${gpxData.points.length} points from ${file.name}`);
         setIsParsing(false);
         onGPXLoaded(gpxData);
+
+        // Announce success to screen readers
+        const announcement = document.getElementById('gpx-status-announcer');
+        if (announcement) {
+          announcement.textContent = `Successfully loaded ${gpxData.points.length} points from ${file.name}`;
+        }
       } catch (err) {
         console.error('Error parsing GPX:', err);
         setIsParsing(false);
@@ -137,21 +147,37 @@ export default function GPXUploader({
     reader.readAsText(file);
   };
 
+  // Handle keyboard accessibility for the file input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInputRef.current?.click();
+    }
+  };
+
   return (
-    <Card className={cn('overflow-hidden', className)}>
+    <Card className={cn('overflow-hidden', animation.fadeIn, className)}>
+      {/* Hidden element for screen reader announcements */}
+      <div
+        id="gpx-status-announcer"
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+      ></div>
+
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-          <Upload className="h-5 w-5" />
+        <CardTitle className={cn(typography.cardTitle, "flex items-center gap-2")}>
+          <Upload className="h-5 w-5" aria-hidden="true" />
           Upload GPX File
         </CardTitle>
-        <CardDescription>{helpText}</CardDescription>
+        <CardDescription className={cn(typography.cardDescription)}>{helpText}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="fileInput" className="text-sm flex items-center gap-2">
+          <div className="grid w-full items-center gap-2" role="region" aria-label="GPX file upload">
+            <Label htmlFor="fileInput" className={cn(typography.formLabel, "flex items-center gap-2")}>
               Select GPX file
-              {isParsing && <LoadingSpinner size="sm" />}
+              {isParsing && <LoadingSpinner size="sm" aria-hidden="true" />}
             </Label>
 
             <div className="flex gap-2">
@@ -163,13 +189,18 @@ export default function GPXUploader({
                 className="cursor-pointer file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2.5 file:py-1.5 file:font-medium hover:file:bg-primary/90"
                 disabled={isLoading || isParsing}
                 ref={fileInputRef}
+                aria-describedby="file-description"
+                aria-busy={isParsing}
+                onKeyDown={handleKeyDown}
+                data-testid="gpx-file-input"
               />
               <Button
                 disabled={isLoading || isParsing || !fileName}
                 onClick={() => fileInputRef.current?.click()}
                 variant="secondary"
+                aria-label="Browse for GPX file"
               >
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
                 Browse
               </Button>
             </div>
@@ -185,12 +216,12 @@ export default function GPXUploader({
 
             {/* Success state */}
             {success && showSuccess && (
-              <Alert variant="default" className="bg-green-500/10 text-green-500 border-green-500/20 py-2">
-                <FileCheck className="h-4 w-4" />
-                <AlertDescription className="text-xs">
-                  Successfully loaded {fileName}
-                </AlertDescription>
-              </Alert>
+              <FeedbackMessage
+                type="success"
+                message={successMessage || `Successfully loaded ${fileName}`}
+                className="py-2 mt-2"
+                id="gpx-success-message"
+              />
             )}
 
             {/* Error state */}
@@ -207,16 +238,26 @@ export default function GPXUploader({
             {/* Progress bar */}
             {isParsing && showProgress && (
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Parsing {fileName}...</span>
-                  <span className="font-medium">{parseProgress}%</span>
+                <div className="flex items-center justify-between">
+                  <span className={cn(typography.bodySm, typography.muted)}>Parsing {fileName}...</span>
+                  <span className={cn(typography.bodySm, typography.strong)}>{parseProgress}%</span>
                 </div>
-                <Progress value={parseProgress} className="h-2" />
+                <Progress
+                  value={parseProgress}
+                  className="h-2"
+                  aria-label={`Parsing progress: ${parseProgress}%`}
+                  aria-valuenow={parseProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
               </div>
             )}
 
             {/* Help text */}
-            <div className="text-xs text-muted-foreground mt-1">
+            <div
+              className={cn(typography.bodySm, typography.muted, "mt-1")}
+              id="file-description"
+            >
               <p>Supported file:</p>
               <ul className="list-disc pl-5 mt-1">
                 <li>GPX files (.gpx) up to 10MB</li>

@@ -25,14 +25,14 @@ const PressureChart: React.FC<PressureChartProps> = ({
   // Function to handle chart click
   const handleChartClick = (event: MouseEvent) => {
     if (!chartInstance.current) return;
-    
+
     const canvas = event.target as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
-    
+
     const chartArea = chartInstance.current.chartArea;
     if (!chartArea) return;
-    
+
     // Only handle clicks within the chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
@@ -40,7 +40,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
         Math.max(0, Math.floor(xPercent * forecastPoints.length)),
         forecastPoints.length - 1
       );
-      
+
       console.log(`Pressure chart clicked at index: ${index}`);
       onChartClick(index);
     }
@@ -49,29 +49,31 @@ const PressureChart: React.FC<PressureChartProps> = ({
   // Get color scheme based on dark/light mode
   const getColorScheme = () => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    return isDarkMode 
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    return isDarkMode
       ? {
           pressure: {
             bg: 'rgba(128, 0, 128, 0.3)',
             border: 'rgb(186, 85, 211)',
-            point: 'rgb(186, 85, 211)'
-          }
+            point: 'rgb(186, 85, 211)',
+          },
         }
       : {
           pressure: {
             bg: 'rgba(230, 190, 255, 0.3)',
             border: 'rgb(147, 112, 219)',
-            point: 'rgb(147, 112, 219)'
-          }
+            point: 'rgb(147, 112, 219)',
+          },
         };
   };
 
   // Define custom tooltip styling
   const getTooltipOptions = () => {
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     return {
       mode: 'index' as const,
       intersect: false,
@@ -85,14 +87,14 @@ const PressureChart: React.FC<PressureChartProps> = ({
       titleFont: {
         weight: 'bold' as const,
         size: 14,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       bodyFont: {
         size: 12,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       caretSize: 8,
-      displayColors: true
+      displayColors: true,
     };
   };
 
@@ -104,7 +106,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
       display: true,
       drawBorder: true,
       drawOnChartArea: true,
-      drawTicks: true
+      drawTicks: true,
     };
   };
 
@@ -122,7 +124,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
@@ -132,7 +134,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
     const validPressures = pressureData.filter(p => p > 0);
     const minPressure = validPressures.length > 0 ? Math.min(...validPressures) : 980;
     const maxPressure = validPressures.length > 0 ? Math.max(...validPressures) : 1040;
-    
+
     // Create or update chart
     if (chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
@@ -154,21 +156,21 @@ const PressureChart: React.FC<PressureChartProps> = ({
                 backgroundColor: colors.pressure.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: (context) => {
+                pointBackgroundColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'blue' : colors.pressure.point;
                 },
-                pointBorderColor: (context) => {
+                pointBorderColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'white' : colors.pressure.border;
                 },
-                pointRadius: (context) => {
+                pointRadius: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 8 : 4;
                 },
                 pointHoverRadius: 10,
                 fill: true,
-              }
+              },
             ],
           },
           options: {
@@ -180,22 +182,22 @@ const PressureChart: React.FC<PressureChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
-              tooltip: getTooltipOptions()
+              tooltip: getTooltipOptions(),
             },
             scales: {
               x: {
                 grid: {
                   display: true,
                   color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: getDashedGridLines(),
@@ -203,13 +205,13 @@ const PressureChart: React.FC<PressureChartProps> = ({
                 max: Math.min(1050, maxPressure + 10),
                 title: {
                   display: true,
-                  text: 'Pressure (hPa)'
-                }
-              }
+                  text: 'Pressure (hPa)',
+                },
+              },
             },
           },
         });
-        
+
         // Add direct click handler
         chartRef.current.addEventListener('click', handleChartClick as any);
       }
@@ -229,9 +231,9 @@ const PressureChart: React.FC<PressureChartProps> = ({
         <CardTitle className="text-lg">Pressure</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          className="h-[250px] w-full" 
-          role="img" 
+        <div
+          className="h-[250px] w-full"
+          role="img"
           aria-label="Pressure chart showing weather data along the route"
         >
           <canvas ref={chartRef} />

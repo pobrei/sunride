@@ -16,9 +16,9 @@ const mockGpxData = {
   name: 'Test Route',
   points: [
     { lat: 37.7749, lon: -122.4194, elevation: 0, time: new Date().toISOString() },
-    { lat: 37.7850, lon: -122.4000, elevation: 10, time: new Date().toISOString() },
-    { lat: 37.7900, lon: -122.3800, elevation: 20, time: new Date().toISOString() },
-    { lat: 37.8000, lon: -122.3700, elevation: 30, time: new Date().toISOString() },
+    { lat: 37.785, lon: -122.4, elevation: 10, time: new Date().toISOString() },
+    { lat: 37.79, lon: -122.38, elevation: 20, time: new Date().toISOString() },
+    { lat: 37.8, lon: -122.37, elevation: 30, time: new Date().toISOString() },
   ],
   totalDistance: 5000,
   totalElevationGain: 100,
@@ -27,9 +27,9 @@ const mockGpxData = {
 
 const mockForecastPoints = [
   { lat: 37.7749, lon: -122.4194, time: new Date().toISOString() },
-  { lat: 37.7850, lon: -122.4000, time: new Date().toISOString() },
-  { lat: 37.7900, lon: -122.3800, time: new Date().toISOString() },
-  { lat: 37.8000, lon: -122.3700, time: new Date().toISOString() },
+  { lat: 37.785, lon: -122.4, time: new Date().toISOString() },
+  { lat: 37.79, lon: -122.38, time: new Date().toISOString() },
+  { lat: 37.8, lon: -122.37, time: new Date().toISOString() },
 ];
 
 const mockWeatherData = [

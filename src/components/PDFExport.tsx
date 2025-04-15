@@ -5,7 +5,14 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { GPXData } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatDistance, formatDateTime, formatTemperature, formatWind, formatElevation, formatPrecipitation } from '@/utils/formatUtils';
+import {
+  formatDistance,
+  formatDateTime,
+  formatTemperature,
+  formatWind,
+  formatElevation,
+  formatPrecipitation,
+} from '@/utils/formatUtils';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
 
@@ -22,7 +29,7 @@ export default function PDFExport({
   forecastPoints,
   weatherData,
   mapRef,
-  chartsRef
+  chartsRef,
 }: PDFExportProps) {
   // State for export status
   const [isExporting, setIsExporting] = useState(false);
@@ -39,14 +46,14 @@ export default function PDFExport({
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
       });
 
       // PDF dimensions
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 10;
-      const contentWidth = pageWidth - (margin * 2);
+      const contentWidth = pageWidth - margin * 2;
 
       // Add title
       pdf.setFontSize(24);
@@ -54,9 +61,8 @@ export default function PDFExport({
 
       // Add generation time
       pdf.setFontSize(10);
-      const generationDate = typeof window !== 'undefined'
-        ? new Date().toLocaleString()
-        : new Date().toISOString();
+      const generationDate =
+        typeof window !== 'undefined' ? new Date().toLocaleString() : new Date().toISOString();
       pdf.text(`Generated on ${generationDate}`, margin, 27);
 
       // Add route info
@@ -103,7 +109,8 @@ export default function PDFExport({
                 message.style.textAlign = 'center';
                 message.style.color = '#6b7280';
                 message.style.padding = '1rem';
-                message.innerHTML = '<strong>Map Preview</strong><br>Interactive map not available in PDF export';
+                message.innerHTML =
+                  '<strong>Map Preview</strong><br>Interactive map not available in PDF export';
 
                 simplifiedMap.appendChild(message);
 
@@ -111,14 +118,16 @@ export default function PDFExport({
                 mapElement.parentNode.replaceChild(simplifiedMap, mapElement);
               }
             },
-            ignoreElements: (element) => {
+            ignoreElements: element => {
               // Ignore elements that might cause CSS parsing issues
-              return element.classList?.contains('ol-control') ||
-                     element.classList?.contains('ol-attribution') ||
-                     element.classList?.contains('ol-scale') ||
-                     element.tagName === 'CANVAS' ||
-                     element.tagName === 'BUTTON';
-            }
+              return (
+                element.classList?.contains('ol-control') ||
+                element.classList?.contains('ol-attribution') ||
+                element.classList?.contains('ol-scale') ||
+                element.tagName === 'CANVAS' ||
+                element.tagName === 'BUTTON'
+              );
+            },
           });
 
           const mapImgData = mapCanvas.toDataURL('image/png');
@@ -147,12 +156,14 @@ export default function PDFExport({
                 scale: 1.5,
                 allowTaint: true,
                 logging: false,
-                ignoreElements: (element) => {
+                ignoreElements: element => {
                   // Ignore elements that might cause CSS parsing issues
-                  return element.tagName === 'BUTTON' ||
-                         element.classList?.contains('scroll-area-scrollbar') ||
-                         element.classList?.contains('scroll-area-thumb');
-                }
+                  return (
+                    element.tagName === 'BUTTON' ||
+                    element.classList?.contains('scroll-area-scrollbar') ||
+                    element.classList?.contains('scroll-area-thumb')
+                  );
+                },
               });
 
               const chartsImgData = chartsCanvas.toDataURL('image/png');
@@ -178,19 +189,28 @@ export default function PDFExport({
                 scale: 1.5,
                 allowTaint: true,
                 logging: false,
-                ignoreElements: (element) => {
+                ignoreElements: element => {
                   // Ignore elements that might cause CSS parsing issues
-                  return element.tagName === 'BUTTON' ||
-                         element.classList?.contains('scroll-area-scrollbar') ||
-                         element.classList?.contains('scroll-area-thumb');
-                }
+                  return (
+                    element.tagName === 'BUTTON' ||
+                    element.classList?.contains('scroll-area-scrollbar') ||
+                    element.classList?.contains('scroll-area-thumb')
+                  );
+                },
               });
 
               const chartsImgData = chartsCanvas.toDataURL('image/png');
               const chartsImgWidth = contentWidth;
               const chartsImgHeight = (chartsCanvas.height / chartsCanvas.width) * chartsImgWidth;
 
-              pdf.addImage(chartsImgData, 'PNG', margin, currentY + 5, chartsImgWidth, chartsImgHeight);
+              pdf.addImage(
+                chartsImgData,
+                'PNG',
+                margin,
+                currentY + 5,
+                chartsImgWidth,
+                chartsImgHeight
+              );
             } catch (error) {
               console.error('Error capturing charts:', error);
               pdf.text('Error capturing charts image', margin, currentY + 5);
@@ -265,8 +285,16 @@ export default function PDFExport({
         pdf.text(formatDateTime(point.timestamp), margin, yPos);
         pdf.text(formatDistance(point.distance), margin + col1Width, yPos);
         pdf.text(formatTemperature(weather.temperature), margin + col1Width + col2Width, yPos);
-        pdf.text(formatWind(weather.windSpeed, weather.windDirection), margin + col1Width + col2Width + colWidth, yPos);
-        pdf.text(formatPrecipitation(weather.rain), margin + col1Width + col2Width + colWidth * 2, yPos);
+        pdf.text(
+          formatWind(weather.windSpeed, weather.windDirection),
+          margin + col1Width + col2Width + colWidth,
+          yPos
+        );
+        pdf.text(
+          formatPrecipitation(weather.rain),
+          margin + col1Width + col2Width + colWidth * 2,
+          yPos
+        );
         pdf.text(`${weather.humidity}%`, margin + col1Width + col2Width + colWidth * 3, yPos);
 
         // Draw row line

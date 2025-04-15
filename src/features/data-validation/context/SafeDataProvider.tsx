@@ -10,7 +10,7 @@ import {
   validateGPXData as validateGPXDataWithZod,
   validateForecastPoints as validateForecastPointsWithZod,
   validateWeatherDataArray,
-  validateWithSchema
+  validateWithSchema,
 } from '../utils/validation';
 import { forecastPointSchema } from '../utils/schemas';
 
@@ -51,7 +51,7 @@ export function SafeDataProvider({ children }: { children: ReactNode }): React.R
       elevationGain: data.elevationGain || 0,
       elevationLoss: data.elevationLoss || 0,
       maxElevation: data.maxElevation || 0,
-      minElevation: data.minElevation || 0
+      minElevation: data.minElevation || 0,
     };
   };
 
@@ -107,8 +107,20 @@ export function SafeDataProvider({ children }: { children: ReactNode }): React.R
       const validItem: WeatherData = { ...item };
 
       // Ensure numeric properties
-      ['temperature', 'feelsLike', 'humidity', 'pressure', 'windSpeed', 'rain', 'snow', 'uvIndex'].forEach(prop => {
-        if (typeof validItem[prop as keyof WeatherData] !== 'number' || isNaN(validItem[prop as keyof WeatherData] as number)) {
+      [
+        'temperature',
+        'feelsLike',
+        'humidity',
+        'pressure',
+        'windSpeed',
+        'rain',
+        'snow',
+        'uvIndex',
+      ].forEach(prop => {
+        if (
+          typeof validItem[prop as keyof WeatherData] !== 'number' ||
+          isNaN(validItem[prop as keyof WeatherData] as number)
+        ) {
           (validItem as Record<string, number>)[prop] = 0;
         }
       });
@@ -131,7 +143,10 @@ export function SafeDataProvider({ children }: { children: ReactNode }): React.R
    */
   const validatePoint = (point: Partial<ForecastPoint>): boolean => {
     // Use Zod schema for validation
-    const result: ValidationResult<Partial<ForecastPoint>> = validateWithSchema(point, forecastPointSchema.partial());
+    const result: ValidationResult<Partial<ForecastPoint>> = validateWithSchema(
+      point,
+      forecastPointSchema.partial()
+    );
     return result.isValid;
   };
 
@@ -142,14 +157,10 @@ export function SafeDataProvider({ children }: { children: ReactNode }): React.R
     validateGPXData,
     validateForecastPoints,
     validateWeatherData,
-    validatePoint
+    validatePoint,
   };
 
-  return (
-    <SafeDataContext.Provider value={contextValue}>
-      {children}
-    </SafeDataContext.Provider>
-  );
+  return <SafeDataContext.Provider value={contextValue}>{children}</SafeDataContext.Provider>;
 }
 
 /**

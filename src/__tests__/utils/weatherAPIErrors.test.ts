@@ -8,25 +8,25 @@ global.fetch = jest.fn();
 const mockAddNotification = jest.fn();
 jest.mock('@/features/notifications/context', () => ({
   useNotifications: () => ({
-    addNotification: mockAddNotification
-  })
+    addNotification: mockAddNotification,
+  }),
 }));
 
 // Mock the weather API function
 const mockFetchWeatherForPoints = jest.fn();
 jest.mock('@/features/weather/utils/weatherAPI', () => ({
-  fetchWeatherForPoints: (points) => mockFetchWeatherForPoints(points)
+  fetchWeatherForPoints: points => mockFetchWeatherForPoints(points),
 }));
 
 describe('Weather API Error Handling', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   it('should handle network errors', async () => {
     // Mock a network error
     mockFetchWeatherForPoints.mockRejectedValueOnce(new Error('Network error'));
-    
+
     try {
       await mockFetchWeatherForPoints(mockForecastPoints);
       fail('Expected an error to be thrown');
@@ -34,19 +34,21 @@ describe('Weather API Error Handling', () => {
       expect(error.message).toBe('Network error');
     }
   });
-  
+
   it('should handle API errors with specific status codes', async () => {
     // Mock different API errors
     const apiErrors = [
       { status: 401, message: 'Unauthorized' },
       { status: 404, message: 'Not Found' },
       { status: 429, message: 'Too Many Requests' },
-      { status: 500, message: 'Internal Server Error' }
+      { status: 500, message: 'Internal Server Error' },
     ];
-    
+
     for (const apiError of apiErrors) {
-      mockFetchWeatherForPoints.mockRejectedValueOnce(new Error(`API error: ${apiError.status} - ${apiError.message}`));
-      
+      mockFetchWeatherForPoints.mockRejectedValueOnce(
+        new Error(`API error: ${apiError.status} - ${apiError.message}`)
+      );
+
       try {
         await mockFetchWeatherForPoints(mockForecastPoints);
         fail('Expected an error to be thrown');
@@ -55,11 +57,11 @@ describe('Weather API Error Handling', () => {
       }
     }
   });
-  
+
   it('should handle timeout errors', async () => {
     // Mock a timeout error
     mockFetchWeatherForPoints.mockRejectedValueOnce(new Error('Request timed out'));
-    
+
     try {
       await mockFetchWeatherForPoints(mockForecastPoints);
       fail('Expected an error to be thrown');
@@ -67,11 +69,11 @@ describe('Weather API Error Handling', () => {
       expect(error.message).toBe('Request timed out');
     }
   });
-  
+
   it('should handle invalid response data', async () => {
     // Mock invalid response data
     mockFetchWeatherForPoints.mockResolvedValueOnce({ invalid: 'data' });
-    
+
     try {
       const result = await mockFetchWeatherForPoints(mockForecastPoints);
       // If no error is thrown, the result should still be valid
@@ -81,7 +83,7 @@ describe('Weather API Error Handling', () => {
       expect(error.message).toContain('Invalid');
     }
   });
-  
+
   it('should handle empty forecast points', async () => {
     const result = await mockFetchWeatherForPoints([]);
     expect(result).toEqual([]);

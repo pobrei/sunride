@@ -11,7 +11,12 @@ export class AppError extends Error {
   /** Additional error details */
   details?: Record<string, unknown>;
 
-  constructor(message: string, code = 'UNKNOWN_ERROR', status?: number, details?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    code = 'UNKNOWN_ERROR',
+    status?: number,
+    details?: Record<string, unknown>
+  ) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;
@@ -165,7 +170,7 @@ export function parseError(error: unknown): {
       message: error.message,
       code: error.code,
       status: error.status,
-      details: error.details
+      details: error.details,
     };
   }
 
@@ -173,21 +178,21 @@ export function parseError(error: unknown): {
     return {
       message: error.message,
       code: 'UNKNOWN_ERROR',
-      details: { name: error.name, stack: error.stack }
+      details: { name: error.name, stack: error.stack },
     };
   }
 
   if (typeof error === 'string') {
     return {
       message: error,
-      code: 'UNKNOWN_ERROR'
+      code: 'UNKNOWN_ERROR',
     };
   }
 
   return {
     message: 'An unknown error occurred',
     code: 'UNKNOWN_ERROR',
-    details: { error }
+    details: { error },
   };
 }
 

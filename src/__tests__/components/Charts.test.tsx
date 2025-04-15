@@ -117,7 +117,7 @@ describe('ChartContainer Component', () => {
 
   it('calls onChartClick when a chart point is clicked', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <NotificationProvider>
         <WeatherProvider>

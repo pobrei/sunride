@@ -3,7 +3,8 @@ import 'server-only';
 import { envConfig } from '@/lib/env';
 
 // Check for OpenWeather API key
-const USE_MOCK_DATA = !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
+const USE_MOCK_DATA =
+  !envConfig.openWeatherApiKey || envConfig.openWeatherApiKey === 'placeholder_key';
 
 if (USE_MOCK_DATA) {
   console.warn('Using mock weather data because no valid OpenWeather API key was provided');
@@ -32,7 +33,7 @@ const rateLimitTracker: RateLimitTracker = {
 };
 
 // In-memory cache to replace MongoDB
-const memoryCache: Map<string, { data: WeatherData, timestamp: number }> = new Map();
+const memoryCache: Map<string, { data: WeatherData; timestamp: number }> = new Map();
 
 /**
  * Represents a point along a route for which to fetch a weather forecast
@@ -71,15 +72,15 @@ export interface WeatherData {
   /** Weather description text */
   weatherDescription: string;
   /** UV index (0-12) */
-  uvIndex?: number;
+  uvIndex: number;
   /** Wind gust speed in km/h */
-  windGust?: number;
+  windGust: number;
   /** Probability of precipitation (0-1) */
-  precipitationProbability?: number;
+  precipitationProbability: number;
   /** Precipitation amount in mm (includes rain, snow, etc.) */
-  precipitation?: number;
+  precipitation: number;
   /** Snow amount in mm */
-  snow?: number;
+  snow: number;
 }
 
 /**
@@ -136,7 +137,7 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
     { icon: '10d', desc: 'rain' },
     { icon: '11d', desc: 'thunderstorm' },
     { icon: '13d', desc: 'snow' },
-    { icon: '50d', desc: 'mist' }
+    { icon: '50d', desc: 'mist' },
   ];
 
   const conditionIndex = Math.floor(seed % conditions.length);
@@ -146,16 +147,18 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
   return {
     temperature: parseFloat(temp.toFixed(1)),
     feelsLike: parseFloat((temp - 2 + Math.random() * 4).toFixed(1)),
-    humidity: Math.floor(40 + seed % 60), // Humidity between 40% and 99%
-    pressure: Math.floor(980 + seed % 40), // Pressure between 980 and 1020 hPa
-    windSpeed: parseFloat((2 + seed % 8).toFixed(1)), // Wind speed between 2 and 10 m/s
+    humidity: Math.floor(40 + (seed % 60)), // Humidity between 40% and 99%
+    pressure: Math.floor(980 + (seed % 40)), // Pressure between 980 and 1020 hPa
+    windSpeed: parseFloat((2 + (seed % 8)).toFixed(1)), // Wind speed between 2 and 10 m/s
     windDirection: Math.floor(seed * 3.6) % 360, // Wind direction between 0 and 359 degrees
     rain: rain,
     weatherIcon: conditions[conditionIndex].icon,
     weatherDescription: conditions[conditionIndex].desc,
     uvIndex: Math.floor(seed % 11), // UV index between 0 and 10
-    windGust: parseFloat((4 + seed % 10).toFixed(1)), // Wind gust between 4 and 14 m/s
-    precipitationProbability: Math.floor(seed % 100) / 100 // Probability between 0 and 0.99
+    windGust: parseFloat((4 + (seed % 10)).toFixed(1)), // Wind gust between 4 and 14 m/s
+    precipitationProbability: Math.floor(seed % 100) / 100, // Probability between 0 and 0.99
+    precipitation: rain, // Same as rain for mock data
+    snow: conditionIndex === 7 ? Math.floor(seed % 5) : 0, // Snow only for snow condition
   };
 }
 
@@ -168,13 +171,22 @@ function generateMockWeatherData(point: ForecastPoint): WeatherData {
 export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherData | null> {
   try {
     // Validate input parameters
-    if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number' ||
-        typeof point.timestamp !== 'number' || typeof point.distance !== 'number') {
-      throw new Error('Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.');
+    if (
+      !point ||
+      typeof point.lat !== 'number' ||
+      typeof point.lon !== 'number' ||
+      typeof point.timestamp !== 'number' ||
+      typeof point.distance !== 'number'
+    ) {
+      throw new Error(
+        'Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.'
+      );
     }
 
     if (point.lat < -90 || point.lat > 90 || point.lon < -180 || point.lon > 180) {
-      throw new Error('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.');
+      throw new Error(
+        'Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.'
+      );
     }
 
     // If using mock data, return it immediately
@@ -222,7 +234,7 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
 
       const response = await fetch(apiUrl, {
         next: { revalidate: 3600 },
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId); // Clear timeout on success
@@ -254,6 +266,10 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
       let weatherData: WeatherData;
 
       if (isCurrentWeather) {
+        // For current weather, we need to generate some values that aren't provided by the API
+        const hour = new Date().getHours();
+        const uvIndex = Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
+
         weatherData = {
           temperature: data.main?.temp ?? 0,
           feelsLike: data.main?.feels_like ?? 0,
@@ -263,7 +279,12 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           windDirection: data.wind?.deg ?? 0,
           rain: data.rain ? data.rain['1h'] || 0 : 0,
           weatherIcon: data.weather?.[0]?.icon ?? '01d',
-          weatherDescription: data.weather?.[0]?.description ?? 'Unknown'
+          weatherDescription: data.weather?.[0]?.description ?? 'Unknown',
+          uvIndex: uvIndex, // Generate UV index based on time of day
+          windGust: data.wind?.gust ?? (data.wind?.speed ? data.wind.speed * 1.5 : 0),
+          precipitationProbability: data.rain ? 0.8 : 0.1, // Estimate based on current conditions
+          precipitation: data.rain ? data.rain['1h'] || 0 : 0,
+          snow: data.snow ? data.snow['1h'] || 0 : 0,
         };
       } else {
         // Find the forecast entry closest to our timestamp
@@ -273,8 +294,21 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
         }
 
         const closestForecast = forecastList.reduce((prev: any, curr: any) => {
-          return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp) ? curr : prev;
+          return Math.abs(curr.dt - point.timestamp) < Math.abs(prev.dt - point.timestamp)
+            ? curr
+            : prev;
         }, forecastList[0]);
+
+        // Extract timestamp from the forecast to generate time-based values
+        const forecastTime = new Date(closestForecast.dt * 1000);
+        const hour = forecastTime.getHours();
+
+        // Generate UV index based on time of day if not provided
+        const uvIndex = closestForecast.uvi ?? Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
+
+        // Generate wind gust if not provided
+        const windGust = closestForecast.wind?.gust ??
+          (closestForecast.wind?.speed ? closestForecast.wind.speed * 1.5 : 5 + Math.random() * 10);
 
         weatherData = {
           temperature: closestForecast.main?.temp ?? 0,
@@ -285,14 +319,19 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
           windDirection: closestForecast.wind?.deg ?? 0,
           rain: closestForecast.rain ? closestForecast.rain['3h'] || 0 : 0,
           weatherIcon: closestForecast.weather?.[0]?.icon ?? '01d',
-          weatherDescription: closestForecast.weather?.[0]?.description ?? 'Unknown'
+          weatherDescription: closestForecast.weather?.[0]?.description ?? 'Unknown',
+          uvIndex: uvIndex,
+          windGust: windGust,
+          precipitationProbability: closestForecast.pop ?? (closestForecast.rain ? 0.8 : 0.1),
+          precipitation: closestForecast.rain ? closestForecast.rain['3h'] || 0 : 0,
+          snow: closestForecast.snow ? closestForecast.snow['3h'] || 0 : 0,
         };
       }
 
       // Save to in-memory cache
       memoryCache.set(cacheKey, {
         data: weatherData,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return weatherData;
@@ -302,15 +341,31 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
       // Handle different types of fetch errors with specific messages
       if (fetchError instanceof Error) {
         if (fetchError.name === 'AbortError') {
-          throw new Error('Request timeout: Weather API did not respond in time. Please try again later.');
+          throw new Error(
+            'Request timeout: Weather API did not respond in time. Please try again later.'
+          );
         } else if (fetchError.message.includes('fetch failed')) {
-          throw new Error('Network error: Unable to connect to the weather service. Please check your internet connection.');
-        } else if (fetchError.message.includes('ENOTFOUND') || fetchError.message.includes('getaddrinfo')) {
-          throw new Error('DNS resolution error: Unable to resolve the weather service domain. Please check your internet connection.');
-        } else if (fetchError.message.includes('ECONNRESET') || fetchError.message.includes('socket hang up')) {
-          throw new Error('Connection reset: The connection to the weather service was interrupted. Please try again.');
+          throw new Error(
+            'Network error: Unable to connect to the weather service. Please check your internet connection.'
+          );
+        } else if (
+          fetchError.message.includes('ENOTFOUND') ||
+          fetchError.message.includes('getaddrinfo')
+        ) {
+          throw new Error(
+            'DNS resolution error: Unable to resolve the weather service domain. Please check your internet connection.'
+          );
+        } else if (
+          fetchError.message.includes('ECONNRESET') ||
+          fetchError.message.includes('socket hang up')
+        ) {
+          throw new Error(
+            'Connection reset: The connection to the weather service was interrupted. Please try again.'
+          );
         } else if (fetchError.message.includes('ETIMEDOUT')) {
-          throw new Error('Connection timeout: The weather service took too long to respond. Please try again later.');
+          throw new Error(
+            'Connection timeout: The weather service took too long to respond. Please try again later.'
+          );
         }
       }
 
@@ -336,7 +391,9 @@ export async function getWeatherForecast(point: ForecastPoint): Promise<WeatherD
  * @returns Array of weather data objects or null for points that couldn't be fetched
  * @throws Error if the points array is invalid
  */
-export async function getMultipleForecastPoints(points: ForecastPoint[]): Promise<(WeatherData | null)[]> {
+export async function getMultipleForecastPoints(
+  points: ForecastPoint[]
+): Promise<(WeatherData | null)[]> {
   try {
     // Validate input
     if (!points) {
@@ -353,15 +410,19 @@ export async function getMultipleForecastPoints(points: ForecastPoint[]): Promis
 
     // Validate each point has required properties
     const invalidPoints = points.filter(p => {
-      return !p ||
-             typeof p.lat !== 'number' ||
-             typeof p.lon !== 'number' ||
-             typeof p.timestamp !== 'number' ||
-             typeof p.distance !== 'number';
+      return (
+        !p ||
+        typeof p.lat !== 'number' ||
+        typeof p.lon !== 'number' ||
+        typeof p.timestamp !== 'number' ||
+        typeof p.distance !== 'number'
+      );
     });
 
     if (invalidPoints.length > 0) {
-      throw new Error(`Found ${invalidPoints.length} invalid points. Each point must have lat, lon, timestamp, and distance as numbers.`);
+      throw new Error(
+        `Found ${invalidPoints.length} invalid points. Each point must have lat, lon, timestamp, and distance as numbers.`
+      );
     }
 
     // Process points in batches to avoid rate limiting
@@ -387,13 +448,18 @@ export async function getMultipleForecastPoints(points: ForecastPoint[]): Promis
             // If we've exhausted retries, give up
             if (retry === MAX_RETRIES - 1) {
               failureCount++;
-              log(`Failed to fetch forecast for point at index ${i + batchIndex} after ${MAX_RETRIES} retries:`, error);
+              log(
+                `Failed to fetch forecast for point at index ${i + batchIndex} after ${MAX_RETRIES} retries:`,
+                error
+              );
               return null;
             }
 
             // Otherwise wait and retry with exponential backoff
             const backoffTime = 1000 * Math.pow(2, retry); // 1s, 2s, 4s
-            log(`Retry ${retry + 1}/${MAX_RETRIES} for point at index ${i + batchIndex} in ${backoffTime}ms`);
+            log(
+              `Retry ${retry + 1}/${MAX_RETRIES} for point at index ${i + batchIndex} in ${backoffTime}ms`
+            );
             await new Promise(resolve => setTimeout(resolve, backoffTime));
           }
         }
@@ -422,11 +488,15 @@ export async function getMultipleForecastPoints(points: ForecastPoint[]): Promis
     const totalAttempted = successCount + failureCount;
     if (totalAttempted > 0) {
       const successRate = Math.round((successCount / totalAttempted) * 100);
-      log(`Weather data fetch complete. Success rate: ${successRate}% (${successCount}/${totalAttempted})`);
+      log(
+        `Weather data fetch complete. Success rate: ${successRate}% (${successCount}/${totalAttempted})`
+      );
 
       // If success rate is too low, log a warning
       if (successRate < 50 && totalAttempted > 5) {
-        console.warn(`Low weather data success rate (${successRate}%). There may be issues with the weather service.`);
+        console.warn(
+          `Low weather data success rate (${successRate}%). There may be issues with the weather service.`
+        );
       }
     }
 

@@ -39,7 +39,7 @@ const FallbackUI: React.FC<FallbackUIProps> = ({ error, resetErrorBoundary }) =>
             </div>
           )}
         </div>
-        
+
         <div className="flex flex-col gap-3">
           <Button onClick={handleReset} className="w-full">
             Try Again

@@ -8,7 +8,7 @@ export const createRateLimiter = (): TokenBucket => {
   return new RateLimiter({
     tokensPerInterval: 30,
     interval: 'minute',
-    fireImmediately: true
+    fireImmediately: true,
   });
 };
 

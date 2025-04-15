@@ -42,9 +42,7 @@ export function ClientTimeline(props: ClientTimelineProps) {
     return (
       <div className="h-[150px] bg-muted flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
-            No forecast data available
-          </p>
+          <p className="text-sm text-muted-foreground">No forecast data available</p>
         </div>
       </div>
     );

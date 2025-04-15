@@ -58,7 +58,7 @@ const MyComponent = () => {
   const { addNotification } = useNotifications();
 
   // Handle GPX data loading
-  const handleGPXLoaded = (data) => {
+  const handleGPXLoaded = data => {
     setGpxData(data);
     addNotification('success', 'GPX file loaded successfully');
   };
@@ -66,19 +66,9 @@ const MyComponent = () => {
   return (
     <div>
       <GPXUploader onGPXLoaded={handleGPXLoaded} />
-      <SafeMapWrapper
-        gpxData={gpxData}
-        forecastPoints={forecastPoints}
-        weatherData={weatherData}
-      />
-      <SafeChartsWrapper
-        forecastPoints={forecastPoints}
-        weatherData={weatherData}
-      />
-      <SafeTimelineWrapper
-        forecastPoints={forecastPoints}
-        weatherData={weatherData}
-      />
+      <SafeMapWrapper gpxData={gpxData} forecastPoints={forecastPoints} weatherData={weatherData} />
+      <SafeChartsWrapper forecastPoints={forecastPoints} weatherData={weatherData} />
+      <SafeTimelineWrapper forecastPoints={forecastPoints} weatherData={weatherData} />
     </div>
   );
 };

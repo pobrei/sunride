@@ -79,7 +79,9 @@ const toastVariants = cva(
   }
 );
 
-interface ToastProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof toastVariants> {
+interface ToastProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof toastVariants> {
   id: string;
   onClose: () => void;
 }
@@ -100,7 +102,11 @@ function ToastIcon({ variant }: { variant?: ToastType }) {
 function Toast({ id, variant, className, onClose, children, ...props }: ToastProps) {
   return (
     <div
-      className={classNames(toastVariants({ variant }), 'animate-in slide-in-from-right-full', className)}
+      className={classNames(
+        toastVariants({ variant }),
+        'animate-in slide-in-from-right-full',
+        className
+      )}
       {...props}
     >
       <div className="flex items-center">

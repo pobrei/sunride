@@ -37,7 +37,7 @@ export function Charts({
   weatherData,
   selectedMarker,
   onChartClick,
-  className
+  className,
 }: ChartsProps) {
   return (
     <div className={cn('p-4', className)}>

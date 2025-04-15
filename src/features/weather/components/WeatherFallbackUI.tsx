@@ -39,18 +39,19 @@ export function WeatherFallbackUI({
       addNotification: (type: string, message: string) => {
         console.log(`[Notification] ${type}: ${message}`);
         return '';
-      }
+      },
     };
   }
 
   const { addNotification } = notificationContext;
 
   // Extract error message
-  const errorMessage = error instanceof Error
-    ? error.message
-    : typeof error === 'string'
-      ? error
-      : 'Unable to load weather data';
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : 'Unable to load weather data';
 
   // Handle retry
   const handleRetry = () => {
@@ -118,12 +119,7 @@ export function WeatherWidgetFallback({
         {error instanceof Error ? error.message : error || 'Weather data unavailable'}
       </p>
       {onRetry && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mt-1"
-          onClick={onRetry}
-        >
+        <Button variant="ghost" size="sm" className="mt-1" onClick={onRetry}>
           <RefreshCw className="h-3 w-3 mr-1" />
           Retry
         </Button>

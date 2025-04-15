@@ -39,18 +39,19 @@ export function GPXErrorFallback({
       addNotification: (type: string, message: string) => {
         console.log(`[Notification] ${type}: ${message}`);
         return '';
-      }
+      },
     };
   }
 
   const { addNotification } = notificationContext;
 
   // Extract error message
-  const errorMessage = error instanceof Error
-    ? error.message
-    : typeof error === 'string'
-      ? error
-      : 'Unable to process GPX file';
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : 'Unable to process GPX file';
 
   // Handle retry
   const handleRetry = () => {
@@ -119,12 +120,7 @@ export function GPXWidgetFallback({
         {error instanceof Error ? error.message : error || 'GPX file error'}
       </p>
       {onRetry && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mt-1"
-          onClick={onRetry}
-        >
+        <Button variant="ghost" size="sm" className="mt-1" onClick={onRetry}>
           <Upload className="h-3 w-3 mr-1" />
           Try Another File
         </Button>

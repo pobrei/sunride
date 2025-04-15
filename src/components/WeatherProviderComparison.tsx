@@ -21,7 +21,7 @@ const WeatherProviderComparison: React.FC = () => {
   const [providers, setProviders] = useState<WeatherProviderData[]>([
     { provider: 'OpenWeather', data: [], isLoading: false, error: null },
     { provider: 'WeatherAPI', data: [], isLoading: false, error: null },
-    { provider: 'VisualCrossing', data: [], isLoading: false, error: null }
+    { provider: 'VisualCrossing', data: [], isLoading: false, error: null },
   ]);
   const [activeProvider, setActiveProvider] = useState<string>('OpenWeather');
   const [isComparing, setIsComparing] = useState<boolean>(false);
@@ -29,38 +29,38 @@ const WeatherProviderComparison: React.FC = () => {
   // Function to fetch data from a specific provider
   const fetchProviderData = async (provider: string) => {
     if (forecastPoints.length === 0) return;
-    
+
     // Find the provider in our state
     const providerIndex = providers.findIndex(p => p.provider === provider);
     if (providerIndex === -1) return;
-    
+
     // Update loading state
     setProviders(prev => {
       const updated = [...prev];
       updated[providerIndex] = {
         ...updated[providerIndex],
         isLoading: true,
-        error: null
+        error: null,
       };
       return updated;
     });
-    
+
     try {
       // In a real implementation, this would call different API endpoints
       // For this demo, we'll simulate different data with a timeout
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Generate mock data with slight variations based on provider
       const mockData = forecastPoints.map((point, index) => {
         const baseTemp = 15 + Math.sin(index * 0.5) * 10;
         const baseHumidity = 60 + Math.cos(index * 0.3) * 20;
         const baseWind = 10 + Math.sin(index * 0.7) * 8;
-        
+
         // Add provider-specific variations
         let tempAdjust = 0;
         let humidityAdjust = 0;
         let windAdjust = 0;
-        
+
         if (provider === 'OpenWeather') {
           tempAdjust = 0;
           humidityAdjust = 0;
@@ -74,7 +74,7 @@ const WeatherProviderComparison: React.FC = () => {
           humidityAdjust = 3;
           windAdjust = -1.5;
         }
-        
+
         return {
           temperature: baseTemp + tempAdjust,
           feelsLike: baseTemp - 2 + tempAdjust,
@@ -91,17 +91,17 @@ const WeatherProviderComparison: React.FC = () => {
           cloudCover: Math.max(0, Math.min(100, Math.sin(index * 0.5) * 50 + 50)),
           visibility: 10000,
           uvIndex: 5,
-          timestamp: point.timestamp
+          timestamp: point.timestamp,
         };
       });
-      
+
       // Update provider data
       setProviders(prev => {
         const updated = [...prev];
         updated[providerIndex] = {
           ...updated[providerIndex],
           data: mockData,
-          isLoading: false
+          isLoading: false,
         };
         return updated;
       });
@@ -112,7 +112,7 @@ const WeatherProviderComparison: React.FC = () => {
         updated[providerIndex] = {
           ...updated[providerIndex],
           isLoading: false,
-          error: error instanceof Error ? error : new Error('Unknown error')
+          error: error instanceof Error ? error : new Error('Unknown error'),
         };
         return updated;
       });
@@ -122,12 +122,12 @@ const WeatherProviderComparison: React.FC = () => {
   // Start comparison
   const handleCompare = async () => {
     setIsComparing(true);
-    
+
     // Fetch data from all providers
     for (const provider of providers) {
       await fetchProviderData(provider.provider);
     }
-    
+
     setIsComparing(false);
   };
 
@@ -141,20 +141,21 @@ const WeatherProviderComparison: React.FC = () => {
   const getTemperatureDifferences = () => {
     const providersWithData = providers.filter(p => p.data.length > 0);
     if (providersWithData.length <= 1) return null;
-    
+
     // Use the first provider as the baseline
     const baseline = providersWithData[0];
-    
+
     return providersWithData.slice(1).map(provider => {
-      const avgDiff = provider.data.reduce((sum, data, index) => {
-        if (!data || !baseline.data[index]) return sum;
-        return sum + (data.temperature - baseline.data[index]!.temperature);
-      }, 0) / provider.data.length;
-      
+      const avgDiff =
+        provider.data.reduce((sum, data, index) => {
+          if (!data || !baseline.data[index]) return sum;
+          return sum + (data.temperature - baseline.data[index]!.temperature);
+        }, 0) / provider.data.length;
+
       return {
         provider: provider.provider,
         baseline: baseline.provider,
-        avgDiff: avgDiff.toFixed(1)
+        avgDiff: avgDiff.toFixed(1),
       };
     });
   };
@@ -171,10 +172,11 @@ const WeatherProviderComparison: React.FC = () => {
         {!hasData ? (
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Compare weather data from multiple providers to see how forecasts differ along your route.
+              Compare weather data from multiple providers to see how forecasts differ along your
+              route.
             </p>
-            <Button 
-              onClick={handleCompare} 
+            <Button
+              onClick={handleCompare}
               disabled={isComparing || forecastPoints.length === 0}
               className="w-full"
             >
@@ -187,7 +189,7 @@ const WeatherProviderComparison: React.FC = () => {
                 'Compare Weather Providers'
               )}
             </Button>
-            
+
             {forecastPoints.length === 0 && (
               <div className="flex items-center p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-md">
                 <AlertTriangle className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0" />
@@ -202,8 +204,8 @@ const WeatherProviderComparison: React.FC = () => {
             <Tabs defaultValue={activeProvider} onValueChange={setActiveProvider}>
               <TabsList className="grid grid-cols-3">
                 {providers.map(provider => (
-                  <TabsTrigger 
-                    key={provider.provider} 
+                  <TabsTrigger
+                    key={provider.provider}
                     value={provider.provider}
                     disabled={provider.data.length === 0}
                   >
@@ -211,7 +213,7 @@ const WeatherProviderComparison: React.FC = () => {
                   </TabsTrigger>
                 ))}
               </TabsList>
-              
+
               {providers.map(provider => (
                 <TabsContent key={provider.provider} value={provider.provider}>
                   {provider.isLoading ? (
@@ -232,19 +234,33 @@ const WeatherProviderComparison: React.FC = () => {
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Temperature</p>
                           <p className="text-2xl font-bold">
-                            {(provider.data.reduce((sum, data) => sum + (data?.temperature || 0), 0) / provider.data.length).toFixed(1)}°C
+                            {(
+                              provider.data.reduce(
+                                (sum, data) => sum + (data?.temperature || 0),
+                                0
+                              ) / provider.data.length
+                            ).toFixed(1)}
+                            °C
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Humidity</p>
                           <p className="text-2xl font-bold">
-                            {Math.round(provider.data.reduce((sum, data) => sum + (data?.humidity || 0), 0) / provider.data.length)}%
+                            {Math.round(
+                              provider.data.reduce((sum, data) => sum + (data?.humidity || 0), 0) /
+                                provider.data.length
+                            )}
+                            %
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground">Avg. Wind</p>
                           <p className="text-2xl font-bold">
-                            {(provider.data.reduce((sum, data) => sum + (data?.windSpeed || 0), 0) / provider.data.length).toFixed(1)} km/h
+                            {(
+                              provider.data.reduce((sum, data) => sum + (data?.windSpeed || 0), 0) /
+                              provider.data.length
+                            ).toFixed(1)}{' '}
+                            km/h
                           </p>
                         </div>
                         <div className="bg-muted p-4 rounded-md">
@@ -254,19 +270,20 @@ const WeatherProviderComparison: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="p-4 bg-muted rounded-md">
                         <h4 className="font-medium mb-2">Provider Information</h4>
                         <p className="text-sm text-muted-foreground">
-                          {provider.provider} provides weather forecasts with updates every 3 hours. 
-                          Data includes temperature, precipitation, wind, humidity, pressure, and more.
+                          {provider.provider} provides weather forecasts with updates every 3 hours.
+                          Data includes temperature, precipitation, wind, humidity, pressure, and
+                          more.
                         </p>
                       </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center p-8">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         onClick={() => fetchProviderData(provider.provider)}
                       >
                         Load {provider.provider} Data
@@ -276,7 +293,7 @@ const WeatherProviderComparison: React.FC = () => {
                 </TabsContent>
               ))}
             </Tabs>
-            
+
             {/* Provider comparison section */}
             {getTemperatureDifferences() && (
               <div className="mt-6 p-4 bg-muted rounded-md">
@@ -288,7 +305,8 @@ const WeatherProviderComparison: React.FC = () => {
                         {diff.provider} vs {diff.baseline}:
                       </span>
                       <span className={Number(diff.avgDiff) > 0 ? 'text-red-500' : 'text-blue-500'}>
-                        {Number(diff.avgDiff) > 0 ? '+' : ''}{diff.avgDiff}°C
+                        {Number(diff.avgDiff) > 0 ? '+' : ''}
+                        {diff.avgDiff}°C
                       </span>
                     </div>
                   ))}
@@ -298,10 +316,10 @@ const WeatherProviderComparison: React.FC = () => {
                 </p>
               </div>
             )}
-            
-            <Button 
-              variant="outline" 
-              onClick={handleCompare} 
+
+            <Button
+              variant="outline"
+              onClick={handleCompare}
               disabled={isComparing}
               className="w-full"
             >

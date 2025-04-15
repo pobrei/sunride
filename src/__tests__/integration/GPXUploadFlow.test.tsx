@@ -128,7 +128,9 @@ describe('GPX Upload Flow Integration', () => {
     );
 
     // Create a mock file
-    const file = new File(['<invalid>Not a GPX file</invalid>'], 'test.gpx', { type: 'application/gpx+xml' });
+    const file = new File(['<invalid>Not a GPX file</invalid>'], 'test.gpx', {
+      type: 'application/gpx+xml',
+    });
 
     // Get the file input
     const fileInput = screen.getByTestId('gpx-file-input');

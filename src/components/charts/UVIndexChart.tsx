@@ -25,14 +25,14 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   // Function to handle chart click
   const handleChartClick = (event: MouseEvent) => {
     if (!chartInstance.current) return;
-    
+
     const canvas = event.target as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
-    
+
     const chartArea = chartInstance.current.chartArea;
     if (!chartArea) return;
-    
+
     // Only handle clicks within the chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
@@ -40,7 +40,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
         Math.max(0, Math.floor(xPercent * forecastPoints.length)),
         forecastPoints.length - 1
       );
-      
+
       console.log(`UV Index chart clicked at index: ${index}`);
       onChartClick(index);
     }
@@ -58,29 +58,31 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   // Get color scheme based on dark/light mode
   const getColorScheme = () => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    return isDarkMode 
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    return isDarkMode
       ? {
           uvIndex: {
             bg: 'rgba(255, 165, 0, 0.3)',
             border: 'rgb(255, 140, 0)',
-            point: 'rgb(255, 140, 0)'
-          }
+            point: 'rgb(255, 140, 0)',
+          },
         }
       : {
           uvIndex: {
             bg: 'rgba(255, 220, 180, 0.3)',
             border: 'rgb(255, 165, 0)',
-            point: 'rgb(255, 165, 0)'
-          }
+            point: 'rgb(255, 165, 0)',
+          },
         };
   };
 
   // Define custom tooltip styling
   const getTooltipOptions = () => {
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     return {
       mode: 'index' as const,
       intersect: false,
@@ -94,29 +96,29 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
       titleFont: {
         weight: 'bold' as const,
         size: 14,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       bodyFont: {
         size: 12,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       caretSize: 8,
       displayColors: true,
       callbacks: {
-        label: function(context) {
+        label: function (context) {
           const value = context.parsed.y;
           let label = `UV Index: ${value}`;
-          
+
           // Add risk level
           if (value <= 2) label += ' (Low)';
           else if (value <= 5) label += ' (Moderate)';
           else if (value <= 7) label += ' (High)';
           else if (value <= 10) label += ' (Very High)';
           else label += ' (Extreme)';
-          
+
           return label;
-        }
-      }
+        },
+      },
     };
   };
 
@@ -128,7 +130,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
       display: true,
       drawBorder: true,
       drawOnChartArea: true,
-      drawTicks: true
+      drawTicks: true,
     };
   };
 
@@ -146,7 +148,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
@@ -169,19 +171,19 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               {
                 label: 'UV Index',
                 data: uvIndexData,
-                backgroundColor: (context) => {
+                backgroundColor: context => {
                   const value = context.raw as number;
                   return getUVColor(value);
                 },
                 borderColor: colors.uvIndex.border,
                 borderWidth: 1,
                 borderRadius: 4,
-                hoverBackgroundColor: (context) => {
+                hoverBackgroundColor: context => {
                   const value = context.raw as number;
                   const color = getUVColor(value);
                   return color.replace('0.7', '0.9'); // Make hover slightly more opaque
                 },
-              }
+              },
             ],
           },
           options: {
@@ -193,22 +195,22 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
-              tooltip: getTooltipOptions()
+              tooltip: getTooltipOptions(),
             },
             scales: {
               x: {
                 grid: {
                   display: true,
                   color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: getDashedGridLines(),
@@ -216,16 +218,16 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
                 max: 12,
                 title: {
                   display: true,
-                  text: 'UV Index'
+                  text: 'UV Index',
                 },
                 ticks: {
-                  stepSize: 1
-                }
-              }
+                  stepSize: 1,
+                },
+              },
             },
           },
         });
-        
+
         // Add direct click handler
         chartRef.current.addEventListener('click', handleChartClick as any);
       }
@@ -245,9 +247,9 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
         <CardTitle className="text-lg">UV Index</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          className="h-[250px] w-full" 
-          role="img" 
+        <div
+          className="h-[250px] w-full"
+          role="img"
           aria-label="UV Index chart showing weather data along the route"
         >
           <canvas ref={chartRef} />

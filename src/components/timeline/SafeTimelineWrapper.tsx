@@ -28,12 +28,13 @@ const SafeTimelineWrapper: React.FC<SafeTimelineWrapperProps> = ({
   weatherData,
   selectedMarker,
   onTimelineClick,
-  timelineRef
+  timelineRef,
 }) => {
   // Validate data
-  const hasValidData = forecastPoints && 
-    weatherData && 
-    forecastPoints.length > 0 && 
+  const hasValidData =
+    forecastPoints &&
+    weatherData &&
+    forecastPoints.length > 0 &&
     weatherData.length > 0 &&
     forecastPoints.length === weatherData.length;
 

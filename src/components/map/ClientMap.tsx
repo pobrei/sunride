@@ -44,9 +44,7 @@ export default function ClientMap(props: ClientMapProps) {
     return (
       <div className="h-[400px] bg-muted flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
-            Upload a GPX file to see the map
-          </p>
+          <p className="text-sm text-muted-foreground">Upload a GPX file to see the map</p>
         </div>
       </div>
     );

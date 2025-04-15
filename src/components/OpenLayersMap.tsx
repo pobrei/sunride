@@ -3,7 +3,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GPXData } from '@/utils/gpxParser';
 import { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
-import { formatDistance, formatDateTime, formatTemperature, getMarkerColor } from '@/utils/formatUtils';
+import {
+  formatDistance,
+  formatDateTime,
+  formatTemperature,
+  getMarkerColor,
+} from '@/utils/formatUtils';
 import { Button } from '@/components/ui/button';
 import { MapPin, Navigation, RefreshCw } from 'lucide-react';
 import WeatherInfoPanel from '@/components/WeatherInfoPanel';
@@ -38,14 +43,17 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const popupOverlayRef = useRef<Overlay | null>(null);
   const [hoveredMarker, setHoveredMarker] = useState<number | null>(null);
-  const [selectedPointData, setSelectedPointData] = useState<{ point: ForecastPoint; weather: WeatherData } | null>(null);
+  const [selectedPointData, setSelectedPointData] = useState<{
+    point: ForecastPoint;
+    weather: WeatherData;
+  } | null>(null);
 
   // Check if we have valid data
   const hasValidData =
@@ -67,74 +75,78 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
         element: popupRef.current!,
         positioning: 'bottom-center',
         stopEvent: false,
-        offset: [0, -10]
+        offset: [0, -10],
       });
 
       // Create route feature
-      const routeCoords = gpxData!.points.map(point =>
-        fromLonLat([point.lon, point.lat])
-      );
+      const routeCoords = gpxData!.points.map(point => fromLonLat([point.lon, point.lat]));
 
       const routeFeature = new Feature({
         geometry: new LineString(routeCoords),
-        name: 'Route'
+        name: 'Route',
       });
 
-      routeFeature.setStyle(new Style({
-        stroke: new Stroke({
-          color: '#3b82f6',
-          width: 4
+      routeFeature.setStyle(
+        new Style({
+          stroke: new Stroke({
+            color: '#3b82f6',
+            width: 4,
+          }),
         })
-      }));
+      );
 
       // Create marker features
-      const markerFeatures = forecastPoints.map((point, index) => {
-        if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
+      const markerFeatures = forecastPoints
+        .map((point, index) => {
+          if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
 
-        const weather = weatherData[index];
-        if (!weather) return null;
+          const weather = weatherData[index];
+          if (!weather) return null;
 
-        const markerFeature = new Feature({
-          geometry: new Point(fromLonLat([point.lon, point.lat])),
-          id: index,
-          point: point,
-          weather: weather
-        });
+          const markerFeature = new Feature({
+            geometry: new Point(fromLonLat([point.lon, point.lat])),
+            id: index,
+            point: point,
+            weather: weather,
+          });
 
-        const isSelected = selectedMarker === index;
-        const markerColor = getMarkerColor(weather);
+          const isSelected = selectedMarker === index;
+          const markerColor = getMarkerColor(weather);
 
-        markerFeature.setStyle(new Style({
-          image: new Circle({
-            radius: isSelected ? 10 : 8,
-            fill: new Fill({
-              color: isSelected ? '#3b82f6' : markerColor
-            }),
-            stroke: new Stroke({
-              color: '#ffffff',
-              width: 2
+          markerFeature.setStyle(
+            new Style({
+              image: new Circle({
+                radius: isSelected ? 10 : 8,
+                fill: new Fill({
+                  color: isSelected ? '#3b82f6' : markerColor,
+                }),
+                stroke: new Stroke({
+                  color: '#ffffff',
+                  width: 2,
+                }),
+              }),
+              text: new Text({
+                text: (index + 1).toString(),
+                fill: new Fill({
+                  color: '#ffffff',
+                }),
+                font: 'bold 12px sans-serif',
+                offsetY: 1,
+              }),
             })
-          }),
-          text: new Text({
-            text: (index + 1).toString(),
-            fill: new Fill({
-              color: '#ffffff'
-            }),
-            font: 'bold 12px sans-serif',
-            offsetY: 1
-          })
-        }));
+          );
 
-        return markerFeature;
-      }).filter(Boolean) as Feature[];
+          return markerFeature;
+        })
+        .filter(Boolean) as Feature[];
 
       // Create vector source and layer
       const vectorSource = new VectorSource({
-        features: [routeFeature, ...markerFeatures]
+        features: [routeFeature, ...markerFeatures],
       });
 
       const vectorLayer = new VectorLayer({
-        source: vectorSource
+        source: vectorSource,
       });
 
       // Create map
@@ -142,29 +154,26 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
         target: mapRef.current,
         layers: [
           new TileLayer({
-            source: new OSM()
+            source: new OSM(),
           }),
-          vectorLayer
+          vectorLayer,
         ],
         controls: defaultControls({
           zoom: true,
           rotate: false,
-          attribution: true
+          attribution: true,
         }),
         overlays: [popupOverlayRef.current],
         view: new View({
-          center: fromLonLat([
-            gpxData!.points[0].lon,
-            gpxData!.points[0].lat
-          ]),
-          zoom: 12
-        })
+          center: fromLonLat([gpxData!.points[0].lon, gpxData!.points[0].lat]),
+          zoom: 12,
+        }),
       });
 
       // Add hover interaction
       const hoverInteraction = new Select({
         condition: pointerMove,
-        style: (feature) => {
+        style: feature => {
           const id = feature.get('id');
           if (id === undefined) return undefined; // Not a marker
 
@@ -175,29 +184,29 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
             image: new Circle({
               radius: 10,
               fill: new Fill({
-                color: selectedMarker === id ? '#3b82f6' : markerColor
+                color: selectedMarker === id ? '#3b82f6' : markerColor,
               }),
               stroke: new Stroke({
                 color: '#ffffff',
-                width: 3
-              })
+                width: 3,
+              }),
             }),
             text: new Text({
               text: (id + 1).toString(),
               fill: new Fill({
-                color: '#ffffff'
+                color: '#ffffff',
               }),
               font: 'bold 12px sans-serif',
-              offsetY: 1
-            })
+              offsetY: 1,
+            }),
           });
-        }
+        },
       });
 
       mapInstanceRef.current.addInteraction(hoverInteraction);
 
       // Add hover handler
-      hoverInteraction.on('select', (e) => {
+      hoverInteraction.on('select', e => {
         if (e.selected.length > 0) {
           const feature = e.selected[0];
           const id = feature.get('id');
@@ -233,10 +242,10 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
       });
 
       // Add click handler
-      mapInstanceRef.current.on('click', (event) => {
+      mapInstanceRef.current.on('click', event => {
         const feature = mapInstanceRef.current!.forEachFeatureAtPixel(
           event.pixel,
-          (feature) => feature
+          feature => feature
         );
 
         if (feature && feature.get('id') !== undefined) {
@@ -267,26 +276,28 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
           const weather = feature.get('weather');
           const markerColor = getMarkerColor(weather);
 
-          feature.setStyle(new Style({
-            image: new Circle({
-              radius: isSelected ? 10 : 8,
-              fill: new Fill({
-                color: isSelected ? '#3b82f6' : markerColor
+          feature.setStyle(
+            new Style({
+              image: new Circle({
+                radius: isSelected ? 10 : 8,
+                fill: new Fill({
+                  color: isSelected ? '#3b82f6' : markerColor,
+                }),
+                stroke: new Stroke({
+                  color: '#ffffff',
+                  width: 2,
+                }),
               }),
-              stroke: new Stroke({
-                color: '#ffffff',
-                width: 2
-              })
-            }),
-            text: new Text({
-              text: (id + 1).toString(),
-              fill: new Fill({
-                color: '#ffffff'
+              text: new Text({
+                text: (id + 1).toString(),
+                fill: new Fill({
+                  color: '#ffffff',
+                }),
+                font: 'bold 12px sans-serif',
+                offsetY: 1,
               }),
-              font: 'bold 12px sans-serif',
-              offsetY: 1
             })
-          }));
+          );
         });
       }
 
@@ -294,7 +305,7 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
       const routeExtent = routeFeature.getGeometry()!.getExtent();
       mapInstanceRef.current.getView().fit(routeExtent, {
         padding: [50, 50, 50, 50],
-        maxZoom: 15
+        maxZoom: 15,
       });
     } catch (error) {
       console.error('Error initializing OpenLayers map:', error);
@@ -313,7 +324,9 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
     if (!mapInstanceRef.current || selectedMarker === null) return;
 
     try {
-      const vectorLayer = mapInstanceRef.current.getLayers().getArray()[1] as VectorLayer<VectorSource>;
+      const vectorLayer = mapInstanceRef.current
+        .getLayers()
+        .getArray()[1] as VectorLayer<VectorSource>;
       const vectorSource = vectorLayer.getSource()!;
 
       const features = vectorSource.getFeatures();
@@ -325,26 +338,28 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
         const weather = feature.get('weather');
         const markerColor = getMarkerColor(weather);
 
-        feature.setStyle(new Style({
-          image: new Circle({
-            radius: isSelected ? 10 : 8,
-            fill: new Fill({
-              color: isSelected ? '#3b82f6' : markerColor
+        feature.setStyle(
+          new Style({
+            image: new Circle({
+              radius: isSelected ? 10 : 8,
+              fill: new Fill({
+                color: isSelected ? '#3b82f6' : markerColor,
+              }),
+              stroke: new Stroke({
+                color: '#ffffff',
+                width: 2,
+              }),
             }),
-            stroke: new Stroke({
-              color: '#ffffff',
-              width: 2
-            })
-          }),
-          text: new Text({
-            text: (id + 1).toString(),
-            fill: new Fill({
-              color: '#ffffff'
+            text: new Text({
+              text: (id + 1).toString(),
+              fill: new Fill({
+                color: '#ffffff',
+              }),
+              font: 'bold 12px sans-serif',
+              offsetY: 1,
             }),
-            font: 'bold 12px sans-serif',
-            offsetY: 1
           })
-        }));
+        );
 
         // Update the selected point data for the info panel
         if (isSelected) {
@@ -365,7 +380,7 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
 
         mapInstanceRef.current.getView().animate({
           center: coordinate,
-          duration: 500
+          duration: 500,
         });
       }
     } catch (error) {
@@ -387,10 +402,7 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
             <p className="text-sm text-muted-foreground mb-4">
               Please upload a GPX file to view your route on the map.
             </p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="w-full"
-            >
+            <Button onClick={() => window.location.reload()} className="w-full">
               <RefreshCw className="mr-2 h-4 w-4" />
               Reload Page
             </Button>
@@ -429,16 +441,20 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
             className="bg-white/90 hover:bg-white"
             onClick={() => {
               if (mapInstanceRef.current && gpxData) {
-                const vectorLayer = mapInstanceRef.current.getLayers().getArray()[1] as VectorLayer<VectorSource>;
+                const vectorLayer = mapInstanceRef.current
+                  .getLayers()
+                  .getArray()[1] as VectorLayer<VectorSource>;
                 const vectorSource = vectorLayer.getSource()!;
-                const routeFeature = vectorSource.getFeatures().find(feature => feature.get('name') === 'Route');
+                const routeFeature = vectorSource
+                  .getFeatures()
+                  .find(feature => feature.get('name') === 'Route');
 
                 if (routeFeature) {
                   const routeExtent = routeFeature.getGeometry()!.getExtent();
                   mapInstanceRef.current.getView().fit(routeExtent, {
                     padding: [50, 50, 50, 50],
                     maxZoom: 15,
-                    duration: 1000
+                    duration: 1000,
                   });
                 }
               }
@@ -451,7 +467,16 @@ const OpenLayersMap: React.FC<OpenLayersMapProps> = ({
 
         {/* Attribution */}
         <div className="absolute bottom-0 left-0 right-0 p-1 bg-white/80 text-center text-xs text-muted-foreground">
-          Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="underline">OpenStreetMap</a> contributors
+          Map data ©{' '}
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            OpenStreetMap
+          </a>{' '}
+          contributors
         </div>
       </div>
     </div>

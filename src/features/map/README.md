@@ -19,7 +19,7 @@ import { ForecastPoint, WeatherData } from '@/features/weather/types';
 
 const MyComponent = () => {
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
-  
+
   const handleMarkerClick = (index: number) => {
     setSelectedMarker(index);
   };

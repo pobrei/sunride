@@ -30,11 +30,6 @@ const MyComponent = () => {
     console.log('GPX data loaded:', data);
   };
 
-  return (
-    <GPXUploader 
-      onGPXLoaded={handleGPXLoaded} 
-      isLoading={false} 
-    />
-  );
+  return <GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={false} />;
 };
 ```

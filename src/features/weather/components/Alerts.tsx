@@ -1,7 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Thermometer, Wind, Droplets, AlertCircle, Clock, MapPin } from 'lucide-react';
+import {
+  AlertTriangle,
+  Thermometer,
+  Wind,
+  Droplets,
+  AlertCircle,
+  Clock,
+  MapPin,
+} from 'lucide-react';
 import gsap from 'gsap';
 
 // Import from features
@@ -38,7 +46,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
     extremeHeat: [],
     freezing: [],
     highWind: [],
-    heavyRain: []
+    heavyRain: [],
   });
 
   // Process weather data to generate alerts
@@ -49,7 +57,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
         extremeHeat: [],
         freezing: [],
         highWind: [],
-        heavyRain: []
+        heavyRain: [],
       });
       return;
     }
@@ -59,7 +67,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
       extremeHeat: [],
       freezing: [],
       highWind: [],
-      heavyRain: []
+      heavyRain: [],
     };
 
     forecastPoints.forEach((point, index) => {
@@ -73,7 +81,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           id: `heat-${index}`,
           type: 'extremeHeat' as const,
           point,
-          weather
+          weather,
         };
         newAlerts.push(alert);
         newAlertsByType.extremeHeat.push(alert);
@@ -84,7 +92,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           id: `freezing-${index}`,
           type: 'freezing' as const,
           point,
-          weather
+          weather,
         };
         newAlerts.push(alert);
         newAlertsByType.freezing.push(alert);
@@ -95,7 +103,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           id: `wind-${index}`,
           type: 'highWind' as const,
           point,
-          weather
+          weather,
         };
         newAlerts.push(alert);
         newAlertsByType.highWind.push(alert);
@@ -106,7 +114,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           id: `rain-${index}`,
           type: 'heavyRain' as const,
           point,
-          weather
+          weather,
         };
         newAlerts.push(alert);
         newAlertsByType.heavyRain.push(alert);
@@ -133,7 +141,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
               stagger: 0.1,
               duration: 0.4,
               ease: 'back.out(1.2)',
-              overwrite: true
+              overwrite: true,
             }
           );
         }
@@ -150,7 +158,9 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
    * @param type - Alert type
    * @returns Object with styling and display properties
    */
-  const getAlertTypeDetails = (type: string): {
+  const getAlertTypeDetails = (
+    type: string
+  ): {
     icon: React.ReactNode;
     title: string;
     color: string;
@@ -164,7 +174,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           title: 'Extreme Heat',
           color: 'text-destructive',
           bgColor: 'bg-destructive/10',
-          borderColor: 'border-l-destructive'
+          borderColor: 'border-l-destructive',
         };
       case 'freezing':
         return {
@@ -172,7 +182,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           title: 'Freezing Temperature',
           color: 'text-primary',
           bgColor: 'bg-primary/10',
-          borderColor: 'border-l-primary'
+          borderColor: 'border-l-primary',
         };
       case 'highWind':
         return {
@@ -180,7 +190,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           title: 'High Wind',
           color: 'text-amber-500',
           bgColor: 'bg-amber-500/10',
-          borderColor: 'border-l-amber-500'
+          borderColor: 'border-l-amber-500',
         };
       case 'heavyRain':
         return {
@@ -188,7 +198,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           title: 'Heavy Rain',
           color: 'text-secondary',
           bgColor: 'bg-secondary/10',
-          borderColor: 'border-l-secondary'
+          borderColor: 'border-l-secondary',
         };
       default:
         return {
@@ -196,12 +206,10 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
           title: 'Weather Alert',
           color: 'text-primary',
           bgColor: 'bg-primary/10',
-          borderColor: 'border-l-primary'
+          borderColor: 'border-l-primary',
         };
     }
   };
-
-
 
   /**
    * Render compact alerts for a specific type
@@ -212,14 +220,17 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
     const typeAlerts: WeatherAlert[] = alertsByType[type as keyof typeof alertsByType];
     if (typeAlerts.length === 0) return null;
 
-    const { icon, title, color, bgColor }: ReturnType<typeof getAlertTypeDetails> = getAlertTypeDetails(type);
+    const { icon, title, color, bgColor }: ReturnType<typeof getAlertTypeDetails> =
+      getAlertTypeDetails(type);
 
     return (
       <Card className="weather-alert overflow-hidden">
         <CardHeader className={`py-2 px-3 ${bgColor} border-b`}>
           <CardTitle className={`text-base font-semibold flex items-center ${color}`}>
             {icon}
-            <span className="ml-2">{title} Alerts ({typeAlerts.length})</span>
+            <span className="ml-2">
+              {title} Alerts ({typeAlerts.length})
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3">

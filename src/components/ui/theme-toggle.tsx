@@ -32,11 +32,7 @@ export function ThemeToggle({ className, small = false, iconOnly = false }: Them
       <Button
         variant="ghost"
         size={small ? 'sm' : 'default'}
-        className={cn(
-          'gap-2 transition-opacity opacity-0',
-          iconOnly && 'px-0 w-9',
-          className
-        )}
+        className={cn('gap-2 transition-opacity opacity-0', iconOnly && 'px-0 w-9', className)}
         aria-label="Toggle theme"
       >
         <Sun className={small ? 'h-4 w-4' : 'h-5 w-5'} />
@@ -52,11 +48,7 @@ export function ThemeToggle({ className, small = false, iconOnly = false }: Them
       variant="ghost"
       size={small ? 'sm' : 'default'}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className={cn(
-        'gap-2 transition-all',
-        iconOnly && 'px-0 w-9',
-        className
-      )}
+      className={cn('gap-2 transition-all', iconOnly && 'px-0 w-9', className)}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
     >
       {isDark ? (

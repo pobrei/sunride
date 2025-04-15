@@ -77,13 +77,22 @@ function validateForecastPoints(points: ForecastPoint[]): void {
   }
 
   for (const point of points) {
-    if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number' ||
-        typeof point.timestamp !== 'number' || typeof point.distance !== 'number') {
-      throw new ValidationError('Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.');
+    if (
+      !point ||
+      typeof point.lat !== 'number' ||
+      typeof point.lon !== 'number' ||
+      typeof point.timestamp !== 'number' ||
+      typeof point.distance !== 'number'
+    ) {
+      throw new ValidationError(
+        'Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers.'
+      );
     }
 
     if (point.lat < -90 || point.lat > 90 || point.lon < -180 || point.lon > 180) {
-      throw new ValidationError('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.');
+      throw new ValidationError(
+        'Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.'
+      );
     }
   }
 }
@@ -93,7 +102,9 @@ function validateForecastPoints(points: ForecastPoint[]): void {
  * @param points - Array of forecast points to get weather data for
  * @returns Array of weather data objects or null for points that couldn't be fetched
  */
-export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(WeatherData | null)[]> {
+export async function fetchWeatherForPoints(
+  points: ForecastPoint[]
+): Promise<(WeatherData | null)[]> {
   let retries: number = 0;
 
   // Process progress
@@ -104,7 +115,7 @@ export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(W
   } = {
     total: points.length,
     processed: 0,
-    status: 'pending'
+    status: 'pending',
   };
 
   try {
@@ -124,7 +135,7 @@ export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(W
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ points }),
-          signal: controller.signal
+          signal: controller.signal,
         });
 
         clearTimeout(timeoutId);
@@ -142,7 +153,7 @@ export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(W
           throw new APIError(errorMessage, response.status);
         }
 
-        const result: { success: boolean; data: (WeatherData | null)[]; } = await response.json();
+        const result: { success: boolean; data: (WeatherData | null)[] } = await response.json();
 
         // Validate the returned data structure
         if (!result.data || !Array.isArray(result.data)) {
@@ -195,7 +206,7 @@ export async function fetchWeatherForPoints(points: ForecastPoint[]): Promise<(W
       captureException(error, {
         context: 'fetchWeatherForPoints',
         type: 'api',
-        status: error.status
+        status: error.status,
       });
     } else if (error instanceof Error) {
       errorMessage = `Error fetching weather data: ${error.message}`;
@@ -235,14 +246,14 @@ export async function fetchWeatherForPoint(point: ForecastPoint): Promise<Weathe
           lat: point.lat.toString(),
           lon: point.lon.toString(),
           timestamp: point.timestamp.toString(),
-          distance: point.distance.toString()
+          distance: point.distance.toString(),
         });
 
         const controller: AbortController = new AbortController();
         const timeoutId: NodeJS.Timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         const response: Response = await fetch(`/api/weather?${params}`, {
-          signal: controller.signal
+          signal: controller.signal,
         });
 
         clearTimeout(timeoutId);
@@ -260,7 +271,7 @@ export async function fetchWeatherForPoint(point: ForecastPoint): Promise<Weathe
           throw new APIError(errorMessage, response.status);
         }
 
-        const result: { success: boolean; data: WeatherData | null; } = await response.json();
+        const result: { success: boolean; data: WeatherData | null } = await response.json();
 
         // Validate the returned data
         if (!result.data) {
@@ -297,14 +308,14 @@ export async function fetchWeatherForPoint(point: ForecastPoint): Promise<Weathe
       captureException(error, {
         context: 'fetchWeatherForPoint',
         type: 'validation',
-        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp }
+        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp },
       });
     } else if (error instanceof NetworkError) {
       errorMessage = `Network error: ${error.message}`;
       captureException(error, {
         context: 'fetchWeatherForPoint',
         type: 'network',
-        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp }
+        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp },
       });
     } else if (error instanceof APIError) {
       errorMessage = `API error (${error.status}): ${error.message}`;
@@ -312,13 +323,13 @@ export async function fetchWeatherForPoint(point: ForecastPoint): Promise<Weathe
         context: 'fetchWeatherForPoint',
         type: 'api',
         status: error.status,
-        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp }
+        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp },
       });
     } else if (error instanceof Error) {
       errorMessage = `Error fetching weather data: ${error.message}`;
       captureException(error, {
         context: 'fetchWeatherForPoint',
-        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp }
+        point: { lat: point.lat, lon: point.lon, timestamp: point.timestamp },
       });
     } else {
       errorMessage = 'An unknown error occurred while fetching weather data';

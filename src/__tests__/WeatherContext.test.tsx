@@ -29,9 +29,11 @@ jest.mock('@/lib/mongodb-api', () => ({
 
 // Mock the GPX parser
 jest.mock('@/utils/gpxParser', () => ({
-  generateForecastPoints: jest.fn().mockReturnValue([
-    { lat: 37.7749, lon: -122.4194, timestamp: '2023-10-15T10:00:00Z', distance: 0 },
-  ]),
+  generateForecastPoints: jest
+    .fn()
+    .mockReturnValue([
+      { lat: 37.7749, lon: -122.4194, timestamp: '2023-10-15T10:00:00Z', distance: 0 },
+    ]),
 }));
 
 // Mock the NotificationProvider
@@ -71,7 +73,13 @@ const TestComponent = () => {
           setGpxData({
             name: 'Test Route',
             points: [
-              { lat: 37.7749, lon: -122.4194, elevation: 10, distance: 0, time: '2023-10-15T10:00:00Z' },
+              {
+                lat: 37.7749,
+                lon: -122.4194,
+                elevation: 10,
+                distance: 0,
+                time: '2023-10-15T10:00:00Z',
+              },
             ],
             totalDistance: 0,
             totalElevationGain: 10,
@@ -81,10 +89,7 @@ const TestComponent = () => {
       >
         Set GPX Data
       </button>
-      <button
-        data-testid="set-selected-marker"
-        onClick={() => setSelectedMarker(0)}
-      >
+      <button data-testid="set-selected-marker" onClick={() => setSelectedMarker(0)}>
         Set Selected Marker
       </button>
       {/* Notification button removed as we now use NotificationProvider */}

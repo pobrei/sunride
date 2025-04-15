@@ -20,9 +20,7 @@ export default function SimpleCharts(props: SimpleChartsProps) {
     return (
       <div className="h-[300px] bg-muted flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
-            No forecast data available
-          </p>
+          <p className="text-sm text-muted-foreground">No forecast data available</p>
         </div>
       </div>
     );
@@ -63,11 +61,13 @@ export default function SimpleCharts(props: SimpleChartsProps) {
                 if (!weather || weather.temperature === undefined) return null;
 
                 const isSelected = selectedMarker === index;
-                const tempPercentage = ((weather.temperature - minTemp) / (maxTemp - minTemp)) * 100;
+                const tempPercentage =
+                  ((weather.temperature - minTemp) / (maxTemp - minTemp)) * 100;
 
                 // Calculate height and left position classes
                 const heightClass = `chart-bar-h-${Math.round(tempPercentage / 10) * 10}`;
-                const leftPosition = Math.round((index / (forecastPoints.length - 1)) * 100 / 10) * 10;
+                const leftPosition =
+                  Math.round(((index / (forecastPoints.length - 1)) * 100) / 10) * 10;
                 const leftClass = `left-${leftPosition}`;
 
                 return (
@@ -91,20 +91,20 @@ export default function SimpleCharts(props: SimpleChartsProps) {
           {/* Precipitation Chart */}
           <div className="border rounded-lg p-3">
             <h4 className="font-medium mb-2">Precipitation</h4>
-            <p className="text-xs text-muted-foreground mb-2">
-              Max: {maxPrecip.toFixed(1)} mm
-            </p>
+            <p className="text-xs text-muted-foreground mb-2">Max: {maxPrecip.toFixed(1)} mm</p>
             <div className="h-[100px] relative border-b border-l">
               {forecastPoints.map((point, index) => {
                 const weather = weatherData[index];
                 if (!weather || weather.precipitation === undefined) return null;
 
                 const isSelected = selectedMarker === index;
-                const precipPercentage = maxPrecip > 0 ? (weather.precipitation / maxPrecip) * 100 : 0;
+                const precipPercentage =
+                  maxPrecip > 0 ? (weather.precipitation / maxPrecip) * 100 : 0;
 
                 // Calculate height and left position classes
                 const heightClass = `chart-bar-h-${Math.round(precipPercentage / 10) * 10}`;
-                const leftPosition = Math.round((index / (forecastPoints.length - 1)) * 100 / 10) * 10;
+                const leftPosition =
+                  Math.round(((index / (forecastPoints.length - 1)) * 100) / 10) * 10;
                 const leftClass = `left-${leftPosition}`;
 
                 return (

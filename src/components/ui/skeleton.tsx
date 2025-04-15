@@ -101,10 +101,7 @@ export function SkeletonCard({
 }) {
   return (
     <div
-      className={cn(
-        'rounded-lg border border-border bg-card overflow-hidden',
-        className
-      )}
+      className={cn('rounded-lg border border-border bg-card overflow-hidden', className)}
       {...props}
     >
       {header && (

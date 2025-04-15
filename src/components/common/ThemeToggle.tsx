@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { animation, effects } from '@/styles/tailwind-utils';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -21,7 +23,9 @@ export default function ThemeToggle() {
         setTheme(savedTheme);
       } else {
         // Check system preference
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
         setTheme(systemTheme);
       }
     }
@@ -34,7 +38,9 @@ export default function ThemeToggle() {
     const root = document.documentElement;
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
       root.classList.remove('light', 'dark');
       root.classList.add(systemTheme);
     } else {
@@ -62,13 +68,17 @@ export default function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="rounded-full"
+      className={cn(
+        "rounded-full",
+        animation.transition,
+        effects.hover
+      )}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {theme === 'dark' ? (
-        <Sun className="h-5 w-5 text-yellow-400" />
+        <Sun className={cn("h-5 w-5 text-yellow-400", animation.spin)} />
       ) : (
-        <Moon className="h-5 w-5 text-slate-700" />
+        <Moon className={cn("h-5 w-5 text-primary", animation.transition)} />
       )}
     </Button>
   );

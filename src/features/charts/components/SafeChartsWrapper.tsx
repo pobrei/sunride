@@ -25,7 +25,7 @@ const SafeChartsWrapper: React.FC<SafeChartsWrapperProps> = ({
   forecastPoints,
   weatherData,
   selectedMarker,
-  onChartClick
+  onChartClick,
 }) => {
   const [hasError, setHasError] = useState(false);
   const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
@@ -64,10 +64,7 @@ const SafeChartsWrapper: React.FC<SafeChartsWrapperProps> = ({
               <li>Refresh the page and try again</li>
             </ul>
           </div>
-          <Button
-            onClick={() => window.location.reload()}
-            className="w-full max-w-xs"
-          >
+          <Button onClick={() => window.location.reload()} className="w-full max-w-xs">
             Reload Page
           </Button>
         </div>

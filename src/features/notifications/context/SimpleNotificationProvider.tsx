@@ -33,7 +33,7 @@ export function SimpleNotificationProvider({ children }: NotificationProviderPro
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   const addNotification = (type: NotificationType, message: string, duration = 5000): string => {
-    const id = Date.now().toString();
+    const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     setNotifications(prev => [...prev, { id, type, message, duration }]);
     return id;
   };
@@ -45,7 +45,11 @@ export function SimpleNotificationProvider({ children }: NotificationProviderPro
   // Listen for custom notification events
   useEffect(() => {
     const handleNotificationEvent = (event: Event) => {
-      const customEvent = event as CustomEvent<{ type: NotificationType; message: string; duration?: number }>;
+      const customEvent = event as CustomEvent<{
+        type: NotificationType;
+        message: string;
+        duration?: number;
+      }>;
       if (customEvent.detail) {
         const { type, message, duration } = customEvent.detail;
         addNotification(type, message, duration);

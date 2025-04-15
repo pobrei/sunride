@@ -28,36 +28,36 @@ const Tooltip: React.FC<TooltipProps> = ({
   delay = 300,
   position = 'top',
   disabled = false,
-  children
+  children,
 }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [coords, setCoords] = React.useState({ x: 0, y: 0 });
   const triggerRef = React.useRef<HTMLDivElement>(null);
   const tooltipRef = React.useRef<HTMLDivElement>(null);
   const timeoutRef = React.useRef<NodeJS.Timeout>();
-  
+
   const handleMouseEnter = () => {
     if (disabled) return;
-    
+
     timeoutRef.current = setTimeout(() => {
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
         setCoords({
           x: rect.left + rect.width / 2,
-          y: position === 'top' ? rect.top : rect.bottom
+          y: position === 'top' ? rect.top : rect.bottom,
         });
         setIsVisible(true);
       }
     }, delay);
   };
-  
+
   const handleMouseLeave = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setIsVisible(false);
   };
-  
+
   React.useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -65,10 +65,10 @@ const Tooltip: React.FC<TooltipProps> = ({
       }
     };
   }, []);
-  
+
   return (
     <>
-      <div 
+      <div
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -76,7 +76,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       >
         {children}
       </div>
-      
+
       {isVisible && (
         <div
           ref={tooltipRef}
@@ -91,7 +91,12 @@ const Tooltip: React.FC<TooltipProps> = ({
           )}
           style={{
             left: `${coords.x}px`,
-            top: position === 'bottom' ? `${coords.y}px` : position === 'top' ? `${coords.y}px` : `${coords.y}px`,
+            top:
+              position === 'bottom'
+                ? `${coords.y}px`
+                : position === 'top'
+                  ? `${coords.y}px`
+                  : `${coords.y}px`,
           }}
         >
           {content}
@@ -101,11 +106,16 @@ const Tooltip: React.FC<TooltipProps> = ({
   );
 };
 
-const TooltipTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ children }) => {
+const TooltipTrigger: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({
+  children,
+}) => {
   return <>{children}</>;
 };
 
-const TooltipContent: React.FC<{ className?: string; children: React.ReactNode }> = ({ className, children }) => {
+const TooltipContent: React.FC<{ className?: string; children: React.ReactNode }> = ({
+  className,
+  children,
+}) => {
   return <div className={className}>{children}</div>;
 };
 

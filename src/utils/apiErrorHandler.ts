@@ -12,7 +12,7 @@ export enum ApiErrorType {
   SERVER = 'SERVER_ERROR',
   NETWORK = 'NETWORK_ERROR',
   TIMEOUT = 'TIMEOUT_ERROR',
-  UNKNOWN = 'UNKNOWN_ERROR'
+  UNKNOWN = 'UNKNOWN_ERROR',
 }
 
 /**
@@ -27,8 +27,8 @@ export class ApiError extends Error {
   details?: Record<string, unknown>;
 
   constructor(
-    message: string, 
-    statusCode: number = 500, 
+    message: string,
+    statusCode: number = 500,
     errorType: ApiErrorType = ApiErrorType.UNKNOWN,
     details?: Record<string, unknown>
   ) {
@@ -54,11 +54,11 @@ export function mapStatusToErrorType(statusCode: number): ApiErrorType {
     if (statusCode === 429) return ApiErrorType.RATE_LIMIT;
     return ApiErrorType.VALIDATION;
   }
-  
+
   if (statusCode >= 500) {
     return ApiErrorType.SERVER;
   }
-  
+
   return ApiErrorType.UNKNOWN;
 }
 
@@ -100,7 +100,7 @@ export async function handleFetchResponse(response: Response): Promise<Response>
     const errorType = mapStatusToErrorType(response.status);
     let errorMessage = getFriendlyErrorMessage(errorType);
     let errorDetails: Record<string, unknown> | undefined;
-    
+
     // Try to parse error details from response
     try {
       const errorData = await response.json();
@@ -111,10 +111,10 @@ export async function handleFetchResponse(response: Response): Promise<Response>
     } catch {
       // Ignore JSON parsing errors
     }
-    
+
     throw new ApiError(errorMessage, response.status, errorType, errorDetails);
   }
-  
+
   return response;
 }
 
@@ -127,7 +127,7 @@ export function handleFetchError(error: unknown): never {
   if (error instanceof Error) {
     let errorType = ApiErrorType.UNKNOWN;
     let statusCode = 0;
-    
+
     // Determine error type based on error message
     if (error.name === 'AbortError') {
       errorType = ApiErrorType.TIMEOUT;
@@ -136,22 +136,16 @@ export function handleFetchError(error: unknown): never {
       errorType = ApiErrorType.NETWORK;
       statusCode = 0; // No HTTP status for network errors
     }
-    
-    throw new ApiError(
-      getFriendlyErrorMessage(errorType),
-      statusCode,
-      errorType,
-      { originalError: error.message }
-    );
+
+    throw new ApiError(getFriendlyErrorMessage(errorType), statusCode, errorType, {
+      originalError: error.message,
+    });
   }
-  
+
   // For unknown errors
-  throw new ApiError(
-    getFriendlyErrorMessage(ApiErrorType.UNKNOWN),
-    0,
-    ApiErrorType.UNKNOWN,
-    { originalError: error }
-  );
+  throw new ApiError(getFriendlyErrorMessage(ApiErrorType.UNKNOWN), 0, ApiErrorType.UNKNOWN, {
+    originalError: error,
+  });
 }
 
 /**
@@ -161,10 +155,7 @@ export function handleFetchError(error: unknown): never {
  * @returns Response object
  * @throws ApiError with appropriate type and message
  */
-export async function safeFetch(
-  url: string, 
-  options?: RequestInit
-): Promise<Response> {
+export async function safeFetch(url: string, options?: RequestInit): Promise<Response> {
   try {
     const response = await fetch(url, options);
     return await handleFetchResponse(response);
@@ -173,10 +164,10 @@ export async function safeFetch(
       // Re-throw ApiError
       throw error;
     }
-    
+
     // Handle other errors
     handleFetchError(error);
-    
+
     // This line is never reached, but TypeScript needs it
     throw error;
   }
@@ -189,21 +180,15 @@ export async function safeFetch(
  * @returns Parsed JSON response
  * @throws ApiError with appropriate type and message
  */
-export async function safeJsonFetch<T>(
-  url: string, 
-  options?: RequestInit
-): Promise<T> {
+export async function safeJsonFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await safeFetch(url, options);
-  
+
   try {
-    return await response.json() as T;
+    return (await response.json()) as T;
   } catch (error) {
-    throw new ApiError(
-      'Failed to parse JSON response',
-      response.status,
-      ApiErrorType.UNKNOWN,
-      { originalError: error }
-    );
+    throw new ApiError('Failed to parse JSON response', response.status, ApiErrorType.UNKNOWN, {
+      originalError: error,
+    });
   }
 }
 
@@ -212,33 +197,30 @@ export async function safeJsonFetch<T>(
  * @param error - API error to report
  * @param context - Error context
  */
-export function reportApiError(
-  error: ApiError | Error | unknown,
-  context: string
-): void {
+export function reportApiError(error: ApiError | Error | unknown, context: string): void {
   if (error instanceof ApiError) {
     captureException(error, {
       tags: {
         errorType: error.errorType,
         statusCode: error.statusCode.toString(),
-        context
+        context,
       },
-      extra: error.details
+      extra: error.details,
     });
   } else if (error instanceof Error) {
     captureException(error, {
       tags: {
         errorType: ApiErrorType.UNKNOWN,
-        context
-      }
+        context,
+      },
     });
   } else {
     captureException(new Error('Unknown API error'), {
       tags: {
         errorType: ApiErrorType.UNKNOWN,
-        context
+        context,
       },
-      extra: { originalError: error }
+      extra: { originalError: error },
     });
   }
 }

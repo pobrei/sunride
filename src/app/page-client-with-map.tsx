@@ -20,21 +20,21 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
-  
+
   // Refs for scrolling
   const mapRef = useRef<HTMLDivElement>(null);
 
   // Handle GPX file upload
   const handleGPXLoaded = (data: GPXData) => {
     setGpxData(data);
-    
+
     // Generate weather forecast
     generateWeatherForecast(data.points);
-    
+
     // Show notification
     addNotification('success', 'GPX file loaded successfully');
   };
@@ -57,7 +57,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (

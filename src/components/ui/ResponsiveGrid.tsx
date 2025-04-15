@@ -56,12 +56,7 @@ export function ResponsiveGrid({
 
   return (
     <div
-      className={classNames(
-        'grid',
-        columnClasses[columns],
-        gapClasses[gap],
-        className
-      )}
+      className={classNames('grid', columnClasses[columns], gapClasses[gap], className)}
       data-testid="responsive-grid"
     >
       {children}

@@ -34,7 +34,7 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
       addNotification: (type: string, message: string) => {
         console.log(`[Notification] ${type}: ${message}`);
         return '';
-      }
+      },
     };
   }
 
@@ -72,7 +72,7 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
     // Read and parse the file
     const reader = new FileReader();
 
-    reader.onload = (event) => {
+    reader.onload = event => {
       try {
         if (!event.target?.result) {
           throw new Error('Failed to read file content');
@@ -88,7 +88,10 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
 
         // Success!
         onGPXLoaded(gpxData);
-        addNotification('success', `Successfully loaded ${gpxData.points.length} points from ${file.name}`);
+        addNotification(
+          'success',
+          `Successfully loaded ${gpxData.points.length} points from ${file.name}`
+        );
       } catch (err) {
         // Handle error with our utility
         const errorMsg = handleError(err, {
@@ -97,8 +100,8 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
           additionalData: {
             fileName: file.name,
             fileSize: file.size,
-            fileType: file.type
-          }
+            fileType: file.type,
+          },
         });
 
         setError(errorMsg);
@@ -112,7 +115,7 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
       addNotification('error', errorMsg);
       captureException(new Error('FileReader error'), {
         tags: { context: 'GPXUploader' },
-        extra: { fileName: file.name, fileSize: file.size }
+        extra: { fileName: file.name, fileSize: file.size },
       });
     };
 
@@ -140,10 +143,7 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
                 disabled={isLoading}
                 data-testid="gpx-file-input"
               />
-              <Button
-                disabled={isLoading || !fileName || !!error}
-                data-testid="upload-button"
-              >
+              <Button disabled={isLoading || !fileName || !!error} data-testid="upload-button">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
               </Button>
@@ -160,9 +160,7 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
             {error && (
               <Alert variant="destructive" className="py-2">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription className="text-xs">
-                  {error}
-                </AlertDescription>
+                <AlertDescription className="text-xs">{error}</AlertDescription>
               </Alert>
             )}
 

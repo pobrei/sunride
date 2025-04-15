@@ -3,6 +3,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { typography, animation, effects, loading, layout } from '@/styles/tailwind-utils';
 
 type LoadingVariant = 'spinner' | 'pulse' | 'skeleton' | 'dots';
 type LoadingSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -14,6 +15,8 @@ interface LoadingSpinnerProps {
   color?: string;
   /** Optional message to display */
   message?: string;
+  /** Accessibility label (defaults to message or 'Loading') */
+  ariaLabel?: string;
   /** Optional className for styling */
   className?: string;
   /** Whether to center the spinner */
@@ -44,14 +47,18 @@ export function LoadingSpinner({
   withContainer = false,
   icon,
   withBackground = false,
+  ariaLabel,
 }: LoadingSpinnerProps) {
   // Convert size to pixels if it's a string
-  const sizeInPx = typeof size === 'string'
-    ? { sm: 16, md: 24, lg: 32, xl: 48 }[size] || 24
-    : size;
+  const sizeInPx = typeof size === 'string' ? { sm: 16, md: 24, lg: 32, xl: 48 }[size] || 24 : size;
 
   // Determine the icon based on variant and provided icon
-  const loadingIcon = icon || <Loader2 className={cn('animate-spin', color)} size={sizeInPx} aria-hidden="true" />;
+  const loadingIcon = icon || (
+    <Loader2 className={cn(animation.spin, color)} size={sizeInPx} aria-hidden="true" />
+  );
+
+  // Determine the accessibility label
+  const accessibilityLabel = ariaLabel || message || 'Loading';
 
   // Create the spinner content based on variant
   let variantContent;
@@ -59,12 +66,15 @@ export function LoadingSpinner({
     case 'pulse':
       variantContent = (
         <div className="flex items-center gap-2">
-          <div className={cn(
-            'rounded-full animate-pulse',
-            color || 'bg-primary/20',
-            { 'h-4 w-4': size === 'sm', 'h-6 w-6': size === 'md', 'h-8 w-8': size === 'lg', 'h-12 w-12': size === 'xl' }
-          )} />
-          {message && <p className="text-sm text-muted-foreground animate-pulse">{message}</p>}
+          <div
+            className={cn(animation.pulse, 'rounded-full', color || 'bg-primary/20', {
+              'h-4 w-4': size === 'sm',
+              'h-6 w-6': size === 'md',
+              'h-8 w-8': size === 'lg',
+              'h-12 w-12': size === 'xl',
+            })}
+          />
+          {message && <p className={cn(typography.bodySm, typography.muted, animation.pulse)}>{message}</p>}
         </div>
       );
       break;
@@ -72,19 +82,24 @@ export function LoadingSpinner({
     case 'dots':
       variantContent = (
         <div className="flex items-center gap-1">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2].map(i => (
             <div
               key={i}
               className={cn(
                 'rounded-full',
                 color || 'bg-primary',
-                { 'h-2 w-2': size === 'sm', 'h-3 w-3': size === 'md', 'h-4 w-4': size === 'lg', 'h-5 w-5': size === 'xl' },
-                'animate-bounce',
+                {
+                  'h-2 w-2': size === 'sm',
+                  'h-3 w-3': size === 'md',
+                  'h-4 w-4': size === 'lg',
+                  'h-5 w-5': size === 'xl',
+                },
+                animation.bounce,
                 `animation-delay-${i}`
               )}
             />
           ))}
-          {message && <p className="text-sm text-muted-foreground ml-2">{message}</p>}
+          {message && <p className={cn(typography.bodySm, typography.muted, "ml-2")}>{message}</p>}
         </div>
       );
       break;
@@ -92,15 +107,20 @@ export function LoadingSpinner({
     case 'skeleton':
       variantContent = (
         <div className="space-y-2 w-full">
-          <div className={cn(
-            'rounded animate-pulse',
-            color || 'bg-muted',
-            { 'h-4': size === 'sm', 'h-6': size === 'md', 'h-8': size === 'lg', 'h-10': size === 'xl' },
-            'w-full'
-          )} />
-          {message && (
-            <div className="rounded animate-pulse bg-muted h-4 w-2/3" />
-          )}
+          <div
+            className={cn(
+              'rounded', animation.pulse,
+              color || 'bg-muted',
+              {
+                'h-4': size === 'sm',
+                'h-6': size === 'md',
+                'h-8': size === 'lg',
+                'h-10': size === 'xl',
+              },
+              'w-full'
+            )}
+          />
+          {message && <div className={cn('rounded bg-muted h-4 w-2/3', animation.pulse)} />}
         </div>
       );
       break;
@@ -110,7 +130,7 @@ export function LoadingSpinner({
       variantContent = (
         <div className="flex items-center gap-2">
           {loadingIcon}
-          {message && <p className="text-sm text-muted-foreground">{message}</p>}
+          {message && <p className={cn(typography.bodySm, typography.muted)}>{message}</p>}
         </div>
       );
   }
@@ -122,13 +142,15 @@ export function LoadingSpinner({
         'flex items-center',
         variant !== 'skeleton' && 'gap-2',
         centered && 'justify-center',
-        withContainer && 'p-4 rounded-lg border border-border bg-card shadow-sm',
-        withBackground && 'bg-background/50 backdrop-blur-sm p-3 rounded-md',
+        withContainer && cn(effects.card, 'p-4'),
+        withBackground && cn(effects.glassmorphismLight, 'p-3 rounded-md'),
         className
       )}
       data-testid="loading-spinner"
       role="status"
       aria-live="polite"
+      aria-busy="true"
+      aria-label={accessibilityLabel}
     >
       {variantContent}
     </div>
@@ -136,11 +158,16 @@ export function LoadingSpinner({
 
   if (fullPage) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
-        {withContainer ? spinnerContent : (
-          <div className="p-6 rounded-xl bg-card shadow-lg">
-            {spinnerContent}
-          </div>
+      <div
+        className={cn(loading.overlay, 'fixed inset-0 z-50')}
+        role="dialog"
+        aria-modal="true"
+        aria-label={accessibilityLabel}
+      >
+        {withContainer ? (
+          spinnerContent
+        ) : (
+          <div className={cn(effects.card, 'p-6 rounded-xl')}>{spinnerContent}</div>
         )}
       </div>
     );

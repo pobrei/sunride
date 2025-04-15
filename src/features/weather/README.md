@@ -34,11 +34,6 @@ import { Alerts } from '@/features/weather/components';
 const MyComponent = () => {
   const { forecastPoints, weatherData } = useWeather();
 
-  return (
-    <Alerts 
-      forecastPoints={forecastPoints} 
-      weatherData={weatherData} 
-    />
-  );
+  return <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />;
 };
 ```

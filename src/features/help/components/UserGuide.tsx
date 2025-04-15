@@ -10,7 +10,7 @@ import {
   BarChart4,
   Clock,
   AlertTriangle,
-  FileDown
+  FileDown,
 } from 'lucide-react';
 
 // Import from components
@@ -31,7 +31,7 @@ const UserGuide: React.FC = () => {
         size="icon"
         className="fixed bottom-4 right-4 z-50 rounded-full h-12 w-12 shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
         onClick={toggleGuide}
-        aria-label={isOpen ? "Close user guide" : "Open user guide"}
+        aria-label={isOpen ? 'Close user guide' : 'Open user guide'}
       >
         {isOpen ? <X className="h-5 w-5" /> : <HelpCircle className="h-5 w-5" />}
       </Button>
@@ -47,7 +47,8 @@ const UserGuide: React.FC = () => {
                 </Button>
               </div>
               <CardDescription>
-                Learn how to use the RideWeather Planner to plan your routes with weather forecasting
+                Learn how to use the RideWeather Planner to plan your routes with weather
+                forecasting
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -57,8 +58,8 @@ const UserGuide: React.FC = () => {
                   Getting Started
                 </h3>
                 <p>
-                  RideWeather Planner helps you plan your outdoor activities by showing weather forecasts along your route.
-                  Follow these steps to get started:
+                  RideWeather Planner helps you plan your outdoor activities by showing weather
+                  forecasts along your route. Follow these steps to get started:
                 </p>
                 <ol className="list-decimal list-inside space-y-2 ml-4">
                   <li>Upload a GPX file containing your route</li>
@@ -74,8 +75,9 @@ const UserGuide: React.FC = () => {
                   Uploading Your Route
                 </h3>
                 <p>
-                  To upload your route, click the "Upload GPX File" button. You can export GPX files from most mapping
-                  and fitness tracking applications like Strava, Komoot, Garmin Connect, or RideWithGPS.
+                  To upload your route, click the "Upload GPX File" button. You can export GPX files
+                  from most mapping and fitness tracking applications like Strava, Komoot, Garmin
+                  Connect, or RideWithGPS.
                 </p>
                 <div className="bg-muted p-3 rounded-md">
                   <p className="text-sm font-medium">Supported file types:</p>
@@ -91,21 +93,27 @@ const UserGuide: React.FC = () => {
                   <Clock className="h-5 w-5 mr-2 text-primary" />
                   Route Settings
                 </h3>
-                <p>
-                  After uploading your route, configure the following settings:
-                </p>
+                <p>After uploading your route, configure the following settings:</p>
                 <ul className="space-y-2">
                   <li className="flex items-start">
                     <span className="font-medium mr-2">Start Time:</span>
-                    <span>When you plan to start your activity. This affects the weather forecast times.</span>
+                    <span>
+                      When you plan to start your activity. This affects the weather forecast times.
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="font-medium mr-2">Average Speed:</span>
-                    <span>Your estimated average speed. This determines when you'll reach each point on your route.</span>
+                    <span>
+                      Your estimated average speed. This determines when you'll reach each point on
+                      your route.
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="font-medium mr-2">Weather Interval:</span>
-                    <span>How frequently to show weather data points along your route (in kilometers or miles).</span>
+                    <span>
+                      How frequently to show weather data points along your route (in kilometers or
+                      miles).
+                    </span>
                   </li>
                 </ul>
               </section>
@@ -116,7 +124,8 @@ const UserGuide: React.FC = () => {
                   Using the Map
                 </h3>
                 <p>
-                  The interactive map shows your route with color-coded markers indicating weather conditions:
+                  The interactive map shows your route with color-coded markers indicating weather
+                  conditions:
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-center">
@@ -133,7 +142,8 @@ const UserGuide: React.FC = () => {
                   </li>
                 </ul>
                 <p className="mt-2">
-                  Click on any marker to see detailed weather information for that location and time.
+                  Click on any marker to see detailed weather information for that location and
+                  time.
                 </p>
               </section>
 
@@ -142,9 +152,7 @@ const UserGuide: React.FC = () => {
                   <BarChart4 className="h-5 w-5 mr-2 text-primary" />
                   Weather Charts
                 </h3>
-                <p>
-                  The charts section displays weather data along your route:
-                </p>
+                <p>The charts section displays weather data along your route:</p>
                 <ul className="space-y-2">
                   <li className="flex items-start">
                     <span className="font-medium mr-2">Temperature:</span>
@@ -164,7 +172,8 @@ const UserGuide: React.FC = () => {
                   </li>
                 </ul>
                 <p className="mt-2">
-                  Click on any point in the charts to highlight the corresponding location on the map.
+                  Click on any point in the charts to highlight the corresponding location on the
+                  map.
                 </p>
               </section>
 
@@ -173,9 +182,7 @@ const UserGuide: React.FC = () => {
                   <AlertTriangle className="h-5 w-5 mr-2 text-primary" />
                   Weather Alerts
                 </h3>
-                <p>
-                  The app automatically identifies potential weather concerns along your route:
-                </p>
+                <p>The app automatically identifies potential weather concerns along your route:</p>
                 <ul className="space-y-2">
                   <li>Heavy rainfall or thunderstorms</li>
                   <li>Strong winds</li>
@@ -183,7 +190,8 @@ const UserGuide: React.FC = () => {
                   <li>Rapid weather changes</li>
                 </ul>
                 <p className="mt-2">
-                  These alerts help you identify sections of your route that might require extra preparation or consideration.
+                  These alerts help you identify sections of your route that might require extra
+                  preparation or consideration.
                 </p>
               </section>
 
@@ -193,8 +201,8 @@ const UserGuide: React.FC = () => {
                   Exporting Your Plan
                 </h3>
                 <p>
-                  You can export your route with weather data as a PDF report by clicking the "Export as PDF" button.
-                  The report includes:
+                  You can export your route with weather data as a PDF report by clicking the
+                  "Export as PDF" button. The report includes:
                 </p>
                 <ul className="space-y-2">
                   <li>Route map with weather markers</li>
@@ -208,7 +216,9 @@ const UserGuide: React.FC = () => {
                 <h3 className="text-lg font-semibold">Tips for Best Results</h3>
                 <ul className="space-y-2">
                   <li>Weather forecasts are most accurate for the next 48 hours</li>
-                  <li>For multi-day activities, consider generating separate forecasts for each day</li>
+                  <li>
+                    For multi-day activities, consider generating separate forecasts for each day
+                  </li>
                   <li>Check for updated forecasts closer to your start time</li>
                   <li>Use the weather interval setting to balance detail vs. clarity</li>
                 </ul>
@@ -216,7 +226,10 @@ const UserGuide: React.FC = () => {
 
               <div className="text-center text-sm text-muted-foreground pt-4 border-t">
                 <p>Weather data provided by OpenWeather API</p>
-                <p>RideWeather Planner &copy; {typeof window !== 'undefined' ? new Date().getFullYear() : 2024}</p>
+                <p>
+                  RideWeather Planner &copy;{' '}
+                  {typeof window !== 'undefined' ? new Date().getFullYear() : 2024}
+                </p>
               </div>
             </CardContent>
           </Card>

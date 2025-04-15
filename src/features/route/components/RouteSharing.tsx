@@ -29,9 +29,10 @@ const RouteSharing: React.FC = () => {
 
       // Generate a mock URL with a random ID
       const mockId = Math.random().toString(36).substring(2, 10);
-      const url = typeof window !== 'undefined'
-        ? `${window.location.origin}/shared/${mockId}`
-        : `/shared/${mockId}`;
+      const url =
+        typeof window !== 'undefined'
+          ? `${window.location.origin}/shared/${mockId}`
+          : `/shared/${mockId}`;
 
       setShareUrl(url);
     } catch (error) {
@@ -55,14 +56,18 @@ const RouteSharing: React.FC = () => {
   const shareViaEmail = () => {
     if (typeof window === 'undefined') return;
     const subject = encodeURIComponent(`Check out my route: ${gpxData?.name || 'My Route'}`);
-    const body = encodeURIComponent(`I've planned a route with weather forecasting and wanted to share it with you: ${shareUrl}`);
+    const body = encodeURIComponent(
+      `I've planned a route with weather forecasting and wanted to share it with you: ${shareUrl}`
+    );
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
 
   // Share via Twitter
   const shareViaTwitter = () => {
     if (typeof window === 'undefined') return;
-    const text = encodeURIComponent(`Check out my route with weather forecast: ${gpxData?.name || 'My Route'} ${shareUrl}`);
+    const text = encodeURIComponent(
+      `Check out my route with weather forecast: ${gpxData?.name || 'My Route'} ${shareUrl}`
+    );
     window.open(`https://twitter.com/intent/tweet?text=${text}`);
   };
 
@@ -84,7 +89,8 @@ const RouteSharing: React.FC = () => {
         {!shareUrl ? (
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Create a shareable link that allows others to view your route with the current weather forecast.
+              Create a shareable link that allows others to view your route with the current weather
+              forecast.
             </p>
             <Button
               onClick={generateShareableLink}
@@ -122,20 +128,36 @@ const RouteSharing: React.FC = () => {
                 onClick={copyToClipboard}
                 aria-label="Copy link to clipboard"
               >
-                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <Button variant="outline" onClick={shareViaEmail} className="flex flex-col h-auto py-4">
+              <Button
+                variant="outline"
+                onClick={shareViaEmail}
+                className="flex flex-col h-auto py-4"
+              >
                 <Mail className="h-5 w-5 mb-1" />
                 <span className="text-xs">Email</span>
               </Button>
-              <Button variant="outline" onClick={shareViaTwitter} className="flex flex-col h-auto py-4">
+              <Button
+                variant="outline"
+                onClick={shareViaTwitter}
+                className="flex flex-col h-auto py-4"
+              >
                 <Twitter className="h-5 w-5 mb-1" />
                 <span className="text-xs">Twitter</span>
               </Button>
-              <Button variant="outline" onClick={shareViaFacebook} className="flex flex-col h-auto py-4">
+              <Button
+                variant="outline"
+                onClick={shareViaFacebook}
+                className="flex flex-col h-auto py-4"
+              >
                 <Facebook className="h-5 w-5 mb-1" />
                 <span className="text-xs">Facebook</span>
               </Button>

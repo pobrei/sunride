@@ -26,7 +26,7 @@ export default function SimpleMap({
   forecastPoints,
   weatherData,
   onMarkerClick,
-  selectedMarker
+  selectedMarker,
 }: SimpleMapProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [mapPoints, setMapPoints] = useState<{ x: number; y: number; index: number }[]>([]);
@@ -84,18 +84,12 @@ export default function SimpleMap({
     });
 
     setMapPoints(mapPointsArray);
-
   }, [gpxData, forecastPoints]);
 
   if (isLoading) {
     return (
       <div className="h-full w-full bg-muted/20 flex items-center justify-center">
-        <LoadingSpinner
-          message="Initializing map..."
-          centered
-          variant="spinner"
-          size="lg"
-        />
+        <LoadingSpinner message="Initializing map..." centered variant="spinner" size="lg" />
       </div>
     );
   }
@@ -106,7 +100,11 @@ export default function SimpleMap({
       <div className="h-full w-full relative">
         {/* Route line */}
         {routePoints.length > 1 && (
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg
+            className="absolute inset-0 h-full w-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
             <polyline
               points={routePoints.map(p => `${p.x},${p.y}`).join(' ')}
               fill="none"
@@ -119,7 +117,7 @@ export default function SimpleMap({
         )}
 
         {/* Markers */}
-        {mapPoints.map((point) => {
+        {mapPoints.map(point => {
           // Round to nearest 10% for positioning
           const xPos = Math.round(point.x / 10) * 10;
           const yPos = Math.round(point.y / 10) * 10;
@@ -129,11 +127,11 @@ export default function SimpleMap({
               type="button"
               key={point.index}
               className={cn(
-                "absolute rounded-full flex items-center justify-center text-white font-medium transform -translate-x-1/2 -translate-y-1/2 transition-all",
+                'absolute rounded-full flex items-center justify-center text-white font-medium transform -translate-x-1/2 -translate-y-1/2 transition-all',
                 `marker-x-${xPos} marker-y-${yPos}`,
                 point.index === selectedMarker
-                  ? "bg-blue-500 w-8 h-8 text-sm z-20 ring-4 ring-blue-300 dark:ring-blue-900"
-                  : "bg-slate-500 w-6 h-6 text-xs z-10 hover:bg-slate-600"
+                  ? 'bg-blue-500 w-8 h-8 text-sm z-20 ring-4 ring-blue-300 dark:ring-blue-900'
+                  : 'bg-slate-500 w-6 h-6 text-xs z-10 hover:bg-slate-600'
               )}
               onClick={() => onMarkerClick(point.index)}
               aria-label={`Map point ${point.index + 1}`}
@@ -163,19 +161,27 @@ export default function SimpleMap({
       {/* Weather info panel */}
       {selectedMarker !== null && weatherData[selectedMarker] && (
         <div className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-3 rounded-md shadow-md border border-slate-200 dark:border-slate-700 text-sm">
-          <div className="font-medium mb-1">Point {selectedMarker + 1} of {forecastPoints.length}</div>
+          <div className="font-medium mb-1">
+            Point {selectedMarker + 1} of {forecastPoints.length}
+          </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             <div>Temperature:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.temperature.toFixed(1)}°C</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.temperature.toFixed(1)}°C
+            </div>
 
             <div>Feels Like:</div>
             <div className="font-medium">{weatherData[selectedMarker]?.feelsLike.toFixed(1)}°C</div>
 
             <div>Wind:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.windSpeed.toFixed(1)} km/h</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.windSpeed.toFixed(1)} km/h
+            </div>
 
             <div>Precipitation:</div>
-            <div className="font-medium">{weatherData[selectedMarker]?.precipitation.toFixed(1)} mm</div>
+            <div className="font-medium">
+              {weatherData[selectedMarker]?.precipitation.toFixed(1)} mm
+            </div>
 
             <div>Humidity:</div>
             <div className="font-medium">{weatherData[selectedMarker]?.humidity}%</div>

@@ -9,15 +9,11 @@ import Link from 'next/link';
 import { ArrowLeft, Cloud, CloudRain, Droplets, Sun, Wind } from 'lucide-react';
 import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
 import { ClientSideTimeline } from '@/components/timeline/ClientSideTimeline';
+import { cn } from '@/lib/utils';
+import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
 
 export default function WeatherPage() {
-  const {
-    gpxData,
-    forecastPoints,
-    weatherData,
-    selectedMarker,
-    setSelectedMarker,
-  } = useWeather();
+  const { gpxData, forecastPoints, weatherData, selectedMarker, setSelectedMarker } = useWeather();
 
   const handleTimelineClick = (index: number) => {
     setSelectedMarker(index);
@@ -25,21 +21,21 @@ export default function WeatherPage() {
 
   return (
     <PageWrapper>
-      <div className="flex items-center gap-2 mb-6">
-        <Button variant="outline" size="sm" asChild>
+      <div className={cn(layout.flexRow, "gap-2 mb-6", animation.fadeIn)}>
+        <Button variant="outline" size="sm" asChild className={effects.buttonHover}>
           <Link href="/">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold">Weather Forecast</h1>
+        <h1 className={cn(typography.h2)}>Weather Forecast</h1>
       </div>
 
       {forecastPoints.length > 0 && weatherData.length > 0 ? (
         <>
-          <Card className="mb-6">
-            <CardHeader className="pb-2">
-              <CardTitle>Weather Timeline</CardTitle>
+          <Card className={cn("mb-6", effects.cardHoverable, animation.fadeIn)}>
+            <CardHeader className={cn("pb-2")}>
+              <CardTitle className={typography.cardTitle}>Weather Timeline</CardTitle>
             </CardHeader>
             <CardContent>
               <ClientSideTimeline
@@ -53,9 +49,9 @@ export default function WeatherPage() {
             </CardContent>
           </Card>
 
-          <Card className="mb-6">
-            <CardHeader className="pb-2">
-              <CardTitle>Weather Alerts</CardTitle>
+          <Card className={cn("mb-6", effects.cardHoverable, animation.fadeIn)}>
+            <CardHeader className={cn("pb-2")}>
+              <CardTitle className={typography.cardTitle}>Weather Alerts</CardTitle>
             </CardHeader>
             <CardContent>
               <WeatherAlerts
@@ -68,73 +64,77 @@ export default function WeatherPage() {
           </Card>
 
           {selectedMarker !== null && weatherData[selectedMarker] && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Detailed Weather at Selected Point</CardTitle>
+            <Card className={cn(effects.cardHoverable, animation.fadeIn)}>
+              <CardHeader className={cn("pb-2")}>
+                <CardTitle className={typography.cardTitle}>Detailed Weather at Selected Point</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="bg-muted/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                <div className={cn(layout.gridMd, "lg:grid-cols-3 gap-6")}>
+                  <div className={cn(effects.cardInner, animation.fadeIn)}>
+                    <div className={cn(layout.flexRow, "gap-2 mb-2")}>
                       <Cloud className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-medium">Temperature</h3>
+                      <h3 className={typography.strong}>Temperature</h3>
                     </div>
-                    <div className="text-3xl font-bold mb-1">
+                    <div className={cn(typography.h3, "mb-1")}>
                       {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className={cn(typography.bodySm, typography.muted)}>
                       Feels like: {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
                     </div>
                   </div>
 
-                  <div className="bg-muted/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className={cn(effects.cardInner, animation.fadeIn)}>
+                    <div className={cn(layout.flexRow, "gap-2 mb-2")}>
                       <Wind className="h-5 w-5 text-green-500" />
-                      <h3 className="font-medium">Wind</h3>
+                      <h3 className={typography.strong}>Wind</h3>
                     </div>
-                    <div className="text-3xl font-bold mb-1">
+                    <div className={cn(typography.h3, "mb-1")}>
                       {weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className={cn(typography.bodySm, typography.muted)}>
                       Gusts: {weatherData[selectedMarker]?.windGust?.toFixed(1) || 'N/A'} km/h
                     </div>
                   </div>
 
-                  <div className="bg-muted/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className={cn(effects.cardInner, animation.fadeIn)}>
+                    <div className={cn(layout.flexRow, "gap-2 mb-2")}>
                       <CloudRain className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-medium">Precipitation</h3>
+                      <h3 className={typography.strong}>Precipitation</h3>
                     </div>
-                    <div className="text-3xl font-bold mb-1">
+                    <div className={cn(typography.h3, "mb-1")}>
                       {weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Probability: {((weatherData[selectedMarker]?.precipitationProbability || 0) * 100).toFixed(0)}%
+                    <div className={cn(typography.bodySm, typography.muted)}>
+                      Probability:{' '}
+                      {((weatherData[selectedMarker]?.precipitationProbability || 0) * 100).toFixed(
+                        0
+                      )}
+                      %
                     </div>
                   </div>
 
-                  <div className="bg-muted/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className={cn(effects.cardInner, animation.fadeIn)}>
+                    <div className={cn(layout.flexRow, "gap-2 mb-2")}>
                       <Droplets className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-medium">Humidity</h3>
+                      <h3 className={typography.strong}>Humidity</h3>
                     </div>
-                    <div className="text-3xl font-bold mb-1">
+                    <div className={cn(typography.h3, "mb-1")}>
                       {weatherData[selectedMarker]?.humidity || 'N/A'}%
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className={cn(typography.bodySm, typography.muted)}>
                       Pressure: {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
                     </div>
                   </div>
 
-                  <div className="bg-muted/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className={cn(effects.cardInner, animation.fadeIn)}>
+                    <div className={cn(layout.flexRow, "gap-2 mb-2")}>
                       <Sun className="h-5 w-5 text-yellow-500" />
-                      <h3 className="font-medium">UV Index</h3>
+                      <h3 className={typography.strong}>UV Index</h3>
                     </div>
-                    <div className="text-3xl font-bold mb-1">
+                    <div className={cn(typography.h3, "mb-1")}>
                       {weatherData[selectedMarker]?.uvIndex ?? 'N/A'}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className={cn(typography.bodySm, typography.muted)}>
                       {getUVIndexDescription(weatherData[selectedMarker]?.uvIndex ?? 0)}
                     </div>
                   </div>
@@ -144,14 +144,16 @@ export default function WeatherPage() {
           )}
         </>
       ) : (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Cloud className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-medium mb-2">No Weather Data Available</h2>
-            <p className="text-muted-foreground mb-4">
+        <Card className={cn(effects.cardHoverable, animation.fadeIn)}>
+          <CardContent className={cn("p-8", typography.center)}>
+            <div className={cn(layout.flexCenter, "mx-auto w-12 h-12 rounded-full bg-muted/40 mb-4", animation.fadeIn)}>
+              <Cloud className={cn("h-8 w-8", typography.muted)} />
+            </div>
+            <h2 className={cn(typography.h4, "mb-2")}>No Weather Data Available</h2>
+            <p className={cn(typography.bodySm, typography.muted, "mb-4")}>
               Please upload a GPX file on the home page to view weather forecasts along your route.
             </p>
-            <Button asChild>
+            <Button asChild className={cn(animation.buttonPress)}>
               <Link href="/">Go to Home Page</Link>
             </Button>
           </CardContent>

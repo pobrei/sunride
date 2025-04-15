@@ -30,12 +30,14 @@ const PressureChart: React.FC<PressureChartProps> = ({
 
     const chartArea = chart.chartArea;
     const xAxis = chart.scales.x;
-    
+
     // Check if click is within chart area
     if (x >= chartArea.left && x <= chartArea.right) {
       // Calculate which data point was clicked
-      const index = Math.round((x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1)));
-      
+      const index = Math.round(
+        (x - chartArea.left) / ((chartArea.right - chartArea.left) / (forecastPoints.length - 1))
+      );
+
       if (index >= 0 && index < forecastPoints.length) {
         onChartClick(index);
       }
@@ -52,7 +54,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
 
     // Filter out null values
     const validWeatherData = weatherData.filter((data): data is WeatherData => data !== null);
-    
+
     if (validWeatherData.length === 0) return;
 
     // Prepare data for the chart
@@ -85,15 +87,15 @@ const PressureChart: React.FC<PressureChartProps> = ({
             borderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 5,
-            pointBackgroundColor: (context) => {
+            pointBackgroundColor: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 'rgba(255, 99, 132, 1)' : 'rgba(153, 102, 255, 1)';
             },
-            pointBorderColor: (context) => {
+            pointBorderColor: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 'rgba(255, 99, 132, 1)' : 'rgba(153, 102, 255, 1)';
             },
-            pointBorderWidth: (context) => {
+            pointBorderWidth: context => {
               const index = context.dataIndex;
               return index === selectedMarker ? 2 : 1;
             },
@@ -113,13 +115,13 @@ const PressureChart: React.FC<PressureChartProps> = ({
             mode: 'index',
             intersect: false,
             callbacks: {
-              title: (tooltipItems) => {
+              title: tooltipItems => {
                 const index = tooltipItems[0].dataIndex;
                 const time = formatTime(forecastPoints[index].timestamp);
                 const distance = formatDistance(forecastPoints[index].distance);
                 return `${time} (${distance})`;
               },
-              label: (context) => {
+              label: context => {
                 const value = context.raw as number;
                 return `Pressure: ${value} hPa`;
               },
@@ -156,7 +158,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
 
     // Add click event listener to the canvas
     const canvas = chartRef.current;
-    canvas.addEventListener('click', (event) => {
+    canvas.addEventListener('click', event => {
       if (chartInstance.current) {
         handleChartClick(event, chartInstance.current);
       }
@@ -164,7 +166,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
 
     // Cleanup function
     return () => {
-      canvas.removeEventListener('click', (event) => {
+      canvas.removeEventListener('click', event => {
         if (chartInstance.current) {
           handleChartClick(event, chartInstance.current);
         }
@@ -181,9 +183,9 @@ const PressureChart: React.FC<PressureChartProps> = ({
         <CardTitle className="text-lg font-semibold">Atmospheric Pressure</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
+        <div
           className="h-[250px] w-full"
-          aria-label={`Pressure chart showing values from ${Math.min(...(weatherData.filter(Boolean).map(w => w?.pressure || 0)))} hPa to ${Math.max(...(weatherData.filter(Boolean).map(w => w?.pressure || 0)))} hPa`}
+          aria-label={`Pressure chart showing values from ${Math.min(...weatherData.filter(Boolean).map(w => w?.pressure || 0))} hPa to ${Math.max(...weatherData.filter(Boolean).map(w => w?.pressure || 0))} hPa`}
         >
           <canvas ref={chartRef} />
         </div>

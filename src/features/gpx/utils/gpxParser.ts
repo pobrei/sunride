@@ -94,10 +94,11 @@ export function parseGPX(gpxString: string): GPXData {
 
     // Get name with fallbacks
     let name = 'Unnamed Route';
-    const nameElement = xmlDoc.querySelector('gpx > name') ||
-                        xmlDoc.querySelector('trk > name') ||
-                        xmlDoc.querySelector('rte > name') ||
-                        xmlDoc.querySelector('n');
+    const nameElement =
+      xmlDoc.querySelector('gpx > name') ||
+      xmlDoc.querySelector('trk > name') ||
+      xmlDoc.querySelector('rte > name') ||
+      xmlDoc.querySelector('n');
     if (nameElement && nameElement.textContent) {
       name = nameElement.textContent.trim();
     }
@@ -111,7 +112,7 @@ export function parseGPX(gpxString: string): GPXData {
 
     const routePoints: RoutePoint[] = [];
     let totalDistance = 0;
-    let prevPoint: {lat: number, lon: number} | null = null;
+    let prevPoint: { lat: number; lon: number } | null = null;
     let elevationGain = 0;
     let elevationLoss = 0;
     let maxElevation = -Infinity;
@@ -153,7 +154,7 @@ export function parseGPX(gpxString: string): GPXData {
         lon,
         elevation,
         time,
-        distance: totalDistance
+        distance: totalDistance,
       });
 
       prevPoint = { lat, lon };
@@ -166,7 +167,7 @@ export function parseGPX(gpxString: string): GPXData {
       elevationGain,
       elevationLoss,
       maxElevation: minElevation === Infinity ? 0 : maxElevation,
-      minElevation: minElevation === Infinity ? 0 : minElevation
+      minElevation: minElevation === Infinity ? 0 : minElevation,
     };
   } catch (error) {
     console.error('Error processing GPX data:', error);
@@ -202,7 +203,7 @@ export function generateForecastPoints(
       lat: points[0].lat,
       lon: points[0].lon,
       timestamp: Math.floor(startTime.getTime() / 1000),
-      distance: 0
+      distance: 0,
     });
 
     // Calculate points at each interval
@@ -223,7 +224,8 @@ export function generateForecastPoints(
       const afterPoint = points[afterIndex];
 
       // Interpolate the position
-      const ratio = (distance - beforePoint.distance) / (afterPoint.distance - beforePoint.distance);
+      const ratio =
+        (distance - beforePoint.distance) / (afterPoint.distance - beforePoint.distance);
       const lat = beforePoint.lat + ratio * (afterPoint.lat - beforePoint.lat);
       const lon = beforePoint.lon + ratio * (afterPoint.lon - beforePoint.lon);
 
@@ -236,7 +238,7 @@ export function generateForecastPoints(
         lat,
         lon,
         timestamp,
-        distance
+        distance,
       });
     }
 
@@ -250,7 +252,7 @@ export function generateForecastPoints(
       lat: lastPoint.lat,
       lon: lastPoint.lon,
       timestamp: endTimestamp,
-      distance: totalDistance
+      distance: totalDistance,
     });
 
     return forecastPoints;

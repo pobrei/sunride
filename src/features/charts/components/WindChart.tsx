@@ -64,32 +64,33 @@ const WindChart: React.FC<WindChartProps> = ({
   // Get color scheme based on dark/light mode
   const getColorScheme = () => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return isDarkMode
       ? {
           windSpeed: {
             bg: 'rgba(144, 238, 144, 0.3)',
             border: 'rgb(144, 238, 144)',
-            point: 'rgb(144, 238, 144)'
+            point: 'rgb(144, 238, 144)',
           },
           windGust: {
             bg: 'rgba(255, 165, 0, 0.3)',
             border: 'rgb(255, 165, 0)',
-            point: 'rgb(255, 165, 0)'
-          }
+            point: 'rgb(255, 165, 0)',
+          },
         }
       : {
           windSpeed: {
             bg: 'rgba(60, 179, 113, 0.3)',
             border: 'rgb(46, 139, 87)',
-            point: 'rgb(46, 139, 87)'
+            point: 'rgb(46, 139, 87)',
           },
           windGust: {
             bg: 'rgba(255, 140, 0, 0.3)',
             border: 'rgb(255, 140, 0)',
-            point: 'rgb(255, 140, 0)'
-          }
+            point: 'rgb(255, 140, 0)',
+          },
         };
   };
 
@@ -107,7 +108,7 @@ const WindChart: React.FC<WindChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
@@ -135,15 +136,15 @@ const WindChart: React.FC<WindChartProps> = ({
                 backgroundColor: colors.windSpeed.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: (context) => {
+                pointBackgroundColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'blue' : colors.windSpeed.point;
                 },
-                pointBorderColor: (context) => {
+                pointBorderColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'white' : colors.windSpeed.border;
                 },
-                pointRadius: (context) => {
+                pointRadius: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 8 : 4;
                 },
@@ -174,9 +175,9 @@ const WindChart: React.FC<WindChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
               tooltip: {
                 mode: 'index',
@@ -190,8 +191,8 @@ const WindChart: React.FC<WindChartProps> = ({
                   color: 'rgba(0, 0, 0, 0.1)',
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: {
@@ -201,9 +202,9 @@ const WindChart: React.FC<WindChartProps> = ({
                 max: Math.max(...windGustData) * 1.2 || 50,
                 title: {
                   display: true,
-                  text: 'Wind Speed (km/h)'
-                }
-              }
+                  text: 'Wind Speed (km/h)',
+                },
+              },
             },
           },
         });

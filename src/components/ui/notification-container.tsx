@@ -7,7 +7,13 @@ import { cn } from '@/lib/utils';
 
 export interface NotificationContainerProps {
   /** Position of the notification container */
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center'
+    | 'bottom-center';
   /** Maximum number of notifications to show */
   maxNotifications?: number;
   /** Optional className for styling */
@@ -37,10 +43,10 @@ export function NotificationContainer({
     const newNotification: NotificationProps = {
       ...notification,
       id,
-      onDismiss: (id) => removeNotification(id),
+      onDismiss: id => removeNotification(id),
     };
 
-    setNotifications((prev) => {
+    setNotifications(prev => {
       // Limit the number of notifications
       const updatedNotifications = [newNotification, ...prev].slice(0, maxNotifications);
       return updatedNotifications;
@@ -58,7 +64,7 @@ export function NotificationContainer({
 
   // Remove a notification by ID
   const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
   // Clear all notifications
@@ -112,7 +118,7 @@ export function NotificationContainer({
       )}
       aria-live="polite"
     >
-      {notifications.map((notification) => (
+      {notifications.map(notification => (
         <div key={notification.id} className="pointer-events-auto w-full">
           <Notification {...notification} />
         </div>
@@ -141,10 +147,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const newNotification: NotificationProps = {
       ...notification,
       id,
-      onDismiss: (id) => removeNotification(id),
+      onDismiss: id => removeNotification(id),
     };
 
-    setNotifications((prev) => [newNotification, ...prev]);
+    setNotifications(prev => [newNotification, ...prev]);
 
     // Auto-dismiss if duration is provided
     if (notification.duration && notification.duration > 0) {
@@ -158,7 +164,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   // Remove a notification by ID
   const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
   // Clear all notifications
@@ -175,10 +181,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       }}
     >
       {children}
-      <NotificationContainer
-        position="bottom-right"
-        maxNotifications={5}
-      />
+      <NotificationContainer position="bottom-right" maxNotifications={5} />
     </NotificationContext.Provider>
   );
 }

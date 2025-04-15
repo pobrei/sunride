@@ -79,12 +79,7 @@ export function AsyncStateHandler<T>({
         <AlertDescription className="flex flex-col gap-2">
           <p>{error.message}</p>
           {onRetry && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-fit mt-2"
-              onClick={onRetry}
-            >
+            <Button variant="outline" size="sm" className="w-fit mt-2" onClick={onRetry}>
               Try Again
             </Button>
           )}
@@ -101,12 +96,7 @@ export function AsyncStateHandler<T>({
         <AlertDescription>
           No data is available to display.
           {onRetry && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-fit mt-2"
-              onClick={onRetry}
-            >
+            <Button variant="outline" size="sm" className="w-fit mt-2" onClick={onRetry}>
               Refresh
             </Button>
           )}

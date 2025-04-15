@@ -120,13 +120,9 @@ const SimpleNotification: React.FC<NotificationProps> = ({
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="flex items-start p-4">
-        <div className="flex-shrink-0 mr-3">
-          {getIcon()}
-        </div>
+        <div className="flex-shrink-0 mr-3">{getIcon()}</div>
         <div className="flex-1 mr-2">
-          <p className="text-sm font-medium">
-            {message}
-          </p>
+          <p className="text-sm font-medium">{message}</p>
         </div>
         <button
           type="button"

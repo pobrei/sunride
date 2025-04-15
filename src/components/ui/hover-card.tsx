@@ -17,13 +17,7 @@ const HoverCardContent = React.forwardRef<
     /** Whether to show an arrow */
     withArrow?: boolean;
   }
->(({ 
-  className, 
-  align = 'center', 
-  sideOffset = 4, 
-  withArrow = true,
-  ...props 
-}, ref) => (
+>(({ className, align = 'center', sideOffset = 4, withArrow = true, ...props }, ref) => (
   <HoverCardPrimitive.Content
     ref={ref}
     align={align}
@@ -36,9 +30,7 @@ const HoverCardContent = React.forwardRef<
     {...props}
   >
     {props.children}
-    {withArrow && (
-      <HoverCardPrimitive.Arrow className="fill-popover" />
-    )}
+    {withArrow && <HoverCardPrimitive.Arrow className="fill-popover" />}
   </HoverCardPrimitive.Content>
 ));
 HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;

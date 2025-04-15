@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="SunRide App" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Sample Mountain Route</name>
+    <desc>A sample mountain route for demonstration</desc>
+    <time>2023-06-15T08:30:00Z</time>
+  </metadata>
+  <trk>
+    <name>Mountain Loop</name>
+    <trkseg>
+      <!-- Starting point -->
+      <trkpt lat="47.6062" lon="-122.3321">
+        <ele>20</ele>
+        <time>2023-06-15T08:30:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6072" lon="-122.3331">
+        <ele>25</ele>
+        <time>2023-06-15T08:35:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6082" lon="-122.3341">
+        <ele>35</ele>
+        <time>2023-06-15T08:40:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6092" lon="-122.3351">
+        <ele>50</ele>
+        <time>2023-06-15T08:45:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6102" lon="-122.3361">
+        <ele>75</ele>
+        <time>2023-06-15T08:50:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6112" lon="-122.3371">
+        <ele>100</ele>
+        <time>2023-06-15T08:55:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6122" lon="-122.3381">
+        <ele>150</ele>
+        <time>2023-06-15T09:00:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6132" lon="-122.3391">
+        <ele>200</ele>
+        <time>2023-06-15T09:05:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6142" lon="-122.3401">
+        <ele>250</ele>
+        <time>2023-06-15T09:10:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6152" lon="-122.3411">
+        <ele>300</ele>
+        <time>2023-06-15T09:15:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6162" lon="-122.3421">
+        <ele>350</ele>
+        <time>2023-06-15T09:20:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6172" lon="-122.3431">
+        <ele>400</ele>
+        <time>2023-06-15T09:25:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6182" lon="-122.3441">
+        <ele>450</ele>
+        <time>2023-06-15T09:30:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6192" lon="-122.3451">
+        <ele>500</ele>
+        <time>2023-06-15T09:35:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6202" lon="-122.3461">
+        <ele>550</ele>
+        <time>2023-06-15T09:40:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6212" lon="-122.3471">
+        <ele>600</ele>
+        <time>2023-06-15T09:45:00Z</time>
+      </trkpt>
+      <!-- Mountain peak -->
+      <trkpt lat="47.6222" lon="-122.3481">
+        <ele>650</ele>
+        <time>2023-06-15T09:50:00Z</time>
+      </trkpt>
+      <!-- Descent begins -->
+      <trkpt lat="47.6232" lon="-122.3491">
+        <ele>600</ele>
+        <time>2023-06-15T09:55:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6242" lon="-122.3501">
+        <ele>550</ele>
+        <time>2023-06-15T10:00:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6252" lon="-122.3511">
+        <ele>500</ele>
+        <time>2023-06-15T10:05:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6262" lon="-122.3521">
+        <ele>450</ele>
+        <time>2023-06-15T10:10:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6272" lon="-122.3531">
+        <ele>400</ele>
+        <time>2023-06-15T10:15:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6282" lon="-122.3541">
+        <ele>350</ele>
+        <time>2023-06-15T10:20:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6292" lon="-122.3551">
+        <ele>300</ele>
+        <time>2023-06-15T10:25:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6302" lon="-122.3561">
+        <ele>250</ele>
+        <time>2023-06-15T10:30:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6312" lon="-122.3571">
+        <ele>200</ele>
+        <time>2023-06-15T10:35:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6322" lon="-122.3581">
+        <ele>150</ele>
+        <time>2023-06-15T10:40:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6332" lon="-122.3591">
+        <ele>100</ele>
+        <time>2023-06-15T10:45:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6342" lon="-122.3601">
+        <ele>75</ele>
+        <time>2023-06-15T10:50:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6352" lon="-122.3611">
+        <ele>50</ele>
+        <time>2023-06-15T10:55:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6362" lon="-122.3621">
+        <ele>35</ele>
+        <time>2023-06-15T11:00:00Z</time>
+      </trkpt>
+      <trkpt lat="47.6372" lon="-122.3631">
+        <ele>25</ele>
+        <time>2023-06-15T11:05:00Z</time>
+      </trkpt>
+      <!-- End point -->
+      <trkpt lat="47.6382" lon="-122.3641">
+        <ele>20</ele>
+        <time>2023-06-15T11:10:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

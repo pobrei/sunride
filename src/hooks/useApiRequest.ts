@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { 
-  safeFetch, 
-  safeJsonFetch, 
-  ApiError, 
-  ApiErrorType, 
-  reportApiError 
+import {
+  safeFetch,
+  safeJsonFetch,
+  ApiError,
+  ApiErrorType,
+  reportApiError,
 } from '@/utils/apiErrorHandler';
 import { useSimpleNotifications } from '@/features/notifications/context';
 
@@ -95,95 +95,99 @@ export function useApiRequest<T = any>(
   } = mergedOptions;
 
   // Function to execute the request
-  const execute = useCallback(async (customOptions?: RequestInit): Promise<T | null> => {
-    // Get the URL (which might be a function)
-    const resolvedUrl = typeof url === 'function' ? url() : url;
-    
-    // If URL is null or empty, don't execute
-    if (!resolvedUrl) {
-      return null;
-    }
+  const execute = useCallback(
+    async (customOptions?: RequestInit): Promise<T | null> => {
+      // Get the URL (which might be a function)
+      const resolvedUrl = typeof url === 'function' ? url() : url;
 
-    // Merge custom options with default options
-    const requestOptions = { ...fetchOptions, ...customOptions };
-    
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
-    let retryCount = 0;
-    let lastError: ApiError | Error | null = null;
-
-    // Retry loop
-    while (retryCount <= (retry ? maxRetries! : 0)) {
-      try {
-        // Execute the request
-        const data = await safeJsonFetch<T>(resolvedUrl, requestOptions);
-        
-        // Update state with success
-        setState({
-          data,
-          isLoading: false,
-          error: null,
-          isSuccess: true,
-        });
-        
-        // Show success notification if enabled
-        if (showSuccessNotifications && successMessage) {
-          addNotification('success', successMessage);
-        }
-        
-        return data;
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error('Unknown error');
-        
-        // If we've exhausted retries or retry is disabled, handle the error
-        if (retryCount === maxRetries || !retry) {
-          // Report error if enabled
-          if (reportErrors) {
-            reportApiError(error, errorContext || 'useApiRequest');
-          }
-          
-          // Show error notification if enabled
-          if (showErrorNotifications) {
-            const errorMessage = error instanceof ApiError 
-              ? error.message 
-              : error instanceof Error 
-                ? error.message 
-                : 'An unknown error occurred';
-                
-            addNotification('error', errorMessage);
-          }
-          
-          // Update state with error
-          setState({
-            data: null,
-            isLoading: false,
-            error: lastError,
-            isSuccess: false,
-          });
-          
-          break;
-        }
-        
-        // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, retryDelay! * Math.pow(2, retryCount)));
-        retryCount++;
+      // If URL is null or empty, don't execute
+      if (!resolvedUrl) {
+        return null;
       }
-    }
-    
-    return null;
-  }, [
-    url, 
-    fetchOptions, 
-    showErrorNotifications, 
-    showSuccessNotifications, 
-    successMessage, 
-    reportErrors, 
-    errorContext,
-    retry,
-    maxRetries,
-    retryDelay,
-    addNotification
-  ]);
+
+      // Merge custom options with default options
+      const requestOptions = { ...fetchOptions, ...customOptions };
+
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+      let retryCount = 0;
+      let lastError: ApiError | Error | null = null;
+
+      // Retry loop
+      while (retryCount <= (retry ? maxRetries! : 0)) {
+        try {
+          // Execute the request
+          const data = await safeJsonFetch<T>(resolvedUrl, requestOptions);
+
+          // Update state with success
+          setState({
+            data,
+            isLoading: false,
+            error: null,
+            isSuccess: true,
+          });
+
+          // Show success notification if enabled
+          if (showSuccessNotifications && successMessage) {
+            addNotification('success', successMessage);
+          }
+
+          return data;
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error('Unknown error');
+
+          // If we've exhausted retries or retry is disabled, handle the error
+          if (retryCount === maxRetries || !retry) {
+            // Report error if enabled
+            if (reportErrors) {
+              reportApiError(error, errorContext || 'useApiRequest');
+            }
+
+            // Show error notification if enabled
+            if (showErrorNotifications) {
+              const errorMessage =
+                error instanceof ApiError
+                  ? error.message
+                  : error instanceof Error
+                    ? error.message
+                    : 'An unknown error occurred';
+
+              addNotification('error', errorMessage);
+            }
+
+            // Update state with error
+            setState({
+              data: null,
+              isLoading: false,
+              error: lastError,
+              isSuccess: false,
+            });
+
+            break;
+          }
+
+          // Wait before retrying
+          await new Promise(resolve => setTimeout(resolve, retryDelay! * Math.pow(2, retryCount)));
+          retryCount++;
+        }
+      }
+
+      return null;
+    },
+    [
+      url,
+      fetchOptions,
+      showErrorNotifications,
+      showSuccessNotifications,
+      successMessage,
+      reportErrors,
+      errorContext,
+      retry,
+      maxRetries,
+      retryDelay,
+      addNotification,
+    ]
+  );
 
   // Reset the state
   const reset = useCallback(() => {

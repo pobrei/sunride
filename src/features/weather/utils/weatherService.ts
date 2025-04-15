@@ -9,7 +9,7 @@ export const weatherSchema = z.object({
   pressure: z.number().min(800).max(1200), // Realistic pressure range in hPa
   clouds: z.number().min(0).max(100),
   time: z.string().datetime(),
-  timezone: z.string().optional()
+  timezone: z.string().optional(),
 });
 
 export type WeatherData = z.infer<typeof weatherSchema>;
@@ -39,15 +39,15 @@ export const synchronizeTimeZones = (data: WeatherData, routeTimezone: string): 
   if (!data.timezone || data.timezone === routeTimezone) {
     return data;
   }
-  
+
   // Convert timestamps between timezones
   const timeUTC = new Date(data.time);
   const options = { timeZone: routeTimezone };
   const adjustedTime = timeUTC.toLocaleString('en-US', options);
-  
+
   return {
     ...data,
     time: new Date(adjustedTime).toISOString(),
-    timezone: routeTimezone
+    timezone: routeTimezone,
   };
 };

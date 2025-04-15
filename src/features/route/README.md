@@ -20,21 +20,12 @@ import { useWeather } from '@/features/weather/context';
 
 const MyComponent = () => {
   const { generateWeatherForecast } = useWeather();
-  
+
   const handleSettingsChange = (settings: RouteSettings) => {
-    generateWeatherForecast(
-      settings.weatherInterval,
-      settings.startTime,
-      settings.avgSpeed
-    );
+    generateWeatherForecast(settings.weatherInterval, settings.startTime, settings.avgSpeed);
   };
 
-  return (
-    <RouteControls 
-      onSettingsChange={handleSettingsChange}
-      isLoading={false}
-    />
-  );
+  return <RouteControls onSettingsChange={handleSettingsChange} isLoading={false} />;
 };
 ```
 

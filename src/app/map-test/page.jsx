@@ -98,7 +98,7 @@ const mockWeatherData = [
 export default function MapTestPage() {
   const [selectedMarker, setSelectedMarker] = useState(null);
 
-  const handleMarkerClick = (index) => {
+  const handleMarkerClick = index => {
     console.log('Marker clicked:', index);
     setSelectedMarker(index);
   };

@@ -3,9 +3,4 @@ import SafeTimelineWrapper from './SafeTimelineWrapper';
 import { ClientSideTimeline } from './ClientSideTimeline';
 import DynamicTimeline from './DynamicTimeline';
 
-export {
-  Timeline,
-  SafeTimelineWrapper,
-  ClientSideTimeline,
-  DynamicTimeline
-};
+export { Timeline, SafeTimelineWrapper, ClientSideTimeline, DynamicTimeline };

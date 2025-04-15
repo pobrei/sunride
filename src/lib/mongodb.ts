@@ -2,9 +2,10 @@ import { MongoClient, Db, Collection, Document } from 'mongodb';
 import { envConfig } from '@/lib/env';
 
 // Check if we have a valid MongoDB URI
-const USE_MOCK_DB = !envConfig.mongodbUri ||
-                   envConfig.mongodbUri === 'mongodb://localhost:27017/weatherapp' ||
-                   envConfig.mongodbUri.includes('your_mongodb_connection_string_here');
+const USE_MOCK_DB =
+  !envConfig.mongodbUri ||
+  envConfig.mongodbUri === 'mongodb://localhost:27017/weatherapp' ||
+  envConfig.mongodbUri.includes('your_mongodb_connection_string_here');
 
 if (USE_MOCK_DB) {
   console.warn('Using in-memory storage because no valid MongoDB URI was provided');
@@ -29,16 +30,19 @@ class MockMongoClient implements Pick<MongoClient, 'connect' | 'db'> {
    */
   db(): Pick<Db, 'collection'> {
     return {
-      collection: (): Pick<Collection<Document>, 'findOne' | 'find' | 'insertOne' | 'updateOne' | 'deleteOne'> => ({
+      collection: (): Pick<
+        Collection<Document>,
+        'findOne' | 'find' | 'insertOne' | 'updateOne' | 'deleteOne'
+      > => ({
         // Mock collection methods
         findOne: async () => null,
         find: () => ({
-          toArray: async () => []
+          toArray: async () => [],
         }),
         insertOne: async () => ({ acknowledged: true, insertedId: 'mock-id' }),
         updateOne: async () => ({ acknowledged: true, modifiedCount: 1 }),
-        deleteOne: async () => ({ acknowledged: true, deletedCount: 1 })
-      })
+        deleteOne: async () => ({ acknowledged: true, deletedCount: 1 }),
+      }),
     };
   }
 }

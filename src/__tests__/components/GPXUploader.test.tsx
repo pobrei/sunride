@@ -19,7 +19,7 @@ jest.mock('@/features/gpx/utils/gpxParser', () => ({
 }));
 
 jest.mock('@/utils/errorHandlers', () => ({
-  handleError: jest.fn().mockImplementation((err) => err.message),
+  handleError: jest.fn().mockImplementation(err => err.message),
   ErrorType: { GPX: 'GPX_ERROR' },
 }));
 
@@ -62,7 +62,9 @@ describe('GPXUploader Component', () => {
     const mockSimpleNotifications = { addNotification };
 
     // Mock the useSimpleNotifications hook
-    const useSimpleNotificationsMock = jest.requireMock('@/features/notifications/context').useSimpleNotifications;
+    const useSimpleNotificationsMock = jest.requireMock(
+      '@/features/notifications/context'
+    ).useSimpleNotifications;
     useSimpleNotificationsMock.mockReturnValue(mockSimpleNotifications);
 
     render(<GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={false} />);
@@ -89,7 +91,9 @@ describe('GPXUploader Component', () => {
     const mockSimpleNotifications = { addNotification };
 
     // Mock the useSimpleNotifications hook
-    const useSimpleNotificationsMock = jest.requireMock('@/features/notifications/context').useSimpleNotifications;
+    const useSimpleNotificationsMock = jest.requireMock(
+      '@/features/notifications/context'
+    ).useSimpleNotifications;
     useSimpleNotificationsMock.mockReturnValue(mockSimpleNotifications);
 
     // Mock parseGPX to throw an error
@@ -100,7 +104,9 @@ describe('GPXUploader Component', () => {
     render(<GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={false} />);
 
     // Create a mock file
-    const file = new File(['<invalid>Not a GPX file</invalid>'], 'test.gpx', { type: 'application/gpx+xml' });
+    const file = new File(['<invalid>Not a GPX file</invalid>'], 'test.gpx', {
+      type: 'application/gpx+xml',
+    });
 
     // Get the file input
     const fileInput = screen.getByTestId('gpx-file-input');
@@ -126,7 +132,9 @@ describe('GPXUploader Component', () => {
     const mockSimpleNotifications = { addNotification };
 
     // Mock the useSimpleNotifications hook
-    const useSimpleNotificationsMock = jest.requireMock('@/features/notifications/context').useSimpleNotifications;
+    const useSimpleNotificationsMock = jest.requireMock(
+      '@/features/notifications/context'
+    ).useSimpleNotifications;
     useSimpleNotificationsMock.mockReturnValue(mockSimpleNotifications);
 
     render(<GPXUploader onGPXLoaded={handleGPXLoaded} isLoading={false} />);

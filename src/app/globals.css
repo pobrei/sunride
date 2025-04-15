@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -44,102 +44,177 @@
 }
 
 :root {
+  /* Base radius for consistent rounded corners */
   --radius: 0.75rem;
 
-  /* Light mode - clean minimal colors */
+  /* Light mode - refined color palette */
+  /* Background and text colors */
   --background: 210 20% 98%; /* #F7FAFC - soft blueish-gray */
   --foreground: 222 47% 11%; /* #1F2937 - dark gray for primary text */
 
+  /* Card colors */
   --card: 0 0% 100%; /* #FFFFFF - pure white for cards */
   --card-foreground: 222 47% 11%; /* #1F2937 - dark gray */
 
+  /* Popover colors */
   --popover: 0 0% 100%; /* #FFFFFF - pure white */
   --popover-foreground: 222 47% 11%; /* #1F2937 - dark gray */
 
-  /* Vibrant blue as primary */
+  /* Primary colors - vibrant blue */
   --primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --primary-foreground: 0 0% 100%; /* White text on blue */
+  --primary-light: 217 91% 85%; /* Lighter blue for hover states */
+  --primary-dark: 217 91% 45%; /* Darker blue for active states */
 
-  /* Emerald green as secondary */
+  /* Secondary colors - emerald green */
   --secondary: 152 60% 36%; /* #10B981 - emerald green */
   --secondary-foreground: 0 0% 100%; /* White text on green */
+  --secondary-light: 152 60% 75%; /* Lighter green for hover states */
+  --secondary-dark: 152 60% 25%; /* Darker green for active states */
 
+  /* Muted colors for subtle UI elements */
   --muted: 220 14% 96%; /* #F3F4F6 - light gray */
   --muted-foreground: 220 9% 46%; /* #6B7280 - medium gray for subtle text */
 
-  --accent: 217 91% 60%; /* #3B82F6 - using blue as accent too */
+  /* Accent colors - using indigo for distinction from primary */
+  --accent: 245 58% 51%; /* #6366F1 - indigo */
   --accent-foreground: 0 0% 100%; /* White text on accent */
+  --accent-light: 245 58% 75%; /* Lighter indigo for hover states */
+  --accent-dark: 245 58% 40%; /* Darker indigo for active states */
 
-  --destructive: 0 84% 60%; /* Red for destructive actions */
+  /* Destructive colors - red */
+  --destructive: 0 84% 60%; /* #EF4444 - red for destructive actions */
   --destructive-foreground: 0 0% 100%; /* White text on destructive */
+  --destructive-light: 0 84% 80%; /* Lighter red for hover states */
+  --destructive-dark: 0 84% 45%; /* Darker red for active states */
 
+  /* Success colors - green */
+  --success: 142 76% 36%; /* #22C55E - green for success states */
+  --success-foreground: 0 0% 100%; /* White text on success */
+  --success-light: 142 76% 75%; /* Lighter green for hover states */
+  --success-dark: 142 76% 25%; /* Darker green for active states */
+
+  /* Warning colors - amber */
+  --warning: 45 93% 47%; /* #F59E0B - amber for warning states */
+  --warning-foreground: 0 0% 100%; /* White text on warning */
+  --warning-light: 45 93% 75%; /* Lighter amber for hover states */
+  --warning-dark: 45 93% 35%; /* Darker amber for active states */
+
+  /* Info colors - sky blue */
+  --info: 199 89% 48%; /* #0EA5E9 - sky blue for info states */
+  --info-foreground: 0 0% 100%; /* White text on info */
+  --info-light: 199 89% 75%; /* Lighter sky blue for hover states */
+  --info-dark: 199 89% 35%; /* Darker sky blue for active states */
+
+  /* Border, input, and ring colors */
   --border: 220 13% 91%; /* #E5E7EB - soft gray for borders/dividers */
   --input: 220 13% 91%; /* #E5E7EB - soft gray for inputs */
   --ring: 217 91% 60%; /* #3B82F6 - vibrant blue for focus rings */
 
-  /* Chart colors - clean palette */
+  /* Chart colors - expanded palette */
   --chart-1: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --chart-2: 152 60% 36%; /* #10B981 - emerald green */
-  --chart-3: 206 100% 50%; /* Light blue */
-  --chart-4: 135 72% 47%;  /* Light green */
-  --chart-5: 245 58% 51%; /* Purple */
+  --chart-3: 199 89% 48%; /* #0EA5E9 - sky blue */
+  --chart-4: 142 76% 36%; /* #22C55E - green */
+  --chart-5: 245 58% 51%; /* #6366F1 - indigo */
+  --chart-6: 326 73% 62%; /* #EC4899 - pink */
+  --chart-7: 45 93% 47%; /* #F59E0B - amber */
+  --chart-8: 0 84% 60%; /* #EF4444 - red */
 
+  /* Sidebar colors */
   --sidebar: 0 0% 100%; /* #FFFFFF - pure white for sidebar */
   --sidebar-foreground: 222 47% 11%; /* #1F2937 - dark gray */
   --sidebar-primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --sidebar-primary-foreground: 0 0% 100%; /* White text */
-  --sidebar-accent: 152 60% 36%; /* #10B981 - emerald green */
+  --sidebar-accent: 245 58% 51%; /* #6366F1 - indigo */
   --sidebar-accent-foreground: 0 0% 100%; /* White text */
   --sidebar-border: 220 13% 91%; /* #E5E7EB - soft gray */
   --sidebar-ring: 217 91% 60%; /* #3B82F6 - vibrant blue */
 }
 
 .dark {
-  /* Dark mode - based on light mode colors but adapted for dark theme */
-  --background: 222 47% 11%; /* Dark background */
-  --foreground: 210 20% 98%; /* Light text */
+  /* Dark mode - refined color palette */
+  /* Background and text colors */
+  --background: 222 47% 11%; /* #1A1E2B - dark background */
+  --foreground: 210 20% 98%; /* #F7FAFC - light text */
 
-  --card: 223 33% 17%; /* Dark card background */
-  --card-foreground: 210 20% 98%; /* Light text on cards */
+  /* Card colors */
+  --card: 223 33% 17%; /* #232A3B - dark card background */
+  --card-foreground: 210 20% 98%; /* #F7FAFC - light text on cards */
 
-  --popover: 223 33% 17%; /* Dark popover background */
-  --popover-foreground: 210 20% 98%; /* Light text on popovers */
+  /* Popover colors */
+  --popover: 223 33% 17%; /* #232A3B - dark popover background */
+  --popover-foreground: 210 20% 98%; /* #F7FAFC - light text on popovers */
 
-  /* Same vibrant blue as primary but slightly adjusted for dark mode */
+  /* Primary colors - vibrant blue adjusted for dark mode */
   --primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --primary-foreground: 0 0% 100%; /* White text */
+  --primary-light: 217 91% 70%; /* Lighter blue for hover states */
+  --primary-dark: 217 91% 50%; /* Darker blue for active states */
 
-  /* Same emerald green adjusted for dark mode */
+  /* Secondary colors - emerald green adjusted for dark mode */
   --secondary: 152 60% 36%; /* #10B981 - emerald green */
   --secondary-foreground: 0 0% 100%; /* White text */
+  --secondary-light: 152 60% 45%; /* Lighter green for hover states */
+  --secondary-dark: 152 60% 30%; /* Darker green for active states */
 
-  --muted: 223 33% 17%; /* Dark muted background */
-  --muted-foreground: 220 9% 70%; /* Light gray for muted text */
+  /* Muted colors for subtle UI elements */
+  --muted: 223 33% 17%; /* #232A3B - dark muted background */
+  --muted-foreground: 220 9% 70%; /* #A1A9B8 - light gray for muted text */
 
-  --accent: 217 91% 60%; /* Vibrant blue as accent */
+  /* Accent colors - using indigo for distinction from primary */
+  --accent: 245 58% 51%; /* #6366F1 - indigo */
   --accent-foreground: 0 0% 100%; /* White text */
+  --accent-light: 245 58% 60%; /* Lighter indigo for hover states */
+  --accent-dark: 245 58% 45%; /* Darker indigo for active states */
 
-  --destructive: 0 84% 60%; /* Red for destructive actions */
+  /* Destructive colors - red */
+  --destructive: 0 84% 60%; /* #EF4444 - red */
   --destructive-foreground: 0 0% 100%; /* White text */
+  --destructive-light: 0 84% 70%; /* Lighter red for hover states */
+  --destructive-dark: 0 84% 50%; /* Darker red for active states */
 
-  --border: 217 19% 27%; /* Darker border color */
-  --input: 217 19% 27%; /* Darker input background */
-  --ring: 217 91% 60%; /* Vibrant blue for focus rings */
+  /* Success colors - green */
+  --success: 142 76% 36%; /* #22C55E - green */
+  --success-foreground: 0 0% 100%; /* White text */
+  --success-light: 142 76% 45%; /* Lighter green for hover states */
+  --success-dark: 142 76% 30%; /* Darker green for active states */
 
-  /* Chart colors - same as light mode for consistency */
+  /* Warning colors - amber */
+  --warning: 45 93% 47%; /* #F59E0B - amber */
+  --warning-foreground: 0 0% 100%; /* White text */
+  --warning-light: 45 93% 55%; /* Lighter amber for hover states */
+  --warning-dark: 45 93% 40%; /* Darker amber for active states */
+
+  /* Info colors - sky blue */
+  --info: 199 89% 48%; /* #0EA5E9 - sky blue */
+  --info-foreground: 0 0% 100%; /* White text */
+  --info-light: 199 89% 55%; /* Lighter sky blue for hover states */
+  --info-dark: 199 89% 40%; /* Darker sky blue for active states */
+
+  /* Border, input, and ring colors */
+  --border: 217 19% 27%; /* #2E374A - darker border color */
+  --input: 217 19% 27%; /* #2E374A - darker input background */
+  --ring: 217 91% 60%; /* #3B82F6 - vibrant blue for focus rings */
+
+  /* Chart colors - expanded palette */
   --chart-1: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --chart-2: 152 60% 36%; /* #10B981 - emerald green */
-  --chart-3: 206 100% 50%; /* Light blue */
-  --chart-4: 135 72% 47%;  /* Light green */
-  --chart-5: 245 58% 51%; /* Purple */
+  --chart-3: 199 89% 48%; /* #0EA5E9 - sky blue */
+  --chart-4: 142 76% 36%; /* #22C55E - green */
+  --chart-5: 245 58% 51%; /* #6366F1 - indigo */
+  --chart-6: 326 73% 62%; /* #EC4899 - pink */
+  --chart-7: 45 93% 47%; /* #F59E0B - amber */
+  --chart-8: 0 84% 60%; /* #EF4444 - red */
 
-  --sidebar: 222 47% 11%; /* Dark sidebar background */
-  --sidebar-foreground: 210 20% 98%; /* Light text */
+  /* Sidebar colors */
+  --sidebar: 222 47% 11%; /* #1A1E2B - dark sidebar background */
+  --sidebar-foreground: 210 20% 98%; /* #F7FAFC - light text */
   --sidebar-primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
   --sidebar-primary-foreground: 0 0% 100%; /* White text */
-  --sidebar-accent: 152 60% 36%; /* #10B981 - emerald green */
+  --sidebar-accent: 245 58% 51%; /* #6366F1 - indigo */
   --sidebar-accent-foreground: 0 0% 100%; /* White text */
-  --sidebar-border: 217 19% 27%; /* Darker border color */
+  --sidebar-border: 217 19% 27%; /* #2E374A - darker border color */
   --sidebar-ring: 217 91% 60%; /* #3B82F6 - vibrant blue */
 }
 
@@ -153,7 +228,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
   /* Custom scrollbar styles */
@@ -179,7 +256,7 @@
   }
 
   /* Datetime input styles for dark theme */
-  input[type="datetime-local"] {
+  input[type='datetime-local'] {
     color-scheme: dark;
   }
 }
@@ -191,7 +268,9 @@
   }
 
   .hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .hover-lift:hover {
@@ -203,7 +282,9 @@
   }
 
   .card-shadow {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.05),
+      0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .inner-shadow {
@@ -243,46 +324,114 @@
   }
 
   /* Custom classes for chart bars */
-  .chart-bar-h-0 { height: 0%; }
-  .chart-bar-h-10 { height: 10%; }
-  .chart-bar-h-20 { height: 20%; }
-  .chart-bar-h-30 { height: 30%; }
-  .chart-bar-h-40 { height: 40%; }
-  .chart-bar-h-50 { height: 50%; }
-  .chart-bar-h-60 { height: 60%; }
-  .chart-bar-h-70 { height: 70%; }
-  .chart-bar-h-80 { height: 80%; }
-  .chart-bar-h-90 { height: 90%; }
-  .chart-bar-h-100 { height: 100%; }
+  .chart-bar-h-0 {
+    height: 0%;
+  }
+  .chart-bar-h-10 {
+    height: 10%;
+  }
+  .chart-bar-h-20 {
+    height: 20%;
+  }
+  .chart-bar-h-30 {
+    height: 30%;
+  }
+  .chart-bar-h-40 {
+    height: 40%;
+  }
+  .chart-bar-h-50 {
+    height: 50%;
+  }
+  .chart-bar-h-60 {
+    height: 60%;
+  }
+  .chart-bar-h-70 {
+    height: 70%;
+  }
+  .chart-bar-h-80 {
+    height: 80%;
+  }
+  .chart-bar-h-90 {
+    height: 90%;
+  }
+  .chart-bar-h-100 {
+    height: 100%;
+  }
 
   /* Custom classes for positioning */
-  .left-0 { left: 0%; }
-  .left-10 { left: 10%; }
-  .left-20 { left: 20%; }
-  .left-30 { left: 30%; }
-  .left-40 { left: 40%; }
-  .left-50 { left: 50%; }
-  .left-60 { left: 60%; }
-  .left-70 { left: 70%; }
-  .left-80 { left: 80%; }
-  .left-90 { left: 90%; }
-  .left-100 { left: 100%; }
+  .left-0 {
+    left: 0%;
+  }
+  .left-10 {
+    left: 10%;
+  }
+  .left-20 {
+    left: 20%;
+  }
+  .left-30 {
+    left: 30%;
+  }
+  .left-40 {
+    left: 40%;
+  }
+  .left-50 {
+    left: 50%;
+  }
+  .left-60 {
+    left: 60%;
+  }
+  .left-70 {
+    left: 70%;
+  }
+  .left-80 {
+    left: 80%;
+  }
+  .left-90 {
+    left: 90%;
+  }
+  .left-100 {
+    left: 100%;
+  }
 
   /* Timeline item width */
-  .min-w-timeline-item { min-width: 80px; }
+  .min-w-timeline-item {
+    min-width: 80px;
+  }
 
   /* Progress bar widths */
-  .w-progress-0 { width: 0%; }
-  .w-progress-10 { width: 10%; }
-  .w-progress-20 { width: 20%; }
-  .w-progress-30 { width: 30%; }
-  .w-progress-40 { width: 40%; }
-  .w-progress-50 { width: 50%; }
-  .w-progress-60 { width: 60%; }
-  .w-progress-70 { width: 70%; }
-  .w-progress-80 { width: 80%; }
-  .w-progress-90 { width: 90%; }
-  .w-progress-100 { width: 100%; }
+  .w-progress-0 {
+    width: 0%;
+  }
+  .w-progress-10 {
+    width: 10%;
+  }
+  .w-progress-20 {
+    width: 20%;
+  }
+  .w-progress-30 {
+    width: 30%;
+  }
+  .w-progress-40 {
+    width: 40%;
+  }
+  .w-progress-50 {
+    width: 50%;
+  }
+  .w-progress-60 {
+    width: 60%;
+  }
+  .w-progress-70 {
+    width: 70%;
+  }
+  .w-progress-80 {
+    width: 80%;
+  }
+  .w-progress-90 {
+    width: 90%;
+  }
+  .w-progress-100 {
+    width: 100%;
+  }
 
   /* Scrollbar styling for timeline */
   .scrollbar-thin {
@@ -312,7 +461,7 @@
     width: 24px;
     height: 24px;
     border: 2px solid white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     font-size: 12px;
     font-weight: normal;
   }
@@ -321,7 +470,7 @@
     width: 32px;
     height: 32px;
     border: 3px solid #ffffff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
     font-size: 14px;
     font-weight: bold;
   }

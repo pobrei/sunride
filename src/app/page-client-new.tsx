@@ -22,7 +22,7 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
@@ -60,7 +60,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (
@@ -105,10 +105,7 @@ export default function Home() {
 
               {forecastPoints.length > 0 && weatherData.length > 0 && (
                 <>
-                  <Alerts
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
-                  />
+                  <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
                 </>
               )}
             </>

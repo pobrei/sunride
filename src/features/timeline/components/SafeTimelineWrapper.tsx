@@ -22,7 +22,7 @@ const SafeTimelineWrapper: React.FC<SafeTimelineWrapperProps> = ({
   forecastPoints,
   weatherData,
   selectedMarker,
-  onTimelineClick
+  onTimelineClick,
 }) => {
   const [hasError, setHasError] = useState(false);
   const { validateForecastPoints, validateWeatherData } = useSafeData();
@@ -34,8 +34,7 @@ const SafeTimelineWrapper: React.FC<SafeTimelineWrapperProps> = ({
   // Check if the data is valid
   useEffect(() => {
     const isDataValid =
-      validForecastPoints.length > 0 &&
-      validWeatherData.some(item => item !== null);
+      validForecastPoints.length > 0 && validWeatherData.some(item => item !== null);
 
     setHasError(!isDataValid);
   }, [validForecastPoints, validWeatherData]);
@@ -58,10 +57,7 @@ const SafeTimelineWrapper: React.FC<SafeTimelineWrapperProps> = ({
               <li>Refresh the page and try again</li>
             </ul>
           </div>
-          <Button
-            onClick={() => window.location.reload()}
-            className="w-full max-w-xs"
-          >
+          <Button onClick={() => window.location.reload()} className="w-full max-w-xs">
             Reload Page
           </Button>
         </div>

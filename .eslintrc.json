@@ -8,4 +8,4 @@
     "prefer-const": "warn",
     "@typescript-eslint/ban-ts-comment": "off"
   }
-} 
+}

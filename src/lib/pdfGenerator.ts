@@ -47,7 +47,8 @@ export async function generateWeatherReportPDF(
   });
 
   // If we have a map image, embed it (with memory checks)
-  if (mapImageBase64 && mapImageBase64.length < 5e6) { // Limit to 5MB
+  if (mapImageBase64 && mapImageBase64.length < 5e6) {
+    // Limit to 5MB
     try {
       const mapImageBytes: Buffer = Buffer.from(
         mapImageBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, ''),
@@ -76,18 +77,21 @@ export async function generateWeatherReportPDF(
     const pageItems: Array<WeatherData | null> = weatherData.slice(i, i + ITEMS_PER_PAGE);
     const dataPage = pdfDoc.addPage([600, 800]);
 
-    dataPage.drawText(`Weather Data (${i + 1}-${Math.min(i + ITEMS_PER_PAGE, weatherData.length)})`, {
-      x: 50,
-      y: height - 50,
-      size: 18,
-      font: helveticaFont,
-    });
+    dataPage.drawText(
+      `Weather Data (${i + 1}-${Math.min(i + ITEMS_PER_PAGE, weatherData.length)})`,
+      {
+        x: 50,
+        y: height - 50,
+        size: 18,
+        font: helveticaFont,
+      }
+    );
 
     // Draw table headers
     const headers: string[] = ['Time', 'Temperature', 'Wind', 'Precipitation', 'Humidity'];
     headers.forEach((header, index) => {
       dataPage.drawText(header, {
-        x: 50 + (index * 100),
+        x: 50 + index * 100,
         y: height - 80,
         size: 12,
         font: helveticaFont,
@@ -99,7 +103,7 @@ export async function generateWeatherReportPDF(
     pageItems.forEach((item, index) => {
       if (!item) return; // Skip null items
 
-      const y: number = height - 110 - (index * 30);
+      const y: number = height - 110 - index * 30;
 
       dataPage.drawText(new Date(item.time).toLocaleTimeString(), {
         x: 50,

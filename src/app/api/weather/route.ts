@@ -52,8 +52,10 @@ function validatePoint(point: any): boolean {
     typeof point.lon === 'number' &&
     typeof point.timestamp === 'number' &&
     typeof point.distance === 'number' &&
-    point.lat >= -90 && point.lat <= 90 &&
-    point.lon >= -180 && point.lon <= 180
+    point.lat >= -90 &&
+    point.lat <= 90 &&
+    point.lon >= -180 &&
+    point.lon <= 180
   );
 }
 
@@ -69,16 +71,15 @@ async function apiHandler<T extends ApiResponse<unknown>>(
 ): Promise<NextResponse<T>> {
   try {
     // Get client IP for rate limiting
-    const clientIp: string = req.headers.get('x-forwarded-for') ||
-                     req.headers.get('x-real-ip') ||
-                     'unknown';
+    const clientIp: string =
+      req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
 
     // Check rate limit
     if (!checkRateLimit(clientIp)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Rate limit exceeded. Please try again later.'
+          error: 'Rate limit exceeded. Please try again later.',
         },
         { status: 429 }
       );
@@ -109,7 +110,7 @@ async function apiHandler<T extends ApiResponse<unknown>>(
     return NextResponse.json(
       {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       },
       { status: statusCode }
     );
@@ -123,7 +124,7 @@ async function apiHandler<T extends ApiResponse<unknown>>(
  */
 export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiResponse>> {
   return apiHandler(req, async () => {
-    const data = await req.json() as WeatherApiRequest;
+    const data = (await req.json()) as WeatherApiRequest;
 
     // Make sure we have valid points
     if (!data.points || !Array.isArray(data.points) || data.points.length === 0) {
@@ -139,7 +140,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
     const forecastPoints: ForecastPoint[] = data.points;
     for (const point of forecastPoints) {
       if (!validatePoint(point)) {
-        throw new Error('Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers within valid ranges.');
+        throw new Error(
+          'Invalid point data. Each point must have lat, lon, timestamp, and distance as numbers within valid ranges.'
+        );
       }
     }
 
@@ -163,7 +166,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
         data: [],
         provider: 'OpenWeather',
         timestamp: Date.now(),
-        pointsProcessed: 0
+        pointsProcessed: 0,
       };
     }
 
@@ -173,7 +176,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
       data: weatherData, // Return the full array including nulls
       provider: 'OpenWeather',
       timestamp: Date.now(),
-      pointsProcessed: weatherData.length
+      pointsProcessed: weatherData.length,
     };
 
     return response;
@@ -190,9 +193,15 @@ export async function GET(req: NextRequest): Promise<NextResponse<WeatherApiResp
     const searchParams: URLSearchParams = req.nextUrl.searchParams;
 
     // Validate required parameters
-    if (!searchParams.has('lat') || !searchParams.has('lon') ||
-        !searchParams.has('timestamp') || !searchParams.has('distance')) {
-      throw new Error('Missing required parameters. lat, lon, timestamp, and distance are required.');
+    if (
+      !searchParams.has('lat') ||
+      !searchParams.has('lon') ||
+      !searchParams.has('timestamp') ||
+      !searchParams.has('distance')
+    ) {
+      throw new Error(
+        'Missing required parameters. lat, lon, timestamp, and distance are required.'
+      );
     }
 
     // Parse and validate parameters
@@ -207,7 +216,9 @@ export async function GET(req: NextRequest): Promise<NextResponse<WeatherApiResp
 
     // Validate ranges
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      throw new Error('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.');
+      throw new Error(
+        'Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180.'
+      );
     }
 
     // Create point object
@@ -227,7 +238,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<WeatherApiResp
       data: [weatherData],
       provider: 'OpenWeather',
       timestamp: Date.now(),
-      pointsProcessed: 1
+      pointsProcessed: 1,
     };
 
     return response;

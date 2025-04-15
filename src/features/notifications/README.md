@@ -21,7 +21,7 @@ import { useNotifications } from '@/features/notifications/context';
 
 const MyComponent = () => {
   const { addNotification, removeNotification } = useNotifications();
-  
+
   const handleAction = () => {
     try {
       // Perform action
@@ -31,11 +31,7 @@ const MyComponent = () => {
     }
   };
 
-  return (
-    <button onClick={handleAction}>
-      Perform Action
-    </button>
-  );
+  return <button onClick={handleAction}>Perform Action</button>;
 };
 ```
 

@@ -6,7 +6,7 @@ import { SafeDataProvider } from '@/features/data-validation/context';
 // Mock the OpenLayersMap component
 jest.mock('@/features/map/components/OpenLayersMap', () => ({
   __esModule: true,
-  default: () => <div data-testid="mock-map">Mock Map</div>
+  default: () => <div data-testid="mock-map">Mock Map</div>,
 }));
 
 // Mock the useSafeData hook
@@ -29,12 +29,12 @@ describe('SafeMapWrapper Component', () => {
     totalElevationGain: 10,
     totalTime: 1800,
   };
-  
+
   const mockForecastPoints = [
     { lat: 37.7749, lon: -122.4194, timestamp: 1634292000, distance: 0 },
     { lat: 37.7847, lon: -122.4294, timestamp: 1634293800, distance: 1000 },
   ];
-  
+
   const mockWeatherData = [
     {
       temperature: 18,
@@ -73,13 +73,13 @@ describe('SafeMapWrapper Component', () => {
       timestamp: 1634293800,
     },
   ];
-  
+
   const mockOnMarkerClick = jest.fn();
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   it('renders the map when valid data is provided', () => {
     render(
       <SafeDataProvider>
@@ -92,10 +92,10 @@ describe('SafeMapWrapper Component', () => {
         />
       </SafeDataProvider>
     );
-    
+
     expect(screen.getByTestId('mock-map')).toBeInTheDocument();
   });
-  
+
   it('renders a fallback UI when no GPX data is provided', () => {
     render(
       <SafeDataProvider>
@@ -108,10 +108,10 @@ describe('SafeMapWrapper Component', () => {
         />
       </SafeDataProvider>
     );
-    
+
     expect(screen.getByText(/No route data available/i)).toBeInTheDocument();
   });
-  
+
   it('renders a fallback UI when forecast points are empty', () => {
     render(
       <SafeDataProvider>
@@ -124,7 +124,7 @@ describe('SafeMapWrapper Component', () => {
         />
       </SafeDataProvider>
     );
-    
+
     expect(screen.getByText(/No forecast points available/i)).toBeInTheDocument();
   });
 });

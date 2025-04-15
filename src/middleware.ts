@@ -9,7 +9,7 @@ const rateLimit = new Map<string, { count: number; lastReset: number }>();
 
 /**
  * Middleware function for rate limiting API requests
- * 
+ *
  * @param request - The incoming request
  * @returns The response or undefined to continue
  */
@@ -18,39 +18,42 @@ export function middleware(request: NextRequest) {
   if (!request.nextUrl.pathname.startsWith('/api')) {
     return;
   }
-  
+
   // Get client IP
   const ip = request.ip || 'unknown';
-  
+
   // Get rate limit configuration
   const maxRequests = envConfig.apiRateLimit;
   const windowMs = envConfig.apiRateLimitWindowMs;
-  
+
   // Get current timestamp
   const now = Date.now();
-  
+
   // Get or initialize rate limit data for this IP
   let rateData = rateLimit.get(ip);
   if (!rateData) {
     rateData = { count: 0, lastReset: now };
     rateLimit.set(ip, rateData);
   }
-  
+
   // Reset count if window has passed
   if (now - rateData.lastReset > windowMs) {
     rateData.count = 0;
     rateData.lastReset = now;
   }
-  
+
   // Increment count
   rateData.count++;
-  
+
   // Set headers
   const response = NextResponse.next();
   response.headers.set('X-RateLimit-Limit', maxRequests.toString());
-  response.headers.set('X-RateLimit-Remaining', Math.max(0, maxRequests - rateData.count).toString());
+  response.headers.set(
+    'X-RateLimit-Remaining',
+    Math.max(0, maxRequests - rateData.count).toString()
+  );
   response.headers.set('X-RateLimit-Reset', (rateData.lastReset + windowMs).toString());
-  
+
   // Check if rate limit exceeded
   if (rateData.count > maxRequests) {
     return new NextResponse(
@@ -71,7 +74,7 @@ export function middleware(request: NextRequest) {
       }
     );
   }
-  
+
   return response;
 }
 

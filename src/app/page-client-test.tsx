@@ -24,7 +24,7 @@ export default function Home() {
     generateWeatherForecast,
     isLoading,
     isGenerating,
-    loadingMessage
+    loadingMessage,
   } = useWeather();
 
   const { addNotification } = useSimpleNotifications();
@@ -74,7 +74,7 @@ export default function Home() {
     isExporting: false,
     onExport: () => {
       addNotification('info', 'Exporting PDF...');
-    }
+    },
   };
 
   return (
@@ -120,6 +120,28 @@ export default function Home() {
               {forecastPoints.length > 0 && weatherData.length > 0 && (
                 <>
                   <div className="rounded-lg overflow-hidden border border-border">
+                    <SafeTimelineWrapper
+                      forecastPoints={forecastPoints}
+                      weatherData={weatherData}
+                      selectedMarker={selectedMarker}
+                      onTimelineClick={handleTimelineClick}
+                    />
+                  </div>
+
+                  <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
+
+                  <div ref={chartsRef} className="rounded-lg overflow-hidden border border-border">
+                    <SafeChartsWrapper
+                      gpxData={gpxData}
+                      forecastPoints={forecastPoints}
+                      weatherData={weatherData}
+                      selectedMarker={selectedMarker}
+                      onChartClick={handleChartClick}
+                    />
+                  </div>
+                </>
+              )}
+            </>
           )}
         </div>
       </div>

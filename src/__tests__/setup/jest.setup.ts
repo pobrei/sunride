@@ -82,25 +82,25 @@ class MockIntersectionObserver {
   readonly root: Element | null;
   readonly rootMargin: string;
   readonly thresholds: ReadonlyArray<number>;
-  
+
   constructor() {
     this.root = null;
     this.rootMargin = '';
     this.thresholds = [];
   }
-  
+
   disconnect() {
     return null;
   }
-  
+
   observe() {
     return null;
   }
-  
+
   takeRecords() {
     return [];
   }
-  
+
   unobserve() {
     return null;
   }
@@ -117,17 +117,17 @@ class MockResizeObserver {
   constructor(callback: ResizeObserverCallback) {
     this.callback = callback;
   }
-  
+
   callback: ResizeObserverCallback;
-  
+
   disconnect() {
     return null;
   }
-  
+
   observe() {
     return null;
   }
-  
+
   unobserve() {
     return null;
   }

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 /**
  * Custom hook for managing state in localStorage
- * 
+ *
  * @param key - The localStorage key
  * @param initialValue - The initial value if no value exists in localStorage
  * @returns A stateful value and a function to update it
@@ -32,10 +32,10 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
     try {
       // Allow value to be a function so we have the same API as useState
       const valueToStore = value instanceof Function ? value(storedValue) : value;
-      
+
       // Save state
       setStoredValue(valueToStore);
-      
+
       // Save to local storage
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(key, JSON.stringify(valueToStore));

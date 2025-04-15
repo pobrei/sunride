@@ -49,38 +49,40 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   // Get color scheme based on dark/light mode
   const getColorScheme = () => {
     // Check if we're in dark mode
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return isDarkMode
       ? {
           temperature: {
             bg: 'rgba(130, 50, 70, 0.3)',
             border: 'rgb(180, 70, 90)',
-            point: 'rgb(180, 70, 90)'
+            point: 'rgb(180, 70, 90)',
           },
           feelsLike: {
             bg: 'rgba(60, 130, 80, 0.3)',
             border: 'rgb(80, 170, 100)',
-            point: 'rgb(80, 170, 100)'
-          }
+            point: 'rgb(80, 170, 100)',
+          },
         }
       : {
           temperature: {
             bg: 'rgba(255, 232, 238, 0.3)',
             border: 'rgb(255, 182, 193)',
-            point: 'rgb(255, 182, 193)'
+            point: 'rgb(255, 182, 193)',
           },
           feelsLike: {
             bg: 'rgba(220, 255, 220, 0.3)',
             border: 'rgb(152, 251, 152)',
-            point: 'rgb(152, 251, 152)'
-          }
+            point: 'rgb(152, 251, 152)',
+          },
         };
   };
 
   // Define custom tooltip styling
   const getTooltipOptions = () => {
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return {
       mode: 'index' as const,
@@ -95,14 +97,14 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
       titleFont: {
         weight: 'bold' as const,
         size: 14,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       bodyFont: {
         size: 12,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
       caretSize: 8,
-      displayColors: true
+      displayColors: true,
     };
   };
 
@@ -114,7 +116,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
       display: true,
       drawBorder: true,
       drawOnChartArea: true,
-      drawTicks: true
+      drawTicks: true,
     };
   };
 
@@ -132,7 +134,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
     // Prepare data
-    const labels = forecastPoints.map((point) => {
+    const labels = forecastPoints.map(point => {
       return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
     });
 
@@ -160,15 +162,15 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                 backgroundColor: colors.temperature.bg,
                 tension: 0.3,
                 borderWidth: 2,
-                pointBackgroundColor: (context) => {
+                pointBackgroundColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'blue' : colors.temperature.point;
                 },
-                pointBorderColor: (context) => {
+                pointBorderColor: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 'white' : colors.temperature.border;
                 },
-                pointRadius: (context) => {
+                pointRadius: context => {
                   const index = context.dataIndex;
                   return selectedMarker === index ? 8 : 4;
                 },
@@ -198,22 +200,22 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                 labels: {
                   font: {
                     family: 'Inter, sans-serif',
-                    size: 12
-                  }
-                }
+                    size: 12,
+                  },
+                },
               },
-              tooltip: getTooltipOptions()
+              tooltip: getTooltipOptions(),
             },
             scales: {
               x: {
                 grid: {
                   display: true,
                   color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true
+                  drawOnChartArea: true,
                 },
                 ticks: {
-                  color: 'hsl(var(--foreground))'
-                }
+                  color: 'hsl(var(--foreground))',
+                },
               },
               y: {
                 grid: getDashedGridLines(),
@@ -221,9 +223,9 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                 max: Math.max(...tempData) + 5,
                 title: {
                   display: true,
-                  text: 'Temperature (°C)'
-                }
-              }
+                  text: 'Temperature (°C)',
+                },
+              },
             },
           },
         });

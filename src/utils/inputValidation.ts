@@ -75,8 +75,8 @@ export function validateRange(value: number, min: number, max: number, fieldName
  * @throws Error if validation fails
  */
 export function validatePattern(
-  value: string, 
-  pattern: RegExp, 
+  value: string,
+  pattern: RegExp,
   fieldName: string,
   errorMessage?: string
 ): void {

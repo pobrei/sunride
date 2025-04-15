@@ -4,7 +4,11 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import Notification from '@/components/ui/notification';
 
 interface NotificationContextType {
-  addNotification: (type: 'error' | 'info' | 'success', message: string, duration?: number) => string;
+  addNotification: (
+    type: 'error' | 'info' | 'success',
+    message: string,
+    duration?: number
+  ) => string;
   removeNotification: (id: string) => void;
 }
 
@@ -32,8 +36,12 @@ interface NotificationItem {
 export function NotificationProvider({ children }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
-  const addNotification = (type: 'error' | 'info' | 'success', message: string, duration = 5000): string => {
-    const id = Date.now().toString();
+  const addNotification = (
+    type: 'error' | 'info' | 'success',
+    message: string,
+    duration = 5000
+  ): string => {
+    const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     setNotifications(prev => [...prev, { id, type, message, duration }]);
     return id;
   };

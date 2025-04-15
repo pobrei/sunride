@@ -9,16 +9,12 @@ import {
   ValidationError as SimpleValidationError,
   APIError as SimpleAPIError,
   AuthError,
-  NotFoundError
+  NotFoundError,
 } from './errors';
 
-export {
-  SimpleValidationError,
-  SimpleAPIError,
-  AuthError,
-  NotFoundError
-};
+export { SimpleValidationError, SimpleAPIError, AuthError, NotFoundError };
 
 export * from './formatUtils';
 export * from './performance';
 export * from './typeGuards';
+export * from './accessibility';

@@ -1,20 +1,27 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  HelpCircle, 
-  X, 
-  ChevronRight, 
-  Upload, 
-  Map, 
-  BarChart3, 
-  Clock, 
-  Settings, 
+import {
+  HelpCircle,
+  X,
+  ChevronRight,
+  Upload,
+  Map,
+  BarChart3,
+  Clock,
+  Settings,
   AlertTriangle,
-  Download
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { cn } from '@/styles/tailwind-utils';
 
 interface UserGuideProps {
@@ -28,45 +35,52 @@ interface UserGuideProps {
 export function UserGuide({ className }: UserGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
-  
+
   const steps = [
     {
       title: 'Upload GPX File',
-      description: 'Start by uploading a GPX file containing your route data. The application will parse the file and display your route on the map.',
+      description:
+        'Start by uploading a GPX file containing your route data. The application will parse the file and display your route on the map.',
       icon: <Upload className="h-5 w-5" />,
     },
     {
       title: 'View Route on Map',
-      description: 'Your route will be displayed on the map with markers for each forecast point. Click on a marker to see detailed weather information for that point.',
+      description:
+        'Your route will be displayed on the map with markers for each forecast point. Click on a marker to see detailed weather information for that point.',
       icon: <Map className="h-5 w-5" />,
     },
     {
       title: 'Explore Timeline',
-      description: 'The timeline shows weather conditions at different points along your route. Click on a timeline item to highlight the corresponding point on the map.',
+      description:
+        'The timeline shows weather conditions at different points along your route. Click on a timeline item to highlight the corresponding point on the map.',
       icon: <Clock className="h-5 w-5" />,
     },
     {
       title: 'Analyze Weather Data',
-      description: 'View detailed weather charts showing temperature, precipitation, wind speed, and elevation data along your route.',
+      description:
+        'View detailed weather charts showing temperature, precipitation, wind speed, and elevation data along your route.',
       icon: <BarChart3 className="h-5 w-5" />,
     },
     {
       title: 'Check Weather Alerts',
-      description: 'The application will automatically detect potential weather hazards along your route and display alerts for extreme conditions.',
+      description:
+        'The application will automatically detect potential weather hazards along your route and display alerts for extreme conditions.',
       icon: <AlertTriangle className="h-5 w-5" />,
     },
     {
       title: 'Adjust Settings',
-      description: 'Customize your route settings including weather interval, start time, and average speed to get more accurate forecasts.',
+      description:
+        'Customize your route settings including weather interval, start time, and average speed to get more accurate forecasts.',
       icon: <Settings className="h-5 w-5" />,
     },
     {
       title: 'Export Your Plan',
-      description: 'Export your route plan as a PDF document including the map, weather data, and alerts for offline reference.',
+      description:
+        'Export your route plan as a PDF document including the map, weather data, and alerts for offline reference.',
       icon: <Download className="h-5 w-5" />,
     },
   ];
-  
+
   const handleNextStep = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
@@ -75,13 +89,13 @@ export function UserGuide({ className }: UserGuideProps) {
       setActiveStep(0);
     }
   };
-  
+
   const handlePrevStep = () => {
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
     }
   };
-  
+
   if (!isOpen) {
     return (
       <Button
@@ -95,9 +109,14 @@ export function UserGuide({ className }: UserGuideProps) {
       </Button>
     );
   }
-  
+
   return (
-    <div className={cn('fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm', className)}>
+    <div
+      className={cn(
+        'fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm',
+        className
+      )}
+    >
       <Card className="w-full max-w-md">
         <CardHeader className="relative pb-2">
           <Button
@@ -121,12 +140,10 @@ export function UserGuide({ className }: UserGuideProps) {
             </div>
             <div className="space-y-1">
               <h3 className="text-lg font-medium">{steps[activeStep].title}</h3>
-              <p className="text-sm text-muted-foreground">
-                {steps[activeStep].description}
-              </p>
+              <p className="text-sm text-muted-foreground">{steps[activeStep].description}</p>
             </div>
           </div>
-          
+
           {/* Progress bar */}
           <div className="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
@@ -136,12 +153,7 @@ export function UserGuide({ className }: UserGuideProps) {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePrevStep}
-            disabled={activeStep === 0}
-          >
+          <Button variant="outline" size="sm" onClick={handlePrevStep} disabled={activeStep === 0}>
             Previous
           </Button>
           <Button
