@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import '../../src/styles/theme-colors.css';
+@import '../../src/styles/typography.css';
+@import '../../src/styles/layout.css';
+@import '../../src/styles/card-styles.css';
+@import '../../src/styles/timeline-chart.css';
+@import '../../src/styles/button-input-styles.css';
+@import '../../src/styles/micro-interactions.css';
+@import '../styles/chart-styles.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -295,18 +303,7 @@
     @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background;
   }
 
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+  /* Use Tailwind's built-in animations instead */
 
   .animate-slide-up {
     animation: slideUp 0.3s ease-in-out;

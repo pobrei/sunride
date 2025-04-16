@@ -17,7 +17,7 @@ import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance, formatTemperature } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
-import '@/styles/chart-styles.css';
+import '@frontend/styles/chart-styles.css';
 
 interface TemperatureChartProps {
   forecastPoints: ForecastPoint[];
