@@ -1,27 +1,19 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, LineChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { typography, animation, effects, layout, loading } from '@/styles/tailwind-utils';
+import { animation, effects } from '@/styles/tailwind-utils';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import dynamic from 'next/dynamic';
 
-// Dynamically import the Charts component with no SSR
+// Dynamically import the SafeChartsWrapper component
 const SafeChartsWrapper = dynamic(() => import('./SafeChartsWrapper'), {
   ssr: false,
   loading: () => (
-    <div className={cn("h-[300px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
-      <LoadingSpinner
-        message="Loading chart components..."
-        centered
-        variant="skeleton"
-        withContainer
-        size="lg"
-      />
+    <div className="h-[500px] flex items-center justify-center">
+      <LoadingSpinner size="lg" />
     </div>
   ),
 });
@@ -37,14 +29,15 @@ interface ClientSideChartsProps {
   selectedMarker: number | null;
   /** Callback when a chart point is clicked */
   onChartClick: (index: number) => void;
-  /** Optional className for styling */
+  /** Additional class names */
   className?: string;
-  /** Optional height for the charts */
+  /** Height class for the container */
   height?: string;
-  /** Whether to show a placeholder when no data is available */
-  showPlaceholder?: boolean;
 }
 
+/**
+ * A client-side only wrapper for the charts component
+ */
 export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
   gpxData,
   forecastPoints,
@@ -52,70 +45,15 @@ export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
   selectedMarker,
   onChartClick,
   className,
-  height = 'h-[300px]',
-  showPlaceholder = true,
+  height = 'h-[800px]',
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  // Simulate charts initialization
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 700);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle errors
-  useEffect(() => {
-    try {
-      // Validate data
-      if (forecastPoints && weatherData && forecastPoints.length !== weatherData.length) {
-        throw new Error('Forecast points and weather data length mismatch');
-      }
-    } catch (error) {
-      setHasError(true);
-      setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
-    }
-  }, [forecastPoints, weatherData]);
-
-  // If there's no data, show a placeholder
-  if (
-    (!gpxData ||
-      !forecastPoints ||
-      forecastPoints.length === 0 ||
-      !weatherData ||
-      weatherData.length === 0) &&
-    showPlaceholder
-  ) {
+  // Check if we have valid data
+  if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) {
     return (
-      <Card className={cn(height, 'overflow-hidden', animation.fadeIn, className)}>
-        <CardContent className={cn("p-0 h-full")}>
-          <div className={cn(layout.flexCenter, "h-full bg-muted/20")}>
-            <div className={cn(typography.center, "p-6", animation.fadeInSlideUp)}>
-              <div className={cn(layout.flexCenter, "mx-auto w-12 h-12 rounded-full bg-muted/40 mb-3", animation.fadeIn)}>
-                <BarChart3 className={cn("h-6 w-6", typography.muted)} />
-              </div>
-              <h3 className={cn(typography.h5, "mb-1")}>No Chart Data</h3>
-              <p className={cn(typography.bodySm, typography.muted, "max-w-xs")}>
-                Upload a GPX file to visualize weather data in charts
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // If there's an error, show an error message
-  if (hasError) {
-    return (
-      <div className={cn(height, effects.rounded, 'overflow-hidden', animation.fadeIn, className)}>
+      <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent', animation.fadeIn, className)}>
         <ErrorMessage
-          title="Chart Error"
-          message={errorMessage || 'Failed to load the chart component'}
+          title="No Data Available"
+          message="Please upload a GPX file and generate a forecast to view charts."
           severity="warning"
           withContainer
           className="h-full"
@@ -127,7 +65,7 @@ export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
 
   // If everything is fine, render the charts
   return (
-    <div className={cn(height, effects.rounded, 'relative overflow-hidden', animation.fadeIn, className)}>
+    <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-20', animation.fadeIn, className)}>
       <SafeChartsWrapper
         gpxData={gpxData}
         forecastPoints={forecastPoints}

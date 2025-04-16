@@ -1,17 +1,18 @@
 'use client';
 
 import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
+import { cn } from '@/lib/utils';
+
 // Import chart components
 import TemperatureChart from './TemperatureChart';
 import PrecipitationChart from './PrecipitationChart';
 import WindChart from './WindChart';
-import ElevationChart from './ElevationChart';
 import HumidityChart from './HumidityChart';
 import PressureChart from './PressureChart';
+import ElevationChart from './ElevationChart';
 import UVIndexChart from './UVIndexChart';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/styles/tailwind-utils';
 
 interface ChartsProps {
   /** GPX data containing route points */
@@ -23,8 +24,8 @@ interface ChartsProps {
   /** Currently selected marker index */
   selectedMarker: number | null;
   /** Callback when a chart point is clicked */
-  onChartClick: (index: number) => void;
-  /** Optional className for styling */
+  onChartClick?: (index: number) => void;
+  /** Additional class names */
   className?: string;
 }
 
@@ -40,9 +41,9 @@ export function Charts({
   className,
 }: ChartsProps) {
   return (
-    <div className={cn('p-4', className)}>
-      <Tabs defaultValue="temperature" className="w-full">
-        <TabsList className="mb-4 flex flex-wrap">
+    <div className={cn('p-4 bg-transparent', className)}>
+      <Tabs defaultValue="temperature" className="w-full bg-transparent">
+        <TabsList className="mb-4 flex flex-wrap bg-card">
           <TabsTrigger value="temperature">Temperature</TabsTrigger>
           <TabsTrigger value="precipitation">Precipitation</TabsTrigger>
           <TabsTrigger value="wind">Wind</TabsTrigger>
@@ -52,7 +53,7 @@ export function Charts({
           <TabsTrigger value="uv-index">UV Index</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="temperature" className="mt-0">
+        <TabsContent value="temperature" className="mt-0 bg-transparent">
           <TemperatureChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -61,7 +62,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="precipitation" className="mt-0">
+        <TabsContent value="precipitation" className="mt-0 bg-transparent">
           <PrecipitationChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -70,7 +71,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="wind" className="mt-0">
+        <TabsContent value="wind" className="mt-0 bg-transparent">
           <WindChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -79,7 +80,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="humidity" className="mt-0">
+        <TabsContent value="humidity" className="mt-0 bg-transparent">
           <HumidityChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -88,7 +89,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="pressure" className="mt-0">
+        <TabsContent value="pressure" className="mt-0 bg-transparent">
           <PressureChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -97,7 +98,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="elevation" className="mt-0">
+        <TabsContent value="elevation" className="mt-0 bg-transparent">
           <ElevationChart
             gpxData={gpxData}
             forecastPoints={forecastPoints}
@@ -106,7 +107,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="uv-index" className="mt-0">
+        <TabsContent value="uv-index" className="mt-0 bg-transparent">
           <UVIndexChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}

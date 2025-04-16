@@ -1,16 +1,28 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useState } from 'react';
+import { 
+  ResponsiveContainer, 
+  ComposedChart, 
+  Bar, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend,
+  ReferenceLine
+} from 'recharts';
+import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
+import { chartTheme } from './chart-theme';
 
 interface WindChartProps {
   forecastPoints: ForecastPoint[];
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
-  onChartClick: (index: number) => void;
+  onChartClick?: (index: number) => void;
 }
 
 const WindChart: React.FC<WindChartProps> = ({
@@ -19,219 +31,169 @@ const WindChart: React.FC<WindChartProps> = ({
   selectedMarker,
   onChartClick,
 }) => {
-  const chartRef = useRef<HTMLCanvasElement>(null);
-  const chartInstance = useRef<Chart | null>(null);
-
-  /**
-   * Function to handle chart click events
-   * @param event - Mouse event from the chart canvas
-   */
-  const handleChartClick = (event: MouseEvent): void => {
-    if (!chartInstance.current) return;
-
-    const canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
-    const rect: DOMRect = canvas.getBoundingClientRect();
-    const x: number = event.clientX - rect.left;
-
-    const chartArea: Chart.ChartArea = chartInstance.current.chartArea;
-    if (!chartArea) return;
-
-    // Only handle clicks within the chart area
-    if (x >= chartArea.left && x <= chartArea.right) {
-      const xPercent: number = (x - chartArea.left) / (chartArea.right - chartArea.left);
-      const index: number = Math.min(
-        Math.max(0, Math.floor(xPercent * forecastPoints.length)),
-        forecastPoints.length - 1
-      );
-
-      console.log(`Wind chart clicked at index: ${index}`);
-      onChartClick(index);
-    }
-  };
-
-  /**
-   * Get color scheme based on dark/light mode
-   * @returns Object containing color schemes for wind speed and wind gust
-   */
-  const getColorScheme = (): {
-    windSpeed: { bg: string; border: string; point: string };
-    windGust: { bg: string; border: string; point: string };
-  } => {
-    // Check if we're in dark mode
-    const isDarkMode: boolean =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    return isDarkMode
-      ? {
-          windSpeed: {
-            bg: 'rgba(144, 238, 144, 0.3)',
-            border: 'rgb(144, 238, 144)',
-            point: 'rgb(144, 238, 144)',
-          },
-          windGust: {
-            bg: 'rgba(255, 165, 0, 0.3)',
-            border: 'rgb(255, 165, 0)',
-            point: 'rgb(255, 165, 0)',
-          },
-        }
-      : {
-          windSpeed: {
-            bg: 'rgba(60, 179, 113, 0.3)',
-            border: 'rgb(46, 139, 87)',
-            point: 'rgb(46, 139, 87)',
-          },
-          windGust: {
-            bg: 'rgba(255, 140, 0, 0.3)',
-            border: 'rgb(255, 140, 0)',
-            point: 'rgb(255, 140, 0)',
-          },
-        };
-  };
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [chartData, setChartData] = useState<any[]>([]);
+  
+  // Check for dark mode
   useEffect(() => {
-    // Clean up chart instance on unmount
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-        chartInstance.current = null;
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsDarkMode(darkModeQuery.matches);
+      
+      const handleChange = (e: MediaQueryListEvent) => {
+        setIsDarkMode(e.matches);
+      };
+      
+      darkModeQuery.addEventListener('change', handleChange);
+      return () => darkModeQuery.removeEventListener('change', handleChange);
+    }
   }, []);
-
+  
+  // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-
-    // Prepare data
-    const labels: string[] = forecastPoints.map(point => {
-      return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
+    
+    const data = forecastPoints.map((point, index) => {
+      const weather = weatherData[index];
+      return {
+        name: formatTime(point.timestamp),
+        distance: formatDistance(point.distance),
+        windSpeed: weather?.windSpeed || 0,
+        windGust: weather?.windGust || 0,
+        windDirection: weather?.windDirection || 0,
+        index: index,
+        isSelected: index === selectedMarker,
+      };
     });
-
-    const windSpeedData: number[] = forecastPoints.map((_, i) => weatherData[i]?.windSpeed ?? 0);
-    const windGustData: number[] = forecastPoints.map((_, i) => weatherData[i]?.windGust ?? 0);
-
-    // Create or update chart
-    if (chartRef.current) {
-      const ctx: CanvasRenderingContext2D | null = chartRef.current.getContext('2d');
-      if (ctx) {
-        if (chartInstance.current) {
-          chartInstance.current.destroy();
-        }
-
-        const colors = getColorScheme();
-        chartInstance.current = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels,
-            datasets: [
-              {
-                label: 'Wind Speed (km/h)',
-                data: windSpeedData,
-                borderColor: colors.windSpeed.border,
-                backgroundColor: colors.windSpeed.bg,
-                tension: 0.3,
-                borderWidth: 2,
-                pointBackgroundColor: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 'blue' : colors.windSpeed.point;
-                },
-                pointBorderColor: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 'white' : colors.windSpeed.border;
-                },
-                pointRadius: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 8 : 4;
-                },
-                pointHoverRadius: 10,
-                fill: true,
-              },
-              {
-                label: 'Wind Gust (km/h)',
-                data: windGustData,
-                borderColor: colors.windGust.border,
-                backgroundColor: 'transparent',
-                borderDash: [5, 5],
-                tension: 0.3,
-                borderWidth: 2,
-                pointBackgroundColor: colors.windGust.point,
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: {
-                  font: {
-                    family: 'Inter, sans-serif',
-                    size: 12,
-                  },
-                },
-              },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-            scales: {
-              x: {
-                grid: {
-                  display: true,
-                  color: 'rgba(0, 0, 0, 0.1)',
-                },
-                ticks: {
-                  color: 'hsl(var(--foreground))',
-                },
-              },
-              y: {
-                grid: {
-                  color: 'rgba(0, 0, 0, 0.1)',
-                },
-                min: 0,
-                max: Math.max(...windGustData) * 1.2 || 50,
-                title: {
-                  display: true,
-                  text: 'Wind Speed (km/h)',
-                },
-              },
-            },
-          },
-        });
-
-        // Add direct click handler
-        chartRef.current.addEventListener('click', handleChartClick as EventListener);
-      }
+    
+    setChartData(data);
+  }, [forecastPoints, weatherData, selectedMarker]);
+  
+  // Handle chart click
+  const handleClick = (data: any) => {
+    if (onChartClick && data?.activePayload?.[0]?.payload) {
+      onChartClick(data.activePayload[0].payload.index);
     }
-
-    // Clean up event listener
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.removeEventListener('click', handleChartClick as EventListener);
-      }
-    };
-  }, [forecastPoints, weatherData, selectedMarker, onChartClick]);
-
+  };
+  
+  // Get theme colors
+  const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
+  
+  // Define wind speed categories
+  const lightBreeze = 15; // km/h
+  const moderateWind = 30; // km/h
+  
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Wind</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div
-          className="h-[250px] w-full"
-          role="img"
-          aria-label="Wind chart showing wind speed and gusts along the route"
-        >
-          <canvas ref={chartRef} />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartCard title="Wind" unitLabel="km/h">
+      <div className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            onClick={handleClick}
+          >
+            <CartesianGrid 
+              stroke={theme.grid} 
+              strokeDasharray="3 3" 
+              vertical={false} 
+            />
+            <XAxis 
+              dataKey="name" 
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dy={10}
+            />
+            <YAxis 
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dx={-10}
+              domain={[0, 'auto']}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: theme.card, 
+                borderColor: theme.grid,
+                color: theme.text,
+                borderRadius: '8px',
+                boxShadow: `0 4px 12px ${theme.shadow}`,
+              }}
+              labelStyle={{ color: theme.text }}
+            />
+            <Legend 
+              verticalAlign="top" 
+              height={36} 
+              iconType="circle"
+              wrapperStyle={{ fontSize: '12px', color: theme.text }}
+            />
+            
+            {/* Reference lines for wind categories */}
+            <ReferenceLine 
+              y={lightBreeze} 
+              stroke={theme.grid} 
+              strokeDasharray="3 3" 
+              label={{ 
+                value: 'Light Breeze', 
+                position: 'insideBottomRight',
+                fill: theme.text,
+                fontSize: 10
+              }} 
+            />
+            <ReferenceLine 
+              y={moderateWind} 
+              stroke={theme.grid} 
+              strokeDasharray="3 3" 
+              label={{ 
+                value: 'Moderate Wind', 
+                position: 'insideBottomRight',
+                fill: theme.text,
+                fontSize: 10
+              }} 
+            />
+            
+            <Bar
+              dataKey="windSpeed"
+              name="Wind Speed (km/h)"
+              fill={`${theme.primary}80`}
+              radius={[4, 4, 0, 0]}
+              barSize={20}
+            />
+            <Line
+              type="monotone"
+              dataKey="windGust"
+              name="Wind Gust (km/h)"
+              stroke="#ff7300"
+              strokeWidth={2}
+              dot={(props: any) => {
+                const { cx, cy, payload } = props;
+                return payload.isSelected ? (
+                  <circle 
+                    cx={cx} 
+                    cy={cy} 
+                    r={6} 
+                    fill="#ff7300" 
+                    stroke={theme.card}
+                    strokeWidth={2}
+                  />
+                ) : (
+                  <circle 
+                    cx={cx} 
+                    cy={cy} 
+                    r={4} 
+                    fill="#ff7300" 
+                    opacity={0.8}
+                  />
+                );
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </ChartCard>
   );
 };
 
-export default React.memo(WindChart);
+export default WindChart;

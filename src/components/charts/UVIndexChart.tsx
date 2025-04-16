@@ -1,17 +1,47 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useState } from 'react';
+import { 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend,
+  ReferenceLine,
+  Cell
+} from 'recharts';
+import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
+import { chartTheme } from './chart-theme';
 
 interface UVIndexChartProps {
   forecastPoints: ForecastPoint[];
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
-  onChartClick: (index: number) => void;
+  onChartClick?: (index: number) => void;
 }
+
+// Function to get UV index color based on value
+const getUVColor = (value: number) => {
+  if (value <= 2) return '#3ECF8E'; // Low
+  if (value <= 5) return '#FFD60A'; // Moderate
+  if (value <= 7) return '#FB8B24'; // High
+  if (value <= 10) return '#E53E3E'; // Very High
+  return '#9F2B68'; // Extreme
+};
+
+// Function to get UV risk level
+const getUVRiskLevel = (value: number) => {
+  if (value <= 2) return 'Low';
+  if (value <= 5) return 'Moderate';
+  if (value <= 7) return 'High';
+  if (value <= 10) return 'Very High';
+  return 'Extreme';
+};
 
 const UVIndexChart: React.FC<UVIndexChartProps> = ({
   forecastPoints,
@@ -19,324 +49,145 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   selectedMarker,
   onChartClick,
 }) => {
-  const chartRef = useRef<HTMLCanvasElement>(null);
-  const chartInstance = useRef<Chart | null>(null);
-
-  // Function to handle chart click
-  const handleChartClick = (event: MouseEvent) => {
-    if (!chartInstance.current) return;
-
-    const canvas = event.target as HTMLCanvasElement;
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-
-    const chartArea = chartInstance.current.chartArea;
-    if (!chartArea) return;
-
-    // Only handle clicks within the chart area
-    if (x >= chartArea.left && x <= chartArea.right) {
-      const xPercent = (x - chartArea.left) / (chartArea.right - chartArea.left);
-      const index = Math.min(
-        Math.max(0, Math.floor(xPercent * forecastPoints.length)),
-        forecastPoints.length - 1
-      );
-
-      console.log(`UV Index chart clicked at index: ${index}`);
-      onChartClick(index);
-    }
-  };
-
-  // Get color for UV index based on value
-  const getUVColor = (uvIndex: number) => {
-    if (uvIndex <= 2) return 'rgba(0, 128, 0, 0.7)'; // Low - Green
-    if (uvIndex <= 5) return 'rgba(255, 165, 0, 0.7)'; // Moderate - Orange
-    if (uvIndex <= 7) return 'rgba(255, 69, 0, 0.7)'; // High - Red-Orange
-    if (uvIndex <= 10) return 'rgba(255, 0, 0, 0.7)'; // Very High - Red
-    return 'rgba(128, 0, 128, 0.7)'; // Extreme - Purple
-  };
-
-  // Get color scheme based on dark/light mode
-  const getColorScheme = () => {
-    // Check if we're in dark mode
-    const isDarkMode =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    return isDarkMode
-      ? {
-          uvIndex: {
-            bg: 'rgba(255, 165, 0, 0.3)',
-            border: 'rgb(255, 140, 0)',
-            point: 'rgb(255, 140, 0)',
-          },
-        }
-      : {
-          uvIndex: {
-            bg: 'rgba(255, 220, 180, 0.3)',
-            border: 'rgb(255, 165, 0)',
-            point: 'rgb(255, 165, 0)',
-          },
-        };
-  };
-
-  // Define custom tooltip styling
-  const getTooltipOptions = () => {
-    const isDarkMode =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    return {
-      mode: 'index' as const,
-      intersect: false,
-      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
-      titleColor: isDarkMode ? '#111' : '#fff',
-      bodyColor: isDarkMode ? '#333' : '#fff',
-      borderColor: isDarkMode ? 'rgba(200, 200, 200, 0.8)' : 'rgba(0, 0, 0, 0.1)',
-      borderWidth: 1,
-      padding: 10,
-      cornerRadius: 6,
-      titleFont: {
-        weight: 'bold' as const,
-        size: 14,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      },
-      bodyFont: {
-        size: 12,
-        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      },
-      caretSize: 8,
-      displayColors: true,
-      callbacks: {
-        label: function (context) {
-          const value = context.parsed.y;
-          let label = `UV Index: ${value}`;
-
-          // Add risk level
-          if (value <= 2) label += ' (Low)';
-          else if (value <= 5) label += ' (Moderate)';
-          else if (value <= 7) label += ' (High)';
-          else if (value <= 10) label += ' (Very High)';
-          else label += ' (Extreme)';
-
-          return label;
-        },
-      },
-    };
-  };
-
-  // For scales that need dashed grid lines
-  const getDashedGridLines = () => {
-    return {
-      color: 'rgba(0, 0, 0, 0.1)',
-      lineWidth: 1,
-      display: true,
-      drawBorder: true,
-      drawOnChartArea: true,
-      drawTicks: true,
-    };
-  };
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [chartData, setChartData] = useState<any[]>([]);
+  
+  // Check for dark mode
   useEffect(() => {
-    // Clean up chart instance on unmount
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-        chartInstance.current = null;
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsDarkMode(darkModeQuery.matches);
+      
+      const handleChange = (e: MediaQueryListEvent) => {
+        setIsDarkMode(e.matches);
+      };
+      
+      darkModeQuery.addEventListener('change', handleChange);
+      return () => darkModeQuery.removeEventListener('change', handleChange);
+    }
   }, []);
-
+  
+  // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-
-    // Prepare data
-    const labels = forecastPoints.map(point => {
-      return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
+    
+    const data = forecastPoints.map((point, index) => {
+      const weather = weatherData[index];
+      const uvIndex = weather?.uvIndex || 0;
+      
+      return {
+        name: formatTime(point.timestamp),
+        distance: formatDistance(point.distance),
+        uvIndex: uvIndex,
+        riskLevel: getUVRiskLevel(uvIndex),
+        color: getUVColor(uvIndex),
+        index: index,
+        isSelected: index === selectedMarker,
+      };
     });
-
-    const uvIndexData = forecastPoints.map((point, i) => {
-      // Check if uvIndex exists and is a number
-      if (weatherData[i]?.uvIndex !== undefined && !isNaN(weatherData[i]?.uvIndex as number) && (weatherData[i]?.uvIndex as number) >= 0) {
-        return weatherData[i]?.uvIndex as number;
-      }
-
-      // Generate a synthetic UV index based on time of day, weather conditions, and location
-      const timestamp = point.timestamp;
-      const date = new Date(timestamp * 1000); // Convert to milliseconds
-      const hour = date.getHours();
-      const month = date.getMonth(); // 0-11 (Jan-Dec)
-
-      // Seasonal adjustment - UV is higher in summer months
-      let seasonalFactor = 1.0;
-      // Northern hemisphere seasons
-      if (month >= 4 && month <= 8) { // May-Sep
-        seasonalFactor = 1.5; // Summer
-      } else if (month >= 9 && month <= 10) { // Oct-Nov
-        seasonalFactor = 0.8; // Fall
-      } else if (month >= 11 || month <= 1) { // Dec-Feb
-        seasonalFactor = 0.6; // Winter
-      } else { // Mar-Apr
-        seasonalFactor = 1.0; // Spring
-      }
-
-      // UV is highest during midday
-      let baseUV = 0;
-      if (hour >= 10 && hour <= 16) {
-        // Peak hours - bell curve with maximum at 13:00
-        const hourFactor = 1 - Math.abs(hour - 13) / 6;
-        baseUV = (6 + Math.random() * 3) * hourFactor; // Higher during peak hours
-      } else if ((hour >= 7 && hour < 10) || (hour > 16 && hour <= 19)) {
-        baseUV = 2 + Math.random() * 3; // Moderate during morning/evening
-      } else {
-        baseUV = Math.random() * 1; // Very low during night
-      }
-
-      // Apply seasonal adjustment
-      baseUV *= seasonalFactor;
-
-      // Adjust based on weather conditions
-      const weatherDesc = weatherData[i]?.weatherDescription?.toLowerCase() || '';
-      if (weatherDesc.includes('clear') || weatherDesc.includes('sun')) {
-        baseUV *= 1.5; // Higher UV on clear/sunny days
-      } else if (weatherDesc.includes('partly cloudy')) {
-        baseUV *= 1.0; // Normal UV on partly cloudy days
-      } else if (weatherDesc.includes('cloud') || weatherDesc.includes('overcast')) {
-        baseUV *= 0.7; // Lower UV on cloudy days
-      } else if (weatherDesc.includes('rain') || weatherDesc.includes('drizzle') || weatherDesc.includes('shower')) {
-        baseUV *= 0.4; // Much lower UV during rain
-      } else if (weatherDesc.includes('snow') || weatherDesc.includes('sleet')) {
-        baseUV *= 0.6; // Lower UV during snow (snow can reflect UV)
-      } else if (weatherDesc.includes('fog') || weatherDesc.includes('mist')) {
-        baseUV *= 0.5; // Lower UV in foggy conditions
-      }
-
-      // Ensure UV index is within realistic bounds and round to 1 decimal place
-      return Math.round(Math.min(11, Math.max(0, baseUV)) * 10) / 10;
-    });
-
-    // Create or update chart
-    if (chartRef.current) {
-      const ctx = chartRef.current.getContext('2d');
-      if (ctx) {
-        if (chartInstance.current) {
-          chartInstance.current.destroy();
-        }
-
-        const colors = getColorScheme();
-        chartInstance.current = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [
-              {
-                label: 'UV Index',
-                data: uvIndexData,
-                backgroundColor: context => {
-                  const value = context.raw as number;
-                  return getUVColor(value);
-                },
-                borderColor: colors.uvIndex.border,
-                borderWidth: 1,
-                borderRadius: 4,
-                hoverBackgroundColor: context => {
-                  const value = context.raw as number;
-                  const color = getUVColor(value);
-                  return color.replace('0.7', '0.9'); // Make hover slightly more opaque
-                },
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: {
-                  font: {
-                    family: 'Inter, sans-serif',
-                    size: 12,
-                  },
-                },
-              },
-              tooltip: getTooltipOptions(),
-            },
-            scales: {
-              x: {
-                grid: {
-                  display: true,
-                  color: 'rgba(0, 0, 0, 0.1)',
-                  drawOnChartArea: true,
-                },
-                ticks: {
-                  color: 'hsl(var(--foreground))',
-                },
-              },
-              y: {
-                grid: getDashedGridLines(),
-                min: 0,
-                max: 12,
-                title: {
-                  display: true,
-                  text: 'UV Index',
-                },
-                ticks: {
-                  stepSize: 1,
-                },
-              },
-            },
-          },
-        });
-
-        // Add direct click handler
-        chartRef.current.addEventListener('click', handleChartClick as any);
-      }
+    
+    setChartData(data);
+  }, [forecastPoints, weatherData, selectedMarker]);
+  
+  // Handle chart click
+  const handleClick = (data: any) => {
+    if (onChartClick && data?.activePayload?.[0]?.payload) {
+      onChartClick(data.activePayload[0].payload.index);
     }
-
-    // Clean up event listener
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.removeEventListener('click', handleChartClick as any);
-      }
-    };
-  }, [forecastPoints, weatherData, selectedMarker, onChartClick]);
-
+  };
+  
+  // Get theme colors
+  const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
+  
+  // Custom tooltip
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white dark:bg-[#1C1F24] p-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+          <p className="font-medium">{label}</p>
+          <p className="text-sm">{data.distance}</p>
+          <div className="flex items-center mt-2">
+            <div 
+              className="w-3 h-3 rounded-full mr-2" 
+              style={{ backgroundColor: data.color }}
+            />
+            <p>
+              <span className="font-medium">UV Index: </span>
+              {data.uvIndex} ({data.riskLevel})
+            </p>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+  
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">UV Index</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div
-          className="h-[250px] w-full"
-          role="img"
-          aria-label="UV Index chart showing weather data along the route"
-        >
-          <canvas ref={chartRef} />
-        </div>
-        <div className="mt-2 text-xs grid grid-cols-5 gap-1">
-          <div className="flex items-center">
-            <div className="w-3 h-3 mr-1 rounded-sm bg-green-600"></div>
-            <span>Low (0-2)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 mr-1 rounded-sm bg-orange-500"></div>
-            <span>Moderate (3-5)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 mr-1 rounded-sm bg-red-500 opacity-80"></div>
-            <span>High (6-7)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 mr-1 rounded-sm bg-red-600"></div>
-            <span>Very High (8-10)</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 mr-1 rounded-sm bg-purple-700"></div>
-            <span>Extreme (11+)</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <ChartCard title="UV Index" unitLabel="">
+      <div className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={chartData}
+            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            onClick={handleClick}
+          >
+            <CartesianGrid 
+              stroke={theme.grid} 
+              strokeDasharray="3 3" 
+              vertical={false} 
+            />
+            <XAxis 
+              dataKey="name" 
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dy={10}
+            />
+            <YAxis 
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dx={-10}
+              domain={[0, 12]}
+              ticks={[0, 2, 5, 7, 10, 12]}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              verticalAlign="top" 
+              height={36} 
+              iconType="circle"
+              wrapperStyle={{ fontSize: '12px', color: theme.text }}
+            />
+            
+            {/* Reference lines for UV categories */}
+            <ReferenceLine y={2} stroke="#3ECF8E" strokeDasharray="3 3" />
+            <ReferenceLine y={5} stroke="#FFD60A" strokeDasharray="3 3" />
+            <ReferenceLine y={7} stroke="#FB8B24" strokeDasharray="3 3" />
+            <ReferenceLine y={10} stroke="#E53E3E" strokeDasharray="3 3" />
+            
+            <Bar 
+              dataKey="uvIndex" 
+              name="UV Index" 
+              radius={[4, 4, 0, 0]}
+              barSize={20}
+            >
+              {chartData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color}
+                  stroke={entry.isSelected ? theme.card : 'none'}
+                  strokeWidth={entry.isSelected ? 2 : 0}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </ChartCard>
   );
 };
 
-export default React.memo(UVIndexChart);
+export default UVIndexChart;

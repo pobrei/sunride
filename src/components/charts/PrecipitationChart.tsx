@@ -1,16 +1,27 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useState } from 'react';
+import { 
+  ResponsiveContainer, 
+  ComposedChart, 
+  Bar, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend
+} from 'recharts';
+import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
+import { chartTheme } from './chart-theme';
 
 interface PrecipitationChartProps {
   forecastPoints: ForecastPoint[];
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
-  onChartClick: (index: number) => void;
+  onChartClick?: (index: number) => void;
 }
 
 const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
@@ -19,246 +30,150 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   selectedMarker,
   onChartClick,
 }) => {
-  const chartRef = useRef<HTMLCanvasElement>(null);
-  const chartInstance = useRef<Chart | null>(null);
-
-  /**
-   * Function to handle chart click events
-   * @param event - Mouse event from the chart canvas
-   */
-  const handleChartClick = (event: MouseEvent): void => {
-    if (!chartInstance.current) return;
-
-    const canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
-    const rect: DOMRect = canvas.getBoundingClientRect();
-    const x: number = event.clientX - rect.left;
-
-    const chartArea: Chart.ChartArea = chartInstance.current.chartArea;
-    if (!chartArea) return;
-
-    // Only handle clicks within the chart area
-    if (x >= chartArea.left && x <= chartArea.right) {
-      const xPercent: number = (x - chartArea.left) / (chartArea.right - chartArea.left);
-      const index: number = Math.min(
-        Math.max(0, Math.floor(xPercent * forecastPoints.length)),
-        forecastPoints.length - 1
-      );
-
-      console.log(`Precipitation chart clicked at index: ${index}`);
-      onChartClick(index);
-    }
-  };
-
-  /**
-   * Get color scheme based on dark/light mode
-   * @returns Object containing color schemes for precipitation and probability
-   */
-  const getColorScheme = (): {
-    precipitation: { bg: string; border: string; point: string };
-    probability: { bg: string; border: string; point: string };
-  } => {
-    // Check if we're in dark mode
-    const isDarkMode: boolean =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    return isDarkMode
-      ? {
-          precipitation: {
-            bg: 'rgba(65, 105, 225, 0.3)',
-            border: 'rgb(65, 105, 225)',
-            point: 'rgb(65, 105, 225)',
-          },
-          probability: {
-            bg: 'rgba(100, 149, 237, 0.3)',
-            border: 'rgb(100, 149, 237)',
-            point: 'rgb(100, 149, 237)',
-          },
-        }
-      : {
-          precipitation: {
-            bg: 'rgba(135, 206, 250, 0.3)',
-            border: 'rgb(30, 144, 255)',
-            point: 'rgb(30, 144, 255)',
-          },
-          probability: {
-            bg: 'rgba(176, 224, 230, 0.3)',
-            border: 'rgb(70, 130, 180)',
-            point: 'rgb(70, 130, 180)',
-          },
-        };
-  };
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [chartData, setChartData] = useState<any[]>([]);
+  
+  // Check for dark mode
   useEffect(() => {
-    // Clean up chart instance on unmount
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-        chartInstance.current = null;
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsDarkMode(darkModeQuery.matches);
+      
+      const handleChange = (e: MediaQueryListEvent) => {
+        setIsDarkMode(e.matches);
+      };
+      
+      darkModeQuery.addEventListener('change', handleChange);
+      return () => darkModeQuery.removeEventListener('change', handleChange);
+    }
   }, []);
-
+  
+  // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-
-    // Prepare data
-    const labels: string[] = forecastPoints.map(point => {
-      return `${formatTime(point.timestamp)}\n${formatDistance(point.distance)}`;
+    
+    const data = forecastPoints.map((point, index) => {
+      const weather = weatherData[index];
+      return {
+        name: formatTime(point.timestamp),
+        distance: formatDistance(point.distance),
+        precipitation: weather?.precipitation || 0,
+        probability: weather?.precipitationProbability || 0,
+        index: index,
+        isSelected: index === selectedMarker,
+      };
     });
-
-    const precipitationData: number[] = forecastPoints.map(
-      (_, i) => weatherData[i]?.precipitation ?? 0
-    );
-    const probabilityData: number[] = forecastPoints.map(
-      (_, i) => (weatherData[i]?.precipitationProbability ?? 0) * 100
-    );
-
-    // Create or update chart
-    if (chartRef.current) {
-      const ctx: CanvasRenderingContext2D | null = chartRef.current.getContext('2d');
-      if (ctx) {
-        if (chartInstance.current) {
-          chartInstance.current.destroy();
-        }
-
-        const colors = getColorScheme();
-        chartInstance.current = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [
-              {
-                type: 'bar',
-                label: 'Precipitation (mm)',
-                data: precipitationData,
-                backgroundColor: colors.precipitation.bg,
-                borderColor: colors.precipitation.border,
-                borderWidth: 1,
-                yAxisID: 'y',
-                barPercentage: 0.8,
-                categoryPercentage: 0.9,
-                order: 2,
-              },
-              {
-                type: 'line',
-                label: 'Probability (%)',
-                data: probabilityData,
-                borderColor: colors.probability.border,
-                backgroundColor: colors.probability.bg,
-                borderWidth: 2,
-                pointBackgroundColor: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 'blue' : colors.probability.point;
-                },
-                pointBorderColor: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 'white' : colors.probability.border;
-                },
-                pointRadius: context => {
-                  const index = context.dataIndex;
-                  return selectedMarker === index ? 8 : 4;
-                },
-                pointHoverRadius: 10,
-                yAxisID: 'y1',
-                fill: false,
-                tension: 0.4,
-                order: 1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-              mode: 'index',
-              intersect: false,
-            },
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: {
-                  font: {
-                    family: 'Inter, sans-serif',
-                    size: 12,
-                  },
-                },
-              },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-            scales: {
-              x: {
-                grid: {
-                  display: true,
-                  color: 'rgba(0, 0, 0, 0.1)',
-                },
-                ticks: {
-                  color: 'hsl(var(--foreground))',
-                },
-              },
-              y: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-                title: {
-                  display: true,
-                  text: 'Precipitation (mm)',
-                },
-                min: 0,
-                max: Math.max(...precipitationData) * 1.2 || 5,
-                grid: {
-                  color: 'rgba(0, 0, 0, 0.1)',
-                },
-              },
-              y1: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                title: {
-                  display: true,
-                  text: 'Probability (%)',
-                },
-                min: 0,
-                max: 100,
-                grid: {
-                  drawOnChartArea: false,
-                },
-              },
-            },
-          },
-        });
-
-        // Add direct click handler
-        chartRef.current.addEventListener('click', handleChartClick as EventListener);
-      }
+    
+    setChartData(data);
+  }, [forecastPoints, weatherData, selectedMarker]);
+  
+  // Handle chart click
+  const handleClick = (data: any) => {
+    if (onChartClick && data?.activePayload?.[0]?.payload) {
+      onChartClick(data.activePayload[0].payload.index);
     }
-
-    // Clean up event listener
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.removeEventListener('click', handleChartClick as EventListener);
-      }
-    };
-  }, [forecastPoints, weatherData, selectedMarker, onChartClick]);
-
+  };
+  
+  // Get theme colors
+  const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
+  
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Precipitation</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div
-          className="h-[250px] w-full"
-          role="img"
-          aria-label="Precipitation chart showing rainfall and probability along the route"
-        >
-          <canvas ref={chartRef} />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartCard title="Precipitation" unitLabel="mm / %">
+      <div className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            onClick={handleClick}
+          >
+            <CartesianGrid 
+              stroke={theme.grid} 
+              strokeDasharray="3 3" 
+              vertical={false} 
+            />
+            <XAxis 
+              dataKey="name" 
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dy={10}
+            />
+            <YAxis 
+              yAxisId="left"
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              dx={-10}
+              domain={[0, 'auto']}
+            />
+            <YAxis 
+              yAxisId="right"
+              orientation="right"
+              stroke={theme.text} 
+              fontSize={12}
+              tickLine={false}
+              axisLine={{ stroke: theme.grid }}
+              domain={[0, 100]}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: theme.card, 
+                borderColor: theme.grid,
+                color: theme.text,
+                borderRadius: '8px',
+                boxShadow: `0 4px 12px ${theme.shadow}`,
+              }}
+              labelStyle={{ color: theme.text }}
+            />
+            <Legend 
+              verticalAlign="top" 
+              height={36} 
+              iconType="circle"
+              wrapperStyle={{ fontSize: '12px', color: theme.text }}
+            />
+            <Bar
+              yAxisId="left"
+              dataKey="precipitation"
+              name="Precipitation (mm)"
+              fill={`${theme.primary}80`}
+              radius={[4, 4, 0, 0]}
+              barSize={20}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="probability"
+              name="Probability (%)"
+              stroke="#8884d8"
+              dot={(props: any) => {
+                const { cx, cy, payload } = props;
+                return payload.isSelected ? (
+                  <circle 
+                    cx={cx} 
+                    cy={cy} 
+                    r={6} 
+                    fill="#8884d8" 
+                    stroke={theme.card}
+                    strokeWidth={2}
+                  />
+                ) : (
+                  <circle 
+                    cx={cx} 
+                    cy={cy} 
+                    r={4} 
+                    fill="#8884d8" 
+                    opacity={0.8}
+                  />
+                );
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </ChartCard>
   );
 };
 
-export default React.memo(PrecipitationChart);
+export default PrecipitationChart;
