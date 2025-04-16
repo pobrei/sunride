@@ -31,7 +31,7 @@ export function PageWrapper({
   withPadding = true,
 }: PageWrapperProps) {
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen')}>
+    <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
       {showHeader && <Header />}
       <PageTransition>
         <main className={cn('flex-1', withPadding && 'container py-6', className)}>{children}</main>

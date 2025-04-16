@@ -154,15 +154,15 @@ export const layout = {
   sectionDivider: 'border-t border-border my-12',
 
   // Card layouts
-  card: 'rounded-lg border border-border bg-card shadow-sm p-6 transition-all duration-200',
-  cardHoverable: 'rounded-lg border border-border bg-card shadow-sm p-6 hover:shadow-md hover:border-border/80 transition-all duration-200',
-  cardInteractive: 'rounded-lg border border-border bg-card shadow-sm p-6 hover:shadow-md hover:border-primary/20 cursor-pointer transition-all duration-200',
-  cardCompact: 'rounded-lg border border-border bg-card shadow-sm p-4 transition-all duration-200',
-  cardHeader: 'pb-4 space-y-1.5',
-  cardTitle: 'text-xl font-semibold leading-none tracking-tight',
-  cardDescription: 'text-sm text-muted-foreground',
-  cardContent: 'py-4',
-  cardFooter: 'flex items-center pt-4 border-t border-border mt-4',
+  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 transition-all duration-200',
+  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
+  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
+  cardCompact: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-3 space-y-1 transition-all duration-200',
+  cardHeader: 'flex items-center justify-between',
+  cardTitle: 'text-lg font-medium text-foreground',
+  cardDescription: 'text-sm text-muted',
+  cardContent: 'space-y-2',
+  cardFooter: 'flex items-center justify-between pt-2 mt-2',
   cardFooterEnd: 'flex items-center justify-end pt-4 border-t border-border mt-4',
 
   // Flex layouts
@@ -238,12 +238,12 @@ export const layout = {
  */
 export const animation = {
   // Basic animations
-  fadeIn: 'animate-fade-in',
-  fadeOut: 'animate-fade-out',
-  slideInFromRight: 'animate-slide-in-from-right',
-  slideInFromLeft: 'animate-slide-in-from-left',
-  slideInFromTop: 'animate-slide-in-from-top',
-  slideInFromBottom: 'animate-slide-in-from-bottom',
+  fadeIn: 'opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]',
+  fadeOut: 'opacity-100 animate-[fadeOut_0.3s_ease-in-out_forwards]',
+  slideInFromRight: 'translate-x-full animate-[slideInFromRight_0.3s_ease-in-out_forwards]',
+  slideInFromLeft: '-translate-x-full animate-[slideInFromLeft_0.3s_ease-in-out_forwards]',
+  slideInFromTop: '-translate-y-full animate-[slideInFromTop_0.3s_ease-in-out_forwards]',
+  slideInFromBottom: 'translate-y-full animate-[slideInFromBottom_0.3s_ease-in-out_forwards]',
   spin: 'animate-spin',
   pulse: 'animate-pulse',
   bounce: 'animate-bounce',
@@ -273,7 +273,7 @@ export const animation = {
   buttonPress: 'active:scale-95 transition-transform duration-150',
   cardHover: 'hover:-translate-y-1 hover:shadow-md transition-all duration-200',
   linkHover: 'hover:underline hover:text-primary-dark transition-colors duration-200',
-  fadeInSlideUp: 'animate-fade-in motion-safe:animate-slide-in-from-bottom',
+  fadeInSlideUp: 'opacity-0 translate-y-4 animate-[fadeIn_0.3s_ease-in-out_forwards]',
 
   // Attention grabbing
   pulse3Times: 'animate-[pulse_1s_ease-in-out_3]',
@@ -340,17 +340,14 @@ export const effects = {
   outlinedAccent: 'border-2 border-accent/50',
 
   // Combinations
-  card: 'rounded-lg border border-border bg-card shadow-sm',
-  cardHoverable: 'rounded-lg border border-border bg-card shadow-sm hover:shadow-md hover:border-border/80 transition-all duration-200',
-  cardInteractive: 'rounded-lg border border-border bg-card shadow-sm hover:shadow-md hover:border-primary/20 cursor-pointer transition-all duration-200',
+  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl',
+  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
+  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
   cardInner: 'p-4 rounded-md bg-background/50 border border-border/50',
   button: 'rounded-md shadow-sm hover:shadow transition-all duration-200 active:scale-95',
   buttonHover: 'hover:bg-accent/10 hover:text-accent transition-colors duration-200',
   input: 'rounded-md border border-input bg-transparent shadow-sm focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200',
   pill: 'rounded-full px-3 py-1 text-xs font-medium',
-  hoverSubtle: 'hover:bg-muted/50',
-  borderTop: 'border-t border-border',
-  borderBottom: 'border-b border-border',
 };
 
 /**

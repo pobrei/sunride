@@ -31,8 +31,8 @@ export default function Providers({ children }: ProvidersProps) {
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <PerformanceProvider>
-          <KeyboardFocusOutline />
-          <ToastProvider>
+            <KeyboardFocusOutline />
+            <ToastProvider>
           <NotificationProvider>
             <SimpleNotificationProvider>
               <SafeDataProvider>
@@ -40,7 +40,7 @@ export default function Providers({ children }: ProvidersProps) {
               </SafeDataProvider>
             </SimpleNotificationProvider>
           </NotificationProvider>
-          </ToastProvider>
+            </ToastProvider>
         </PerformanceProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -1,0 +1,93 @@
+/**
+ * Sunride Theme Color System
+ * Refined color palette with light and dark mode support
+ * These variables can be used throughout the application
+ */
+
+:root {
+  /* Base theme colors - Light Mode */
+  --color-bg: #F6F8FA;        /* Soft Light Gray */
+  --color-text: #1E2A38;      /* Deep Navy Blue */
+  --color-accent: #00C2A8;    /* Vibrant Teal */
+  --color-card: #FFFFFF;      /* Pure White */
+  --color-shadow: rgba(0, 0, 0, 0.05);
+
+  /* Derived colors for UI elements */
+  --color-accent-light: #33CFBA; /* Lighter teal for hover states */
+  --color-accent-dark: #00A08A;  /* Darker teal for active states */
+  --color-border: #E5E7EB;       /* Light gray for borders */
+  --color-muted: #F3F4F6;        /* Muted background */
+  --color-muted-text: #6B7280;   /* Muted text */
+
+  /* Map theme colors to existing system for compatibility */
+  --theme-bg: var(--color-bg);
+  --theme-text: var(--color-text);
+  --theme-accent: var(--color-accent);
+  --theme-card: var(--color-card);
+  --theme-shadow: var(--color-shadow);
+
+  /* Map to HSL variables for Tailwind */
+  --background: 210 20% 98%;     /* #F6F8FA */
+  --foreground: 215 30% 17%;     /* #1E2A38 */
+  --primary: 170 100% 38%;       /* #00C2A8 */
+  --primary-foreground: 0 0% 100%;
+  --card: 0 0% 100%;             /* #FFFFFF */
+  --card-foreground: 215 30% 17%; /* #1E2A38 */
+  --border: 220 13% 91%;         /* #E5E7EB */
+  --input: 220 13% 91%;          /* #E5E7EB */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Base theme colors - Dark Mode */
+    --color-bg: #0E1116;        /* Dark Charcoal */
+    --color-text: #F5F7FA;      /* Soft White */
+    --color-accent: #00C2A8;    /* Vibrant Teal */
+    --color-card: #1C1F24;      /* Dark Slate */
+    --color-shadow: rgba(0, 0, 0, 0.25);
+
+    /* Derived colors for UI elements */
+    --color-accent-light: #33CFBA; /* Lighter teal for hover states */
+    --color-accent-dark: #00A08A;  /* Darker teal for active states */
+    --color-border: #2E374A;       /* Darker border color */
+    --color-muted: #232A3B;        /* Muted background */
+    --color-muted-text: #A1A9B8;   /* Muted text */
+
+    /* Map to HSL variables for Tailwind */
+    --background: 220 15% 7%;      /* #0E1116 */
+    --foreground: 210 20% 98%;     /* #F5F7FA */
+    --primary: 170 100% 38%;       /* #00C2A8 */
+    --primary-foreground: 0 0% 100%;
+    --card: 220 13% 13%;           /* #1C1F24 */
+    --card-foreground: 210 20% 98%; /* #F5F7FA */
+    --border: 217 19% 27%;         /* #2E374A */
+    --input: 217 19% 27%;          /* #2E374A */
+  }
+}
+
+/* For next-themes or manual class-based dark mode */
+.dark {
+  /* Base theme colors - Dark Mode */
+  --color-bg: #0E1116;        /* Dark Charcoal */
+  --color-text: #F5F7FA;      /* Soft White */
+  --color-accent: #00C2A8;    /* Vibrant Teal */
+  --color-card: #1C1F24;      /* Dark Slate */
+  --color-shadow: rgba(0, 0, 0, 0.25);
+
+  /* Derived colors for UI elements */
+  --color-accent-light: #33CFBA; /* Lighter teal for hover states */
+  --color-accent-dark: #00A08A;  /* Darker teal for active states */
+  --color-border: #2E374A;       /* Darker border color */
+  --color-muted: #232A3B;        /* Muted background */
+  --color-muted-text: #A1A9B8;   /* Muted text */
+
+  /* Map to HSL variables for Tailwind */
+  --background: 220 15% 7%;      /* #0E1116 */
+  --foreground: 210 20% 98%;     /* #F5F7FA */
+  --primary: 170 100% 38%;       /* #00C2A8 */
+  --primary-foreground: 0 0% 100%;
+  --card: 220 13% 13%;           /* #1C1F24 */
+  --card-foreground: 210 20% 98%; /* #F5F7FA */
+  --border: 217 19% 27%;         /* #2E374A */
+  --input: 217 19% 27%;          /* #2E374A */
+}

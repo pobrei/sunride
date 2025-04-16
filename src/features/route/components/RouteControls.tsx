@@ -111,11 +111,11 @@ export default function RouteControls({
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold">Route Settings</CardTitle>
+      <CardHeader>
+        <CardTitle>Route Settings</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <div className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="startTime">Start Time</Label>
             <Input
@@ -140,7 +140,7 @@ export default function RouteControls({
               step={1}
               value={[weatherInterval]}
               onValueChange={value => setWeatherInterval(value[0])}
-              className="py-2"
+              className="py-4"
             />
           </div>
 
@@ -156,16 +156,16 @@ export default function RouteControls({
               step={1}
               value={[avgSpeed]}
               onValueChange={value => setAvgSpeed(value[0])}
-              className="py-2"
+              className="py-4"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex items-center justify-between gap-3 mt-6">
             <Button
               onClick={handleGenerateForecast}
               disabled={isGenerating}
-              className="flex-1 min-w-0 max-w-full aspect-auto"
-              size="sm"
+              className="flex-1 h-10"
+              size="default"
             >
               {isGenerating ? (
                 <>
@@ -181,8 +181,8 @@ export default function RouteControls({
               onClick={onExportPDF}
               disabled={isExporting || isGenerating}
               variant="outline"
-              className="min-w-0 max-w-full aspect-auto"
-              size="sm"
+              className="h-10 px-4"
+              size="default"
             >
               {isExporting ? (
                 <>

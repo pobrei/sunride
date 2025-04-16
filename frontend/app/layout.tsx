@@ -61,7 +61,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <SkipToContent contentId="main-content" />
-          <div className="relative flex min-h-screen flex-col">
+          <div className="relative flex min-h-screen flex-col container-transition">
             <MainNav />
             <main id="main-content" className="flex-1" tabIndex={-1} aria-label="Main content">
               {children}

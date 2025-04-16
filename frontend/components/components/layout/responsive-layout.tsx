@@ -54,7 +54,7 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen')}>
+    <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
       {/* Header */}
       {showHeader && <Header />}
 

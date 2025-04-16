@@ -245,7 +245,7 @@ export default function Home() {
                   gpxData={gpxData}
                   forecastPoints={forecastPoints}
                   weatherData={weatherData}
-                  className="animate-fade-in"
+                  className="opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]"
                 />
 
                 <ClientSideTimeline
@@ -262,7 +262,7 @@ export default function Home() {
                   weatherData={weatherData}
                   maxInitialAlerts={3}
                   compact={true}
-                  className="animate-fade-in"
+                  className="opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]"
                 />
 
                 <div ref={chartsRef}>
@@ -280,7 +280,7 @@ export default function Home() {
           </>
         )}
 
-        <UserGuide className="animate-fade-in" />
+        <UserGuide className="opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]" />
       </div>
     </ResponsiveLayout>
   );

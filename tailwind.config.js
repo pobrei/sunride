@@ -10,6 +10,9 @@ module.exports = {
     './shared/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    fontFamily: {
+      sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'sans-serif'],
+    },
     extend: {
       gridTemplateColumns: {
         'auto-fill-100': 'repeat(auto-fill, minmax(100px, 1fr))',
@@ -17,6 +20,16 @@ module.exports = {
         'auto-fill-300': 'repeat(auto-fill, minmax(300px, 1fr))',
       },
       colors: {
+        theme: {
+          text: 'var(--color-text)',
+          bg: 'var(--color-bg)',
+          card: 'var(--color-card)',
+          accent: 'var(--color-accent)',
+          primary: 'var(--color-primary)',
+          secondary: 'var(--color-secondary)',
+          border: 'var(--color-border)',
+          shadow: 'var(--color-shadow)',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -75,6 +88,14 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
+        },
+        // New theme colors
+        theme: {
+          bg: 'var(--color-bg)',
+          text: 'var(--color-text)',
+          accent: 'var(--color-accent)',
+          card: 'var(--color-card)',
+          shadow: 'var(--color-shadow)',
         },
       },
       borderRadius: {

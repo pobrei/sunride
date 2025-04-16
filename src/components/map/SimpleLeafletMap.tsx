@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { effects, typography } from '@/styles/tailwind-utils';
-import { GPXData, ForecastPoint } from '@shared/types';
+import { GPXData, ForecastPoint } from '@/types';
 import { Locate } from 'lucide-react';
 import './MapStyles.css';
 
@@ -215,8 +214,6 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
     if (typeof window === 'undefined') return;
 
     const styleId = 'leaflet-custom-styles';
-
-    // Only add styles once
     if (!document.getElementById(styleId)) {
       const style = document.createElement('style');
       style.id = styleId;
@@ -231,17 +228,13 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           justify-content: center;
           width: 24px;
           height: 24px;
-          background-color: #64748b;
+          background-color: #3b82f6;
           color: white;
           font-weight: 500;
           border-radius: 50%;
           font-size: 12px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
           transition: all 0.2s ease;
-        }
-        .marker-normal:hover {
-          background-color: #475569;
-          transform: scale(1.1);
         }
         .marker-selected {
           display: flex;
@@ -283,27 +276,9 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         .dark .leaflet-tile {
           filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
         }
-        .dark .leaflet-container {
-          background: #1a1a1a;
-        }
-        .dark .leaflet-control-attribution {
-          background: rgba(0, 0, 0, 0.5);
-          color: #ccc;
-        }
-        .dark .leaflet-control-attribution a {
-          color: #9ca3af;
-        }
       `;
       document.head.appendChild(style);
     }
-
-    return () => {
-      // Clean up styles on unmount
-      const styleElement = document.getElementById(styleId);
-      if (styleElement) {
-        styleElement.remove();
-      }
-    };
   }, []);
 
   // Render placeholder if no data
@@ -328,8 +303,8 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                 />
               </svg>
             </div>
-            <h3 className={cn(typography.h4, "mb-2")}>No Route Data</h3>
-            <p className={cn(typography.bodySm, "text-muted-foreground max-w-xs mx-auto")}>
+            <h3 className="text-lg font-semibold mb-2">No Route Data</h3>
+            <p className="text-sm text-muted-foreground max-w-xs mx-auto">
               Upload a GPX file to visualize your route on the map with weather data
             </p>
           </div>
@@ -339,39 +314,39 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
   }
 
   // Function to center the map on the route
-  const handleCenterMap = () => {
-    if (mapRef.current && routeRef.current) {
-      console.log('SimpleLeafletMap: Centering map on route');
+  const centerMap = useCallback(async () => {
+    if (!mapRef.current || !routeRef.current) return;
+
+    try {
+      // Center the map on the route bounds
       mapRef.current.fitBounds(routeRef.current.getBounds(), {
         padding: [50, 50],
         maxZoom: 14,
       });
+    } catch (error) {
+      console.error('Error centering map:', error);
     }
-  };
+  }, []);
 
   // Render map
   return (
     <div className="h-full w-full relative">
       <div ref={mapContainerRef} className="h-full w-full"></div>
 
-      {/* Center Map Button */}
+      {/* Center map button */}
       <Button
+        onClick={centerMap}
+        size="icon"
         variant="secondary"
-        size="sm"
-        className="absolute top-2 right-2 z-[1000] shadow-md"
-        onClick={handleCenterMap}
-        aria-label="Center map on route"
+        className="absolute top-3 right-3 z-[1000] bg-theme-card/80 backdrop-blur-sm hover:bg-theme-accent text-theme-text hover:text-white shadow-md map-control-button"
+        aria-label="Center map"
       >
-        <Locate className="h-4 w-4 mr-2" />
-        Center Map
+        <Locate className="h-4 w-4" />
       </Button>
 
       {/* Weather info panel */}
       {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
-        <Card className={cn(
-          "absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-64 z-[1000] p-0",
-          effects.glassmorphism
-        )}>
+        <Card className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-64 z-[1000] p-0 bg-background/80 backdrop-blur-sm">
           <div className="p-3">
             <div className="font-medium mb-2 text-sm">
               Point {selectedMarker + 1} of {forecastPoints.length}
@@ -394,7 +369,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
 
               <div className="text-muted-foreground">Precipitation:</div>
               <div className="font-medium">
-                {weatherData[selectedMarker]?.precipitation?.toFixed(1) || 'N/A'} mm
+                {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
               </div>
             </div>
           </div>

@@ -4,34 +4,37 @@ import { cn } from '@/lib/utils';
 import { effects } from '@/styles/tailwind-utils';
 
 const cardVariants = cva(
-  'rounded-lg bg-card text-card-foreground transition-all duration-200',
+  'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl transition-all duration-300 ease-in-out border border-border/30 dark:border-border/10',
   {
     variants: {
       variant: {
-        default: 'border shadow-sm',
-        elevated: 'border shadow-md',
-        outline: 'border-2',
-        ghost: 'border-none shadow-none bg-transparent',
+        default: '',
+        elevated: 'shadow-lg',
+        outline: 'border border-border',
+        ghost: 'shadow-none bg-transparent',
         glass: effects.glassmorphism,
+        primary: 'border-l-4 border-primary',
+        secondary: 'border-l-4 border-secondary',
+        accent: 'border-l-4 border-accent',
       },
       size: {
-        default: 'p-6',
-        sm: 'p-4',
-        lg: 'p-8',
-        compact: 'p-3',
+        default: 'p-4 md:p-6 space-y-2',
+        sm: 'p-3 md:p-4 space-y-1',
+        lg: 'p-6 md:p-8 space-y-4',
+        compact: 'p-3 space-y-1',
         none: 'p-0',
       },
       hover: {
-        default: 'hover:shadow-md hover:translate-y-[-2px]',
-        subtle: 'hover:shadow-sm hover:translate-y-[-1px]',
-        glow: 'hover:shadow-[0_0_15px_rgba(var(--primary),0.3)]',
+        default: 'hover:shadow-lg hover:-translate-y-1 hover:border-border/50 dark:hover:border-border/20',
+        subtle: 'hover:shadow-md hover:-translate-y-0.5 hover:border-border/50 dark:hover:border-border/20',
+        glow: 'hover:shadow-[0_0_15px_rgba(var(--accent),0.3)]',
         none: '',
       },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      hover: 'default',
+      hover: 'subtle',
     },
   }
 );
@@ -70,8 +73,8 @@ const CardHeader = React.forwardRef<
     ref={ref}
     data-slot="card-header"
     className={cn(
-      'flex flex-col space-y-1.5 rounded-t-lg px-6 pt-6 pb-4',
-      bordered && 'border-b pb-4 mb-4',
+      'flex items-center justify-between px-4 py-3',
+      bordered && 'border-b pb-3 mb-2',
       className
     )}
     {...props}
@@ -86,7 +89,7 @@ const CardTitle = React.forwardRef<
   <Comp
     ref={ref}
     data-slot="card-title"
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+    className={cn('text-lg font-semibold text-foreground', className)}
     {...props}
   />
 ));
@@ -99,7 +102,7 @@ const CardDescription = React.forwardRef<
   <p
     ref={ref}
     data-slot="card-description"
-    className={cn('text-sm text-muted-foreground', className)}
+    className={cn('text-sm text-muted', className)}
     {...props}
   />
 ));
@@ -112,7 +115,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     data-slot="card-content"
-    className={cn('px-6 py-2', className)}
+    className={cn('space-y-4 px-4 py-3', className)}
     {...props}
   />
 ));
@@ -129,8 +132,8 @@ const CardFooter = React.forwardRef<
     ref={ref}
     data-slot="card-footer"
     className={cn(
-      'flex items-center rounded-b-lg px-6 pt-4 pb-6',
-      bordered && 'border-t mt-4',
+      'flex items-center justify-between px-4 py-3',
+      bordered && 'border-t mt-2 pt-4',
       className
     )}
     {...props}

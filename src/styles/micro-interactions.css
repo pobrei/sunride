@@ -1,0 +1,79 @@
+/* Micro Interactions */
+
+/* Base transitions for containers */
+.container-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Card hover and active states */
+.card-interactive {
+  @apply transition-all duration-300 ease-in-out hover:shadow-lg active:scale-98;
+}
+
+/* Button hover and active states */
+.button-interactive {
+  @apply transition-all duration-300 ease-in-out hover:shadow-lg active:scale-98;
+}
+
+/* Link hover states */
+.link-interactive {
+  @apply transition-all duration-200 ease-in-out hover:opacity-80;
+}
+
+/* Input focus states */
+.input-interactive {
+  @apply transition-all duration-200 ease-in-out focus:shadow-md;
+}
+
+/* Hover scale effect */
+.hover-scale {
+  @apply transition-transform duration-300 ease-in-out hover:scale-105;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  @apply transition-transform duration-300 ease-in-out hover:-translate-y-1;
+}
+
+/* Animation classes using standard CSS */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pulse-animation {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.bounce-animation {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

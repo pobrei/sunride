@@ -124,26 +124,30 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold">Upload GPX File</CardTitle>
+      <CardHeader>
+        <CardTitle>Upload GPX File</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div className="grid w-full items-center gap-2">
-            <Label htmlFor="fileInput" className="text-sm">
+            <Label htmlFor="fileInput">
               Select GPX file
             </Label>
-            <div className="flex gap-2" data-testid="gpx-drop-zone">
+            <div className="flex gap-3" data-testid="gpx-drop-zone">
               <Input
                 id="fileInput"
                 type="file"
                 accept=".gpx"
                 onChange={handleFileChange}
-                className="cursor-pointer file:bg-primary file:text-primary-foreground file:border-none file:rounded file:px-2.5 file:py-1.5 file:font-medium hover:file:bg-primary/90"
+                className="cursor-pointer h-10 file:bg-primary file:text-primary-foreground file:border-none file:rounded-lg file:px-3 file:py-2 file:font-medium hover:file:bg-primary/90 file:mr-3 file:transition-colors"
                 disabled={isLoading}
                 data-testid="gpx-file-input"
               />
-              <Button disabled={isLoading || !fileName || !!error} data-testid="upload-button">
+              <Button
+                disabled={isLoading || !fileName || !!error}
+                data-testid="upload-button"
+                className="h-10 px-4"
+              >
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
               </Button>

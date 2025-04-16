@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import '../styles/theme-colors.css';
+@import '../styles/colors.css';
+@import '../styles/typography.css';
+@import '../styles/layout.css';
+@import '../styles/card-styles.css';
+@import '../styles/timeline-chart.css';
+@import '../styles/button-input-styles.css';
+@import '../styles/micro-interactions.css';
+@import '../styles/new-charts.css';
+@import '../styles/chart-styles.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -47,40 +57,40 @@
   /* Base radius for consistent rounded corners */
   --radius: 0.75rem;
 
-  /* Light mode - refined color palette */
+  /* Light mode - Sunride refined color palette */
   /* Background and text colors */
-  --background: 210 20% 98%; /* #F7FAFC - soft blueish-gray */
-  --foreground: 222 47% 11%; /* #1F2937 - dark gray for primary text */
+  --background: 210 20% 98%; /* #F6F8FA - Soft Light Gray */
+  --foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
 
   /* Card colors */
-  --card: 0 0% 100%; /* #FFFFFF - pure white for cards */
-  --card-foreground: 222 47% 11%; /* #1F2937 - dark gray */
+  --card: 0 0% 100%; /* #FFFFFF - Pure White */
+  --card-foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
 
   /* Popover colors */
-  --popover: 0 0% 100%; /* #FFFFFF - pure white */
-  --popover-foreground: 222 47% 11%; /* #1F2937 - dark gray */
+  --popover: 0 0% 100%; /* #FFFFFF - Pure White */
+  --popover-foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
 
-  /* Primary colors - vibrant blue */
-  --primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
-  --primary-foreground: 0 0% 100%; /* White text on blue */
-  --primary-light: 217 91% 85%; /* Lighter blue for hover states */
-  --primary-dark: 217 91% 45%; /* Darker blue for active states */
+  /* Primary colors - Vibrant Teal */
+  --primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
+  --primary-foreground: 0 0% 100%; /* White text on teal */
+  --primary-light: 170 100% 50%; /* #00F5D4 - Lighter teal for hover states */
+  --primary-dark: 170 100% 30%; /* #009A85 - Darker teal for active states */
 
-  /* Secondary colors - emerald green */
-  --secondary: 152 60% 36%; /* #10B981 - emerald green */
-  --secondary-foreground: 0 0% 100%; /* White text on green */
-  --secondary-light: 152 60% 75%; /* Lighter green for hover states */
-  --secondary-dark: 152 60% 25%; /* Darker green for active states */
+  /* Secondary colors - complementary to teal */
+  --secondary: 200 60% 50%; /* #3399CC - Sky Blue */
+  --secondary-foreground: 0 0% 100%; /* White text on blue */
+  --secondary-light: 200 60% 65%; /* #66B8E0 - Lighter blue for hover states */
+  --secondary-dark: 200 60% 40%; /* #297AA6 - Darker blue for active states */
 
   /* Muted colors for subtle UI elements */
   --muted: 220 14% 96%; /* #F3F4F6 - light gray */
-  --muted-foreground: 220 9% 46%; /* #6B7280 - medium gray for subtle text */
+  --muted-foreground: 215 25% 40%; /* #5A6A80 - medium navy for subtle text */
 
-  /* Accent colors - using indigo for distinction from primary */
-  --accent: 245 58% 51%; /* #6366F1 - indigo */
+  /* Accent colors - using the same teal as primary for consistency */
+  --accent: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --accent-foreground: 0 0% 100%; /* White text on accent */
-  --accent-light: 245 58% 75%; /* Lighter indigo for hover states */
-  --accent-dark: 245 58% 40%; /* Darker indigo for active states */
+  --accent-light: 170 100% 50%; /* #00F5D4 - Lighter teal for hover states */
+  --accent-dark: 170 100% 30%; /* #009A85 - Darker teal for active states */
 
   /* Destructive colors - red */
   --destructive: 0 84% 60%; /* #EF4444 - red for destructive actions */
@@ -122,51 +132,51 @@
   --chart-8: 0 84% 60%; /* #EF4444 - red */
 
   /* Sidebar colors */
-  --sidebar: 0 0% 100%; /* #FFFFFF - pure white for sidebar */
-  --sidebar-foreground: 222 47% 11%; /* #1F2937 - dark gray */
-  --sidebar-primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
+  --sidebar: 0 0% 100%; /* #FFFFFF - Pure White for sidebar */
+  --sidebar-foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
+  --sidebar-primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --sidebar-primary-foreground: 0 0% 100%; /* White text */
-  --sidebar-accent: 245 58% 51%; /* #6366F1 - indigo */
+  --sidebar-accent: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --sidebar-accent-foreground: 0 0% 100%; /* White text */
   --sidebar-border: 220 13% 91%; /* #E5E7EB - soft gray */
-  --sidebar-ring: 217 91% 60%; /* #3B82F6 - vibrant blue */
+  --sidebar-ring: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
 }
 
 .dark {
-  /* Dark mode - refined color palette */
+  /* Dark mode - Sunride refined color palette */
   /* Background and text colors */
-  --background: 222 47% 11%; /* #1A1E2B - dark background */
-  --foreground: 210 20% 98%; /* #F7FAFC - light text */
+  --background: 220 15% 7%; /* #0E1116 - Dark Charcoal */
+  --foreground: 210 20% 98%; /* #F5F7FA - Soft White */
 
   /* Card colors */
-  --card: 223 33% 17%; /* #232A3B - dark card background */
-  --card-foreground: 210 20% 98%; /* #F7FAFC - light text on cards */
+  --card: 220 13% 13%; /* #1C1F24 - Dark Slate */
+  --card-foreground: 210 20% 98%; /* #F5F7FA - Soft White */
 
   /* Popover colors */
-  --popover: 223 33% 17%; /* #232A3B - dark popover background */
-  --popover-foreground: 210 20% 98%; /* #F7FAFC - light text on popovers */
+  --popover: 220 13% 13%; /* #1C1F24 - Dark Slate */
+  --popover-foreground: 210 20% 98%; /* #F5F7FA - Soft White */
 
-  /* Primary colors - vibrant blue adjusted for dark mode */
-  --primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
+  /* Primary colors - Vibrant Teal adjusted for dark mode */
+  --primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --primary-foreground: 0 0% 100%; /* White text */
-  --primary-light: 217 91% 70%; /* Lighter blue for hover states */
-  --primary-dark: 217 91% 50%; /* Darker blue for active states */
+  --primary-light: 170 100% 45%; /* #00DBC0 - Lighter teal for hover states */
+  --primary-dark: 170 100% 32%; /* #00A38C - Darker teal for active states */
 
-  /* Secondary colors - emerald green adjusted for dark mode */
-  --secondary: 152 60% 36%; /* #10B981 - emerald green */
+  /* Secondary colors - complementary to teal adjusted for dark mode */
+  --secondary: 200 60% 50%; /* #3399CC - Sky Blue */
   --secondary-foreground: 0 0% 100%; /* White text */
-  --secondary-light: 152 60% 45%; /* Lighter green for hover states */
-  --secondary-dark: 152 60% 30%; /* Darker green for active states */
+  --secondary-light: 200 60% 60%; /* #4DAAD9 - Lighter blue for hover states */
+  --secondary-dark: 200 60% 42%; /* #2B82AD - Darker blue for active states */
 
   /* Muted colors for subtle UI elements */
-  --muted: 223 33% 17%; /* #232A3B - dark muted background */
-  --muted-foreground: 220 9% 70%; /* #A1A9B8 - light gray for muted text */
+  --muted: 220 15% 16%; /* #232A3B - dark muted background */
+  --muted-foreground: 210 15% 70%; /* #A1A9B8 - light gray for muted text */
 
-  /* Accent colors - using indigo for distinction from primary */
-  --accent: 245 58% 51%; /* #6366F1 - indigo */
+  /* Accent colors - using the same teal as primary for consistency */
+  --accent: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --accent-foreground: 0 0% 100%; /* White text */
-  --accent-light: 245 58% 60%; /* Lighter indigo for hover states */
-  --accent-dark: 245 58% 45%; /* Darker indigo for active states */
+  --accent-light: 170 100% 45%; /* #00DBC0 - Lighter teal for hover states */
+  --accent-dark: 170 100% 32%; /* #00A38C - Darker teal for active states */
 
   /* Destructive colors - red */
   --destructive: 0 84% 60%; /* #EF4444 - red */
@@ -208,14 +218,14 @@
   --chart-8: 0 84% 60%; /* #EF4444 - red */
 
   /* Sidebar colors */
-  --sidebar: 222 47% 11%; /* #1A1E2B - dark sidebar background */
-  --sidebar-foreground: 210 20% 98%; /* #F7FAFC - light text */
-  --sidebar-primary: 217 91% 60%; /* #3B82F6 - vibrant blue */
+  --sidebar: 220 15% 7%; /* #0E1116 - Dark Charcoal */
+  --sidebar-foreground: 210 20% 98%; /* #F5F7FA - Soft White */
+  --sidebar-primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --sidebar-primary-foreground: 0 0% 100%; /* White text */
-  --sidebar-accent: 245 58% 51%; /* #6366F1 - indigo */
+  --sidebar-accent: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
   --sidebar-accent-foreground: 0 0% 100%; /* White text */
   --sidebar-border: 217 19% 27%; /* #2E374A - darker border color */
-  --sidebar-ring: 217 91% 60%; /* #3B82F6 - vibrant blue */
+  --sidebar-ring: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
 }
 
 @tailwind base;
@@ -245,13 +255,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--primary);
+    background: var(--accent);
     border-radius: 4px;
     opacity: 0.7;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+    background: var(--accent-light);
     opacity: 1;
   }
 
@@ -278,35 +288,24 @@
   }
 
   .micro-shadow {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px var(--color-shadow);
   }
 
   .card-shadow {
     box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.05),
-      0 1px 3px rgba(0, 0, 0, 0.1);
+      0 4px 12px var(--color-shadow),
+      0 1px 3px var(--color-shadow);
   }
 
   .inner-shadow {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px var(--color-shadow);
   }
 
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent/40 focus:ring-offset-1 focus:ring-offset-background;
   }
 
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+  /* Use Tailwind's built-in animations instead */
 
   .animate-slide-up {
     animation: slideUp 0.3s ease-in-out;
@@ -470,7 +469,7 @@
     width: 32px;
     height: 32px;
     border: 3px solid #ffffff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 15px var(--color-shadow);
     font-size: 14px;
     font-weight: bold;
   }

@@ -14,14 +14,14 @@ interface ChartCardProps {
 /**
  * A reusable card component for charts
  */
-const ChartCard: React.FC<ChartCardProps> = ({ 
-  title, 
-  unitLabel, 
-  children, 
-  className 
+const ChartCard: React.FC<ChartCardProps> = ({
+  title,
+  unitLabel,
+  children,
+  className
 }) => {
   return (
-    <Card className={cn("overflow-hidden bg-white dark:bg-[var(--color-card)] rounded-2xl", className)}>
+    <Card className={cn("overflow-visible bg-white dark:bg-[var(--color-card)] rounded-2xl", className)}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-medium text-[#1E2A38] dark:text-[#F5F7FA]">
@@ -34,7 +34,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-4 overflow-visible">
         {children}
       </CardContent>
     </Card>

@@ -87,3 +87,49 @@
 .dark .leaflet-control-attribution a {
   color: #9ca3af;
 }
+
+/* Map control buttons */
+.map-control-button {
+  background-color: var(--color-card, white);
+  color: var(--color-text, #1E2A38);
+  border: none;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 5px var(--color-shadow, rgba(0, 0, 0, 0.1));
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.map-control-button:hover {
+  background-color: var(--color-accent, #00C2A8);
+  color: white;
+}
+
+.map-control-button:focus {
+  outline: 2px solid var(--color-accent, #00C2A8);
+  outline-offset: 2px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .marker-normal {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .marker-selected {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .map-control-button {
+    width: 32px;
+    height: 32px;
+  }
+}

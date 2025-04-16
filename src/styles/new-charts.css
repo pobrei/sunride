@@ -1,0 +1,117 @@
+/* New chart styles with high contrast */
+
+/* Chart canvas styling */
+canvas.humidity-chart,
+canvas.pressure-chart,
+canvas.uv-chart,
+canvas.temperature-chart,
+canvas.precipitation-chart,
+canvas.wind-chart,
+canvas.elevation-chart,
+canvas.chartjs-render-monitor,
+canvas[data-chartjs] {
+  background-color: transparent !important;
+  border-radius: 4px !important;
+}
+
+/* Global canvas styling for Chart.js */
+canvas {
+  background-color: transparent !important;
+}
+
+/* Chart container styles */
+.chart-container {
+  background-color: transparent !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+}
+
+/* Chart wrapper with visible overflow */
+.chart-wrapper-visible {
+  overflow: visible !important;
+}
+
+/* Chart styling */
+.humidity-chart,
+.pressure-chart,
+.uv-chart {
+  filter: none !important;
+}
+
+/* Chart text styling */
+.chart-title,
+.chart-label,
+.chart-tick {
+  /* Use theme colors from CSS variables */
+  color: var(--foreground) !important;
+}
+
+/* Chart grid lines */
+.chart-grid-line {
+  stroke: var(--border) !important;
+  stroke-width: 1px !important;
+}
+
+/* Chart points */
+.chart-point {
+  stroke: var(--primary) !important;
+  stroke-width: 2px !important;
+  r: 4 !important;
+}
+
+/* Chart lines */
+.chart-line {
+  stroke-width: 2px !important;
+}
+
+/* Chart bars */
+.chart-bar {
+  stroke: var(--border) !important;
+  stroke-width: 1px !important;
+}
+
+/* Chart tooltips */
+.chartjs-tooltip {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+}
+
+/* Chart legend */
+.chartjs-legend {
+  color: var(--foreground) !important;
+}
+
+/* Chart axis titles */
+.chartjs-axis-title {
+  color: var(--foreground) !important;
+}
+
+/* Chart ticks */
+.chartjs-tick {
+  color: var(--muted-foreground) !important;
+}
+
+/* UV Index legend colors */
+.uv-low {
+  background-color: rgb(0, 255, 0) !important;
+}
+
+.uv-moderate {
+  background-color: rgb(255, 255, 0) !important;
+}
+
+.uv-high {
+  background-color: rgb(255, 165, 0) !important;
+}
+
+.uv-very-high {
+  background-color: rgb(255, 0, 0) !important;
+}
+
+.uv-extreme {
+  background-color: rgb(255, 0, 255) !important;
+}

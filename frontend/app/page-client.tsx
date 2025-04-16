@@ -253,7 +253,7 @@ export default function Home() {
                   gpxData={gpxData}
                   forecastPoints={forecastPoints}
                   weatherData={weatherData}
-                  className="animate-fade-in"
+                  className="fade-in"
                 />
 
                 <ClientSideTimeline
@@ -270,7 +270,7 @@ export default function Home() {
                   weatherData={weatherData}
                   maxInitialAlerts={3}
                   compact={true}
-                  className="animate-fade-in"
+                  className="fade-in"
                 />
 
                 <div ref={chartsRef}>
@@ -288,10 +288,10 @@ export default function Home() {
           </>
         )}
 
-        <UserGuide className="animate-fade-in" />
+        <UserGuide className="fade-in" />
 
         {/* Enhanced Visualization Demo Link */}
-        <Card className="p-6 border border-border rounded-lg bg-muted/10 hover:bg-muted/20 transition-colors animate-fade-in">
+        <Card className="p-6 border border-border rounded-lg bg-muted/10 hover:bg-muted/20 transition-colors fade-in">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-semibold mb-2">Enhanced Data Visualization Demo</h3>

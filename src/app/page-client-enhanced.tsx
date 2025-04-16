@@ -2,6 +2,8 @@
 
 import { useRef } from 'react';
 import { Map as MapIcon, Upload, CloudRain, BarChart } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { layout } from '@/styles/tailwind-utils';
 import gsap from 'gsap';
 
 // Import from feature folders
@@ -25,7 +27,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import GPXUploader from '@/components/GPXUploader';
 
 // Import layout components
-import { ResponsiveLayout } from '@/components/layout/responsive-layout';
+import { Header } from '@/components/layout/header';
 
 // Import the map component
 import MapWrapper from '@/components/map/MapWrapper';
@@ -197,91 +199,102 @@ export default function Home() {
   );
 
   return (
-    <ResponsiveLayout
-      sidebarContent={sidebarContent}
-      headerContent={headerContent}
-      sidebarTitle="Route Controls"
-      sidebarIcon={<MapIcon className="h-5 w-5 text-primary" />}
-      sidebarCollapsible={true}
-      sidebarDefaultCollapsed={false}
-    >
-      <div className="space-y-6">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-[500px] bg-muted/30 rounded-lg border border-border">
-            <LoadingSpinner
-              message={loadingMessage || 'Loading weather data...'}
-              centered
-              variant="spinner"
-              withContainer
-              size="lg"
-            />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      <div className="container mx-auto px-4 py-6 pb-24"> {/* Added more bottom padding */}
+        {headerContent}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+          {/* Left panel with controls */}
+          <div className="lg:col-span-1 space-y-4">
+            {sidebarContent}
           </div>
-        ) : (
-          <>
-            <div ref={mapRef} className="relative">
-              <div className="h-[500px] rounded-lg overflow-hidden border border-border">
-                <MapWrapper
-                  gpxData={gpxData}
-                  forecastPoints={forecastPoints}
-                  weatherData={weatherData}
-                  onMarkerClick={handleMarkerClick}
-                  selectedMarker={selectedMarker}
+
+          {/* Main content area */}
+          <div className="lg:col-span-3 space-y-6">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-[500px] bg-muted/30 rounded-lg border border-border">
+                <LoadingSpinner
+                  message={loadingMessage || 'Loading weather data...'}
+                  centered
+                  variant="spinner"
+                  withContainer
+                  size="lg"
                 />
               </div>
+            ) : (
+              <>
+                <div className="relative" ref={mapRef}>
+                  <div className="h-[500px] rounded-lg overflow-hidden border border-border">
+                    <MapWrapper
+                      gpxData={gpxData}
+                      forecastPoints={forecastPoints}
+                      weatherData={weatherData}
+                      onMarkerClick={handleMarkerClick}
+                      selectedMarker={selectedMarker}
+                    />
+                  </div>
 
-              {forecastPoints.length > 0 && (
-                <KeyboardNavigation
-                  onNavigate={direction => console.log(`Navigate ${direction}`)}
-                  onZoom={direction => console.log(`Zoom ${direction}`)}
-                  onSelectMarker={handleMarkerClick}
-                  markerCount={forecastPoints.length}
-                />
-              )}
-            </div>
-
-            {forecastPoints.length > 0 && weatherData.length > 0 && (
-              <div className="space-y-6">
-                <RouteSummary
-                  gpxData={gpxData}
-                  forecastPoints={forecastPoints}
-                  weatherData={weatherData}
-                  className="animate-fade-in"
-                />
-
-                <ClientSideTimeline
-                  forecastPoints={forecastPoints}
-                  weatherData={weatherData}
-                  selectedMarker={selectedMarker}
-                  onTimelineClick={handleTimelineClick}
-                  height="h-[150px]"
-                  showNavigation={true}
-                />
-
-                <WeatherAlerts
-                  forecastPoints={forecastPoints}
-                  weatherData={weatherData}
-                  maxInitialAlerts={3}
-                  compact={true}
-                  className="animate-fade-in"
-                />
-
-                <div ref={chartsRef}>
-                  <EnhancedClientCharts
-                    gpxData={gpxData}
-                    forecastPoints={forecastPoints}
-                    weatherData={weatherData}
-                    selectedMarker={selectedMarker}
-                    onChartClick={handleChartClick}
-                    height="h-[400px]"
-                  />
+                  {forecastPoints.length > 0 && (
+                    <KeyboardNavigation
+                      onNavigate={direction => console.log(`Navigate ${direction}`)}
+                      onZoom={direction => console.log(`Zoom ${direction}`)}
+                      onSelectMarker={(index) => index !== null && handleMarkerClick(index)}
+                      markerCount={forecastPoints.length}
+                    />
+                  )}
                 </div>
-              </div>
-            )}
-          </>
-        )}
 
-        <UserGuide className="animate-fade-in" />
+                {forecastPoints.length > 0 && weatherData.length > 0 && (
+                  <div className={cn("space-y-6 mt-6")}>
+                    <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-6")}>
+                      <RouteSummary
+                        gpxData={gpxData}
+                        forecastPoints={forecastPoints}
+                        weatherData={weatherData}
+                        className="fade-in"
+                      />
+
+                      <WeatherAlerts
+                        forecastPoints={forecastPoints}
+                        weatherData={weatherData}
+                        maxInitialAlerts={3}
+                        compact={true}
+                        className="fade-in"
+                      />
+                    </div>
+
+                    <ClientSideTimeline
+                      forecastPoints={forecastPoints}
+                      weatherData={weatherData}
+                      selectedMarker={selectedMarker}
+                      onTimelineClick={handleTimelineClick}
+                      height="h-[150px]"
+                      showNavigation={true}
+                    />
+
+                    <div ref={chartsRef} className="mb-16"> {/* Added bottom margin */}
+                      <EnhancedClientCharts
+                        gpxData={gpxData}
+                        forecastPoints={forecastPoints}
+                        weatherData={weatherData}
+                        selectedMarker={selectedMarker}
+                        onChartClick={handleChartClick}
+                        height="h-[500px]"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className={cn("mt-6")}>
+                  <UserGuide className={cn("fade-in")} />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
-    </ResponsiveLayout>
+    </div>
   );
 }

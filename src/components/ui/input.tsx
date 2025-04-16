@@ -48,7 +48,7 @@ function Input({
   return (
     <div className="relative w-full">
       {leftIcon && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+        <div className="input-icon-left">
           {leftIcon}
         </div>
       )}
@@ -56,18 +56,18 @@ function Input({
         type={type}
         data-slot="input"
         className={cn(
-          'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base inner-shadow transition-all duration-200 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-          'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:shadow-none',
-          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-          'hover:border-primary/50',
-          leftIcon && 'pl-10',
+          'input w-full rounded-xl border border-border bg-transparent px-4 py-2 text-sm transition-all duration-300 ease-in-out',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus:shadow-md',
+          'placeholder:text-muted disabled:opacity-50 disabled:cursor-not-allowed',
+          'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
+          leftIcon && 'input-with-icon-left pl-10',
           (rightIcon ||
             isValid ||
             isInvalid ||
             (initialType === 'password' && showPasswordToggle)) &&
-            'pr-10',
-          isInvalid && 'border-destructive',
-          isValid && 'border-green-500',
+            'input-with-icon-right pr-10',
+          isInvalid && 'input-error border-red-500 focus-visible:ring-red-500',
+          isValid && 'input-success border-green-500 focus-visible:ring-green-500',
           className
         )}
         aria-invalid={isInvalid ? 'true' : 'false'}
@@ -78,19 +78,19 @@ function Input({
         {...props}
       />
       {isValid && !rightIcon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+        <div className="input-icon-right text-green-500">
           <Check className="h-4 w-4" />
         </div>
       )}
       {isInvalid && !rightIcon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-destructive">
+        <div className="input-icon-right text-red-500">
           <AlertCircle className="h-4 w-4" />
         </div>
       )}
       {initialType === 'password' && showPasswordToggle && (
         <button
           type="button"
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="input-icon-right text-muted hover:text-foreground"
           onClick={togglePasswordVisibility}
           tabIndex={-1}
           aria-label={type === 'password' ? 'Show password' : 'Hide password'}
@@ -102,7 +102,7 @@ function Input({
         !isValid &&
         !isInvalid &&
         !(initialType === 'password' && showPasswordToggle) && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <div className="input-icon-right text-muted">
             {rightIcon}
           </div>
         )}

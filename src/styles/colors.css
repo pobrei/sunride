@@ -1,0 +1,51 @@
+:root {
+  /* Base colors */
+  --color-bg: #F6F8FA;
+  --color-foreground: #1E2A38;
+  --color-accent: #00C2A8;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-muted: #6B7280;
+  --color-primary: #1E2A38;
+
+  /* Chart colors */
+  --chart-grid-color: rgba(0, 0, 0, 0.1);
+  --chart-tooltip-bg: rgba(0, 0, 0, 0.8);
+  --chart-tooltip-text: #FFFFFF;
+
+  /* Chart specific colors */
+  --chart-humidity-color: #87CEF9;
+  --chart-pressure-color: #9370DB;
+  --chart-uv-color: #FFA500;
+  --chart-temperature-color: #FFB6C1;
+  --chart-feels-like-color: #98FB98;
+  --chart-precipitation-color: #4682B4;
+  --chart-wind-color: #6495ED;
+  --chart-elevation-color: #A0522D;
+}
+
+.dark {
+  /* Base colors */
+  --color-bg: #0E1116;
+  --color-foreground: #F5F7FA;
+  --color-accent: #00C2A8;
+  --color-card: #1C1F24;
+  --color-border: #2D3748;
+  --color-muted: #9CA3AF;
+  --color-primary: #F5F7FA;
+
+  /* Chart colors */
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+  --chart-tooltip-bg: rgba(255, 255, 255, 0.9);
+  --chart-tooltip-text: #111111;
+
+  /* Chart specific colors */
+  --chart-humidity-color: #6495ED;
+  --chart-pressure-color: #BA55D3;
+  --chart-uv-color: #FF8C00;
+  --chart-temperature-color: #B4465A;
+  --chart-feels-like-color: #50AA64;
+  --chart-precipitation-color: #6495ED;
+  --chart-wind-color: #6495ED;
+  --chart-elevation-color: #CD853F;
+}

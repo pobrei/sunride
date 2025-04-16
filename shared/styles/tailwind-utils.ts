@@ -55,10 +55,10 @@ export const typography = {
   h5: 'text-lg font-semibold leading-snug',
   h6: 'text-base font-semibold leading-normal',
 
-  // Body text
-  body: 'text-base leading-relaxed',
-  bodyLg: 'text-lg leading-relaxed',
-  bodySm: 'text-sm leading-relaxed',
+  // Body text - updated to match new typography system
+  body: 'text-lg leading-relaxed',  // Main body text
+  bodyLg: 'text-xl leading-relaxed',
+  bodySm: 'text-sm leading-normal', // For labels
   bodyXs: 'text-xs leading-normal',
 
   // Display text (larger than headings, for hero sections)
@@ -108,6 +108,10 @@ export const typography = {
   badge: 'text-xs font-medium',
   code: 'font-mono text-sm',
   blockquote: 'pl-4 border-l-2 border-muted italic text-muted-foreground',
+
+  // New typography system classes
+  textBody: 'text-lg leading-relaxed font-normal',
+  textLabel: 'text-sm leading-normal font-normal',
 };
 
 /**
@@ -142,10 +146,24 @@ export const lineHeight = {
  */
 export const layout = {
   // Container layouts
-  container: 'container mx-auto px-4 max-w-7xl',
-  containerSm: 'container mx-auto px-4 max-w-3xl',
-  containerLg: 'container mx-auto px-4 max-w-screen-2xl',
+  container: 'max-w-screen-xl mx-auto px-4',
+  containerSm: 'mx-auto px-4 max-w-3xl',
+  containerLg: 'mx-auto px-4 max-w-screen-2xl',
   containerFull: 'w-full px-4',
+
+  // Grid layouts
+  grid: 'grid grid-cols-12 gap-6',
+  gridSm: 'grid grid-cols-12 gap-4',
+  gridLg: 'grid grid-cols-12 gap-8',
+
+  // Column spans
+  colFull: 'col-span-12',
+  colMain: 'col-span-12 md:col-span-8',
+  colSidebar: 'col-span-12 md:col-span-4',
+  colHalf: 'col-span-12 md:col-span-6',
+  colThird: 'col-span-12 md:col-span-4',
+  colTwoThirds: 'col-span-12 md:col-span-8',
+  colQuarter: 'col-span-12 sm:col-span-6 md:col-span-3',
 
   // Section layouts
   section: 'py-12',
@@ -153,16 +171,25 @@ export const layout = {
   sectionLg: 'py-24',
   sectionDivider: 'border-t border-border my-12',
 
+  // Vertical spacing
+  verticalSpacingSm: 'gap-4',
+  verticalSpacingMd: 'gap-6',
+  verticalSpacingLg: 'gap-8',
+
+  // Section spacing
+  sectionSpacing: 'mt-8 pb-12',
+
   // Card layouts
-  card: 'rounded-lg border border-border bg-card shadow-sm p-6 transition-all duration-200',
-  cardHoverable: 'rounded-lg border border-border bg-card shadow-sm p-6 hover:shadow-md hover:border-border/80 transition-all duration-200',
-  cardInteractive: 'rounded-lg border border-border bg-card shadow-sm p-6 hover:shadow-md hover:border-primary/20 cursor-pointer transition-all duration-200',
-  cardCompact: 'rounded-lg border border-border bg-card shadow-sm p-4 transition-all duration-200',
-  cardHeader: 'pb-4 space-y-1.5',
-  cardTitle: 'text-xl font-semibold leading-none tracking-tight',
-  cardDescription: 'text-sm text-muted-foreground',
-  cardContent: 'py-4',
-  cardFooter: 'flex items-center pt-4 border-t border-border mt-4',
+  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 transition-all duration-200',
+  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
+  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
+  cardCompact: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-3 space-y-1 transition-all duration-200',
+  cardHeader: 'flex items-center justify-between',
+  cardTitle: 'text-lg font-medium text-foreground',
+  cardDescription: 'text-sm text-muted',
+  cardContent: 'space-y-2',
+  cardFooter: 'flex items-center justify-between pt-2 mt-2',
+  cardOutline: 'border border-border dark:border-theme-border',
   cardFooterEnd: 'flex items-center justify-end pt-4 border-t border-border mt-4',
 
   // Flex layouts
@@ -238,12 +265,12 @@ export const layout = {
  */
 export const animation = {
   // Basic animations
-  fadeIn: 'animate-fade-in',
-  fadeOut: 'animate-fade-out',
-  slideInFromRight: 'animate-slide-in-from-right',
-  slideInFromLeft: 'animate-slide-in-from-left',
-  slideInFromTop: 'animate-slide-in-from-top',
-  slideInFromBottom: 'animate-slide-in-from-bottom',
+  fadeIn: 'opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]',
+  fadeOut: 'opacity-100 animate-[fadeOut_0.3s_ease-in-out_forwards]',
+  slideInFromRight: 'translate-x-full animate-[slideInFromRight_0.3s_ease-in-out_forwards]',
+  slideInFromLeft: '-translate-x-full animate-[slideInFromLeft_0.3s_ease-in-out_forwards]',
+  slideInFromTop: '-translate-y-full animate-[slideInFromTop_0.3s_ease-in-out_forwards]',
+  slideInFromBottom: 'translate-y-full animate-[slideInFromBottom_0.3s_ease-in-out_forwards]',
   spin: 'animate-spin',
   pulse: 'animate-pulse',
   bounce: 'animate-bounce',
@@ -273,7 +300,7 @@ export const animation = {
   buttonPress: 'active:scale-95 transition-transform duration-150',
   cardHover: 'hover:-translate-y-1 hover:shadow-md transition-all duration-200',
   linkHover: 'hover:underline hover:text-primary-dark transition-colors duration-200',
-  fadeInSlideUp: 'animate-fade-in motion-safe:animate-slide-in-from-bottom',
+  fadeInSlideUp: 'opacity-0 translate-y-4 animate-[fadeIn_0.3s_ease-in-out_forwards]',
 
   // Attention grabbing
   pulse3Times: 'animate-[pulse_1s_ease-in-out_3]',

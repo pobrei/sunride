@@ -1,0 +1,73 @@
+/* Layout & Composition System */
+
+/* 12-column grid system */
+.grid-container {
+  @apply max-w-screen-xl mx-auto px-4 grid grid-cols-12 gap-6;
+}
+
+/* Responsive column spans */
+.col-full {
+  @apply col-span-12;
+}
+
+.col-main {
+  @apply col-span-12 md:col-span-8;
+}
+
+.col-sidebar {
+  @apply col-span-12 md:col-span-4;
+}
+
+.col-half {
+  @apply col-span-12 md:col-span-6;
+}
+
+.col-third {
+  @apply col-span-12 md:col-span-4;
+}
+
+.col-two-thirds {
+  @apply col-span-12 md:col-span-8;
+}
+
+.col-quarter {
+  @apply col-span-12 sm:col-span-6 md:col-span-3;
+}
+
+/* Vertical spacing */
+.vertical-spacing-sm {
+  @apply gap-4;
+}
+
+.vertical-spacing-md {
+  @apply gap-6;
+}
+
+.vertical-spacing-lg {
+  @apply gap-8;
+}
+
+/* Section spacing */
+.section-spacing {
+  @apply mt-8 pb-12;
+}
+
+/* Container with max width */
+.content-container {
+  @apply max-w-screen-xl mx-auto px-4;
+}
+
+/* Responsive padding */
+.responsive-padding {
+  @apply px-4 sm:px-6 md:px-8;
+}
+
+/* Responsive margin */
+.responsive-margin {
+  @apply my-4 sm:my-6 md:my-8;
+}
+
+/* Responsive gap */
+.responsive-gap {
+  @apply gap-4 sm:gap-6 md:gap-8;
+}

@@ -1,0 +1,73 @@
+/* Chart-specific colors for both light and dark modes */
+
+/* Chart canvas elements */
+canvas {
+  /* Ensure canvas elements have proper contrast */
+  filter: brightness(1.5) contrast(1.5);
+}
+
+/* Chart container styles */
+.chart-container {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Chart legend styles */
+.chart-legend,
+.chartjs-legend {
+  color: white !important;
+  text-shadow: 0 0 2px black !important;
+}
+
+/* Chart tooltip styles */
+.chartjs-tooltip,
+.chart-tooltip {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Chart axis styles */
+.chart-axis,
+.chartjs-axis-title,
+.chartjs-axis-label {
+  color: white !important;
+  text-shadow: 0 0 2px black !important;
+}
+
+/* Chart grid styles */
+.chart-grid,
+.chartjs-grid-line {
+  stroke: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Chart point styles */
+.chart-point,
+.chartjs-point {
+  stroke: white !important;
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
+}
+
+/* Chart line styles */
+.chart-line,
+.chartjs-line {
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
+}
+
+/* Chart area styles */
+.chart-area,
+.chartjs-area {
+  opacity: 0.8 !important;
+}
+
+/* Chart bar styles */
+.chart-bar,
+.chartjs-bar {
+  opacity: 1.0 !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
+}

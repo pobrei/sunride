@@ -65,7 +65,7 @@ export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
 
   // If everything is fine, render the charts
   return (
-    <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-20', animation.fadeIn, className)}>
+    <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-8', animation.fadeIn, className)}>
       <SafeChartsWrapper
         gpxData={gpxData}
         forecastPoints={forecastPoints}

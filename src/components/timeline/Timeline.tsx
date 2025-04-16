@@ -84,7 +84,7 @@ export function Timeline({
     <div className="w-full overflow-hidden">
       <div
         className={cn(
-          'timeline-scrollable-area flex space-x-2 py-2 px-4 overflow-x-auto scrollbar-thin whitespace-nowrap',
+          'timeline-container flex space-x-4 py-4 px-4 overflow-x-auto whitespace-nowrap relative',
           isDragging ? 'cursor-grabbing' : 'cursor-grab'
         )}
         onMouseDown={handleMouseDown}
@@ -93,6 +93,9 @@ export function Timeline({
         onMouseLeave={handleMouseUp}
         ref={timelineRef}
       >
+        {/* Connector line that runs through all events */}
+        <div className="absolute h-0.5 bg-muted left-0 right-0 top-6 z-0"></div>
+
         {forecastPoints.map((point, index) => {
           if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
           const weather = weatherData[index];
@@ -108,44 +111,50 @@ export function Timeline({
               ref={el => {
                 timelineItemsRef.current[index] = el;
               }}
-              className={cn(
-                'timeline-item flex-shrink-0 w-36 p-3 rounded-lg cursor-pointer transition-all duration-200',
-                selectedMarker === index
-                  ? 'bg-accent ring-2 ring-primary shadow-md scale-105 z-10'
-                  : 'bg-card hover:bg-accent/50 hover:scale-102',
-                hasAlert && 'ring-1 ring-yellow-500/50'
-              )}
+              className="timeline-event flex flex-col items-center"
               onClick={() => onTimelineClick(index)}
             >
-              <div className="flex justify-between items-start mb-2">
-                <div className="font-medium text-sm">{formatTime(point.timestamp)}</div>
-                <div className="text-xs text-muted-foreground">
-                  {formatDistance(point.distance)}
-                </div>
+              {/* Circle event marker */}
+              <div
+                className={cn(
+                  "timeline-event-circle",
+                  selectedMarker === index ? "active" : "",
+                  hasAlert ? "ring-1 ring-yellow-500" : ""
+                )}
+              >
+                <Thermometer className="h-3 w-3 text-white" />
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Thermometer className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm">{Math.round(weather.temperature)}°C</span>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <Wind className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm">{Math.round(weather.windSpeed)} km/h</span>
-                  </div>
+              {/* Timeline content card */}
+              <div
+                className={cn(
+                  "timeline-content w-36 cursor-pointer",
+                  selectedMarker === index
+                    ? 'bg-accent ring-2 ring-primary shadow-md z-10'
+                    : 'bg-card hover:bg-accent/50',
+                  hasAlert && 'ring-1 ring-yellow-500/50'
+                )}
+              >
+                {/* Time and weather inline */}
+                <div className="timeline-time-weather">
+                  <span>{formatTime(point.timestamp)}</span>
+                  <Thermometer className="timeline-weather-icon" />
+                  <span>{Math.round(weather.temperature)}°C</span>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="text-xs text-muted mt-1">
+                  {formatDistance(point.distance)} · {weather.weatherDescription || 'Weather data'}
+                </div>
+
+                <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-1">
-                    <CloudRain className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm">{Math.round(weather.precipitation * 100)}%</span>
+                    <Wind className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs">{Math.round(weather.windSpeed)} km/h</span>
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <Cloud className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm">{Math.round(weather.humidity)}%</span>
+                    <CloudRain className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs">{Math.round(weather.precipitation * 100)}%</span>
                   </div>
                 </div>
 

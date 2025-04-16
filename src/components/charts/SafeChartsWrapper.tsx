@@ -68,7 +68,7 @@ const SafeChartsWrapper: React.FC<SafeChartsWrapperProps> = ({
 
   try {
     return (
-      <div className="pb-20">
+      <div className="pb-8 overflow-visible">
         <Charts
           gpxData={gpxData}
           forecastPoints={forecastPoints}
@@ -76,6 +76,8 @@ const SafeChartsWrapper: React.FC<SafeChartsWrapperProps> = ({
           selectedMarker={selectedMarker}
           onChartClick={onChartClick}
         />
+        {/* Spacer moved outside of chart container to avoid interference */}
+        <div className="h-16 mt-8" />
       </div>
     );
   } catch (error) {

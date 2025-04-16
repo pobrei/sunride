@@ -54,7 +54,7 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen')}>
+    <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
       {/* Header */}
       {showHeader && <Header />}
 
@@ -115,7 +115,7 @@ export function ResponsiveLayout({
           )}
 
           {/* Main content */}
-          <div className="container py-6">{children}</div>
+          <div className={cn(layout.container, layout.sectionSm)}>{children}</div>
         </main>
       </div>
 

@@ -156,7 +156,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If everything is fine, render the timeline
   return (
     <div
-      className={cn(height, 'relative overflow-hidden', effects.rounded, effects.border, animation.fadeIn, className)}
+      className={cn(height, 'relative overflow-hidden timeline-bar', effects.rounded, effects.border, animation.fadeIn, className)}
     >
       {/* Navigation arrows */}
       {showNavigation && (
