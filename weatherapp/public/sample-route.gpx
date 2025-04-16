@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="RideWeather Planner" version="1.1">
+  <metadata>
+    <name>Sample Ride</name>
+  </metadata>
+  <trk>
+    <name>Sample Ride</name>
+    <trkseg>
+      <!-- San Francisco start point -->
+      <trkpt lat="37.7749" lon="-122.4194">
+        <ele>10</ele>
+      </trkpt>
+      <!-- Point 2 -->
+      <trkpt lat="37.7684" lon="-122.4065">
+        <ele>20</ele>
+      </trkpt>
+      <!-- Point 3 -->
+      <trkpt lat="37.7583" lon="-122.3978">
+        <ele>30</ele>
+      </trkpt>
+      <!-- Point 4 -->
+      <trkpt lat="37.7485" lon="-122.3842">
+        <ele>40</ele>
+      </trkpt>
+      <!-- Point 5 -->
+      <trkpt lat="37.7395" lon="-122.3761">
+        <ele>60</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx> 
