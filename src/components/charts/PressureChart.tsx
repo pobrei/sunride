@@ -148,6 +148,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
                   <circle
+                    key={`dot-${cx}-${cy}-selected`}
                     cx={cx}
                     cy={cy}
                     r={6}
@@ -156,7 +157,14 @@ const PressureChart: React.FC<PressureChartProps> = ({
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle cx={cx} cy={cy} r={4} fill="#9333ea" opacity={0.8} />
+                  <circle
+                    key={`dot-${cx}-${cy}`}
+                    cx={cx}
+                    cy={cy}
+                    r={4}
+                    fill="#9333ea"
+                    opacity={0.8}
+                  />
                 );
               }}
             />

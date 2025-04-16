@@ -150,6 +150,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
                   <circle
+                    key={`dot-${cx}-${cy}-selected`}
                     cx={cx}
                     cy={cy}
                     r={6}
@@ -158,7 +159,14 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle cx={cx} cy={cy} r={4} fill={theme.primary} opacity={0.8} />
+                  <circle
+                    key={`dot-${cx}-${cy}`}
+                    cx={cx}
+                    cy={cy}
+                    r={4}
+                    fill={theme.primary}
+                    opacity={0.8}
+                  />
                 );
               }}
             />

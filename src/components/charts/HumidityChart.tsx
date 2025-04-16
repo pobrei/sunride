@@ -149,6 +149,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
                   <circle
+                    key={`dot-${cx}-${cy}-selected`}
                     cx={cx}
                     cy={cy}
                     r={6}
@@ -157,7 +158,14 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle cx={cx} cy={cy} r={4} fill="#3b82f6" opacity={0.8} />
+                  <circle
+                    key={`dot-${cx}-${cy}`}
+                    cx={cx}
+                    cy={cy}
+                    r={4}
+                    fill="#3b82f6"
+                    opacity={0.8}
+                  />
                 );
               }}
             />

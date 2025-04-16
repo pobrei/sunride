@@ -183,6 +183,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
                   <circle
+                    key={`dot-${cx}-${cy}-selected`}
                     cx={cx}
                     cy={cy}
                     r={6}

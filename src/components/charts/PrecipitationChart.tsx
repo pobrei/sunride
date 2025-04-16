@@ -158,6 +158,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
                   <circle
+                    key={`dot-${cx}-${cy}-selected`}
                     cx={cx}
                     cy={cy}
                     r={6}
@@ -166,7 +167,14 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle cx={cx} cy={cy} r={4} fill="#8884d8" opacity={0.8} />
+                  <circle
+                    key={`dot-${cx}-${cy}`}
+                    cx={cx}
+                    cy={cy}
+                    r={4}
+                    fill="#8884d8"
+                    opacity={0.8}
+                  />
                 );
               }}
             />
