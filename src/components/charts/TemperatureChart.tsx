@@ -134,6 +134,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
             <Area
+              key="temperature-area"
               type="monotone"
               dataKey="temperature"
               stroke={theme.primary}
@@ -162,6 +163,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               }}
             />
             <Line
+              key="feelsLike-line"
               type="monotone"
               dataKey="feelsLike"
               stroke="#8884d8"

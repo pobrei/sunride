@@ -132,6 +132,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
             <Line
+              key="pressure-line"
               type="monotone"
               dataKey="pressure"
               name="Pressure (hPa)"

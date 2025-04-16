@@ -132,6 +132,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
             <Area
+              key="humidity-area"
               type="monotone"
               dataKey="humidity"
               name="Humidity (%)"

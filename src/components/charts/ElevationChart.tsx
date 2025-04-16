@@ -166,6 +166,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
             <Area
+              key="elevation-area"
               type="monotone"
               dataKey="elevation"
               name="Elevation (m)"

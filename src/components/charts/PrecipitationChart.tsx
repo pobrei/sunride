@@ -139,6 +139,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
             <Bar
+              key="precipitation-bar"
               yAxisId="left"
               dataKey="precipitation"
               name="Precipitation (mm)"
@@ -147,6 +148,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               barSize={20}
             />
             <Line
+              key="probability-line"
               yAxisId="right"
               type="monotone"
               dataKey="probability"

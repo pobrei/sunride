@@ -161,6 +161,7 @@ const WindChart: React.FC<WindChartProps> = ({
             />
 
             <Bar
+              key="windSpeed-bar"
               dataKey="windSpeed"
               name="Wind Speed (km/h)"
               fill={`${theme.primary}80`}
@@ -168,6 +169,7 @@ const WindChart: React.FC<WindChartProps> = ({
               barSize={20}
             />
             <Line
+              key="windGust-line"
               type="monotone"
               dataKey="windGust"
               name="Wind Gust (km/h)"
