@@ -306,7 +306,20 @@ The project follows a modular structure for better organization and maintainabil
 │   ├── utils/          # Utility functions
 │   ├── lib/            # Shared libraries
 │   └── constants/      # Shared constants
+│
+├── src/                # Main application code (legacy structure)
+│   ├── app/            # Next.js App Router pages
+│   ├── components/     # UI components
+│   ├── features/       # Feature-based modules
+│   └── hooks/          # React hooks
+│
+├── weatherapp/         # Weather application module
+│   ├── src/            # Source code for the weather app
+│   ├── public/         # Public assets for the weather app
+│   └── components/     # UI components for the weather app
 ```
+
+The project is currently in a transition phase, consolidating multiple repositories into a single SunRide repository. The `src/` directory contains the main application code, while the `frontend/`, `backend/`, and `shared/` directories represent the new modular structure being implemented. The `weatherapp/` directory contains a separate weather application module that has been integrated into the main repository.
 
 Each feature folder contains its own components, utilities, types, and documentation. See the [Project Structure](./PROJECT_STRUCTURE.md) document for more details.
 

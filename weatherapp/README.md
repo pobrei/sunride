@@ -1,6 +1,6 @@
-# RideWeather Planner
+# Weather Module for SunRide
 
-A premium, beautifully designed Next.js application for planning routes with detailed weather forecasts. Upload GPX files, analyze weather conditions along your path, and make informed decisions for your outdoor activities with a delightful user experience.
+This directory contains the weather planning module for the SunRide application. It was originally developed as a standalone application and has now been integrated into the main SunRide repository.
 
 ![RideWeather Planner screenshot](./public/assets/screenshot.png)
 
@@ -85,34 +85,7 @@ RATE_LIMIT_WINDOW=60000
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/weatherapp.git
-   cd weatherapp
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up your environment variables by copying the example file:
-   ```bash
-   cp env.example .env.local
-   ```
-
-4. Edit `.env.local` with your actual credentials:
-   ```
-   MONGODB_URI=your_mongodb_connection_string
-   OPENWEATHER_API_KEY=your_openweather_api_key
-   ```
-
-5. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+This module is now part of the main SunRide repository. To use it, follow the installation instructions in the main README.md file.
 
 ## Usage
 
