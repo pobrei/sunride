@@ -17,7 +17,6 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { formatDistance, formatDuration, formatTemperature } from '@/utils/formatters';
-import { cva } from 'class-variance-authority';
 import { cn } from '@/styles/tailwind-utils';
 
 interface TripSummaryProps {
@@ -88,19 +87,21 @@ export function TripSummary({ gpxData, forecastPoints, weatherData, className }:
   // Calculate temperature indicator position
   const tempIndicatorPosition = (() => {
     const position = ((avgTemperature - minTemperature) / (maxTemperature - minTemperature)) * 100;
-    return {
-      0: 'left-0',
-      10: 'left-[10%]',
-      20: 'left-[20%]',
-      30: 'left-[30%]',
-      40: 'left-[40%]',
-      50: 'left-[50%]',
-      60: 'left-[60%]',
-      70: 'left-[70%]',
-      80: 'left-[80%]',
-      90: 'left-[90%]',
-      100: 'left-[100%]',
-    }[Math.round(position / 10) * 10] || 'left-[50%]';
+    return (
+      {
+        0: 'left-0',
+        10: 'left-[10%]',
+        20: 'left-[20%]',
+        30: 'left-[30%]',
+        40: 'left-[40%]',
+        50: 'left-[50%]',
+        60: 'left-[60%]',
+        70: 'left-[70%]',
+        80: 'left-[80%]',
+        90: 'left-[90%]',
+        100: 'left-[100%]',
+      }[Math.round(position / 10) * 10] || 'left-[50%]'
+    );
   })();
 
   return (
@@ -124,7 +125,7 @@ export function TripSummary({ gpxData, forecastPoints, weatherData, className }:
               <MapPin className="h-3 w-3 text-primary" />
               Distance
             </div>
-            <div className="text-lg font-medium">{formatDistance(tripDistance)}</div>
+            <div className="text-lg font-medium">{formatDistance(tripDistance * 1000)}</div>
           </div>
 
           {/* Duration */}
@@ -203,12 +204,10 @@ export function TripSummary({ gpxData, forecastPoints, weatherData, className }:
 
           {/* Temperature range visualization */}
           <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden relative">
-            <div
-              className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-blue-500 to-red-500 rounded-full"
-            />
+            <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-blue-500 to-red-500 rounded-full" />
             <div
               className={cn(
-                "absolute inset-y-0 w-1 bg-white rounded-full -translate-x-1/2",
+                'absolute inset-y-0 w-1 bg-white rounded-full -translate-x-1/2',
                 tempIndicatorPosition
               )}
             />

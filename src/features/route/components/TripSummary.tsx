@@ -165,7 +165,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Distance</p>
-              <p className="font-medium">{formatDistance(totalDistance)}</p>
+              <p className="font-medium">{formatDistance(totalDistance * 1000)}</p>
             </div>
           </div>
 
