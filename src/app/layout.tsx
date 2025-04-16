@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
+import { Footer } from '@/components/layout/footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'RideWeather Planner',
+  title: 'SunRide',
   description: 'Plan your routes with detailed weather forecasts along the way',
   keywords: ['weather', 'planning', 'GPX', 'route', 'cycling', 'hiking', 'forecast'],
   authors: [{ name: 'Filipp Shamshin' }],
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'RideWeather',
+    title: 'SunRide',
   },
   formatDetection: {
     telephone: false,
@@ -58,10 +59,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="relative flex min-h-screen flex-col">
-            <main className="flex-1">
+          <div className="relative flex min-h-screen flex-col container-transition">
+            <main className="flex-1 pb-16">
+              {' '}
+              {/* Reduced padding as footer is no longer fixed */}
               {children}
             </main>
+            <Footer />
           </div>
         </Providers>
       </body>

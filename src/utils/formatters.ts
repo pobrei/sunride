@@ -31,15 +31,13 @@ export function formatDate(timestamp: number): string {
 }
 
 /**
- * Format a distance in meters into a readable string
+ * Format a distance in meters into a readable string in kilometers
  * @param distance - Distance in meters
- * @returns Formatted distance string (e.g., "1.2 km" or "500 m")
+ * @returns Formatted distance string in kilometers (e.g., "1.2 km")
  */
 export function formatDistance(distance: number): string {
-  if (distance >= 1000) {
-    return `${(distance / 1000).toFixed(1)} km`;
-  }
-  return `${Math.round(distance)} m`;
+  // Always display distance in kilometers as requested
+  return `${(distance / 1000).toFixed(1)} km`;
 }
 
 /**
@@ -128,4 +126,137 @@ export function formatNumber(num: number): string {
  */
 export function formatDecimal(num: number, precision: number = 2): string {
   return num.toFixed(precision);
+}
+
+/**
+ * Theme color system for consistent color usage across the application
+ * These colors are defined in CSS variables and can be used with Tailwind
+ */
+type ThemeColorKeys = 'bg' | 'text' | 'accent' | 'card' | 'shadow';
+
+interface ThemeColorClasses {
+  // Background classes
+  bg: string;
+  bgCard: string;
+  bgAccent: string;
+
+  // Text classes
+  text: string;
+  textAccent: string;
+
+  // Border classes
+  border: string;
+  borderAccent: string;
+
+  // Shadow
+  shadow: string;
+
+  // Common combinations
+  card: string;
+  button: string;
+  input: string;
+}
+
+interface ThemeColors {
+  // Base colors
+  bg: string;
+  text: string;
+  accent: string;
+  card: string;
+  shadow: string;
+
+  // Tailwind class mappings
+  classes: ThemeColorClasses;
+
+  // Helper function to get CSS variable value
+  get: (colorName: ThemeColorKeys) => string;
+}
+
+export const themeColors: ThemeColors = {
+  // Base colors
+  bg: 'var(--color-bg)',
+  text: 'var(--color-text)',
+  accent: 'var(--color-accent)',
+  card: 'var(--color-card)',
+  shadow: 'var(--color-shadow)',
+
+  // Tailwind class mappings
+  classes: {
+    // Background classes
+    bg: 'bg-[var(--color-bg)]',
+    bgCard: 'bg-[var(--color-card)]',
+    bgAccent: 'bg-[var(--color-accent)]',
+
+    // Text classes
+    text: 'text-[var(--color-text)]',
+    textAccent: 'text-[var(--color-accent)]',
+
+    // Border classes
+    border: 'border-[var(--color-text)]',
+    borderAccent: 'border-[var(--color-accent)]',
+
+    // Shadow
+    shadow: 'shadow-[var(--color-shadow)]',
+
+    // Common combinations
+    card: 'bg-[var(--color-card)] text-[var(--color-text)] shadow-[var(--color-shadow)]',
+    button: 'bg-[var(--color-accent)] text-[var(--color-card)] hover:opacity-90',
+    input:
+      'bg-[var(--color-card)] text-[var(--color-text)] border-[var(--color-text)/20] focus:border-[var(--color-accent)]',
+  },
+
+  // Helper function to get CSS variable value
+  get: (colorName: ThemeColorKeys) => {
+    if (typeof window === 'undefined') return '';
+    return getComputedStyle(document.documentElement).getPropertyValue(
+      `--color-${String(colorName)}`
+    );
+  },
+};
+
+/**
+ * Convert a hex color to RGB values
+ * @param hex - Hex color code (e.g., "#FF5500" or "#F50")
+ * @returns RGB object {r, g, b} or null if invalid
+ */
+export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  // Remove # if present
+  hex = hex.replace(/^#/, '');
+
+  // Convert 3-digit hex to 6-digit
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+
+  // Validate hex format
+  if (hex.length !== 6) {
+    console.warn('Invalid hex color format:', hex);
+    return null;
+  }
+
+  // Parse hex values
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  return { r, g, b };
+}
+
+/**
+ * Convert RGB values to a hex color string
+ * @param r - Red component (0-255)
+ * @param g - Green component (0-255)
+ * @param b - Blue component (0-255)
+ * @returns Hex color string (e.g., "#FF5500")
+ */
+export function rgbToHex(r: number, g: number, b: number): string {
+  return (
+    '#' +
+    [r, g, b]
+      .map(x => {
+        const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      })
+      .join('')
+  );
 }

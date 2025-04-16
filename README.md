@@ -1,10 +1,10 @@
-# RideWeather Planner
+# SunRide
 
 > A premium weather planning application for outdoor activities
 
 A premium, beautifully designed Next.js application for planning routes with detailed weather forecasts. Upload GPX files, analyze weather conditions along your path, and make informed decisions for your outdoor activities with a delightful user experience.
 
-![RideWeather Planner screenshot](./public/assets/screenshot.png)
+![SunRide screenshot](./public/assets/screenshot.png)
 
 ## Features
 
@@ -28,7 +28,7 @@ A premium, beautifully designed Next.js application for planning routes with det
 
 [![Deploy with Vercel](https://vercel.com/button)]
 
-Try the live demo: [RideWeather Planner Demo](https://rideweather.vercel.app)
+Try the live demo: [SunRide Demo](https://sunride.vercel.app)
 
 ## Tech Stack
 
@@ -70,14 +70,14 @@ Requires OpenWeather One Call API 3.0 (Free tier available)
 
 Configure in `.env.local`:
 
-```
+```env
 RATE_LIMIT_MAX=30
 RATE_LIMIT_WINDOW=60000
 ```
 
 ## Screenshot
 
-![RideWeather Planner Interface](https://rideweather.vercel.app/screenshot.png 'Interactive map with weather markers and charts')
+![SunRide Interface](https://sunride.vercel.app/screenshot.png 'Interactive map with weather markers and charts')
 
 ## Getting Started
 
@@ -93,8 +93,8 @@ RATE_LIMIT_WINDOW=60000
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/weatherapp.git
-   cd weatherapp
+   git clone https://github.com/pobrei/sunride.git
+   cd sunride
    ```
 
 2. Install dependencies:
@@ -111,7 +111,7 @@ RATE_LIMIT_WINDOW=60000
 
 4. Edit `.env.local` with your actual credentials:
 
-   ```
+   ```env
    MONGODB_URI=your_mongodb_connection_string
    OPENWEATHER_API_KEY=your_openweather_api_key
    ```
