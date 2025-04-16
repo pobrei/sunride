@@ -1,13 +1,14 @@
 import { WeatherData } from '@/features/weather/types';
 
 /**
- * Format a distance in meters or kilometers to a human-readable string
+ * Format a distance in meters or kilometers to a human-readable string in kilometers
  *
- * @param distance - Distance value (in km if < 1, otherwise in meters)
- * @returns Formatted distance string
+ * @param distance - Distance value in kilometers
+ * @returns Formatted distance string in kilometers
  */
 export function formatDistance(distance: number): string {
-  return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`;
+  // Always display distance in kilometers as requested
+  return `${distance.toFixed(1)} km`;
 }
 
 /**
