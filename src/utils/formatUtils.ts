@@ -1,14 +1,15 @@
 import { WeatherData } from '@/features/weather/types';
 
 /**
- * Format a distance in meters or kilometers to a human-readable string in kilometers
+ * Format a distance in meters to a human-readable string in kilometers
  *
- * @param distance - Distance value in kilometers
+ * @param distance - Distance value in meters
  * @returns Formatted distance string in kilometers
  */
 export function formatDistance(distance: number): string {
-  // Always display distance in kilometers as requested
-  return `${distance.toFixed(1)} km`;
+  // Convert meters to kilometers and display
+  const kilometers = distance / 1000;
+  return `${kilometers.toFixed(1)} km`;
 }
 
 /**
