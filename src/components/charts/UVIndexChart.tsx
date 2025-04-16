@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   Legend,
   ReferenceLine,
-  Cell
+  Cell,
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
@@ -50,31 +50,41 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   onChartClick,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [chartData, setChartData] = useState<any[]>([]);
-  
+  const [chartData, setChartData] = useState<
+    Array<{
+      name: string;
+      distance: string;
+      uvIndex: number;
+      riskLevel: string;
+      color: string;
+      index: number;
+      isSelected: boolean;
+    }>
+  >([]);
+
   // Check for dark mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       setIsDarkMode(darkModeQuery.matches);
-      
+
       const handleChange = (e: MediaQueryListEvent) => {
         setIsDarkMode(e.matches);
       };
-      
+
       darkModeQuery.addEventListener('change', handleChange);
       return () => darkModeQuery.removeEventListener('change', handleChange);
     }
   }, []);
-  
+
   // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-    
+
     const data = forecastPoints.map((point, index) => {
       const weather = weatherData[index];
       const uvIndex = weather?.uvIndex || 0;
-      
+
       return {
         name: formatTime(point.timestamp),
         distance: formatDistance(point.distance),
@@ -85,22 +95,32 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
         isSelected: index === selectedMarker,
       };
     });
-    
+
     setChartData(data);
   }, [forecastPoints, weatherData, selectedMarker]);
-  
+
   // Handle chart click
-  const handleClick = (data: any) => {
+  const handleClick = (data: { activePayload?: Array<{ payload: { index: number } }> }) => {
     if (onChartClick && data?.activePayload?.[0]?.payload) {
       onChartClick(data.activePayload[0].payload.index);
     }
   };
-  
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
-  
+
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: Array<{
+      payload: { distance: string; uvIndex: number; riskLevel: string; color: string };
+    }>;
+    label?: string;
+  }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -108,8 +128,10 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
           <p className="font-medium">{label}</p>
           <p className="text-sm">{data.distance}</p>
           <div className="flex items-center mt-2">
-            <div 
-              className="w-3 h-3 rounded-full mr-2" 
+            <div
+              className="w-3 h-3 rounded-full mr-2"
+              // Using inline style for dynamic color based on UV index
+              // This is an exception to the no-inline-styles rule
               style={{ backgroundColor: data.color }}
             />
             <p>
@@ -122,7 +144,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
     }
     return null;
   };
-  
+
   return (
     <ChartCard title="UV Index" unitLabel="">
       <div className="h-[350px] w-full">
@@ -132,21 +154,17 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
             margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
             onClick={handleClick}
           >
-            <CartesianGrid 
-              stroke={theme.grid} 
-              strokeDasharray="3 3" 
-              vertical={false} 
-            />
-            <XAxis 
-              dataKey="name" 
-              stroke={theme.text} 
+            <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dy={10}
             />
-            <YAxis 
-              stroke={theme.text} 
+            <YAxis
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
@@ -155,28 +173,23 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               ticks={[0, 2, 5, 7, 10, 12]}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              verticalAlign="top" 
-              height={36} 
+            <Legend
+              verticalAlign="top"
+              height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
-            
+
             {/* Reference lines for UV categories */}
             <ReferenceLine y={2} stroke="#3ECF8E" strokeDasharray="3 3" />
             <ReferenceLine y={5} stroke="#FFD60A" strokeDasharray="3 3" />
             <ReferenceLine y={7} stroke="#FB8B24" strokeDasharray="3 3" />
             <ReferenceLine y={10} stroke="#E53E3E" strokeDasharray="3 3" />
-            
-            <Bar 
-              dataKey="uvIndex" 
-              name="UV Index" 
-              radius={[4, 4, 0, 0]}
-              barSize={20}
-            >
+
+            <Bar dataKey="uvIndex" name="UV Index" radius={[4, 4, 0, 0]} barSize={20}>
               {chartData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={entry.color}
                   stroke={entry.isSelected ? theme.card : 'none'}
                   strokeWidth={entry.isSelected ? 2 : 0}

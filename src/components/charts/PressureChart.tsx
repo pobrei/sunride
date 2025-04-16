@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
@@ -30,27 +30,35 @@ const PressureChart: React.FC<PressureChartProps> = ({
   onChartClick,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [chartData, setChartData] = useState<any[]>([]);
-  
+  const [chartData, setChartData] = useState<
+    Array<{
+      name: string;
+      distance: string;
+      pressure: number;
+      index: number;
+      isSelected: boolean;
+    }>
+  >([]);
+
   // Check for dark mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       setIsDarkMode(darkModeQuery.matches);
-      
+
       const handleChange = (e: MediaQueryListEvent) => {
         setIsDarkMode(e.matches);
       };
-      
+
       darkModeQuery.addEventListener('change', handleChange);
       return () => darkModeQuery.removeEventListener('change', handleChange);
     }
   }, []);
-  
+
   // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-    
+
     const data = forecastPoints.map((point, index) => {
       const weather = weatherData[index];
       return {
@@ -61,29 +69,26 @@ const PressureChart: React.FC<PressureChartProps> = ({
         isSelected: index === selectedMarker,
       };
     });
-    
+
     setChartData(data);
   }, [forecastPoints, weatherData, selectedMarker]);
-  
+
   // Handle chart click
-  const handleClick = (data: any) => {
+  const handleClick = (data: { activePayload?: Array<{ payload: { index: number } }> }) => {
     if (onChartClick && data?.activePayload?.[0]?.payload) {
       onChartClick(data.activePayload[0].payload.index);
     }
   };
-  
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
-  
+
   // Calculate min and max pressure for better visualization
   const pressureValues = chartData.map(d => d.pressure).filter(p => p > 0);
-  const minPressure = pressureValues.length > 0 
-    ? Math.floor(Math.min(...pressureValues) - 2) 
-    : 1000;
-  const maxPressure = pressureValues.length > 0 
-    ? Math.ceil(Math.max(...pressureValues) + 2) 
-    : 1030;
-  
+  const minPressure =
+    pressureValues.length > 0 ? Math.floor(Math.min(...pressureValues) - 2) : 1000;
+  const maxPressure = pressureValues.length > 0 ? Math.ceil(Math.max(...pressureValues) + 2) : 1030;
+
   return (
     <ChartCard title="Pressure" unitLabel="hPa">
       <div className="h-[350px] w-full">
@@ -93,30 +98,26 @@ const PressureChart: React.FC<PressureChartProps> = ({
             margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
             onClick={handleClick}
           >
-            <CartesianGrid 
-              stroke={theme.grid} 
-              strokeDasharray="3 3" 
-              vertical={false} 
-            />
-            <XAxis 
-              dataKey="name" 
-              stroke={theme.text} 
+            <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dy={10}
             />
-            <YAxis 
-              stroke={theme.text} 
+            <YAxis
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dx={-10}
               domain={[minPressure, maxPressure]}
             />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: theme.card, 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: theme.card,
                 borderColor: theme.grid,
                 color: theme.text,
                 borderRadius: '8px',
@@ -124,9 +125,9 @@ const PressureChart: React.FC<PressureChartProps> = ({
               }}
               labelStyle={{ color: theme.text }}
             />
-            <Legend 
-              verticalAlign="top" 
-              height={36} 
+            <Legend
+              verticalAlign="top"
+              height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
@@ -136,31 +137,25 @@ const PressureChart: React.FC<PressureChartProps> = ({
               name="Pressure (hPa)"
               stroke="#9333ea"
               strokeWidth={2}
-              activeDot={{ 
-                r: 8, 
-                stroke: theme.card, 
+              activeDot={{
+                r: 8,
+                stroke: theme.card,
                 strokeWidth: 2,
-                fill: "#9333ea" 
+                fill: '#9333ea',
               }}
-              dot={(props: any) => {
+              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={6} 
-                    fill="#9333ea" 
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={6}
+                    fill="#9333ea"
                     stroke={theme.card}
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={4} 
-                    fill="#9333ea" 
-                    opacity={0.8}
-                  />
+                  <circle cx={cx} cy={cy} r={4} fill="#9333ea" opacity={0.8} />
                 );
               }}
             />

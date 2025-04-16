@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ResponsiveContainer, 
-  ComposedChart, 
-  Bar, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
@@ -31,27 +31,36 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   onChartClick,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [chartData, setChartData] = useState<any[]>([]);
-  
+  const [chartData, setChartData] = useState<
+    Array<{
+      name: string;
+      distance: string;
+      precipitation: number;
+      probability: number;
+      index: number;
+      isSelected: boolean;
+    }>
+  >([]);
+
   // Check for dark mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       setIsDarkMode(darkModeQuery.matches);
-      
+
       const handleChange = (e: MediaQueryListEvent) => {
         setIsDarkMode(e.matches);
       };
-      
+
       darkModeQuery.addEventListener('change', handleChange);
       return () => darkModeQuery.removeEventListener('change', handleChange);
     }
   }, []);
-  
+
   // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-    
+
     const data = forecastPoints.map((point, index) => {
       const weather = weatherData[index];
       return {
@@ -63,20 +72,20 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
         isSelected: index === selectedMarker,
       };
     });
-    
+
     setChartData(data);
   }, [forecastPoints, weatherData, selectedMarker]);
-  
+
   // Handle chart click
-  const handleClick = (data: any) => {
+  const handleClick = (data: { activePayload?: Array<{ payload: { index: number } }> }) => {
     if (onChartClick && data?.activePayload?.[0]?.payload) {
       onChartClick(data.activePayload[0].payload.index);
     }
   };
-  
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
-  
+
   return (
     <ChartCard title="Precipitation" unitLabel="mm / %">
       <div className="h-[350px] w-full">
@@ -86,40 +95,36 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
             margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
             onClick={handleClick}
           >
-            <CartesianGrid 
-              stroke={theme.grid} 
-              strokeDasharray="3 3" 
-              vertical={false} 
-            />
-            <XAxis 
-              dataKey="name" 
-              stroke={theme.text} 
+            <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dy={10}
             />
-            <YAxis 
+            <YAxis
               yAxisId="left"
-              stroke={theme.text} 
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dx={-10}
               domain={[0, 'auto']}
             />
-            <YAxis 
+            <YAxis
               yAxisId="right"
               orientation="right"
-              stroke={theme.text} 
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               domain={[0, 100]}
             />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: theme.card, 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: theme.card,
                 borderColor: theme.grid,
                 color: theme.text,
                 borderRadius: '8px',
@@ -127,9 +132,9 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               }}
               labelStyle={{ color: theme.text }}
             />
-            <Legend 
-              verticalAlign="top" 
-              height={36} 
+            <Legend
+              verticalAlign="top"
+              height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
@@ -147,25 +152,19 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               dataKey="probability"
               name="Probability (%)"
               stroke="#8884d8"
-              dot={(props: any) => {
+              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={6} 
-                    fill="#8884d8" 
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={6}
+                    fill="#8884d8"
                     stroke={theme.card}
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={4} 
-                    fill="#8884d8" 
-                    opacity={0.8}
-                  />
+                  <circle cx={cx} cy={cy} r={4} fill="#8884d8" opacity={0.8} />
                 );
               }}
             />

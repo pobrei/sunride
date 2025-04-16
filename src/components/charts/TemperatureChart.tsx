@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   Legend,
-  Area
+  Area,
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
@@ -31,27 +31,36 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   onChartClick,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [chartData, setChartData] = useState<any[]>([]);
-  
+  const [chartData, setChartData] = useState<
+    Array<{
+      name: string;
+      distance: string;
+      temperature: number;
+      feelsLike: number;
+      index: number;
+      isSelected: boolean;
+    }>
+  >([]);
+
   // Check for dark mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       setIsDarkMode(darkModeQuery.matches);
-      
+
       const handleChange = (e: MediaQueryListEvent) => {
         setIsDarkMode(e.matches);
       };
-      
+
       darkModeQuery.addEventListener('change', handleChange);
       return () => darkModeQuery.removeEventListener('change', handleChange);
     }
   }, []);
-  
+
   // Prepare chart data
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
-    
+
     const data = forecastPoints.map((point, index) => {
       const weather = weatherData[index];
       return {
@@ -63,20 +72,20 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
         isSelected: index === selectedMarker,
       };
     });
-    
+
     setChartData(data);
   }, [forecastPoints, weatherData, selectedMarker]);
-  
+
   // Handle chart click
-  const handleClick = (data: any) => {
+  const handleClick = (data: { activePayload?: Array<{ payload: { index: number } }> }) => {
     if (onChartClick && data?.activePayload?.[0]?.payload) {
       onChartClick(data.activePayload[0].payload.index);
     }
   };
-  
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
-  
+
   return (
     <ChartCard title="Temperature" unitLabel="°C">
       <div className="h-[350px] w-full">
@@ -92,29 +101,25 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
                 <stop offset="95%" stopColor={theme.primary} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid 
-              stroke={theme.grid} 
-              strokeDasharray="3 3" 
-              vertical={false} 
-            />
-            <XAxis 
-              dataKey="name" 
-              stroke={theme.text} 
+            <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dy={10}
             />
-            <YAxis 
-              stroke={theme.text} 
+            <YAxis
+              stroke={theme.text}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dx={-10}
             />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: theme.card, 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: theme.card,
                 borderColor: theme.grid,
                 color: theme.text,
                 borderRadius: '8px',
@@ -122,9 +127,9 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               }}
               labelStyle={{ color: theme.text }}
             />
-            <Legend 
-              verticalAlign="top" 
-              height={36} 
+            <Legend
+              verticalAlign="top"
+              height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
             />
@@ -134,31 +139,25 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               stroke={theme.primary}
               fillOpacity={1}
               fill="url(#temperatureGradient)"
-              activeDot={{ 
-                r: 8, 
-                stroke: theme.card, 
+              activeDot={{
+                r: 8,
+                stroke: theme.card,
                 strokeWidth: 2,
-                fill: theme.primary 
+                fill: theme.primary,
               }}
-              dot={(props: any) => {
+              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
                 const { cx, cy, payload } = props;
                 return payload.isSelected ? (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={6} 
-                    fill={theme.primary} 
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={6}
+                    fill={theme.primary}
                     stroke={theme.card}
                     strokeWidth={2}
                   />
                 ) : (
-                  <circle 
-                    cx={cx} 
-                    cy={cy} 
-                    r={4} 
-                    fill={theme.primary} 
-                    opacity={0.8}
-                  />
+                  <circle cx={cx} cy={cy} r={4} fill={theme.primary} opacity={0.8} />
                 );
               }}
             />
