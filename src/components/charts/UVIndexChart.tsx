@@ -17,6 +17,7 @@ import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
+import '@/styles/chart-styles.css';
 
 interface UVIndexChartProps {
   forecastPoints: ForecastPoint[];
@@ -59,6 +60,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
       color: string;
       index: number;
       isSelected: boolean;
+      timestamp: number;
     }>
   >([]);
 
@@ -87,12 +89,13 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
       return {
         name: formatTime(point.timestamp),
-        distance: formatDistance(point.distance),
+        distance: formatDistance(point.distance * 1000), // Convert km to meters before formatting
         uvIndex: uvIndex,
         riskLevel: getUVRiskLevel(uvIndex),
         color: getUVColor(uvIndex),
         index: index,
         isSelected: index === selectedMarker,
+        timestamp: point.timestamp,
       };
     });
 
@@ -124,9 +127,9 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white dark:bg-[#1C1F24] p-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-          <p className="font-medium">{label}</p>
-          <p className="text-sm">{data.distance}</p>
+        <div className="chart-tooltip">
+          <p className="chart-tooltip-title">{label}</p>
+          <p className="chart-tooltip-label">{data.distance}</p>
           <div className="flex items-center mt-2">
             <div
               className="w-3 h-3 rounded-full mr-2"
@@ -134,9 +137,8 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               // This is an exception to the no-inline-styles rule
               style={{ backgroundColor: data.color }}
             />
-            <p>
-              <span className="font-medium">UV Index: </span>
-              {data.uvIndex} ({data.riskLevel})
+            <p className="uv-value">
+              UV Index: {data.uvIndex} ({data.riskLevel})
             </p>
           </div>
         </div>
@@ -147,11 +149,11 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
 
   return (
     <ChartCard title="UV Index" unitLabel="">
-      <div className="h-[350px] w-full">
+      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
@@ -159,9 +161,9 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
-              tickLine={false}
+              tickLine={true}
               axisLine={{ stroke: theme.grid }}
-              dy={10}
+              dy={15}
             />
             <YAxis
               stroke={theme.text}

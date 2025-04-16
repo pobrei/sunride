@@ -81,7 +81,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
         });
 
         return {
-          name: formatDistance(distance),
+          name: formatDistance(distance * 1000), // Convert km to meters before formatting
           distance: distance,
           elevation: elevation,
           index: closestForecastIndex,
@@ -120,11 +120,11 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
 
   return (
     <ChartCard title="Elevation" unitLabel="m">
-      <div className="h-[350px] w-full">
+      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
             <defs>
@@ -138,9 +138,9 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
-              tickLine={false}
+              tickLine={true}
               axisLine={{ stroke: theme.grid }}
-              dy={10}
+              dy={15}
             />
             <YAxis
               stroke={theme.text}

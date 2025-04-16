@@ -13,8 +13,9 @@ import {
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance } from '@/utils/formatters';
+import { formatTime, formatDistance, formatHumidity } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
+import '@/styles/chart-styles.css';
 
 interface HumidityChartProps {
   forecastPoints: ForecastPoint[];
@@ -37,6 +38,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
       humidity: number;
       index: number;
       isSelected: boolean;
+      timestamp: number;
     }>
   >([]);
 
@@ -63,10 +65,11 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
       const weather = weatherData[index];
       return {
         name: formatTime(point.timestamp),
-        distance: formatDistance(point.distance),
+        distance: formatDistance(point.distance * 1000), // Convert km to meters before formatting
         humidity: weather?.humidity || 0,
         index: index,
         isSelected: index === selectedMarker,
+        timestamp: point.timestamp,
       };
     });
 
@@ -80,22 +83,45 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
     }
   };
 
+  // Custom tooltip formatter
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: Array<{ payload: { distance: string; humidity: number } }>;
+    label?: string;
+  }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="chart-tooltip">
+          <p className="chart-tooltip-title">{label}</p>
+          <p className="chart-tooltip-label">Distance: {data.distance}</p>
+          <p className="humidity-value">Humidity: {formatHumidity(data.humidity)}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   return (
     <ChartCard title="Humidity" unitLabel="%">
-      <div className="h-[350px] w-full">
+      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
             <defs>
               <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="5%" stopColor={theme.humidity} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={theme.humidity} stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
@@ -103,9 +129,9 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
-              tickLine={false}
+              tickLine={true}
               axisLine={{ stroke: theme.grid }}
-              dy={10}
+              dy={15}
             />
             <YAxis
               stroke={theme.text}
@@ -115,16 +141,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
               dx={-10}
               domain={[0, 100]}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme.card,
-                borderColor: theme.grid,
-                color: theme.text,
-                borderRadius: '8px',
-                boxShadow: `0 4px 12px ${theme.shadow}`,
-              }}
-              labelStyle={{ color: theme.text }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend
               verticalAlign="top"
               height={36}
@@ -136,38 +153,16 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
               type="monotone"
               dataKey="humidity"
               name="Humidity (%)"
-              stroke="#3b82f6"
+              stroke={theme.humidity}
               fillOpacity={1}
               fill="url(#humidityGradient)"
               activeDot={{
                 r: 8,
                 stroke: theme.card,
                 strokeWidth: 2,
-                fill: '#3b82f6',
+                fill: theme.humidity,
               }}
-              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
-                const { cx, cy, payload } = props;
-                return payload.isSelected ? (
-                  <circle
-                    key={`dot-${cx}-${cy}-selected`}
-                    cx={cx}
-                    cy={cy}
-                    r={6}
-                    fill="#3b82f6"
-                    stroke={theme.card}
-                    strokeWidth={2}
-                  />
-                ) : (
-                  <circle
-                    key={`dot-${cx}-${cy}`}
-                    cx={cx}
-                    cy={cy}
-                    r={4}
-                    fill="#3b82f6"
-                    opacity={0.8}
-                  />
-                );
-              }}
+              dot={false}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -11,11 +11,13 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ReferenceLine,
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
+import '@/styles/chart-styles.css';
 
 interface PrecipitationChartProps {
   forecastPoints: ForecastPoint[];
@@ -39,8 +41,10 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
       probability: number;
       index: number;
       isSelected: boolean;
+      timestamp: number;
     }>
   >([]);
+  const [maxPrecip, setMaxPrecip] = useState<number>(10); // Default max precipitation
 
   // Check for dark mode
   useEffect(() => {
@@ -61,15 +65,24 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   useEffect(() => {
     if (forecastPoints.length === 0 || weatherData.length === 0) return;
 
+    // Filter out null weather data and extract precipitation values
+    const validWeatherData = weatherData.filter(w => w !== null) as WeatherData[];
+    const precipValues = validWeatherData.map(w => w.precipitation || 0);
+
+    // Calculate max precipitation with a buffer for better visualization
+    const maxValue = Math.max(...precipValues);
+    setMaxPrecip(maxValue > 0 ? Math.ceil(maxValue * 1.2) : 10); // Add 20% buffer or default to 10mm
+
     const data = forecastPoints.map((point, index) => {
       const weather = weatherData[index];
       return {
         name: formatTime(point.timestamp),
-        distance: formatDistance(point.distance),
-        precipitation: weather?.precipitation || 0,
-        probability: weather?.precipitationProbability || 0,
+        distance: formatDistance(point.distance * 1000), // Convert km to meters before formatting
+        precipitation: weather?.precipitation ?? 0,
+        probability: (weather?.precipitationProbability ?? 0) * 100, // Convert to percentage (0-100)
         index: index,
         isSelected: index === selectedMarker,
+        timestamp: point.timestamp,
       };
     });
 
@@ -83,16 +96,46 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
     }
   };
 
+  // Custom tooltip formatter
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: Array<{
+      payload: { distance: string; precipitation: number; precipProbability: number };
+    }>;
+    label?: string;
+  }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="chart-tooltip">
+          <p className="chart-tooltip-title">{label}</p>
+          <p className="chart-tooltip-label">Distance: {data.distance}</p>
+          <p className="precipitation-value">Precipitation: {data.precipitation.toFixed(1)} mm</p>
+          <p className="probability-value">Probability: {data.probability.toFixed(0)}%</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
+  // Get precipitation colors from theme
+  const precipColor = theme.precipitation; // Steel blue for precipitation
+  const probColor = theme.probability; // Purple for probability
+
   return (
     <ChartCard title="Precipitation" unitLabel="mm / %">
-      <div className="h-[350px] w-full">
+      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
@@ -100,38 +143,74 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
-              tickLine={false}
+              tickLine={true}
               axisLine={{ stroke: theme.grid }}
-              dy={10}
+              dy={15}
             />
             <YAxis
               yAxisId="left"
-              stroke={theme.text}
+              stroke={precipColor}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dx={-10}
-              domain={[0, 'auto']}
+              domain={[0, maxPrecip]}
+              label={{
+                value: 'mm',
+                angle: -90,
+                position: 'insideLeft',
+                style: { textAnchor: 'middle', fill: precipColor },
+                offset: 0,
+                dx: -15,
+              }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
-              stroke={theme.text}
+              stroke={probColor}
               fontSize={12}
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               domain={[0, 100]}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme.card,
-                borderColor: theme.grid,
-                color: theme.text,
-                borderRadius: '8px',
-                boxShadow: `0 4px 12px ${theme.shadow}`,
+              label={{
+                value: '%',
+                angle: -90,
+                position: 'insideRight',
+                style: { textAnchor: 'middle', fill: probColor },
+                offset: 0,
+                dx: 15,
               }}
-              labelStyle={{ color: theme.text }}
+              tickFormatter={value => `${value}`}
             />
+
+            {/* Reference lines for precipitation levels */}
+            <ReferenceLine
+              yAxisId="left"
+              y={5}
+              stroke="#90cdf4"
+              strokeDasharray="3 3"
+              label={{
+                value: 'Moderate',
+                position: 'insideBottomRight',
+                fill: theme.text,
+                fontSize: 10,
+              }}
+            />
+
+            <ReferenceLine
+              yAxisId="right"
+              y={50}
+              stroke="#9f7aea"
+              strokeDasharray="3 3"
+              label={{
+                value: '50%',
+                position: 'insideTopRight',
+                fill: theme.text,
+                fontSize: 10,
+              }}
+            />
+
+            <Tooltip content={<CustomTooltip />} />
             <Legend
               verticalAlign="top"
               height={36}
@@ -143,9 +222,10 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               yAxisId="left"
               dataKey="precipitation"
               name="Precipitation (mm)"
-              fill={`${theme.primary}80`}
+              fill={precipColor}
               radius={[4, 4, 0, 0]}
               barSize={20}
+              opacity={0.8}
             />
             <Line
               key="probability-line"
@@ -153,30 +233,10 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               type="monotone"
               dataKey="probability"
               name="Probability (%)"
-              stroke="#8884d8"
-              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
-                const { cx, cy, payload } = props;
-                return payload.isSelected ? (
-                  <circle
-                    key={`dot-${cx}-${cy}-selected`}
-                    cx={cx}
-                    cy={cy}
-                    r={6}
-                    fill="#8884d8"
-                    stroke={theme.card}
-                    strokeWidth={2}
-                  />
-                ) : (
-                  <circle
-                    key={`dot-${cx}-${cy}`}
-                    cx={cx}
-                    cy={cy}
-                    r={4}
-                    fill="#8884d8"
-                    opacity={0.8}
-                  />
-                );
-              }}
+              stroke={probColor}
+              strokeWidth={2}
+              connectNulls
+              dot={false}
             />
           </ComposedChart>
         </ResponsiveContainer>

@@ -15,8 +15,9 @@ import {
 } from 'recharts';
 import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance } from '@/utils/formatters';
+import { formatTime, formatDistance, formatWindSpeed } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
+import '@/styles/chart-styles.css';
 
 interface WindChartProps {
   forecastPoints: ForecastPoint[];
@@ -41,6 +42,7 @@ const WindChart: React.FC<WindChartProps> = ({
       windDirection: number;
       index: number;
       isSelected: boolean;
+      timestamp: number;
     }>
   >([]);
 
@@ -67,12 +69,13 @@ const WindChart: React.FC<WindChartProps> = ({
       const weather = weatherData[index];
       return {
         name: formatTime(point.timestamp),
-        distance: formatDistance(point.distance),
+        distance: formatDistance(point.distance * 1000), // Convert km to meters before formatting
         windSpeed: weather?.windSpeed || 0,
         windGust: weather?.windGust || 0,
         windDirection: weather?.windDirection || 0,
         index: index,
         isSelected: index === selectedMarker,
+        timestamp: point.timestamp,
       };
     });
 
@@ -86,6 +89,43 @@ const WindChart: React.FC<WindChartProps> = ({
     }
   };
 
+  // Custom tooltip formatter
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: Array<{ payload: { distance: string; windSpeed: number; windDirection: number } }>;
+    label?: string;
+  }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+
+      // Get wind direction as compass point
+      const getWindDirection = (degrees: number) => {
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const index = Math.round(degrees / 45) % 8;
+        return directions[index];
+      };
+
+      return (
+        <div className="chart-tooltip">
+          <p className="chart-tooltip-title">{label}</p>
+          <p className="chart-tooltip-label">Distance: {data.distance}</p>
+          <p className="wind-speed-value">Wind Speed: {formatWindSpeed(data.windSpeed)}</p>
+          {data.windGust > 0 && (
+            <p className="wind-gust-value">Wind Gust: {formatWindSpeed(data.windGust)}</p>
+          )}
+          <p className="wind-direction-value">
+            Direction: {getWindDirection(data.windDirection)} ({data.windDirection}°)
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   // Get theme colors
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
@@ -95,11 +135,11 @@ const WindChart: React.FC<WindChartProps> = ({
 
   return (
     <ChartCard title="Wind" unitLabel="km/h">
-      <div className="h-[350px] w-full">
+      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
@@ -107,9 +147,9 @@ const WindChart: React.FC<WindChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
-              tickLine={false}
+              tickLine={true}
               axisLine={{ stroke: theme.grid }}
-              dy={10}
+              dy={15}
             />
             <YAxis
               stroke={theme.text}
@@ -119,16 +159,7 @@ const WindChart: React.FC<WindChartProps> = ({
               dx={-10}
               domain={[0, 'auto']}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme.card,
-                borderColor: theme.grid,
-                color: theme.text,
-                borderRadius: '8px',
-                boxShadow: `0 4px 12px ${theme.shadow}`,
-              }}
-              labelStyle={{ color: theme.text }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend
               verticalAlign="top"
               height={36}
@@ -164,7 +195,7 @@ const WindChart: React.FC<WindChartProps> = ({
               key="windSpeed-bar"
               dataKey="windSpeed"
               name="Wind Speed (km/h)"
-              fill={`${theme.primary}80`}
+              fill={theme.wind}
               radius={[4, 4, 0, 0]}
               barSize={20}
             />
@@ -174,30 +205,9 @@ const WindChart: React.FC<WindChartProps> = ({
               dataKey="windGust"
               name="Wind Gust (km/h)"
               stroke="#ff7300"
+              strokeDasharray="3 3"
               strokeWidth={2}
-              dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
-                const { cx, cy, payload } = props;
-                return payload.isSelected ? (
-                  <circle
-                    key={`dot-${cx}-${cy}-selected`}
-                    cx={cx}
-                    cy={cy}
-                    r={6}
-                    fill="#ff7300"
-                    stroke={theme.card}
-                    strokeWidth={2}
-                  />
-                ) : (
-                  <circle
-                    key={`dot-${cx}-${cy}`}
-                    cx={cx}
-                    cy={cy}
-                    r={4}
-                    fill="#ff7300"
-                    opacity={0.8}
-                  />
-                );
-              }}
+              dot={false}
             />
           </ComposedChart>
         </ResponsiveContainer>
