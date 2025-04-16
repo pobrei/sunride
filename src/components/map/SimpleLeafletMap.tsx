@@ -19,14 +19,75 @@ interface WeatherDataPoint {
   windSpeed: number;
   windDirection: number;
   precipitation: number;
+  precipitationProbability?: number;
   cloudCover: number;
   uvIndex: number;
   visibility: number;
   pressure: number;
   weatherCode: number;
+  conditionCode?: number;
   weatherDescription: string;
+  conditionDescription?: string;
   weatherIcon: string;
   time: string;
+}
+
+/**
+ * Get weather icon emoji based on condition code
+ */
+function getWeatherIconEmoji(conditionCode: number): string {
+  // Weather condition codes based on OpenWeatherMap API
+  // https://openweathermap.org/weather-conditions
+
+  // Thunderstorm
+  if (conditionCode >= 200 && conditionCode < 300) return '⛈️';
+
+  // Drizzle
+  if (conditionCode >= 300 && conditionCode < 400) return '🌦️';
+
+  // Rain
+  if (conditionCode >= 500 && conditionCode < 600) {
+    if (conditionCode === 511) return '🌨️'; // Freezing rain
+    return '🌧️';
+  }
+
+  // Snow
+  if (conditionCode >= 600 && conditionCode < 700) return '❄️';
+
+  // Atmosphere (fog, mist, etc.)
+  if (conditionCode >= 700 && conditionCode < 800) return '🌫️';
+
+  // Clear
+  if (conditionCode === 800) return '☀️';
+
+  // Clouds
+  if (conditionCode > 800 && conditionCode < 900) {
+    if (conditionCode === 801) return '🌤️'; // Few clouds
+    if (conditionCode === 802) return '⛅'; // Scattered clouds
+    return '☁️'; // Broken or overcast clouds
+  }
+
+  return '🌡️'; // Default
+}
+
+/**
+ * Get wind direction as a cardinal direction
+ */
+function getWindDirection(degrees: number): string {
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const index = Math.round(degrees / 22.5) % 16;
+  return directions[index];
+}
+
+/**
+ * Get UV index category
+ */
+function getUVIndexCategory(uvIndex: number): string {
+  if (uvIndex < 3) return 'Low';
+  if (uvIndex < 6) return 'Moderate';
+  if (uvIndex < 8) return 'High';
+  if (uvIndex < 11) return 'Very High';
+  return 'Extreme';
 }
 
 interface SimpleLeafletMapProps {
@@ -181,8 +242,8 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
       const icon = L.divIcon({
         className: 'custom-marker-icon',
         html: `<div class="${isSelected ? 'marker-selected' : 'marker-normal'}">${index + 1}</div>`,
-        iconSize: [isSelected ? 32 : 24, isSelected ? 32 : 24],
-        iconAnchor: [isSelected ? 16 : 12, isSelected ? 16 : 12],
+        iconSize: [isSelected ? 36 : 24, isSelected ? 36 : 24],
+        iconAnchor: [isSelected ? 18 : 12, isSelected ? 18 : 12],
       });
 
       // Create marker
@@ -235,20 +296,38 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           font-size: 12px;
           box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
           transition: all 0.2s ease;
+          z-index: 400;
+        }
+        .marker-normal:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2);
         }
         .marker-selected {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
-          background-color: #3b82f6;
+          width: 36px;
+          height: 36px;
+          background-color: #2563eb;
           color: white;
           font-weight: 600;
           border-radius: 50%;
           font-size: 14px;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
-          transition: all 0.2s ease;
+          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+          z-index: 500;
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+          }
         }
         .weather-popup {
           text-align: center;
@@ -344,32 +423,84 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         <Locate className="h-4 w-4" />
       </Button>
 
-      {/* Weather info panel */}
+      {/* Enhanced Weather info panel */}
       {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
-        <Card className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-64 z-[1000] p-0 bg-background/80 backdrop-blur-sm">
-          <div className="p-3">
-            <div className="font-medium mb-2 text-sm">
-              Point {selectedMarker + 1} of {forecastPoints.length}
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <div className="text-muted-foreground">Temperature:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
+        <Card className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-80 z-[1000] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="font-medium text-sm flex items-center">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs mr-2">
+                  {selectedMarker + 1}
+                </div>
+                <span>Point {selectedMarker + 1} of {forecastPoints.length}</span>
               </div>
+              <div className="text-2xl">
+                {getWeatherIconEmoji(weatherData[selectedMarker]?.conditionCode || 800)}
+              </div>
+            </div>
 
-              <div className="text-muted-foreground">Feels Like:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
+            <div className="mb-3">
+              <div className="text-lg font-semibold">
+                {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  Feels like {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
+                </span>
+              </div>
+              <div className="text-sm text-muted-foreground capitalize">
+                {weatherData[selectedMarker]?.conditionDescription || 'Unknown'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div className="col-span-2 pb-1 mb-1 border-b border-border">
+                <span className="font-medium">Weather Details</span>
               </div>
 
               <div className="text-muted-foreground">Wind:</div>
               <div className="font-medium">
                 {weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h
+                <span className="text-xs text-muted-foreground ml-1">
+                  {getWindDirection(weatherData[selectedMarker]?.windDirection || 0)}
+                </span>
+              </div>
+
+              <div className="text-muted-foreground">Humidity:</div>
+              <div className="font-medium">
+                {weatherData[selectedMarker]?.humidity || 'N/A'}%
               </div>
 
               <div className="text-muted-foreground">Precipitation:</div>
               <div className="font-medium">
                 {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
+                {weatherData[selectedMarker]?.precipitationProbability > 0 && (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    ({(weatherData[selectedMarker]?.precipitationProbability * 100).toFixed(0)}%)
+                  </span>
+                )}
+              </div>
+
+              <div className="text-muted-foreground">UV Index:</div>
+              <div className="font-medium">
+                {weatherData[selectedMarker]?.uvIndex?.toFixed(1) || 'N/A'}
+                <span className="text-xs text-muted-foreground ml-1">
+                  {getUVIndexCategory(weatherData[selectedMarker]?.uvIndex || 0)}
+                </span>
+              </div>
+
+              <div className="text-muted-foreground">Pressure:</div>
+              <div className="font-medium">
+                {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
+              </div>
+
+              <div className="text-muted-foreground">Visibility:</div>
+              <div className="font-medium">
+                {((weatherData[selectedMarker]?.visibility || 0) / 1000).toFixed(1)} km
+              </div>
+
+              <div className="col-span-2 pt-1 mt-1 border-t border-border text-xs text-center text-muted-foreground">
+                {forecastPoints[selectedMarker] && (
+                  <span>Distance: {forecastPoints[selectedMarker].distance.toFixed(1)} km</span>
+                )}
               </div>
             </div>
           </div>
