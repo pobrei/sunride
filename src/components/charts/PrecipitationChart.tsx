@@ -24,6 +24,8 @@ interface PrecipitationChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
@@ -31,6 +33,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<

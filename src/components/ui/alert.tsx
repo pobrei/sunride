@@ -2,6 +2,8 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
+
 import { cn } from '@/lib/utils';
 
 const alertVariants = cva(
@@ -13,10 +15,10 @@ const alertVariants = cva(
         destructive:
           'border-destructive/50 text-destructive bg-destructive/10 [&>svg]:text-destructive *:data-[slot=alert-description]:text-destructive/90',
         success:
-          'border-green-500/50 text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/20 [&>svg]:text-green-500 *:data-[slot=alert-description]:text-green-700/90 dark:*:data-[slot=alert-description]:text-green-300/90',
+          'border-green-500/50 text-green-700 bg-green-50 [&>svg]:text-green-500 *:data-[slot=alert-description]:text-green-700/90',
         warning:
-          'border-yellow-500/50 text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/20 [&>svg]:text-yellow-500 *:data-[slot=alert-description]:text-yellow-700/90 dark:*:data-[slot=alert-description]:text-yellow-300/90',
-        info: 'border-blue-500/50 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/20 [&>svg]:text-blue-500 *:data-[slot=alert-description]:text-blue-700/90 dark:*:data-[slot=alert-description]:text-blue-300/90',
+          'border-yellow-500/50 text-yellow-700 bg-yellow-50 [&>svg]:text-yellow-500 *:data-[slot=alert-description]:text-yellow-700/90',
+        info: 'border-blue-500/50 text-blue-700 bg-blue-50 [&>svg]:text-blue-500 *:data-[slot=alert-description]:text-blue-700/90',
       },
     },
     defaultVariants: {
@@ -69,14 +71,15 @@ function Alert({
       {getDefaultIcon()}
       {props.children}
       {dismissible && onDismiss && (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onDismiss}
-          className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          className="absolute right-2 top-2 h-6 w-6 p-0 opacity-70 transition-transform hover:scale-105 hover:opacity-100"
           aria-label="Close alert"
         >
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -86,7 +89,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="alert-title"
-      className={cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', className)}
+      className={cn('col-start-2 line-clamp-1 min-h-4 text-lg font-semibold', className)}
       {...props}
     />
   );
@@ -97,7 +100,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) 
     <div
       data-slot="alert-description"
       className={cn(
-        'text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed',
+        'text-zinc-500 col-start-2 grid justify-items-start gap-1 text-sm font-medium [&_p]:leading-relaxed',
         className
       )}
       {...props}

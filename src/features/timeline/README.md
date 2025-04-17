@@ -6,13 +6,12 @@ This folder contains components for displaying and interacting with a timeline o
 
 - `Timeline`: The main timeline component that displays forecast points over time.
 - `SafeTimelineWrapper`: A wrapper component that handles error boundaries and loading states.
-- `DynamicTimeline`: A dynamically loaded timeline component for client-side rendering.
-- `SimpleTimeline`: A simplified timeline component for fallback or low-resource environments.
+- `ClientSideTimeline`: A client-side timeline component with navigation controls.
 
 ## Usage
 
 ```tsx
-import { SafeTimelineWrapper } from '@/features/timeline/components';
+import { ClientSideTimeline } from '@/features/timeline/components';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 
 const MyComponent = () => {
@@ -23,7 +22,7 @@ const MyComponent = () => {
   };
 
   return (
-    <SafeTimelineWrapper
+    <ClientSideTimeline
       forecastPoints={forecastPoints}
       weatherData={weatherData}
       selectedMarker={selectedMarker}

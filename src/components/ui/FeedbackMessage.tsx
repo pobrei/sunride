@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertCircle, CheckCircle, Info, AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { effects, status, animation } from '@/styles/tailwind-utils';
+import { Button } from '@/components/ui/button';
 
 export type FeedbackType = 'success' | 'error' | 'info' | 'warning';
 
@@ -81,18 +82,17 @@ export function FeedbackMessage({
         <span>{message}</span>
       </div>
       {dismissible && (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={handleDismiss}
           className={cn(
-            'ml-2 rounded-full p-1',
-            effects.hover,
-            effects.focus
+            'ml-2 h-6 w-6 p-0 transition-transform hover:scale-105'
           )}
           aria-label={`Dismiss ${type} message`}
         >
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       )}
     </div>
   );

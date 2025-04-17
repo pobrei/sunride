@@ -192,40 +192,40 @@ export function WeatherAlerts({
           icon: <Sun className="h-4 w-4 text-red-500" />,
           title: 'Extreme Heat',
           color: 'text-red-600',
-          bgColor: 'bg-red-50 dark:bg-red-900/20',
-          borderColor: 'border-red-200 dark:border-red-800/30',
+          bgColor: 'bg-red-50',
+          borderColor: 'border-red-200',
         };
       case 'freezing':
         return {
           icon: <Snowflake className="h-4 w-4 text-blue-500" />,
           title: 'Freezing',
           color: 'text-blue-600',
-          bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-          borderColor: 'border-blue-200 dark:border-blue-800/30',
+          bgColor: 'bg-blue-50',
+          borderColor: 'border-blue-200',
         };
       case 'highWind':
         return {
           icon: <Wind className="h-4 w-4 text-amber-500" />,
           title: 'High Wind',
           color: 'text-amber-600',
-          bgColor: 'bg-amber-50 dark:bg-amber-900/20',
-          borderColor: 'border-amber-200 dark:border-amber-800/30',
+          bgColor: 'bg-amber-50',
+          borderColor: 'border-amber-200',
         };
       case 'heavyRain':
         return {
           icon: <CloudRain className="h-4 w-4 text-cyan-500" />,
           title: 'Heavy Rain',
           color: 'text-cyan-600',
-          bgColor: 'bg-cyan-50 dark:bg-cyan-900/20',
-          borderColor: 'border-cyan-200 dark:border-cyan-800/30',
+          bgColor: 'bg-cyan-50',
+          borderColor: 'border-cyan-200',
         };
       default:
         return {
           icon: <AlertTriangle className="h-4 w-4 text-gray-500" />,
           title: 'Alert',
           color: 'text-gray-600',
-          bgColor: 'bg-gray-50 dark:bg-gray-900/20',
-          borderColor: 'border-gray-200 dark:border-gray-800/30',
+          bgColor: 'bg-zinc-50',
+          borderColor: 'border-zinc-200',
         };
     }
   };
@@ -238,8 +238,8 @@ export function WeatherAlerts({
     const { icon, title, color, bgColor, borderColor } = getAlertTypeDetails(type);
 
     return (
-      <Card key={type} className={cn("overflow-hidden border", borderColor, animation.fadeIn)}>
-        <CardHeader className={cn("py-2 px-3", bgColor, "border-b", borderColor)}>
+      <Card key={type} className={cn("overflow-hidden border max-w-7xl mx-auto text-zinc-700", borderColor, animation.fadeIn)}>
+        <CardHeader className={cn("py-4 px-4", bgColor, "border-b", borderColor)}>
           <CardTitle className={cn("text-sm font-semibold flex items-center", color)}>
             {icon}
             <span className="ml-2">
@@ -247,8 +247,8 @@ export function WeatherAlerts({
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-3">
-          <div className="flex flex-wrap gap-1.5">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap gap-2">
             {typeAlerts.map(alert => (
               <Badge
                 key={alert.id}
@@ -279,16 +279,16 @@ export function WeatherAlerts({
   }
 
   return (
-    <div className={cn('space-y-3 p-4 border border-primary/10 rounded-lg bg-gradient-to-r from-primary/5 to-transparent', animation.fadeIn, className)}>
+    <div className={cn('space-y-4 p-4 border border-zinc-200 rounded-lg bg-white text-zinc-700', animation.fadeIn, className)}>
       <div className={cn(layout.flexBetween)}>
-        <h3 className={cn(typography.h5, layout.flexRow, "gap-2")}>
+        <h3 className={cn("text-lg font-semibold", layout.flexRow, "gap-2")}>
           <AlertTriangle className="h-5 w-5 text-primary" />
           Weather Alerts
-          <span className={cn(typography.bodySm, typography.muted)}>({visibleAlerts.length})</span>
+          <span className="text-sm font-medium text-zinc-500">({visibleAlerts.length})</span>
         </h3>
       </div>
 
-      <div className={cn("space-y-3", animation.fadeInSlideUp)}>
+      <div className={cn("space-y-4", animation.fadeInSlideUp)}>
         {renderCompactAlerts('highWind')}
         {renderCompactAlerts('extremeHeat')}
         {renderCompactAlerts('freezing')}

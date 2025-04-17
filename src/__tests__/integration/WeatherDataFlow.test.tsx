@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { WeatherProvider } from '@frontend/features/weather/context';
 import { NotificationProvider } from '@frontend/features/notifications/context';
 import { mockGPXData, mockForecastPoints, mockWeatherData } from '../mocks/mockData';
+import { Button } from '@/components/ui/button';
 
 // Mock the weather API
 jest.mock('@frontend/features/weather/utils/weatherService', () => ({
@@ -42,7 +43,13 @@ const TestWeatherFlow = () => {
 
   return (
     <div>
-      <button onClick={handleLoadGPX}>Load GPX and Weather</button>
+      <Button
+        variant="default"
+        onClick={handleLoadGPX}
+        className="transition-transform hover:scale-105"
+      >
+        Load GPX and Weather
+      </Button>
 
       {isLoading && <div>Loading weather data...</div>}
       {error && <div>Error: {error.message}</div>}
@@ -130,7 +137,13 @@ describe('Weather Data Flow Integration', () => {
 
       return (
         <div>
-          <button onClick={handleLoadGPX}>Load GPX and Weather</button>
+          <Button
+            variant="default"
+            onClick={handleLoadGPX}
+            className="transition-transform hover:scale-105"
+          >
+            Load GPX and Weather
+          </Button>
           {error && <div>Error: {error.message}</div>}
         </div>
       );

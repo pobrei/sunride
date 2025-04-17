@@ -9,13 +9,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
+import { typography, animation, effects, layout, responsive } from '@/styles/tailwind-utils';
 
 // Dynamically import the Timeline component with no SSR
 const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
   ssr: false,
   loading: () => (
-    <div className={cn("h-[150px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
+    <div className={cn("h-[300px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
       <LoadingSpinner
         message="Loading timeline..."
         centered
@@ -165,7 +165,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
+            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm hover:shadow active:scale-[0.98] transition-all duration-200 ease-in-out", effects.buttonHover)}
             onClick={() => handleScroll('left')}
             disabled={scrollPosition <= 10}
           >
@@ -175,7 +175,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
+            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm hover:shadow active:scale-[0.98] transition-all duration-200 ease-in-out", effects.buttonHover)}
             onClick={() => handleScroll('right')}
           >
             <ChevronRight className="h-4 w-4" />
@@ -183,7 +183,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
         </>
       )}
 
-      <div className={cn("h-full overflow-hidden pb-2")} onScroll={handleScrollEvent}>
+      <div className={cn("h-full", responsive.scrollContainer)} onScroll={handleScrollEvent}>
         <SafeTimelineWrapper
           forecastPoints={forecastPoints}
           weatherData={weatherData}

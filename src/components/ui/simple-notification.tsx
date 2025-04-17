@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 import { classNames } from '@/utils/classNames';
+import { Button } from '@/components/ui/button';
 
 export type NotificationType = 'error' | 'info' | 'success' | 'warning';
 
@@ -124,14 +125,15 @@ const SimpleNotification: React.FC<NotificationProps> = ({
         <div className="flex-1 mr-2">
           <p className="text-sm font-medium">{message}</p>
         </div>
-        <button
-          type="button"
-          className="h-6 w-6 rounded-full flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 p-0 flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-transform hover:scale-105"
           onClick={handleDismiss}
           aria-label="Dismiss notification"
         >
           <X className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
 
       {/* Progress bar */}

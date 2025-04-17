@@ -66,25 +66,25 @@ export function AlertCard({
 
   // Determine icon based on severity
   let IconComponent = Info;
-  let severityColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+  let severityColor = 'bg-blue-50 text-blue-600 border-blue-200';
 
   switch (severity) {
     case 'error':
       IconComponent = AlertCircle;
-      severityColor = 'bg-red-500/10 text-red-500 border-red-500/20';
+      severityColor = 'bg-red-50 text-red-600 border-red-200';
       break;
     case 'warning':
       IconComponent = AlertTriangle;
-      severityColor = 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+      severityColor = 'bg-amber-50 text-amber-600 border-amber-200';
       break;
     case 'success':
       IconComponent = Info;
-      severityColor = 'bg-green-500/10 text-green-500 border-green-500/20';
+      severityColor = 'bg-green-50 text-green-600 border-green-200';
       break;
     case 'info':
     default:
       IconComponent = Info;
-      severityColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      severityColor = 'bg-blue-50 text-blue-600 border-blue-200';
   }
 
   if (!isOpen) return null;

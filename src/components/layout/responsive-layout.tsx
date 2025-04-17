@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { typography, animation, layout } from '@/styles/tailwind-utils';
+import { typography, animation, layout, responsive } from '@/styles/tailwind-utils';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Sidebar } from '@/components/layout/sidebar';
@@ -30,6 +30,12 @@ interface ResponsiveLayoutProps {
   sidebarTitle?: string;
   /** Optional icon for the sidebar */
   sidebarIcon?: React.ReactNode;
+  /** Optional title for the header */
+  headerTitle?: string;
+  /** Whether to show a back button in the header */
+  showBackButton?: boolean;
+  /** Optional back URL for the header */
+  backUrl?: string;
 }
 
 /**
@@ -46,6 +52,9 @@ export function ResponsiveLayout({
   sidebarDefaultCollapsed = false,
   sidebarTitle = 'Controls',
   sidebarIcon,
+  headerTitle,
+  showBackButton = false,
+  backUrl,
 }: ResponsiveLayoutProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -56,7 +65,7 @@ export function ResponsiveLayout({
   return (
     <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
       {/* Header */}
-      {showHeader && <Header />}
+      {showHeader && <Header title={headerTitle} showBackButton={showBackButton} backUrl={backUrl} />}
 
       {/* Main content */}
       <div className={cn(layout.flexRow, 'flex-1 overflow-hidden')}>
@@ -104,18 +113,18 @@ export function ResponsiveLayout({
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <div className="p-4 overflow-auto h-[calc(100vh-4rem)]">{sidebarContent}</div>
+          <div className="p-3 sm:p-4 overflow-auto h-[calc(100vh-4rem)]">{sidebarContent}</div>
         </div>
 
         {/* Main content area */}
         <main className={cn('flex-1 overflow-auto', className)}>
           {/* Optional header content */}
           {headerContent && (
-            <div className="border-b border-border bg-card/50 px-6 py-4">{headerContent}</div>
+            <div className="border-b border-border bg-card/50 px-4 py-4 max-w-7xl mx-auto">{headerContent}</div>
           )}
 
           {/* Main content */}
-          <div className={cn(layout.container, layout.sectionSm)}>{children}</div>
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">{children}</div>
         </main>
       </div>
 

@@ -1,2 +1,2 @@
-// Export only the map components used on the main page
-export { default as SimpleMap } from './SimpleMap';
+// Re-export map components from the main components directory
+export { MapWrapper, SimpleLeafletMap } from '@/components/map';

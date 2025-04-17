@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
 import { cn } from '@/lib/utils';
-import { animation, effects } from '@/styles/tailwind-utils';
+import { animation, effects, responsive } from '@/styles/tailwind-utils';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import dynamic from 'next/dynamic';
@@ -12,13 +13,13 @@ import dynamic from 'next/dynamic';
 const SafeChartsWrapper = dynamic(() => import('./SafeChartsWrapper'), {
   ssr: false,
   loading: () => (
-    <div className="h-[500px] flex items-center justify-center">
+    <div className="h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center">
       <LoadingSpinner size="lg" />
     </div>
   ),
 });
 
-interface ClientSideChartsProps {
+export interface ClientSideChartsProps {
   /** GPX data containing route points */
   gpxData: GPXData | null;
   /** Forecast points along the route */
@@ -38,14 +39,14 @@ interface ClientSideChartsProps {
 /**
  * A client-side only wrapper for the charts component
  */
-export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
+const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
   gpxData,
   forecastPoints,
   weatherData,
   selectedMarker,
   onChartClick,
   className,
-  height = 'h-[800px]',
+  height = 'h-[500px] sm:h-[600px] md:h-[800px]',
 }) => {
   // Check if we have valid data
   if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) {
@@ -65,7 +66,12 @@ export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
 
   // If everything is fine, render the charts
   return (
-    <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-8', animation.fadeIn, className)}>
+    <motion.div
+      className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-8', className)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
       <SafeChartsWrapper
         gpxData={gpxData}
         forecastPoints={forecastPoints}
@@ -73,6 +79,8 @@ export const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
         selectedMarker={selectedMarker}
         onChartClick={onChartClick}
       />
-    </div>
+    </motion.div>
   );
 };
+
+export default ClientSideCharts;

@@ -15,7 +15,7 @@ import { KeyboardNavigation } from '@/features/navigation/components';
 import { useNotifications } from '@/features/notifications/context';
 
 // Import from components
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { EnhancedThemeToggle } from '@/components/ui/enhanced-theme-toggle';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { ProgressSteps } from '@/components/ui/progress-steps';
 
@@ -36,8 +36,8 @@ import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
 import { TripSummary as RouteSummary } from '@/components/route/TripSummary';
 import { UserGuide } from '@/components/help/UserGuide';
 
-// Import enhanced charts
-import EnhancedClientCharts from '@/components/charts/EnhancedClientCharts';
+// Import charts
+import ClientSideCharts from '@/components/charts/ClientSideCharts';
 
 export default function Home() {
   const {
@@ -181,7 +181,7 @@ export default function Home() {
           ]}
         />
         <div className="flex items-center space-x-2">
-          <ThemeToggle />
+          <EnhancedThemeToggle />
           <PDFExport {...pdfExportProps} />
         </div>
       </div>
@@ -200,7 +200,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header title="Route Weather Planner" />
 
       <div className="container mx-auto px-4 py-6 pb-24"> {/* Added more bottom padding */}
         {headerContent}
@@ -270,12 +270,12 @@ export default function Home() {
                       weatherData={weatherData}
                       selectedMarker={selectedMarker}
                       onTimelineClick={handleTimelineClick}
-                      height="h-[200px]"
+                      height="h-[350px]"
                       showNavigation={true}
                     />
 
                     <div ref={chartsRef} className="mb-16"> {/* Added bottom margin */}
-                      <EnhancedClientCharts
+                      <ClientSideCharts
                         gpxData={gpxData}
                         forecastPoints={forecastPoints}
                         weatherData={weatherData}

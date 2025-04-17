@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { WeatherFallbackUI, WeatherWidgetFallback } from './WeatherFallbackUI';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@/components/ui/card';
 import { useWeatherContext } from '@/features/weather/context/WeatherContext';
 
 interface WeatherDataLoaderProps {
@@ -73,15 +74,19 @@ export function WeatherDataLoader({
   // Show loading state
   if (isLoading) {
     return compact ? (
-      <div className={`p-3 ${className}`}>
-        <Skeleton className="h-24 w-full" />
-      </div>
+      <Card className={`rounded-2xl shadow-sm bg-white text-zinc-700 ${className}`}>
+        <CardContent>
+          <Skeleton className="h-24 w-full" />
+        </CardContent>
+      </Card>
     ) : (
-      <div className={`p-4 space-y-4 ${className}`}>
-        <Skeleton className="h-8 w-3/4" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-24 w-full" />
-      </div>
+      <Card className={`rounded-2xl shadow-sm bg-white text-zinc-700 ${className}`}>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </CardContent>
+      </Card>
     );
   }
 

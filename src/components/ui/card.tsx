@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { effects } from '@/styles/tailwind-utils';
 
 const cardVariants = cva(
-  'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl transition-all duration-300 ease-in-out border border-border/30 dark:border-border/10',
+  'bg-white shadow-md rounded-2xl transition-all duration-300 ease-in-out border border-border/30 hover:shadow active:scale-[0.98] text-zinc-700',
   {
     variants: {
       variant: {
@@ -18,15 +18,15 @@ const cardVariants = cva(
         accent: 'border-l-4 border-accent',
       },
       size: {
-        default: 'p-4 md:p-6 space-y-2',
-        sm: 'p-3 md:p-4 space-y-1',
-        lg: 'p-6 md:p-8 space-y-4',
-        compact: 'p-3 space-y-1',
+        default: 'p-4 space-y-4',
+        sm: 'p-4 space-y-2',
+        lg: 'p-8 space-y-4',
+        compact: 'p-4 space-y-2',
         none: 'p-0',
       },
       hover: {
-        default: 'hover:shadow-lg hover:-translate-y-1 hover:border-border/50 dark:hover:border-border/20',
-        subtle: 'hover:shadow-md hover:-translate-y-0.5 hover:border-border/50 dark:hover:border-border/20',
+        default: 'hover:shadow-lg hover:-translate-y-1 hover:border-border/50 dark:hover:border-border/20 active:scale-[0.98]',
+        subtle: 'hover:shadow-md hover:-translate-y-0.5 hover:border-border/50 dark:hover:border-border/20 active:scale-[0.98]',
         glow: 'hover:shadow-[0_0_15px_rgba(var(--accent),0.3)]',
         none: '',
       },
@@ -73,8 +73,8 @@ const CardHeader = React.forwardRef<
     ref={ref}
     data-slot="card-header"
     className={cn(
-      'flex items-center justify-between px-4 py-3',
-      bordered && 'border-b pb-3 mb-2',
+      'flex items-center justify-between px-4 py-4',
+      bordered && 'border-b pb-4 mb-4',
       className
     )}
     {...props}
@@ -89,7 +89,7 @@ const CardTitle = React.forwardRef<
   <Comp
     ref={ref}
     data-slot="card-title"
-    className={cn('text-lg font-semibold text-foreground', className)}
+    className={cn('text-lg font-semibold', className)}
     {...props}
   />
 ));
@@ -102,7 +102,7 @@ const CardDescription = React.forwardRef<
   <p
     ref={ref}
     data-slot="card-description"
-    className={cn('text-sm text-muted', className)}
+    className={cn('text-sm font-medium text-zinc-500', className)}
     {...props}
   />
 ));
@@ -115,7 +115,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     data-slot="card-content"
-    className={cn('space-y-4 px-4 py-3', className)}
+    className={cn('space-y-4 px-4 py-4', className)}
     {...props}
   />
 ));
@@ -132,8 +132,8 @@ const CardFooter = React.forwardRef<
     ref={ref}
     data-slot="card-footer"
     className={cn(
-      'flex items-center justify-between px-4 py-3',
-      bordered && 'border-t mt-2 pt-4',
+      'flex items-center justify-between px-4 py-4',
+      bordered && 'border-t mt-4 pt-4',
       className
     )}
     {...props}

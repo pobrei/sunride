@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const badgeVariants = cva(
   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
@@ -43,11 +44,21 @@ export interface BadgeProps
  * Badge component for displaying status, counts, or labels
  */
 function Badge({ className, variant, size, interactive = false, ...props }: BadgeProps) {
-  const Comp = interactive ? 'button' : 'div';
+  if (interactive) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(badgeVariants({ variant, size }), "transition-transform hover:scale-105", className)}
+        type="button"
+        {...props}
+      />
+    );
+  }
+
   return (
-    <Comp
+    <div
       className={cn(badgeVariants({ variant, size }), className)}
-      {...(interactive && { type: 'button' })}
       {...props}
     />
   );

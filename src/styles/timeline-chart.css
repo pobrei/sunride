@@ -38,7 +38,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 300px;
   justify-content: space-between;
   padding-bottom: 12px;
   margin-bottom: 4px;

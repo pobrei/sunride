@@ -3,6 +3,7 @@ import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { FormErrorMessage } from './FormErrorMessage';
+import { Button } from '@/components/ui/button';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Optional left icon */
@@ -46,7 +47,7 @@ function Input({
     setType(type === 'password' ? 'text' : 'password');
   };
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-7xl mx-auto">
       {leftIcon && (
         <div className="input-icon-left">
           {leftIcon}
@@ -70,7 +71,7 @@ function Input({
           isValid && 'input-success border-green-500 focus-visible:ring-green-500',
           className
         )}
-        aria-invalid={isInvalid ? 'true' : 'false'}
+        aria-invalid={isInvalid}
         aria-describedby={cn(
           errorMessage && isInvalid ? errorId || `${props.id || props.name}-error` : undefined,
           description ? descriptionId || `${props.id || props.name}-description` : undefined
@@ -88,15 +89,16 @@ function Input({
         </div>
       )}
       {initialType === 'password' && showPasswordToggle && (
-        <button
-          type="button"
-          className="input-icon-right text-muted hover:text-foreground"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="input-icon-right h-6 w-6 p-0 text-muted transition-transform hover:scale-105 hover:text-foreground"
           onClick={togglePasswordVisibility}
           tabIndex={-1}
           aria-label={type === 'password' ? 'Show password' : 'Hide password'}
         >
           {type === 'password' ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-        </button>
+        </Button>
       )}
       {rightIcon &&
         !isValid &&
@@ -116,7 +118,7 @@ function Input({
       {description && (
         <p
           id={descriptionId || `${props.id || props.name}-description`}
-          className="mt-1 text-xs text-muted-foreground"
+          className="mt-2 text-xs font-medium text-zinc-500"
         >
           {description}
         </p>

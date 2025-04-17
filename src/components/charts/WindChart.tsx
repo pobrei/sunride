@@ -24,6 +24,8 @@ interface WindChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const WindChart: React.FC<WindChartProps> = ({
@@ -31,6 +33,7 @@ const WindChart: React.FC<WindChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<

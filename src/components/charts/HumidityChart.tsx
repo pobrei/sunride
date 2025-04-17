@@ -22,6 +22,8 @@ interface HumidityChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const HumidityChart: React.FC<HumidityChartProps> = ({
@@ -29,6 +31,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<

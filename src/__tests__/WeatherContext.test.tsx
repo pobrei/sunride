@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { WeatherProvider, useWeather } from '@frontend/features/weather/context';
 import { NotificationProvider } from '@frontend/features/notifications/context';
+import { Button } from '@/components/ui/button';
 
 // Mock the API functions
 jest.mock('@backend/lib/mongodb-api', () => ({
@@ -67,7 +68,8 @@ const TestComponent = () => {
       <div data-testid="forecast-points">{forecastPoints.length}</div>
       <div data-testid="weather-data">{weatherData.length}</div>
       <div data-testid="selected-marker">{selectedMarker !== null ? selectedMarker : 'None'}</div>
-      <button
+      <Button
+        variant="default"
         data-testid="set-gpx-data"
         onClick={() =>
           setGpxData({
@@ -86,19 +88,27 @@ const TestComponent = () => {
             totalTime: 0,
           })
         }
+        className="transition-transform hover:scale-105"
       >
         Set GPX Data
-      </button>
-      <button data-testid="set-selected-marker" onClick={() => setSelectedMarker(0)}>
+      </Button>
+      <Button
+        variant="default"
+        data-testid="set-selected-marker"
+        onClick={() => setSelectedMarker(0)}
+        className="transition-transform hover:scale-105"
+      >
         Set Selected Marker
-      </button>
+      </Button>
       {/* Notification button removed as we now use NotificationProvider */}
-      <button
+      <Button
+        variant="default"
         data-testid="generate-forecast"
         onClick={() => generateWeatherForecast(5, new Date(), 20)}
+        className="transition-transform hover:scale-105"
       >
         Generate Forecast
-      </button>
+      </Button>
     </div>
   );
 };

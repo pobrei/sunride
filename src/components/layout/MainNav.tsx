@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { EnhancedThemeToggle } from '@/components/ui/enhanced-theme-toggle';
 
 /**
  * Main navigation component for the application
@@ -41,7 +41,7 @@ export function MainNav() {
           ))}
         </nav>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
+          <EnhancedThemeToggle />
         </div>
       </div>
     </header>

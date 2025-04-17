@@ -44,9 +44,8 @@ Each feature folder follows a consistent structure:
 ```tsx
 // Import components from features
 import { GPXUploader } from '@/features/gpx/components';
-import { SafeMapWrapper } from '@/features/map/components';
-import { SafeChartsWrapper } from '@/features/charts/components';
-import { SafeTimelineWrapper } from '@/features/timeline/components';
+import { MapWrapper } from '@/features/map/components';
+import { ClientSideTimeline } from '@/features/timeline/components';
 
 // Import context hooks
 import { useWeather } from '@/features/weather/context';
@@ -66,9 +65,8 @@ const MyComponent = () => {
   return (
     <div>
       <GPXUploader onGPXLoaded={handleGPXLoaded} />
-      <SafeMapWrapper gpxData={gpxData} forecastPoints={forecastPoints} weatherData={weatherData} />
-      <SafeChartsWrapper forecastPoints={forecastPoints} weatherData={weatherData} />
-      <SafeTimelineWrapper forecastPoints={forecastPoints} weatherData={weatherData} />
+      <MapWrapper gpxData={gpxData} forecastPoints={forecastPoints} weatherData={weatherData} />
+      <ClientSideTimeline forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={null} onTimelineClick={() => {}} />
     </div>
   );
 };

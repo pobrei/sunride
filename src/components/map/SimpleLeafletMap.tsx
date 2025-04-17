@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { GPXData, ForecastPoint } from '@/types';
 import { Locate } from 'lucide-react';
+import { responsive } from '@/styles/tailwind-utils';
 import './MapStyles.css';
 
 // Import Leaflet types but use dynamic import for the actual library
@@ -363,10 +364,10 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
   // Render placeholder if no data
   if (!gpxData || forecastPoints.length === 0) {
     return (
-      <div className="h-full w-full bg-muted rounded-lg flex items-center justify-center">
+      <div className={cn(responsive.mapContainer, "bg-muted flex items-center justify-center max-w-7xl mx-auto")}>
         <Card className="w-full max-w-md mx-auto">
-          <div className="text-center p-6">
-            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+          <div className="text-center p-4">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 text-primary"
@@ -382,7 +383,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2">No Route Data</h3>
+            <h3 className="text-lg font-semibold mb-4">No Route Data</h3>
             <p className="text-sm text-muted-foreground max-w-xs mx-auto">
               Upload a GPX file to visualize your route on the map with weather data
             </p>
@@ -410,7 +411,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
   // Render map
   return (
     <div className="h-full w-full relative">
-      <div ref={mapContainerRef} className="h-full w-full"></div>
+      <div ref={mapContainerRef} className={cn(responsive.mapContainer, "w-full")}></div>
 
       {/* Center map button */}
       <Button
@@ -425,9 +426,9 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
 
       {/* Enhanced Weather info panel */}
       {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
-        <Card className="absolute bottom-2 left-2 right-2 md:left-auto md:right-2 md:w-80 z-[1000] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20">
+        <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-[1000] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20 max-h-[80vh] overflow-y-auto">
           <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <div className="font-medium text-sm flex items-center">
                 <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs mr-2">
                   {selectedMarker + 1}
@@ -439,7 +440,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
               </div>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-4">
               <div className="text-lg font-semibold">
                 {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
                 <span className="text-sm font-normal text-muted-foreground ml-2">
@@ -451,8 +452,8 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div className="col-span-2 pb-1 mb-1 border-b border-border">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+              <div className="col-span-2 pb-2 mb-2 border-b border-border">
                 <span className="font-medium">Weather Details</span>
               </div>
 
@@ -497,7 +498,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                 {((weatherData[selectedMarker]?.visibility || 0) / 1000).toFixed(1)} km
               </div>
 
-              <div className="col-span-2 pt-1 mt-1 border-t border-border text-xs text-center text-muted-foreground">
+              <div className="col-span-2 pt-2 mt-2 border-t border-border text-xs text-center text-muted-foreground">
                 {forecastPoints[selectedMarker] && (
                   <span>Distance: {forecastPoints[selectedMarker].distance.toFixed(1)} km</span>
                 )}

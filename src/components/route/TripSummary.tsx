@@ -105,9 +105,9 @@ export function TripSummary({ gpxData, forecastPoints, weatherData, className }:
   })();
 
   return (
-    <Card className={cn('overflow-hidden border-primary/10', className)}>
-      <CardHeader className="pb-2 bg-gradient-to-r from-primary/5 to-transparent">
-        <CardTitle className="text-lg font-medium flex items-center gap-2">
+    <Card className={cn('overflow-hidden border-primary/10 max-w-7xl mx-auto', className)}>
+      <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-transparent">
+        <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <Route className="h-5 w-5 text-primary" />
           Trip Summary
           {totalAlerts > 0 && (
@@ -121,79 +121,79 @@ export function TripSummary({ gpxData, forecastPoints, weatherData, className }:
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Distance */}
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <MapPin className="h-3 w-3 text-primary" />
               Distance
             </div>
-            <div className="text-lg font-medium">{formatDistance(tripDistance * 1000)}</div>
+            <div className="text-base text-zinc-700">{formatDistance(tripDistance * 1000)}</div>
           </div>
 
           {/* Duration */}
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <Timer className="h-3 w-3 text-primary" />
               Duration
             </div>
-            <div className="text-lg font-medium">{formatDuration(tripDuration)}</div>
+            <div className="text-base text-zinc-700">{formatDuration(tripDuration)}</div>
           </div>
 
           {/* Elevation */}
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <ArrowUp className="h-3 w-3 text-primary" />
               Elevation Gain
             </div>
-            <div className="text-lg font-medium">{Math.round(elevationGain)}m</div>
+            <div className="text-base text-zinc-700">{Math.round(elevationGain)}m</div>
           </div>
 
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <ArrowDown className="h-3 w-3 text-primary" />
               Elevation Loss
             </div>
-            <div className="text-lg font-medium">{Math.round(elevationLoss)}m</div>
+            <div className="text-base text-zinc-700">{Math.round(elevationLoss)}m</div>
           </div>
 
           {/* Weather */}
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <Thermometer className="h-3 w-3 text-primary" />
               Avg Temperature
             </div>
-            <div className="text-lg font-medium">{formatTemperature(avgTemperature)}</div>
+            <div className="text-base text-zinc-700">{formatTemperature(avgTemperature)}</div>
           </div>
 
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <Wind className="h-3 w-3 text-primary" />
               Avg Wind
             </div>
-            <div className="text-lg font-medium">{Math.round(avgWindSpeed)} km/h</div>
+            <div className="text-base text-zinc-700">{Math.round(avgWindSpeed)} km/h</div>
           </div>
 
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <CloudRain className="h-3 w-3 text-primary" />
               Rain Chance
             </div>
-            <div className="text-lg font-medium">{Math.round(precipitationChance * 100)}%</div>
+            <div className="text-base text-zinc-700">{Math.round(precipitationChance * 100)}%</div>
           </div>
 
           <div className="flex flex-col">
-            <div className="text-sm text-muted-foreground flex items-center gap-1 mb-1">
+            <div className="text-sm font-medium text-zinc-500 flex items-center gap-2 mb-2">
               <AlertTriangle className="h-3 w-3 text-primary" />
               Weather Alerts
             </div>
-            <div className="text-lg font-medium">{totalAlerts}</div>
+            <div className="text-base text-zinc-700">{totalAlerts}</div>
           </div>
         </div>
 
         {/* Temperature range */}
-        <div className="mt-4 pt-4 border-t border-border">
+        <div className="mt-8 pt-4 border-t border-border">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Sun className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Temperature Range</span>
+              <span className="text-sm font-medium text-zinc-700">Temperature Range</span>
             </div>
             <div className="text-sm">
               <span className="text-blue-500 font-medium">{formatTemperature(minTemperature)}</span>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 // This file has intentional formatting issues to test Prettier and ESLint
 const TestFormatting: React.FC = () => {
@@ -16,9 +17,13 @@ const TestFormatting: React.FC = () => {
     <div className="p-4">
       <h1 className="text-xl font-bold">Test Formatting</h1>
       <p>Count: {count}</p>
-      <button onClick={handleClick} className="bg-blue-500 text-white px-4 py-2 rounded">
+      <Button
+        variant="default"
+        onClick={handleClick}
+        className="transition-transform hover:scale-105"
+      >
         Increment
-      </button>
+      </Button>
     </div>
   );
 };

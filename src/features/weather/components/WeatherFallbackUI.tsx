@@ -62,7 +62,7 @@ export function WeatherFallbackUI({
   };
 
   return (
-    <Card className={`${fullSize ? 'w-full h-full' : ''} ${className}`}>
+    <Card className={`${fullSize ? 'w-full h-full' : ''} bg-white text-zinc-700 ${className}`}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-muted-foreground">
           <CloudOff className="h-5 w-5" />
@@ -73,8 +73,8 @@ export function WeatherFallbackUI({
       <CardContent>
         <div className="flex flex-col items-center justify-center p-4 text-center">
           <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
-          <p className="text-muted-foreground mb-2">{errorMessage}</p>
-          <div className="text-xs text-muted-foreground mt-2">
+          <p className="text-zinc-700 mb-2">{errorMessage}</p>
+          <div className="text-xs text-zinc-500 mt-2">
             <p>This could be due to:</p>
             <ul className="list-disc pl-5 mt-1 text-left">
               <li>Network connectivity issues</li>
@@ -113,17 +113,19 @@ export function WeatherWidgetFallback({
   error?: Error | string | null;
 }) {
   return (
-    <div className="p-3 bg-muted/50 rounded-md flex flex-col items-center justify-center text-center min-h-[100px]">
-      <CloudOff className="h-5 w-5 text-muted-foreground mb-2" />
-      <p className="text-sm text-muted-foreground mb-2">
-        {error instanceof Error ? error.message : error || 'Weather data unavailable'}
-      </p>
-      {onRetry && (
-        <Button variant="ghost" size="sm" className="mt-1" onClick={onRetry}>
-          <RefreshCw className="h-3 w-3 mr-1" />
-          Retry
-        </Button>
-      )}
-    </div>
+    <Card className="rounded-2xl shadow-sm bg-white text-zinc-700 min-h-[100px]">
+      <CardContent className="flex flex-col items-center justify-center text-center">
+        <CloudOff className="h-5 w-5 text-muted-foreground mb-2" />
+        <p className="text-sm text-zinc-700 mb-2">
+          {error instanceof Error ? error.message : error || 'Weather data unavailable'}
+        </p>
+        {onRetry && (
+          <Button variant="ghost" size="sm" className="mt-1" onClick={onRetry}>
+            <RefreshCw className="h-3 w-3 mr-1" />
+            Retry
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

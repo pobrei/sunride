@@ -48,26 +48,26 @@ export const spacing = {
  */
 export const typography = {
   // Headings
-  h1: 'text-4xl font-bold tracking-tight leading-tight',
-  h2: 'text-3xl font-bold tracking-tight leading-tight',
-  h3: 'text-2xl font-bold leading-snug',
-  h4: 'text-xl font-semibold leading-snug',
+  h1: 'text-2xl font-semibold leading-tight',
+  h2: 'text-xl font-semibold leading-tight',
+  h3: 'text-lg font-semibold leading-snug',
+  h4: 'text-lg font-semibold leading-snug',
   h5: 'text-lg font-semibold leading-snug',
   h6: 'text-base font-semibold leading-normal',
 
   // Body text
-  body: 'text-base leading-relaxed',
-  bodyLg: 'text-lg leading-relaxed',
-  bodySm: 'text-sm leading-relaxed',
-  bodyXs: 'text-xs leading-normal',
+  body: 'text-base text-zinc-700 leading-relaxed',
+  bodyLg: 'text-lg text-zinc-700 leading-relaxed',
+  bodySm: 'text-sm text-zinc-700 leading-relaxed',
+  bodyXs: 'text-xs text-zinc-700 leading-normal',
 
   // Display text (larger than headings, for hero sections)
   display1: 'text-6xl font-bold tracking-tighter leading-none',
   display2: 'text-5xl font-bold tracking-tight leading-none',
 
   // Text styles
-  muted: 'text-muted-foreground',
-  subtle: 'text-foreground/70',
+  muted: 'text-zinc-500',
+  subtle: 'text-zinc-500',
   strong: 'font-semibold',
   emphasis: 'italic',
   underline: 'underline underline-offset-4',
@@ -97,17 +97,17 @@ export const typography = {
   info: 'text-info',
 
   // Combinations
-  sectionTitle: 'text-2xl font-bold tracking-tight mb-4',
+  sectionTitle: 'text-lg font-semibold mb-4',
   cardTitle: 'text-lg font-semibold leading-none',
-  cardDescription: 'text-sm text-muted-foreground',
+  cardDescription: 'text-sm font-medium text-zinc-500',
   formLabel: 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-  formDescription: 'text-sm text-muted-foreground',
+  formDescription: 'text-sm text-zinc-500',
   formMessage: 'text-sm font-medium text-destructive',
-  breadcrumb: 'text-sm text-muted-foreground hover:text-foreground',
-  caption: 'text-xs text-muted-foreground',
+  breadcrumb: 'text-sm text-zinc-500 hover:text-foreground',
+  caption: 'text-xs text-zinc-500',
   badge: 'text-xs font-medium',
   code: 'font-mono text-sm',
-  blockquote: 'pl-4 border-l-2 border-muted italic text-muted-foreground',
+  blockquote: 'pl-4 border-l-2 border-muted italic text-zinc-500',
 };
 
 /**
@@ -142,27 +142,27 @@ export const lineHeight = {
  */
 export const layout = {
   // Container layouts
-  container: 'container mx-auto px-4 max-w-7xl',
-  containerSm: 'container mx-auto px-4 max-w-3xl',
-  containerLg: 'container mx-auto px-4 max-w-screen-2xl',
+  container: 'max-w-7xl mx-auto px-4',
+  containerSm: 'max-w-3xl mx-auto px-4',
+  containerLg: 'max-w-screen-2xl mx-auto px-4',
   containerFull: 'w-full px-4',
 
   // Section layouts
-  section: 'py-12',
-  sectionSm: 'py-6',
-  sectionLg: 'py-24',
-  sectionDivider: 'border-t border-border my-12',
+  section: 'py-8',
+  sectionSm: 'py-4',
+  sectionLg: 'py-16',
+  sectionDivider: 'border-t border-border my-8',
 
   // Card layouts
-  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 transition-all duration-200',
-  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
-  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
-  cardCompact: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-3 space-y-1 transition-all duration-200',
-  cardHeader: 'flex items-center justify-between',
+  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 transition-all duration-200',
+  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
+  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
+  cardCompact: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-2 transition-all duration-200',
+  cardHeader: 'flex items-center justify-between mb-4',
   cardTitle: 'text-lg font-medium text-foreground',
   cardDescription: 'text-sm text-muted',
-  cardContent: 'space-y-2',
-  cardFooter: 'flex items-center justify-between pt-2 mt-2',
+  cardContent: 'space-y-4',
+  cardFooter: 'flex items-center justify-between pt-4 mt-4',
   cardFooterEnd: 'flex items-center justify-end pt-4 border-t border-border mt-4',
 
   // Flex layouts
@@ -177,27 +177,27 @@ export const layout = {
   flexShrink: 'flex-shrink',
 
   // Grid layouts
-  grid: 'grid grid-cols-1 gap-6',
-  gridSm: 'grid grid-cols-1 sm:grid-cols-2 gap-6',
-  gridMd: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6',
-  gridLg: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6',
-  gridAuto: 'grid grid-cols-auto-fill-100 gap-6',
-  gridAutoSm: 'grid grid-cols-auto-fill-200 gap-6',
-  gridAutoMd: 'grid grid-cols-auto-fill-300 gap-6',
+  grid: 'grid grid-cols-1 gap-4',
+  gridSm: 'grid grid-cols-1 sm:grid-cols-2 gap-4',
+  gridMd: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4',
+  gridLg: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4',
+  gridAuto: 'grid grid-cols-auto-fill-100 gap-4',
+  gridAutoSm: 'grid grid-cols-auto-fill-200 gap-4',
+  gridAutoMd: 'grid grid-cols-auto-fill-300 gap-4',
 
   // Form layouts
-  formGroup: 'space-y-2 mb-4',
+  formGroup: 'space-y-4 mb-4',
   formRow: 'grid grid-cols-1 md:grid-cols-2 gap-4 mb-4',
   formLabel: 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2',
-  formDescription: 'text-sm text-muted-foreground mt-1',
-  formMessage: 'text-sm font-medium text-destructive mt-1',
-  formActions: 'flex justify-end space-x-2 mt-6',
+  formDescription: 'text-sm text-muted-foreground mt-2',
+  formMessage: 'text-sm font-medium text-destructive mt-2',
+  formActions: 'flex justify-end space-x-4 mt-8',
 
   // Spacing utilities
-  spacer: 'h-6',
-  spacerSm: 'h-3',
-  spacerLg: 'h-12',
-  divider: 'border-t border-border my-6',
+  spacer: 'h-8',
+  spacerSm: 'h-4',
+  spacerLg: 'h-16',
+  divider: 'border-t border-border my-8',
   dividerVertical: 'border-l border-border mx-4 h-full',
 
   // Positioning utilities
@@ -223,12 +223,15 @@ export const layout = {
   responsiveReverse: 'flex flex-col-reverse md:flex-row',
   responsiveHide: 'hidden md:block',
   responsiveShow: 'block md:hidden',
+  responsiveGrid: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4',
+  responsiveGridCompact: 'grid grid-cols-1 sm:grid-cols-2 gap-4',
+  responsiveGridWide: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4',
 
   // Special layouts
   dashboardLayout: 'grid grid-cols-1 md:grid-cols-[240px_1fr] min-h-screen',
   appLayout: 'flex flex-col min-h-screen',
-  mainContent: 'flex-grow py-6',
-  sidebarLayout: 'flex flex-col md:flex-row gap-6',
+  mainContent: 'flex-grow py-8',
+  sidebarLayout: 'flex flex-col md:flex-row gap-4',
   sidebar: 'w-full md:w-64 shrink-0',
   content: 'flex-grow',
 };
@@ -354,6 +357,7 @@ export const effects = {
  * Responsive utilities for consistent responsive design
  */
 export const responsive = {
+  // Visibility utilities
   hiddenSm: 'hidden sm:block',
   hiddenMd: 'hidden md:block',
   hiddenLg: 'hidden lg:block',
@@ -364,11 +368,37 @@ export const responsive = {
   visibleLg: 'lg:hidden',
   visibleXl: 'xl:hidden',
 
+  // Flex direction utilities
   stackCol: 'flex flex-col',
   stackRow: 'flex flex-col sm:flex-row',
+  stackRowMd: 'flex flex-col md:flex-row',
+  stackRowLg: 'flex flex-col lg:flex-row',
 
+  // Flex wrap utilities
   wrapSm: 'flex-wrap sm:flex-nowrap',
   wrapMd: 'flex-wrap md:flex-nowrap',
+
+  // Mobile-first width utilities
+  mobileFullWidth: 'w-full min-w-full',
+  mobileContainer: 'w-full px-4 sm:px-6 md:px-8',
+
+  // Scrollable container utilities
+  scrollContainer: 'overflow-x-auto overflow-y-visible snap-x scroll-smooth px-2 pb-2',
+  scrollItem: 'min-w-[300px] flex-shrink-0 snap-center',
+  scrollItemSm: 'min-w-[200px] flex-shrink-0 snap-center',
+  scrollItemLg: 'min-w-[400px] flex-shrink-0 snap-center',
+
+  // Chart and map container utilities
+  chartContainer: 'h-[350px] w-full px-4 pb-6 overflow-visible',
+  mapContainer: 'h-[300px] sm:h-[400px] md:h-[500px] w-full rounded-lg overflow-hidden',
+
+  // Timeline utilities
+  timelineItem: 'min-w-[150px] flex-shrink-0 snap-center',
+
+  // Spacing utilities for mobile
+  mobileSpacing: 'p-3 sm:p-4 md:p-6',
+  mobileGap: 'gap-3 sm:gap-4 md:gap-6',
+  mobileMargin: 'mb-4 sm:mb-6 md:mb-8'
 };
 
 /**

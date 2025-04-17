@@ -21,6 +21,8 @@ interface ElevationChartProps {
   forecastPoints: ForecastPoint[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const ElevationChart: React.FC<ElevationChartProps> = ({
@@ -28,6 +30,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
   forecastPoints,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<

@@ -81,7 +81,7 @@ const FormItem = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          'space-y-2',
+          'space-y-4',
           horizontal && 'sm:flex sm:items-start sm:space-x-4 sm:space-y-0',
           className
         )}
@@ -146,7 +146,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-sm font-medium text-zinc-500 mt-2', className)}
       {...props}
     />
   );
@@ -168,7 +168,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn('text-sm font-medium text-destructive flex items-center gap-1', className)}
+      className={cn('text-sm font-medium text-destructive flex items-center gap-2 mt-2', className)}
       {...props}
     >
       <AlertCircle className="h-3.5 w-3.5" />

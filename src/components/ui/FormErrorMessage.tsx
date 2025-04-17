@@ -31,7 +31,7 @@ export function FormErrorMessage({
     <div
       id={id}
       className={cn(
-        'flex items-center gap-2 text-destructive text-sm mt-1',
+        'flex items-center gap-2 text-destructive text-sm mt-2',
         animation.fadeIn,
         className
       )}

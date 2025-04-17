@@ -23,6 +23,8 @@ interface PressureChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const PressureChart: React.FC<PressureChartProps> = ({
@@ -30,6 +32,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<

@@ -2,7 +2,7 @@
 
 /* 12-column grid system */
 .grid-container {
-  @apply max-w-screen-xl mx-auto px-4 grid grid-cols-12 gap-6;
+  @apply max-w-7xl mx-auto px-4 grid grid-cols-12 gap-4;
 }
 
 /* Responsive column spans */
@@ -36,11 +36,11 @@
 
 /* Vertical spacing */
 .vertical-spacing-sm {
-  @apply gap-4;
+  @apply gap-2;
 }
 
 .vertical-spacing-md {
-  @apply gap-6;
+  @apply gap-4;
 }
 
 .vertical-spacing-lg {
@@ -49,25 +49,25 @@
 
 /* Section spacing */
 .section-spacing {
-  @apply mt-8 pb-12;
+  @apply mt-8 pb-8;
 }
 
 /* Container with max width */
 .content-container {
-  @apply max-w-screen-xl mx-auto px-4;
+  @apply max-w-7xl mx-auto px-4;
 }
 
 /* Responsive padding */
 .responsive-padding {
-  @apply px-4 sm:px-6 md:px-8;
+  @apply px-4;
 }
 
 /* Responsive margin */
 .responsive-margin {
-  @apply my-4 sm:my-6 md:my-8;
+  @apply my-4;
 }
 
 /* Responsive gap */
 .responsive-gap {
-  @apply gap-4 sm:gap-6 md:gap-8;
+  @apply gap-4;
 }

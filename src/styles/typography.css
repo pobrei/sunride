@@ -5,39 +5,40 @@ html {
   font-size: 16px;
 }
 
-h1, h2, h3 {
-  font-weight: 700;
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
 }
 
 p, span, label {
   font-weight: 400;
   line-height: 1.6;
+  color: #374151; /* text-zinc-700 */
 }
 
 /* Typography utility classes */
 .text-body {
-  @apply text-lg leading-relaxed;
+  @apply text-base text-zinc-700 leading-relaxed;
 }
 
 .text-label {
-  @apply text-sm leading-normal;
+  @apply text-sm font-medium text-zinc-500 leading-normal;
 }
 
 /* Maintain semantic heading levels */
 h1 {
-  @apply text-4xl font-bold tracking-tight leading-tight;
+  @apply text-2xl font-semibold leading-tight;
 }
 
 h2 {
-  @apply text-3xl font-bold tracking-tight leading-tight;
+  @apply text-xl font-semibold leading-tight;
 }
 
 h3 {
-  @apply text-2xl font-bold leading-snug;
+  @apply text-lg font-semibold leading-snug;
 }
 
 h4 {
-  @apply text-xl font-semibold leading-snug;
+  @apply text-lg font-semibold leading-snug;
 }
 
 h5 {

@@ -1,5 +1,4 @@
 // Export all layout components
-export * from './theme-provider';
 export * from './MainNav';
 export * from './header';
 export * from './footer';

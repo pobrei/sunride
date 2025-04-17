@@ -1,7 +1,6 @@
 // Export all chart components
 export { Charts } from './Charts';
-export { ClientSideCharts } from './ClientSideCharts';
-export { default as EnhancedClientCharts } from './EnhancedClientCharts';
+export { default as ClientSideCharts } from './ClientSideCharts';
 export { default as SafeChartsWrapper } from './SafeChartsWrapper';
 export { default as TemperatureChart } from './TemperatureChart';
 export { default as PrecipitationChart } from './PrecipitationChart';

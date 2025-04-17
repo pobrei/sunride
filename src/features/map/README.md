@@ -4,12 +4,13 @@ This folder contains components and utilities related to map visualization.
 
 ## Components
 
-- `SimpleMap`: The main map component that displays GPX routes and weather data.
+- `MapWrapper`: A wrapper for the Leaflet map component that handles dynamic loading.
+- `SimpleLeafletMap`: The main Leaflet map implementation that displays GPX routes and weather data.
 
 ## Usage
 
 ```tsx
-import { SimpleMap } from '@/features/map/components';
+import { MapWrapper } from '@/features/map/components';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 
@@ -21,7 +22,7 @@ const MyComponent = () => {
   };
 
   return (
-    <SimpleMap
+    <MapWrapper
       gpxData={gpxData}
       forecastPoints={forecastPoints}
       weatherData={weatherData}

@@ -6,6 +6,7 @@ import { Clock, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatTemperature, formatWindSpeed } from '@/utils/formatters';
+import { responsive } from '@/styles/tailwind-utils';
 
 interface TimelineProps {
   forecastPoints: ForecastPoint[];
@@ -83,7 +84,7 @@ export function Timeline({
       {/* Timeline container */}
       <div
         ref={containerRef}
-        className="overflow-x-auto pb-8 hide-scrollbar border-b-2 border-black/20 dark:border-white/20"
+        className={cn(responsive.scrollContainer, "pb-8 hide-scrollbar border-b-2 border-black/20 dark:border-white/20")}
         onScroll={handleScroll}
       >
         <div className="flex items-stretch space-x-1 px-8 min-w-max pb-4">
@@ -95,47 +96,69 @@ export function Timeline({
               <div
                 key={`timeline-${index}`}
                 className={cn(
-                  "timeline-item flex flex-col items-center p-2 pb-4 rounded-lg transition-all cursor-pointer min-w-[100px] h-auto",
+                  "timeline-item flex flex-col items-center p-2 pb-4 rounded-lg transition-all duration-200 ease-in-out cursor-pointer h-auto", responsive.timelineItem,
                   isSelected
                     ? "bg-primary/10 border border-primary/30 shadow-md"
-                    : "hover:bg-muted/50"
+                    : "hover:bg-muted/50 hover:shadow active:scale-[0.98]"
                 )}
                 onClick={() => handleItemClick(index)}
               >
                 {/* Time */}
-                <div className="flex items-center text-xs text-muted-foreground mb-1">
-                  <Clock className="h-3 w-3 mr-1" />
+                <div className="flex items-center text-sm font-medium mb-2">
+                  <Clock className="h-4 w-4 mr-1" />
                   {formatTime(point.timestamp)}
                 </div>
 
                 {/* Weather icon */}
-                <div className="text-2xl my-2">
+                <div className="text-3xl my-3">
                   {weather ? getWeatherIcon(weather.weatherCode) : '❓'}
                 </div>
 
-                {/* Temperature */}
-                {weather && (
-                  <div className="flex items-center text-sm font-medium mb-1">
-                    <Thermometer className="h-3 w-3 mr-1 text-rose-500" />
-                    {formatTemperature(weather.temperature)}
-                  </div>
-                )}
+                {/* Weather data section */}
+                <div className="space-y-3 w-full">
+                  {/* Temperature */}
+                  {weather && (
+                    <div className="flex items-center text-sm font-medium">
+                      <Thermometer className="h-4 w-4 mr-1 text-rose-500" />
+                      <div>
+                        <div>{formatTemperature(weather.temperature)}</div>
+                        <div className="text-xs text-muted-foreground">Feels like: {formatTemperature(weather.feelsLike)}</div>
+                      </div>
+                    </div>
+                  )}
 
-                {/* Precipitation */}
-                {weather && weather.precipitation > 0 && (
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <Droplets className="h-3 w-3 mr-1 text-blue-500" />
-                    {weather.precipitation.toFixed(1)}mm
-                  </div>
-                )}
+                  {/* Precipitation */}
+                  {weather && (
+                    <div className="flex items-center text-sm">
+                      <Droplets className="h-4 w-4 mr-1 text-blue-500" />
+                      <div>
+                        <div>{weather.precipitation.toFixed(1)}mm</div>
+                        <div className="text-xs text-muted-foreground">{(weather.precipitationProbability * 100).toFixed(0)}% chance</div>
+                      </div>
+                    </div>
+                  )}
 
-                {/* Wind */}
-                {weather && (
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <Wind className="h-3 w-3 mr-1 text-emerald-500" />
-                    {formatWindSpeed(weather.windSpeed)}
-                  </div>
-                )}
+                  {/* Wind */}
+                  {weather && (
+                    <div className="flex items-center text-sm">
+                      <Wind className="h-4 w-4 mr-1 text-emerald-500" />
+                      <div>
+                        <div>{formatWindSpeed(weather.windSpeed)}</div>
+                        <div className="text-xs text-muted-foreground">Dir: {weather.windDirection}°</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Humidity */}
+                  {weather && (
+                    <div className="flex items-center text-sm">
+                      <div className="h-4 w-4 mr-1 flex items-center justify-center text-blue-400">💧</div>
+                      <div>
+                        <div>{weather.humidity}% humidity</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Distance marker */}
                 <div className="flex items-center text-xs text-muted-foreground mt-3 mb-1 font-medium distance-marker">

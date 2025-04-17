@@ -4,6 +4,7 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X, AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import { classNames } from '@/utils/classNames';
+import { Button } from '@/components/ui/button';
 
 // Simple toast context
 type ToastType = 'default' | 'destructive' | 'success' | 'warning' | 'info';
@@ -113,14 +114,15 @@ function Toast({ id, variant, className, onClose, children, ...props }: ToastPro
         <ToastIcon variant={variant} />
         <div>{children}</div>
       </div>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onClose}
-        className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100"
+        className="absolute right-2 top-2 h-6 w-6 p-0 text-foreground/50 opacity-0 transition-transform hover:scale-105 hover:text-foreground focus:opacity-100 group-hover:opacity-100"
         aria-label="Close toast"
       >
         <X className="h-4 w-4" />
-      </button>
+      </Button>
     </div>
   );
 }

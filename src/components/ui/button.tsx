@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 ease-in-out hover:shadow-md active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 ease-in-out hover:shadow-md active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px] max-w-7xl mx-auto",
   {
     variants: {
       variant: {
@@ -22,9 +22,9 @@ const buttonVariants = cva(
         link: 'text-[var(--color-accent)] underline-offset-4 hover:underline hover:text-[var(--color-accent-light)]',
       },
       size: {
-        default: 'px-4 py-2 has-[>svg]:px-3',
-        sm: 'rounded-xl gap-1.5 px-3 py-1.5 has-[>svg]:px-2.5 min-h-[32px] text-xs',
-        lg: 'rounded-xl px-6 py-3 has-[>svg]:px-4 min-h-[40px] text-base',
+        default: 'px-4 py-2 has-[>svg]:px-4',
+        sm: 'rounded-xl gap-2 px-4 py-2 has-[>svg]:px-4 min-h-[32px] text-xs',
+        lg: 'rounded-xl px-8 py-4 has-[>svg]:px-4 min-h-[40px] text-base',
         icon: 'aspect-square min-w-[36px] min-h-[36px] p-2',
       },
     },

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { formatTemperature, formatWind, formatPrecipitation } from '@/utils/formatUtils';
 
@@ -49,10 +49,10 @@ export default function CollapsibleWeatherPanel({
       )}
     >
       {/* Header - always visible */}
-      <div className="flex items-center justify-between p-3 bg-card border-b border-border">
+      <div className="flex items-center justify-between p-4 bg-white border-b border-border text-zinc-700">
         <div className="flex items-center gap-2">
-          <span className="font-medium">Weather at Point {selectedPoint + 1}</span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-lg font-semibold">Weather at Point {selectedPoint + 1}</span>
+          <span className="text-sm font-medium text-zinc-500">
             {formatTemperature(weather.temperature)}
           </span>
         </div>
@@ -84,39 +84,39 @@ export default function CollapsibleWeatherPanel({
 
       {/* Content - only visible when expanded */}
       {!isCollapsed && (
-        <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="space-y-1">
-            <h4 className="text-sm font-medium">Temperature</h4>
-            <div className="text-2xl font-bold">{formatTemperature(weather.temperature)}</div>
-            <div className="text-sm text-muted-foreground">
+        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-7xl mx-auto bg-white text-zinc-700">
+          <div className="space-y-2 bg-blue-50 p-4 rounded-md">
+            <h4 className="text-sm font-medium text-zinc-500">Temperature</h4>
+            <div className="text-lg font-semibold">{formatTemperature(weather.temperature)}</div>
+            <div className="text-sm font-medium text-zinc-500">
               Feels like {formatTemperature(weather.feelsLike)}
             </div>
           </div>
 
-          <div className="space-y-1">
-            <h4 className="text-sm font-medium">Wind</h4>
-            <div className="text-2xl font-bold">{formatWind(weather.windSpeed)}</div>
-            <div className="text-sm text-muted-foreground">
+          <div className="space-y-2 bg-blue-50 p-4 rounded-md">
+            <h4 className="text-sm font-medium text-zinc-500">Wind</h4>
+            <div className="text-lg font-semibold">{formatWind(weather.windSpeed, weather.windDirection)}</div>
+            <div className="text-sm font-medium text-zinc-500">
               Direction: {weather.windDirection}°
             </div>
           </div>
 
-          <div className="space-y-1">
-            <h4 className="text-sm font-medium">Precipitation</h4>
-            <div className="text-2xl font-bold">{formatPrecipitation(weather.precipitation)}</div>
-            <div className="text-sm text-muted-foreground">
+          <div className="space-y-2 bg-blue-50 p-4 rounded-md">
+            <h4 className="text-sm font-medium text-zinc-500">Precipitation</h4>
+            <div className="text-lg font-semibold">{formatPrecipitation(weather.precipitation)}</div>
+            <div className="text-sm font-medium text-zinc-500">
               Humidity: {weather.humidity}%
             </div>
           </div>
 
-          <div className="space-y-1">
-            <h4 className="text-sm font-medium">Conditions</h4>
-            <div className="text-lg font-medium">{weather.weatherDescription}</div>
-            <div className="text-sm text-muted-foreground">
-              Cloud cover: {weather.cloudCover}%
+          <div className="space-y-2 bg-zinc-50 p-4 rounded-md">
+            <h4 className="text-sm font-medium text-zinc-500">Conditions</h4>
+            <div className="text-lg font-semibold">{weather.weatherDescription}</div>
+            <div className="text-sm font-medium text-zinc-500">
+              UV Index: {weather.uvIndex !== undefined ? weather.uvIndex.toFixed(1) : 'N/A'}
             </div>
           </div>
-        </div>
+        </CardContent>
       )}
     </Card>
   );

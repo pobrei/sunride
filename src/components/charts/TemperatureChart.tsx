@@ -17,6 +17,8 @@ import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance, formatTemperature } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
+import { responsive } from '@/styles/tailwind-utils';
+import { cn } from '@/lib/utils';
 import '@/styles/chart-styles.css';
 
 interface TemperatureChartProps {
@@ -24,6 +26,8 @@ interface TemperatureChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
+  /** Animation delay in seconds */
+  delay?: number;
 }
 
 const TemperatureChart: React.FC<TemperatureChartProps> = ({
@@ -31,6 +35,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
+  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -136,7 +141,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
 
   return (
     <ChartCard title="Temperature & Feels Like" unitLabel="°C">
-      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
+      <div className={cn(responsive.chartContainer, "chart-wrapper-visible")}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
