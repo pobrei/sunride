@@ -16,7 +16,9 @@
     "check:any": "node scripts/check-any-types.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "verify:deployment": "node scripts/verify-deployment.js",
+    "deploy": "npm run verify:deployment && git push origin main"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",
