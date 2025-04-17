@@ -24,7 +24,7 @@ import type { GPXData, RouteSettings } from '@/types';
 
 // Import UI components
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import GPXUploader from '@/components/GPXUploader';
+import { GPXUploader } from '@/features/gpx/components';
 
 // Import layout components
 import { Header } from '@/components/layout/header';
@@ -37,7 +37,7 @@ import { TripSummary as RouteSummary } from '@/components/route/TripSummary';
 import { UserGuide } from '@/components/help/UserGuide';
 
 // Import enhanced charts
-import EnhancedClientCharts from '@/features/charts/components/EnhancedClientCharts';
+import EnhancedClientCharts from '@/components/charts/EnhancedClientCharts';
 
 export default function Home() {
   const {
@@ -270,7 +270,7 @@ export default function Home() {
                       weatherData={weatherData}
                       selectedMarker={selectedMarker}
                       onTimelineClick={handleTimelineClick}
-                      height="h-[150px]"
+                      height="h-[200px]"
                       showNavigation={true}
                     />
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initializeChartDefaults } from '@frontend/lib/chart-init';
+import { initializeChartDefaults } from '@/lib/chart-init';
 
 /**
  * A component that initializes Chart.js defaults

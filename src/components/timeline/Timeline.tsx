@@ -1,188 +1,154 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Clock, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance } from '@/utils/formatters';
-import { cn } from '@/styles/tailwind-utils';
-import { Cloud, CloudRain, Thermometer, Wind } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/simple-tooltip';
+import { formatTime, formatTemperature, formatWindSpeed } from '@/utils/formatters';
 
 interface TimelineProps {
-  /** Forecast points along the route */
   forecastPoints: ForecastPoint[];
-  /** Weather data for each forecast point */
   weatherData: (WeatherData | null)[];
-  /** Currently selected marker index */
   selectedMarker: number | null;
-  /** Callback when a timeline item is clicked */
-  onTimelineClick: (index: number) => void;
-  /** Reference to the timeline container for scrolling */
+  onTimelineClick?: (index: number) => void;
+  className?: string;
   timelineRef?: React.RefObject<HTMLDivElement>;
 }
 
-/**
- * A horizontal timeline component that displays weather data at different points
- */
 export function Timeline({
   forecastPoints,
   weatherData,
   selectedMarker,
   onTimelineClick,
-  timelineRef: externalTimelineRef,
+  className,
+  timelineRef,
 }: TimelineProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const internalTimelineRef = useRef<HTMLDivElement>(null);
-  const timelineItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const localTimelineRef = useRef<HTMLDivElement>(null);
+  const containerRef = timelineRef || localTimelineRef;
 
-  // Use external ref if provided, otherwise use internal ref
-  const timelineRef = externalTimelineRef || internalTimelineRef;
-
-  // Initialize timeline items array
+  // Scroll to selected marker when it changes
   useEffect(() => {
-    timelineItemsRef.current = timelineItemsRef.current.slice(0, forecastPoints.length);
-  }, [forecastPoints]);
+    if (selectedMarker !== null && containerRef.current) {
+      const timelineItems = containerRef.current.querySelectorAll('.timeline-item');
+      if (timelineItems[selectedMarker]) {
+        const item = timelineItems[selectedMarker] as HTMLElement;
+        const container = containerRef.current;
 
-  // Mouse event handlers for dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!timelineRef.current) return;
+        // Calculate the scroll position to center the selected item
+        const itemLeft = item.offsetLeft;
+        const itemWidth = item.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        const scrollLeft = itemLeft - containerWidth / 2 + itemWidth / 2;
 
-    setIsDragging(true);
-    setStartX(e.pageX - timelineRef.current.offsetLeft);
-    setScrollLeft(timelineRef.current.scrollLeft);
+        // Smooth scroll to the position
+        container.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [selectedMarker, containerRef]);
+
+  // Handle scroll event
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollPosition(e.currentTarget.scrollLeft);
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
+  // Handle timeline item click
+  const handleItemClick = (index: number) => {
+    if (onTimelineClick) {
+      onTimelineClick(index);
+    }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !timelineRef.current) return;
+  // Scroll functionality is handled by the parent component (ClientSideTimeline)
 
-    const x = e.pageX - timelineRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    timelineRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Check for weather alerts
-  const checkWeatherAlerts = (weather: WeatherData) => {
-    return {
-      extremeHeat: weather.temperature > 35,
-      freezing: weather.temperature < 0,
-      highWind: weather.windSpeed > 30,
-      heavyRain: weather.precipitation > 5,
-    };
+  // Get weather icon based on weather code
+  const getWeatherIcon = (weatherCode: number) => {
+    // Simple mapping of weather codes to icons
+    if (weatherCode >= 200 && weatherCode < 300) return '⛈️'; // Thunderstorm
+    if (weatherCode >= 300 && weatherCode < 400) return '🌧️'; // Drizzle
+    if (weatherCode >= 500 && weatherCode < 600) return '🌧️'; // Rain
+    if (weatherCode >= 600 && weatherCode < 700) return '❄️'; // Snow
+    if (weatherCode >= 700 && weatherCode < 800) return '🌫️'; // Atmosphere (fog, mist, etc.)
+    if (weatherCode === 800) return '☀️'; // Clear
+    if (weatherCode > 800) return '☁️'; // Clouds
+    return '🌡️'; // Default
   };
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className={cn("relative w-full", className)}>
+      {/* Timeline container */}
       <div
-        className={cn(
-          'timeline-container flex space-x-4 py-4 px-4 overflow-x-auto whitespace-nowrap relative',
-          isDragging ? 'cursor-grabbing' : 'cursor-grab'
-        )}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseUp}
-        ref={timelineRef}
+        ref={containerRef}
+        className="overflow-x-auto pb-8 hide-scrollbar border-b-2 border-black/20 dark:border-white/20"
+        onScroll={handleScroll}
       >
-        {/* Connector line that runs through all events */}
-        <div className="absolute h-0.5 bg-muted left-0 right-0 top-6 z-0"></div>
+        <div className="flex items-stretch space-x-1 px-8 min-w-max pb-4">
+          {forecastPoints.map((point, index) => {
+            const weather = weatherData[index];
+            const isSelected = index === selectedMarker;
 
-        {forecastPoints.map((point, index) => {
-          if (!point || typeof point.lat !== 'number' || typeof point.lon !== 'number') return null;
-          const weather = weatherData[index];
-          if (!weather) return null;
-
-          const alerts = checkWeatherAlerts(weather);
-          const hasAlert =
-            alerts.extremeHeat || alerts.freezing || alerts.highWind || alerts.heavyRain;
-
-          return (
-            <div
-              key={index}
-              ref={el => {
-                timelineItemsRef.current[index] = el;
-              }}
-              className="timeline-event flex flex-col items-center"
-              onClick={() => onTimelineClick(index)}
-            >
-              {/* Circle event marker */}
+            return (
               <div
+                key={`timeline-${index}`}
                 className={cn(
-                  "timeline-event-circle",
-                  selectedMarker === index ? "active" : "",
-                  hasAlert ? "ring-1 ring-yellow-500" : ""
+                  "timeline-item flex flex-col items-center p-2 pb-4 rounded-lg transition-all cursor-pointer min-w-[100px] h-auto",
+                  isSelected
+                    ? "bg-primary/10 border border-primary/30 shadow-md"
+                    : "hover:bg-muted/50"
                 )}
+                onClick={() => handleItemClick(index)}
               >
-                <Thermometer className="h-3 w-3 text-white" />
-              </div>
-
-              {/* Timeline content card */}
-              <div
-                className={cn(
-                  "timeline-content w-36 cursor-pointer",
-                  selectedMarker === index
-                    ? 'bg-accent ring-2 ring-primary shadow-md z-10'
-                    : 'bg-card hover:bg-accent/50',
-                  hasAlert && 'ring-1 ring-yellow-500/50'
-                )}
-              >
-                {/* Time and weather inline */}
-                <div className="timeline-time-weather">
-                  <span>{formatTime(point.timestamp)}</span>
-                  <Thermometer className="timeline-weather-icon" />
-                  <span>{Math.round(weather.temperature)}°C</span>
+                {/* Time */}
+                <div className="flex items-center text-xs text-muted-foreground mb-1">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {formatTime(point.timestamp)}
                 </div>
 
-                <div className="text-xs text-muted mt-1">
-                  {formatDistance(point.distance)} · {weather.weatherDescription || 'Weather data'}
+                {/* Weather icon */}
+                <div className="text-2xl my-2">
+                  {weather ? getWeatherIcon(weather.weatherCode) : '❓'}
                 </div>
 
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center gap-1">
-                    <Wind className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs">{Math.round(weather.windSpeed)} km/h</span>
+                {/* Temperature */}
+                {weather && (
+                  <div className="flex items-center text-sm font-medium mb-1">
+                    <Thermometer className="h-3 w-3 mr-1 text-rose-500" />
+                    {formatTemperature(weather.temperature)}
                   </div>
-
-                  <div className="flex items-center gap-1">
-                    <CloudRain className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs">{Math.round(weather.precipitation * 100)}%</span>
-                  </div>
-                </div>
-
-                {hasAlert && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="mt-1 text-xs text-yellow-500 flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
-                          Weather alert
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <div className="text-xs">
-                          {alerts.extremeHeat && <div>Extreme heat</div>}
-                          {alerts.freezing && <div>Freezing conditions</div>}
-                          {alerts.highWind && <div>High wind</div>}
-                          {alerts.heavyRain && <div>Heavy rain</div>}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 )}
+
+                {/* Precipitation */}
+                {weather && weather.precipitation > 0 && (
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Droplets className="h-3 w-3 mr-1 text-blue-500" />
+                    {weather.precipitation.toFixed(1)}mm
+                  </div>
+                )}
+
+                {/* Wind */}
+                {weather && (
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Wind className="h-3 w-3 mr-1 text-emerald-500" />
+                    {formatWindSpeed(weather.windSpeed)}
+                  </div>
+                )}
+
+                {/* Distance marker */}
+                <div className="flex items-center text-xs text-muted-foreground mt-3 mb-1 font-medium distance-marker">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  {(point.distance).toFixed(1)}km
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
+
+export default Timeline;

@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { ForecastPoint, WeatherData } from '@/types';
-import { AlertCard } from '@/components/ui/alert-card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Thermometer, Wind, CloudRain, Snowflake, Sun, AlertTriangle } from 'lucide-react';
+import { Thermometer, Wind, CloudRain, Snowflake, Sun, AlertTriangle, Clock, MapPin } from 'lucide-react';
 import { formatTime, formatDate } from '@/utils/formatters';
 import { cn } from '@/lib/utils';
 import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
@@ -24,6 +25,7 @@ interface WeatherAlertsProps {
 
 interface Alert {
   id: string;
+  type: 'extremeHeat' | 'freezing' | 'highWind' | 'heavyRain';
   title: string;
   description: string;
   severity: 'error' | 'warning' | 'info';
@@ -32,6 +34,7 @@ interface Alert {
   location: string;
   details: string;
   pointIndex: number;
+  value: string;
 }
 
 /**
@@ -71,6 +74,7 @@ export function WeatherAlerts({
       if (weather.temperature > 35) {
         newAlerts.push({
           id: `heat-${index}`,
+          type: 'extremeHeat',
           title: 'Extreme Heat Warning',
           description: `Temperature of ${Math.round(weather.temperature)}°C expected at ${formatTime(point.timestamp)}`,
           severity: 'error',
@@ -79,6 +83,7 @@ export function WeatherAlerts({
           location: `${point.distance.toFixed(1)} km`,
           details: `High temperatures can lead to heat exhaustion or heat stroke. Stay hydrated and avoid extended exposure.`,
           pointIndex: index,
+          value: `${Math.round(weather.temperature)}°C`,
         });
       }
 
@@ -86,6 +91,7 @@ export function WeatherAlerts({
       if (weather.temperature < 0) {
         newAlerts.push({
           id: `freezing-${index}`,
+          type: 'freezing',
           title: 'Freezing Conditions',
           description: `Temperature of ${Math.round(weather.temperature)}°C expected at ${formatTime(point.timestamp)}`,
           severity: 'warning',
@@ -94,6 +100,7 @@ export function WeatherAlerts({
           location: `${point.distance.toFixed(1)} km`,
           details: `Freezing conditions may lead to ice on roads or paths. Take extra caution and dress warmly.`,
           pointIndex: index,
+          value: `${Math.round(weather.temperature)}°C`,
         });
       }
 
@@ -101,6 +108,7 @@ export function WeatherAlerts({
       if (weather.windSpeed > 30) {
         newAlerts.push({
           id: `wind-${index}`,
+          type: 'highWind',
           title: 'High Wind Alert',
           description: `Wind speeds of ${Math.round(weather.windSpeed)} km/h expected at ${formatTime(point.timestamp)}`,
           severity: 'warning',
@@ -109,6 +117,7 @@ export function WeatherAlerts({
           location: `${point.distance.toFixed(1)} km`,
           details: `High winds can make cycling or outdoor activities difficult and potentially dangerous. Consider alternative routes or timing.`,
           pointIndex: index,
+          value: `${Math.round(weather.windSpeed)} km/h`,
         });
       }
 
@@ -116,6 +125,7 @@ export function WeatherAlerts({
       if (weather.precipitation > 0.5) {
         newAlerts.push({
           id: `rain-${index}`,
+          type: 'heavyRain',
           title: 'Heavy Rain Expected',
           description: `${Math.round(weather.precipitation * 100)}% chance of precipitation at ${formatTime(point.timestamp)}`,
           severity: 'info',
@@ -124,6 +134,7 @@ export function WeatherAlerts({
           location: `${point.distance.toFixed(1)} km`,
           details: `Heavy rain can reduce visibility and make surfaces slippery. Bring appropriate gear and consider shelter options.`,
           pointIndex: index,
+          value: `${Math.round(weather.precipitation * 100)}%`,
         });
       }
     });
@@ -157,6 +168,112 @@ export function WeatherAlerts({
     return null;
   }
 
+  // Group alerts by type
+  const alertsByType = visibleAlerts.reduce<Record<string, Alert[]>>(
+    (acc, alert) => {
+      if (!acc[alert.type]) {
+        acc[alert.type] = [];
+      }
+      acc[alert.type].push(alert);
+      return acc;
+    },
+    { extremeHeat: [], freezing: [], highWind: [], heavyRain: [] }
+  );
+
+  // Get alert type details
+  const getAlertTypeDetails = (type: string) => {
+    switch (type) {
+      case 'extremeHeat':
+        return {
+          icon: <Sun className="h-4 w-4 text-red-500" />,
+          title: 'Extreme Heat',
+          color: 'text-red-600',
+          bgColor: 'bg-red-50 dark:bg-red-900/20',
+          borderColor: 'border-red-200 dark:border-red-800/30',
+        };
+      case 'freezing':
+        return {
+          icon: <Snowflake className="h-4 w-4 text-blue-500" />,
+          title: 'Freezing',
+          color: 'text-blue-600',
+          bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+          borderColor: 'border-blue-200 dark:border-blue-800/30',
+        };
+      case 'highWind':
+        return {
+          icon: <Wind className="h-4 w-4 text-amber-500" />,
+          title: 'High Wind',
+          color: 'text-amber-600',
+          bgColor: 'bg-amber-50 dark:bg-amber-900/20',
+          borderColor: 'border-amber-200 dark:border-amber-800/30',
+        };
+      case 'heavyRain':
+        return {
+          icon: <CloudRain className="h-4 w-4 text-cyan-500" />,
+          title: 'Heavy Rain',
+          color: 'text-cyan-600',
+          bgColor: 'bg-cyan-50 dark:bg-cyan-900/20',
+          borderColor: 'border-cyan-200 dark:border-cyan-800/30',
+        };
+      default:
+        return {
+          icon: <AlertTriangle className="h-4 w-4 text-gray-500" />,
+          title: 'Alert',
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-50 dark:bg-gray-900/20',
+          borderColor: 'border-gray-200 dark:border-gray-800/30',
+        };
+    }
+  };
+
+  // Render compact alerts for a specific type
+  const renderCompactAlerts = (type: string) => {
+    const typeAlerts = alertsByType[type as keyof typeof alertsByType] || [];
+    if (typeAlerts.length === 0) return null;
+
+    const { icon, title, color, bgColor, borderColor } = getAlertTypeDetails(type);
+
+    return (
+      <Card key={type} className={cn("overflow-hidden border", borderColor, animation.fadeIn)}>
+        <CardHeader className={cn("py-2 px-3", bgColor, "border-b", borderColor)}>
+          <CardTitle className={cn("text-sm font-semibold flex items-center", color)}>
+            {icon}
+            <span className="ml-2">
+              {title} ({typeAlerts.length})
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-3">
+          <div className="flex flex-wrap gap-1.5">
+            {typeAlerts.map(alert => (
+              <Badge
+                key={alert.id}
+                variant="outline"
+                className={cn(
+                  "flex items-center gap-1 py-1 px-2",
+                  bgColor,
+                  "hover:bg-opacity-20 transition-colors text-xs"
+                )}
+              >
+                <Clock className="h-3 w-3" />
+                {alert.timestamp}
+                <span className="mx-0.5">•</span>
+                <span className="font-semibold">{alert.value}</span>
+                <span className="mx-0.5">•</span>
+                <MapPin className="h-3 w-3" />
+                {alert.location}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  if (visibleAlerts.length === 0) {
+    return null;
+  }
+
   return (
     <div className={cn('space-y-3 p-4 border border-primary/10 rounded-lg bg-gradient-to-r from-primary/5 to-transparent', animation.fadeIn, className)}>
       <div className={cn(layout.flexBetween)}>
@@ -165,36 +282,14 @@ export function WeatherAlerts({
           Weather Alerts
           <span className={cn(typography.bodySm, typography.muted)}>({visibleAlerts.length})</span>
         </h3>
-        {visibleAlerts.length > maxInitialAlerts && (
-          <Button variant="ghost" size="sm" onClick={() => setShowAll(!showAll)} className={effects.buttonHover}>
-            {showAll ? 'Show Less' : `Show All (${visibleAlerts.length})`}
-          </Button>
-        )}
       </div>
 
       <div className={cn("space-y-3", animation.fadeInSlideUp)}>
-        {displayedAlerts.map(alert => (
-          <AlertCard
-            key={alert.id}
-            title={alert.title}
-            description={alert.description}
-            severity={alert.severity}
-            icon={alert.icon}
-            timestamp={alert.timestamp}
-            location={alert.location}
-            details={alert.details}
-            dismissible={true}
-            onDismiss={() => handleDismiss(alert.id)}
-            className={compact ? 'p-3' : ''}
-          />
-        ))}
+        {renderCompactAlerts('highWind')}
+        {renderCompactAlerts('extremeHeat')}
+        {renderCompactAlerts('freezing')}
+        {renderCompactAlerts('heavyRain')}
       </div>
-
-      {!showAll && visibleAlerts.length > maxInitialAlerts && (
-        <Button variant="outline" size="sm" className={cn("w-full", effects.buttonHover)} onClick={() => setShowAll(true)}>
-          Show {visibleAlerts.length - maxInitialAlerts} More Alerts
-        </Button>
-      )}
     </div>
   );
 }

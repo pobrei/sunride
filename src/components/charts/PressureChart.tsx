@@ -16,7 +16,7 @@ import ChartCard from './ChartCard';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
-import '@frontend/styles/chart-styles.css';
+import '@/styles/chart-styles.css';
 
 interface PressureChartProps {
   forecastPoints: ForecastPoint[];

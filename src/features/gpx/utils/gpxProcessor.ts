@@ -3,7 +3,7 @@
  * Offloads CPU-intensive calculations to a background thread
  */
 
-import { GPXPoint, ForecastPoint, GPXElevation, WorkerRequest, WorkerResponse } from '@shared/types';
+import { GPXPoint, ForecastPoint, GPXElevation, WorkerRequest, WorkerResponse } from '@/types';
 
 export class GPXProcessor {
   private worker: Worker | null;

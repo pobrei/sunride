@@ -3,7 +3,7 @@
  * This moves calculations off the main thread to prevent UI freezing
  */
 
-import { GPXPoint, ForecastPoint, GPXElevation, WorkerRequest, WorkerResponse } from '@shared/types';
+import { GPXPoint, ForecastPoint, GPXElevation, WorkerRequest, WorkerResponse } from '@/types';
 
 // Need to declare self for TypeScript in a worker context
 declare const self: Worker;

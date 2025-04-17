@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { parseGPX } from '@/features/gpx/utils/gpxParser';
+import { parseGPX } from '@/utils/gpxParser';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Read file content
     const fileContent = await file.text();
-    
+
     // Parse GPX data
     const gpxData = parseGPX(fileContent);
 

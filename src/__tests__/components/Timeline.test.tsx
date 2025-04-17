@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Timeline } from '@frontend/features/timeline/components';
+import { Timeline } from '@/components/timeline';
 import { mockForecastPoints, mockWeatherData } from '../mocks/mockData';
-import { WeatherProvider } from '@frontend/features/weather/context';
-import { NotificationProvider } from '@frontend/features/notifications/context';
+import { WeatherProvider } from '@/features/weather/context';
+import { NotificationProvider } from '@/features/notifications/context';
 
 // Create merged data for testing
 const mergedData = mockForecastPoints.map((point, index) => ({

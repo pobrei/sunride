@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWeatherForecast, getMultipleForecastPoints } from '@/lib/weatherAPI';
-import type { ForecastPoint, WeatherData } from '@/lib/weatherAPI';
+import { getWeatherForecast, getMultipleForecastPoints, ForecastPoint, WeatherData } from '@/lib/weatherAPI';
 import { ApiResponse, WeatherApiRequest, WeatherApiResponse } from '@/types/api-types';
 import { envConfig } from '@/lib/env';
 
@@ -68,7 +67,7 @@ function validatePoint(point: any): boolean {
 async function apiHandler<T extends ApiResponse<unknown>>(
   req: NextRequest,
   handler: () => Promise<T>
-): Promise<NextResponse<T>> {
+): Promise<NextResponse> {
   try {
     // Get client IP for rate limiting
     const clientIp: string =
@@ -122,7 +121,7 @@ async function apiHandler<T extends ApiResponse<unknown>>(
  * @param req - The Next.js request object
  * @returns API response with weather data for multiple points
  */
-export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiResponse>> {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   return apiHandler(req, async () => {
     const data = (await req.json()) as WeatherApiRequest;
 
@@ -137,7 +136,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
     }
 
     // Validate each point
-    const forecastPoints: ForecastPoint[] = data.points;
+    const forecastPoints = data.points.map(point => {
+      return {
+        lat: point.lat,
+        lon: point.lon,
+        timestamp: point.timestamp || Math.floor(Date.now() / 1000),
+        distance: point.distance
+      } as ForecastPoint;
+    });
     for (const point of forecastPoints) {
       if (!validatePoint(point)) {
         throw new Error(
@@ -173,7 +179,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
     // Create a response with additional metadata
     const response: WeatherApiResponse = {
       success: true,
-      data: weatherData, // Return the full array including nulls
+      data: weatherData as any, // Type assertion to handle backend/shared type differences
       provider: 'OpenWeather',
       timestamp: Date.now(),
       pointsProcessed: weatherData.length,
@@ -188,7 +194,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<WeatherApiRes
  * @param req - The Next.js request object
  * @returns API response with weather data for a single point
  */
-export async function GET(req: NextRequest): Promise<NextResponse<WeatherApiResponse>> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   return apiHandler(req, async () => {
     const searchParams: URLSearchParams = req.nextUrl.searchParams;
 
@@ -235,7 +241,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<WeatherApiResp
     // Create a response with additional metadata
     const response: WeatherApiResponse = {
       success: true,
-      data: [weatherData],
+      data: [weatherData] as any, // Type assertion to handle backend/shared type differences
       provider: 'OpenWeather',
       timestamp: Date.now(),
       pointsProcessed: 1,

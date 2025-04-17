@@ -52,7 +52,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   selectedMarker,
   onTimelineClick,
   className,
-  height = 'h-[150px]',
+  height = 'h-[200px]',
   showPlaceholder = true,
   showNavigation = true,
 }) => {
@@ -182,7 +182,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
         </>
       )}
 
-      <div className={cn("h-full overflow-hidden")} onScroll={handleScrollEvent}>
+      <div className={cn("h-full overflow-hidden pb-2")} onScroll={handleScrollEvent}>
         <SafeTimelineWrapper
           forecastPoints={forecastPoints}
           weatherData={weatherData}

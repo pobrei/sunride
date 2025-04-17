@@ -151,11 +151,42 @@ export default function PDFExport({
             pdf.text('Weather Charts', margin, 20);
 
             try {
+              // Pre-process the charts to handle unsupported color functions
+              const preprocessCharts = (node: HTMLElement) => {
+                // Convert all oklab colors to RGB to avoid html2canvas parsing errors
+                const elementsWithStyle = node.querySelectorAll('*');
+                elementsWithStyle.forEach(el => {
+                  if (el instanceof HTMLElement) {
+                    const style = window.getComputedStyle(el);
+                    // Apply computed styles directly to avoid color function parsing issues
+                    el.style.backgroundColor = style.backgroundColor;
+                    el.style.color = style.color;
+                    el.style.borderColor = style.borderColor;
+                  }
+                });
+              };
+
+              // Apply preprocessing to the charts
+              if (chartsRef.current) {
+                preprocessCharts(chartsRef.current);
+              }
+
               const chartsCanvas = await html2canvas(chartsRef.current, {
                 useCORS: true,
                 scale: 1.5,
                 allowTaint: true,
                 logging: false,
+                backgroundColor: '#ffffff',
+                onclone: (document, clone) => {
+                  // Find and process chart elements in the cloned document
+                  const chartElements = clone.querySelectorAll('[class*="chart"]');
+                  chartElements.forEach(el => {
+                    if (el instanceof HTMLElement) {
+                      // Apply computed styles directly
+                      el.style.backgroundColor = '#ffffff';
+                    }
+                  });
+                },
                 ignoreElements: element => {
                   // Ignore elements that might cause CSS parsing issues
                   return (
@@ -184,11 +215,42 @@ export default function PDFExport({
             pdf.text('Weather Charts', margin, currentY);
 
             try {
+              // Pre-process the charts to handle unsupported color functions
+              const preprocessCharts = (node: HTMLElement) => {
+                // Convert all oklab colors to RGB to avoid html2canvas parsing errors
+                const elementsWithStyle = node.querySelectorAll('*');
+                elementsWithStyle.forEach(el => {
+                  if (el instanceof HTMLElement) {
+                    const style = window.getComputedStyle(el);
+                    // Apply computed styles directly to avoid color function parsing issues
+                    el.style.backgroundColor = style.backgroundColor;
+                    el.style.color = style.color;
+                    el.style.borderColor = style.borderColor;
+                  }
+                });
+              };
+
+              // Apply preprocessing to the charts
+              if (chartsRef.current) {
+                preprocessCharts(chartsRef.current);
+              }
+
               const chartsCanvas = await html2canvas(chartsRef.current, {
                 useCORS: true,
                 scale: 1.5,
                 allowTaint: true,
                 logging: false,
+                backgroundColor: '#ffffff',
+                onclone: (document, clone) => {
+                  // Find and process chart elements in the cloned document
+                  const chartElements = clone.querySelectorAll('[class*="chart"]');
+                  chartElements.forEach(el => {
+                    if (el instanceof HTMLElement) {
+                      // Apply computed styles directly
+                      el.style.backgroundColor = '#ffffff';
+                    }
+                  });
+                },
                 ignoreElements: element => {
                   // Ignore elements that might cause CSS parsing issues
                   return (

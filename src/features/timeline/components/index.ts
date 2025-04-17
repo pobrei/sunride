@@ -1,6 +1,4 @@
-// Export all timeline components
-export { default as DynamicTimeline } from './DynamicTimeline';
-export { default as SimpleTimeline } from './SimpleTimeline';
-export { default as SafeTimelineWrapper } from './SafeTimelineWrapper';
-export { default as Timeline } from './Timeline';
-export { default as StickyTimeline } from './StickyTimeline';
+// Import and re-export timeline components from the main components directory
+import { Timeline, SafeTimelineWrapper, ClientSideTimeline } from '@/components/timeline';
+
+export { Timeline, SafeTimelineWrapper, ClientSideTimeline };

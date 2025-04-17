@@ -3,7 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { GPXData, ForecastPoint } from '@shared/types';
+import { GPXData, ForecastPoint } from '@/types';
 
 interface WeatherDataPoint {
   temperature: number;
