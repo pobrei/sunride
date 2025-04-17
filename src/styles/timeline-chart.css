@@ -1,15 +1,12 @@
 /* Timeline and Elevation Chart Styles */
 
-/* Sticky timeline bar for mobile */
+/* Timeline bar */
 .timeline-bar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: relative;
+  z-index: 1;
   background: var(--color-bg);
   padding: 0.5rem 1rem;
   border-bottom: 2px solid var(--color-border, rgba(0, 0, 0, 0.1));
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
 }
 
 /* Timeline container */
@@ -71,7 +68,7 @@
   display: flex; /* flex */
   align-items: center; /* items-center */
   justify-content: center; /* justify-center */
-  z-index: 10; /* z-10 */
+  z-index: 2; /* z-2 */
 }
 
 .timeline-event-circle.active {
@@ -124,9 +121,8 @@
 
 @media (max-width: 768px) {
   .elevation-chart-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    position: relative;
+    z-index: 1;
     background-color: var(--color-bg); /* bg-background */
     padding-top: 0.5rem; /* pt-2 */
     padding-bottom: 1rem; /* pb-4 */
@@ -142,7 +138,7 @@
   border-radius: 9999px; /* rounded-full */
   background-color: var(--chart-humidity-color, var(--color-accent)); /* Use chart color with accent as fallback */
   transform: translate(-50%, -50%); /* transform -translate-x-1/2 -translate-y-1/2 */
-  z-index: 10; /* z-10 */
+  z-index: 2; /* z-2 */
   box-shadow: 0 0 0 2px var(--color-card);
 }
 

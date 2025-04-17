@@ -157,7 +157,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If everything is fine, render the timeline
   return (
     <div
-      className={cn(height, 'relative overflow-hidden timeline-bar', effects.rounded, effects.border, animation.fadeIn, className)}
+      className={cn(height, 'relative overflow-hidden', effects.rounded, effects.border, animation.fadeIn, className)}
     >
       {/* Navigation arrows */}
       {showNavigation && (
@@ -165,7 +165,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
+            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
             onClick={() => handleScroll('left')}
             disabled={scrollPosition <= 10}
           >
@@ -175,7 +175,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
+            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm", effects.buttonHover)}
             onClick={() => handleScroll('right')}
           >
             <ChevronRight className="h-4 w-4" />
