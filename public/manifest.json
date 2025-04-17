@@ -1,6 +1,6 @@
 {
-  "name": "RideWeather Planner",
-  "short_name": "RideWeather",
+  "name": "SunRide",
+  "short_name": "SunRide",
   "description": "Plan your routes with detailed weather forecasts along the way",
   "start_url": "/",
   "display": "standalone",
