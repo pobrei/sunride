@@ -1,0 +1,13 @@
+/* Additional CSS to ensure weather card and center button are always on top */
+
+/* Target the weather info card */
+[data-slot="card"].absolute.bottom-4 {
+  z-index: 9000 !important;
+  position: absolute !important;
+}
+
+/* Target the center map button */
+[data-slot="button"].absolute.top-3.right-3 {
+  z-index: 9500 !important;
+  position: absolute !important;
+}

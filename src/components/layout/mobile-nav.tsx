@@ -44,7 +44,7 @@ export function MobileNav({ className }: MobileNavProps) {
       <SheetContent side="left" className={cn("p-0", animation.fadeInSlideUp)}>
         <SheetHeader className={cn("p-4", effects.borderBottom)}>
           <SheetTitle className={cn(layout.flexBetween)}>
-            <span className={cn(typography.h5)}>RideWeather</span>
+            <span className={cn(typography.h5)}>SunRide</span>
             <Button
               variant="ghost"
               size="icon"

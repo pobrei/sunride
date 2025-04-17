@@ -13,7 +13,7 @@ import {
   ReferenceLine,
   Cell,
 } from 'recharts';
-import ChartCard from './ChartCard';
+import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
@@ -24,8 +24,6 @@ interface UVIndexChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
-  /** Animation delay in seconds */
-  delay?: number;
 }
 
 // Function to get UV index color based on value
@@ -51,7 +49,6 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
-  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -151,9 +148,8 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
   };
 
   return (
-    <ChartCard title="UV Index" unitLabel="">
-      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
-        <ResponsiveContainer width="100%" height="100%">
+    <BaseChart title="UV Index" unitLabel="" forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={selectedMarker} onChartClick={onChartClick}>
+      <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
@@ -203,8 +199,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    </ChartCard>
+    </BaseChart>
   );
 };
 

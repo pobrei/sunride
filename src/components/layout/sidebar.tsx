@@ -44,7 +44,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        'flex flex-col border-r border-border bg-card transition-all duration-300',
+        'flex flex-col border-r border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 transition-all duration-300',
         collapsed ? 'w-[60px]' : 'w-[300px]',
         animation.fadeIn,
         className
@@ -55,14 +55,14 @@ export function Sidebar({
       <div
         className={cn(
           layout.flexBetween,
-          'h-14 px-4 border-b border-border',
+          'h-14 px-4 border-b border-zinc-100 dark:border-zinc-700',
           collapsed && 'justify-center px-2'
         )}
       >
         {!collapsed && (
           <div className={cn(layout.flexRow, 'gap-2')}>
             {icon}
-            <h2 className={cn(typography.h5)}>{title}</h2>
+            <h2 className="text-lg font-semibold text-zinc-800 dark:text-white">{title}</h2>
           </div>
         )}
         {collapsible && (

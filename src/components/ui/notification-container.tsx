@@ -111,7 +111,7 @@ export function NotificationContainer({
   return createPortal(
     <div
       className={cn(
-        'fixed z-50 flex flex-col p-4 max-w-md w-full max-h-screen overflow-hidden pointer-events-none',
+        'fixed z-[200] flex flex-col p-4 max-w-md w-full max-h-screen overflow-hidden pointer-events-none',
         getPositionClasses(),
         position.includes('top') ? 'items-end' : 'items-start flex-col-reverse',
         className

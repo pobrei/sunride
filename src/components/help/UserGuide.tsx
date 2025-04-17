@@ -128,7 +128,7 @@ export function UserGuide({ className }: UserGuideProps) {
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </Button>
-          <CardTitle className="text-xl">RideWeather Guide</CardTitle>
+          <CardTitle className="text-xl">SunRide Guide</CardTitle>
           <CardDescription>
             Step {activeStep + 1} of {steps.length}
           </CardDescription>

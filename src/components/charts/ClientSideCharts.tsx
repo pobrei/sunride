@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
 import { cn } from '@/lib/utils';
-import { animation, effects, responsive } from '@/styles/tailwind-utils';
+import { effects, responsive } from '@/styles/tailwind-utils';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import dynamic from 'next/dynamic';
@@ -13,7 +12,7 @@ import dynamic from 'next/dynamic';
 const SafeChartsWrapper = dynamic(() => import('./SafeChartsWrapper'), {
   ssr: false,
   loading: () => (
-    <div className="h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center">
+    <div className="h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] flex items-center justify-center">
       <LoadingSpinner size="lg" />
     </div>
   ),
@@ -46,32 +45,23 @@ const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
   selectedMarker,
   onChartClick,
   className,
-  height = 'h-[500px] sm:h-[600px] md:h-[800px]',
+  height = 'h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px]',
 }) => {
   // Check if we have valid data
   if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) {
     return (
-      <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent', animation.fadeIn, className)}>
-        <ErrorMessage
-          title="No Data Available"
-          message="Please upload a GPX file and generate a forecast to view charts."
-          severity="warning"
-          withContainer
-          className="h-full"
-          size="sm"
-        />
+      <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent flex items-center justify-center', className)}>
+        <div className="text-center p-4">
+          <p className="text-zinc-500 mb-2">No data available</p>
+          <p className="text-sm text-zinc-400">Please upload a GPX file and generate a forecast to view charts.</p>
+        </div>
       </div>
     );
   }
 
   // If everything is fine, render the charts
   return (
-    <motion.div
-      className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent pb-8', className)}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-    >
+    <div className={cn(height, effects.rounded, 'relative overflow-hidden bg-transparent w-full max-w-full', className)}>
       <SafeChartsWrapper
         gpxData={gpxData}
         forecastPoints={forecastPoints}
@@ -79,7 +69,7 @@ const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
         selectedMarker={selectedMarker}
         onChartClick={onChartClick}
       />
-    </motion.div>
+    </div>
   );
 };
 

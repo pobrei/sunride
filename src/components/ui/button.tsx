@@ -6,19 +6,19 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 ease-in-out hover:shadow-md active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px] max-w-7xl mx-auto",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 ease-in-out hover:shadow-sm active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px] max-w-7xl mx-auto",
   {
     variants: {
       variant: {
         default:
-          'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-light)] active:bg-[var(--color-accent-dark)] active:scale-95',
+          'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-light)] active:bg-[var(--color-accent-dark)] active:scale-95 shadow-sm',
         destructive:
-          'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 active:scale-95',
+          'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 active:scale-95 shadow-sm',
         outline:
-          'bg-transparent border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent-light)] active:scale-95',
+          'bg-transparent border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600 active:scale-95',
         secondary:
-          'bg-secondary text-white hover:bg-secondary/90 active:bg-secondary/80 active:scale-95',
-        ghost: 'bg-transparent text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 active:bg-[var(--color-accent)]/20 active:scale-95',
+          'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 dark:active:bg-zinc-600 active:scale-95 shadow-sm',
+        ghost: 'bg-transparent text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-700 active:scale-95',
         link: 'text-[var(--color-accent)] underline-offset-4 hover:underline hover:text-[var(--color-accent-light)]',
       },
       size: {

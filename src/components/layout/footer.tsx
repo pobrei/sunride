@@ -20,7 +20,7 @@ export function Footer({ className }: FooterProps) {
   return (
     <footer
       className={cn(
-        'w-full border-t border-border bg-background/95 backdrop-blur-sm py-2 mt-auto', /* Changed from fixed to mt-auto for proper spacing */
+        'w-full border-t border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 py-4 mt-auto', /* Changed from fixed to mt-auto for proper spacing */
         animation.fadeIn,
         className
       )}
@@ -29,22 +29,22 @@ export function Footer({ className }: FooterProps) {
         <div className={cn(layout.flexBetween, 'md:flex-row gap-2')}>
           <div className={cn(layout.flexRow, 'gap-2')}>
             <Link href="/" className={cn(layout.flexRow, 'gap-2', animation.linkHover)}>
-              <span className={cn(typography.h6)}>RideWeather</span>
+              <span className="text-sm font-semibold text-zinc-800 dark:text-white">SunRide</span>
             </Link>
-            <span className="text-muted-foreground">|</span>
+            <span className="text-zinc-400 dark:text-zinc-500">|</span>
             <a
               href="https://github.com/pobrei/sunride"
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(typography.bodySm, typography.link)}
+              className="text-sm text-zinc-700 dark:text-zinc-300 hover:text-primary dark:hover:text-primary transition-colors"
             >
               <Github className="h-4 w-4 inline-block mr-1" />
               GitHub
             </a>
           </div>
 
-          <p className={cn(typography.bodySm, typography.muted)}>
-            &copy; {currentYear} RideWeather. Made with <Heart className="inline-block h-3 w-3 text-red-500" /> by Pobrei
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            &copy; {currentYear} SunRide. Made with <Heart className="inline-block h-3 w-3 text-red-500" /> by Pobrei
           </p>
         </div>
       </div>

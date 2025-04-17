@@ -50,12 +50,14 @@ export function formatTemperature(temp: number): string {
 }
 
 /**
- * Format wind speed in km/h
+ * Format wind speed in m/s
  * @param speed - Wind speed in km/h
- * @returns Formatted wind speed string (e.g., "15 km/h")
+ * @returns Formatted wind speed string (e.g., "4.2 m/s")
  */
 export function formatWindSpeed(speed: number): string {
-  return `${Math.round(speed)} km/h`;
+  // Convert from km/h to m/s
+  const speedInMS = speed / 3.6;
+  return `${speedInMS.toFixed(1)} m/s`;
 }
 
 /**

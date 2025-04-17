@@ -176,7 +176,7 @@ export function SimpleToastViewport(): React.ReactElement {
   const { toasts, removeToast } = useSimpleToast();
 
   return (
-    <div className="fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]">
+    <div className="fixed bottom-0 right-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]">
       {toasts.map(toast => (
         <SimpleToast key={toast.id} id={toast.id} variant={toast.variant} className="mb-2">
           <div className="grid gap-1">

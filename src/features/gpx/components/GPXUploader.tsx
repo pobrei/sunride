@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,9 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
   const [fileName, setFileName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Try to use notifications context, but don't crash if it's not available
   let notificationContext;
@@ -40,12 +43,12 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
 
   const { addNotification } = notificationContext;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const validateAndProcessFile = (file: File) => {
     if (!file) return;
 
     setFileName(file.name);
     setFileSize(file.size);
+    setSelectedFile(file);
     setError(null);
 
     // Validate file type
@@ -69,57 +72,46 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
       return;
     }
 
-    // Read and parse the file
-    const reader = new FileReader();
+    // File is validated and stored in state
+    // It will be processed when the user clicks the Process button
+  };
 
-    reader.onload = event => {
-      try {
-        if (!event.target?.result) {
-          throw new Error('Failed to read file content');
-        }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-        const fileContent = event.target.result as string;
-        const gpxData = parseGPX(fileContent);
+    validateAndProcessFile(file);
+  };
 
-        // Validate parsed data
-        if (!gpxData.points || gpxData.points.length === 0) {
-          throw new Error('No valid route points found in the GPX file');
-        }
+  // Handle drag events
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
 
-        // Success!
-        onGPXLoaded(gpxData);
-        addNotification(
-          'success',
-          `Successfully loaded ${gpxData.points.length} points from ${file.name}`
-        );
-      } catch (err) {
-        // Handle error with our utility
-        const errorMsg = handleError(err, {
-          context: 'GPXUploader',
-          errorType: ErrorType.GPX,
-          additionalData: {
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.type,
-          },
-        });
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
 
-        setError(errorMsg);
-        addNotification('error', 'Failed to parse GPX file: ' + errorMsg);
-      }
-    };
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
 
-    reader.onerror = () => {
-      const errorMsg = 'Error reading file';
-      setError(errorMsg);
-      addNotification('error', errorMsg);
-      captureException(new Error('FileReader error'), {
-        tags: { context: 'GPXUploader' },
-        extra: { fileName: file.name, fileSize: file.size },
-      });
-    };
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      validateAndProcessFile(files[0]);
+    }
+  }, []);
 
-    reader.readAsText(file);
+  // Trigger file input click when drop zone is clicked
+  const handleDropZoneClick = () => {
+    if (!isLoading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -133,31 +125,102 @@ export default function GPXUploader({ onGPXLoaded, isLoading }: GPXUploaderProps
             <Label htmlFor="fileInput">
               Select GPX file
             </Label>
-            <div className="flex gap-3" data-testid="gpx-drop-zone">
-              <Input
-                id="fileInput"
-                type="file"
-                accept=".gpx"
-                onChange={handleFileChange}
-                className="cursor-pointer h-10 file:bg-primary file:text-primary-foreground file:border-none file:rounded-lg file:px-3 file:py-2 file:font-medium hover:file:bg-primary/90 file:mr-3 file:transition-colors"
-                disabled={isLoading}
-                data-testid="gpx-file-input"
-              />
-              <Button
-                disabled={isLoading || !fileName || !!error}
-                data-testid="upload-button"
-                className="h-10 px-4"
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Upload
-              </Button>
+            <div
+              className={`border-2 border-dashed rounded-lg p-6 transition-colors duration-200 ${isDragging ? 'border-primary bg-primary/5' : 'border-border'} ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary/50 hover:bg-primary/5'}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={handleDropZoneClick}
+              data-testid="gpx-drop-zone"
+            >
+              <div className="flex flex-col items-center justify-center gap-3 text-center">
+                <div className="rounded-full bg-primary/10 p-3">
+                  <Upload className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium mb-1">Drag & drop your GPX file here</p>
+                  <p className="text-xs text-muted-foreground">or click to browse files</p>
+                </div>
+                <Input
+                  ref={fileInputRef}
+                  id="fileInput"
+                  type="file"
+                  accept=".gpx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={isLoading}
+                  data-testid="gpx-file-input"
+                />
+              </div>
             </div>
 
             {fileName && !error && (
-              <div className="flex items-center text-xs text-muted-foreground mt-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mt-3">
                 <p>
                   {fileName} ({(fileSize / 1024).toFixed(1)} KB) selected
                 </p>
+                <Button
+                  onClick={() => {
+                    if (selectedFile) {
+                      const reader = new FileReader();
+
+                      reader.onload = event => {
+                        try {
+                          if (!event.target?.result) {
+                            throw new Error('Failed to read file content');
+                          }
+
+                          const fileContent = event.target.result as string;
+                          const gpxData = parseGPX(fileContent);
+
+                          // Validate parsed data
+                          if (!gpxData.points || gpxData.points.length === 0) {
+                            throw new Error('No valid route points found in the GPX file');
+                          }
+
+                          // Success!
+                          onGPXLoaded(gpxData);
+                          addNotification(
+                            'success',
+                            `Successfully loaded ${gpxData.points.length} points from ${selectedFile.name}`
+                          );
+                        } catch (err) {
+                          // Handle error with our utility
+                          const errorMsg = handleError(err, {
+                            context: 'GPXUploader',
+                            errorType: ErrorType.GPX,
+                            additionalData: {
+                              fileName: selectedFile.name,
+                              fileSize: selectedFile.size,
+                              fileType: selectedFile.type,
+                            },
+                          });
+
+                          setError(errorMsg);
+                          addNotification('error', 'Failed to parse GPX file: ' + errorMsg);
+                        }
+                      };
+
+                      reader.onerror = () => {
+                        const errorMsg = 'Error reading file';
+                        setError(errorMsg);
+                        addNotification('error', errorMsg);
+                        captureException(new Error('FileReader error'), {
+                          tags: { context: 'GPXUploader' },
+                          extra: { fileName: selectedFile.name, fileSize: selectedFile.size },
+                        });
+                      };
+
+                      reader.readAsText(selectedFile);
+                    }
+                  }}
+                  disabled={isLoading || !selectedFile}
+                  className="h-8 px-3"
+                  data-testid="process-button"
+                >
+                  <Upload className="mr-2 h-3 w-3" />
+                  Process File
+                </Button>
               </div>
             )}
 

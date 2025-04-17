@@ -162,9 +162,7 @@ export default function Home() {
       />
       <RouteControls
         onUpdateSettings={handleUpdateSettings}
-        onExportPDF={() => {}}
         isGenerating={isGenerating}
-        isExporting={false}
       />
       <WeatherProviderComparison />
     </div>
@@ -200,9 +198,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header title="Route Weather Planner" />
+      <Header title="SunRide" />
 
-      <div className="container mx-auto px-4 py-6 pb-24"> {/* Added more bottom padding */}
+      <div className="container mx-auto px-4 py-6 pb-24 bg-zinc-50 dark:bg-zinc-900"> {/* Added more bottom padding */}
         {headerContent}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
@@ -214,7 +212,7 @@ export default function Home() {
           {/* Main content area */}
           <div className="lg:col-span-3 space-y-6">
             {isLoading ? (
-              <div className="flex items-center justify-center h-[500px] bg-muted/30 rounded-lg border border-border">
+              <div className="flex items-center justify-center h-[500px] bg-white dark:bg-zinc-800 rounded-lg border border-zinc-100 dark:border-zinc-700 shadow-sm">
                 <LoadingSpinner
                   message={loadingMessage || 'Loading weather data...'}
                   centered
@@ -226,7 +224,7 @@ export default function Home() {
             ) : (
               <>
                 <div className="relative" ref={mapRef}>
-                  <div className="h-[500px] rounded-lg overflow-hidden border border-border">
+                  <div className="h-[500px] rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-700 shadow-sm">
                     <MapWrapper
                       gpxData={gpxData}
                       forecastPoints={forecastPoints}
@@ -270,18 +268,18 @@ export default function Home() {
                       weatherData={weatherData}
                       selectedMarker={selectedMarker}
                       onTimelineClick={handleTimelineClick}
-                      height="h-[350px]"
+                      height="h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]"
                       showNavigation={true}
                     />
 
-                    <div ref={chartsRef} className="mb-16"> {/* Added bottom margin */}
+                    <div ref={chartsRef} className="mb-6 sm:mb-8 md:mb-10 w-full max-w-full overflow-hidden"> {/* Responsive bottom margin with full width */}
                       <ClientSideCharts
                         gpxData={gpxData}
                         forecastPoints={forecastPoints}
                         weatherData={weatherData}
                         selectedMarker={selectedMarker}
                         onChartClick={handleChartClick}
-                        height="h-[500px]"
+                        height="h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px]"
                       />
                     </div>
                   </div>

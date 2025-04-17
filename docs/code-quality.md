@@ -1,6 +1,6 @@
 # Code Quality Tools
 
-This document outlines the code quality tools and processes used in the RideWeather Planner project.
+This document outlines the code quality tools and processes used in the SunRide project.
 
 ## Prettier
 

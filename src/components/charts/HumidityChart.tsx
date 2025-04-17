@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import ChartCard from './ChartCard';
+import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance, formatHumidity } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
@@ -22,8 +22,6 @@ interface HumidityChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
-  /** Animation delay in seconds */
-  delay?: number;
 }
 
 const HumidityChart: React.FC<HumidityChartProps> = ({
@@ -31,7 +29,6 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
-  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -113,9 +110,8 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   return (
-    <ChartCard title="Humidity" unitLabel="%">
-      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
-        <ResponsiveContainer width="100%" height="100%">
+    <BaseChart title="Humidity" unitLabel="%" forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={selectedMarker} onChartClick={onChartClick}>
+      <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
@@ -169,8 +165,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
-    </ChartCard>
+    </BaseChart>
   );
 };
 

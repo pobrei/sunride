@@ -37,7 +37,7 @@ export function Header({ className, showBackButton = false, backUrl, title }: He
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 bg-white shadow-sm px-4 py-2 flex items-center justify-between',
+        'sticky top-0 z-[100] bg-white dark:bg-zinc-800 shadow-sm px-4 py-3 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-700',
         animation.fadeIn,
         className
       )}

@@ -13,7 +13,7 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
-import ChartCard from './ChartCard';
+import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance, formatWindSpeed } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
@@ -24,8 +24,6 @@ interface WindChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
-  /** Animation delay in seconds */
-  delay?: number;
 }
 
 const WindChart: React.FC<WindChartProps> = ({
@@ -33,7 +31,6 @@ const WindChart: React.FC<WindChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
-  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -133,13 +130,12 @@ const WindChart: React.FC<WindChartProps> = ({
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   // Define wind speed categories
-  const lightBreeze = 15; // km/h
-  const moderateWind = 30; // km/h
+  const lightBreeze = 4.2; // m/s (15 km/h)
+  const moderateWind = 8.3; // m/s (30 km/h)
 
   return (
-    <ChartCard title="Wind" unitLabel="km/h">
-      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
-        <ResponsiveContainer width="100%" height="100%">
+    <BaseChart title="Wind" unitLabel="m/s" forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={selectedMarker} onChartClick={onChartClick}>
+      <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
@@ -197,7 +193,7 @@ const WindChart: React.FC<WindChartProps> = ({
             <Bar
               key="windSpeed-bar"
               dataKey="windSpeed"
-              name="Wind Speed (km/h)"
+              name="Wind Speed (m/s)"
               fill={theme.wind}
               radius={[4, 4, 0, 0]}
               barSize={20}
@@ -206,7 +202,7 @@ const WindChart: React.FC<WindChartProps> = ({
               key="windGust-line"
               type="monotone"
               dataKey="windGust"
-              name="Wind Gust (km/h)"
+              name="Wind Gust (m/s)"
               stroke="#ff7300"
               strokeDasharray="3 3"
               strokeWidth={2}
@@ -214,8 +210,7 @@ const WindChart: React.FC<WindChartProps> = ({
             />
           </ComposedChart>
         </ResponsiveContainer>
-      </div>
-    </ChartCard>
+    </BaseChart>
   );
 };
 

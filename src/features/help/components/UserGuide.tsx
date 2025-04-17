@@ -41,13 +41,13 @@ const UserGuide: React.FC = () => {
           <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>RideWeather Planner User Guide</CardTitle>
+                <CardTitle>SunRide User Guide</CardTitle>
                 <Button variant="ghost" size="icon" onClick={toggleGuide} aria-label="Close guide">
                   <X className="h-5 w-5" />
                 </Button>
               </div>
               <CardDescription>
-                Learn how to use the RideWeather Planner to plan your routes with weather
+                Learn how to use SunRide to plan your routes with weather
                 forecasting
               </CardDescription>
             </CardHeader>
@@ -58,7 +58,7 @@ const UserGuide: React.FC = () => {
                   Getting Started
                 </h3>
                 <p>
-                  RideWeather Planner helps you plan your outdoor activities by showing weather
+                  SunRide helps you plan your outdoor activities by showing weather
                   forecasts along your route. Follow these steps to get started:
                 </p>
                 <ol className="list-decimal list-inside space-y-2 ml-4">
@@ -227,7 +227,7 @@ const UserGuide: React.FC = () => {
               <div className="text-center text-sm text-muted-foreground pt-4 border-t">
                 <p>Weather data provided by OpenWeather API</p>
                 <p>
-                  RideWeather Planner &copy;{' '}
+                  SunRide &copy;{' '}
                   {typeof window !== 'undefined' ? new Date().getFullYear() : 2024}
                 </p>
               </div>

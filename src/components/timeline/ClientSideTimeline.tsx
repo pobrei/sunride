@@ -15,7 +15,7 @@ import { typography, animation, effects, layout, responsive } from '@/styles/tai
 const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
   ssr: false,
   loading: () => (
-    <div className={cn("h-[300px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
+    <div className={cn("h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
       <LoadingSpinner
         message="Loading timeline..."
         centered
@@ -52,7 +52,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   selectedMarker,
   onTimelineClick,
   className,
-  height = 'h-[200px]',
+  height = 'h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]',
   showPlaceholder = true,
   showNavigation = true,
 }) => {
@@ -61,7 +61,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
-  const timelineRef = React.useRef<HTMLDivElement>(null);
+  const timelineRef = React.useRef<HTMLDivElement | null>(null);
 
   // Simulate timeline initialization
   useEffect(() => {

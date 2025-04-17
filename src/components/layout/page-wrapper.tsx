@@ -40,10 +40,10 @@ export function PageWrapper({
   backUrl,
 }: PageWrapperProps) {
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
+    <div className={cn(layout.flexCol, 'min-h-screen bg-zinc-50 dark:bg-zinc-900 container-transition')}>
       {showHeader && <Header title={headerTitle} showBackButton={showBackButton} backUrl={backUrl} />}
       <PageTransition>
-        <main className={cn('flex-1', withPadding && 'max-w-7xl mx-auto px-4 py-4 sm:py-6 md:py-8', className)}>{children}</main>
+        <main className={cn('flex-1', withPadding && 'max-w-7xl mx-auto px-4 py-6 sm:py-8 md:py-10', className)}>{children}</main>
       </PageTransition>
       {showFooter && <Footer />}
     </div>

@@ -45,6 +45,6 @@ const DynamicMap = dynamic(() => import('./SimpleLeafletMap'), {
 /**
  * A wrapper component for the map that handles dynamic loading
  */
-export default function MapWrapper(props: MapWrapperProps): React.ReactNode {
+export default function MapWrapper(props: MapWrapperProps): JSX.Element {
   return <DynamicMap {...props} />;
 }

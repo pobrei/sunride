@@ -9,6 +9,7 @@ import { GPXData, ForecastPoint } from '@/types';
 import { Locate } from 'lucide-react';
 import { responsive } from '@/styles/tailwind-utils';
 import './MapStyles.css';
+import './WeatherCardFix.css';
 
 // Import Leaflet types but use dynamic import for the actual library
 import type { Map as LeafletMap, Marker, Polyline, DivIcon } from 'leaflet';
@@ -102,7 +103,7 @@ interface SimpleLeafletMapProps {
 /**
  * A simple Leaflet map component that displays the route and weather data
  */
-export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.ReactNode {
+export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Element {
   const { gpxData, forecastPoints = [], weatherData = [], onMarkerClick = () => {}, selectedMarker = null } = props;
 
   // Refs
@@ -361,38 +362,6 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
     }
   }, []);
 
-  // Render placeholder if no data
-  if (!gpxData || forecastPoints.length === 0) {
-    return (
-      <div className={cn(responsive.mapContainer, "bg-muted flex items-center justify-center max-w-7xl mx-auto")}>
-        <Card className="w-full max-w-md mx-auto">
-          <div className="text-center p-4">
-            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold mb-4">No Route Data</h3>
-            <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-              Upload a GPX file to visualize your route on the map with weather data
-            </p>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
   // Function to center the map on the route
   const centerMap = useCallback(async () => {
     if (!mapRef.current || !routeRef.current) return;
@@ -408,104 +377,141 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
     }
   }, []);
 
-  // Render map
-  return (
-    <div className="h-full w-full relative">
-      <div ref={mapContainerRef} className={cn(responsive.mapContainer, "w-full")}></div>
-
-      {/* Center map button */}
-      <Button
-        onClick={centerMap}
-        size="icon"
-        variant="secondary"
-        className="absolute top-3 right-3 z-[1000] bg-theme-card/80 backdrop-blur-sm hover:bg-theme-accent text-theme-text hover:text-white shadow-md map-control-button"
-        aria-label="Center map"
-      >
-        <Locate className="h-4 w-4" />
-      </Button>
-
-      {/* Enhanced Weather info panel */}
-      {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
-        <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-[1000] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20 max-h-[80vh] overflow-y-auto">
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="font-medium text-sm flex items-center">
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs mr-2">
-                  {selectedMarker + 1}
-                </div>
-                <span>Point {selectedMarker + 1} of {forecastPoints.length}</span>
-              </div>
-              <div className="text-2xl">
-                {getWeatherIconEmoji(weatherData[selectedMarker]?.conditionCode || 800)}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <div className="text-lg font-semibold">
-                {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  Feels like {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
-                </span>
-              </div>
-              <div className="text-sm text-muted-foreground capitalize">
-                {weatherData[selectedMarker]?.conditionDescription || 'Unknown'}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
-              <div className="col-span-2 pb-2 mb-2 border-b border-border">
-                <span className="font-medium">Weather Details</span>
-              </div>
-
-              <div className="text-muted-foreground">Wind:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.windSpeed?.toFixed(1) || 'N/A'} km/h
-                <span className="text-xs text-muted-foreground ml-1">
-                  {getWindDirection(weatherData[selectedMarker]?.windDirection || 0)}
-                </span>
-              </div>
-
-              <div className="text-muted-foreground">Humidity:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.humidity || 'N/A'}%
-              </div>
-
-              <div className="text-muted-foreground">Precipitation:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
-                {weatherData[selectedMarker]?.precipitationProbability > 0 && (
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({(weatherData[selectedMarker]?.precipitationProbability * 100).toFixed(0)}%)
-                  </span>
-                )}
-              </div>
-
-              <div className="text-muted-foreground">UV Index:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.uvIndex?.toFixed(1) || 'N/A'}
-                <span className="text-xs text-muted-foreground ml-1">
-                  {getUVIndexCategory(weatherData[selectedMarker]?.uvIndex || 0)}
-                </span>
-              </div>
-
-              <div className="text-muted-foreground">Pressure:</div>
-              <div className="font-medium">
-                {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
-              </div>
-
-              <div className="text-muted-foreground">Visibility:</div>
-              <div className="font-medium">
-                {((weatherData[selectedMarker]?.visibility || 0) / 1000).toFixed(1)} km
-              </div>
-
-              <div className="col-span-2 pt-2 mt-2 border-t border-border text-xs text-center text-muted-foreground">
-                {forecastPoints[selectedMarker] && (
-                  <span>Distance: {forecastPoints[selectedMarker].distance.toFixed(1)} km</span>
-                )}
-              </div>
-            </div>
+  // Render placeholder if no data
+  const noDataContent = (
+    <div className={cn(responsive.mapContainer, "bg-muted flex items-center justify-center max-w-7xl mx-auto")}>
+      <Card className="w-full max-w-md mx-auto">
+        <div className="text-center p-4">
+          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              />
+            </svg>
           </div>
-        </Card>
+          <h3 className="text-lg font-semibold mb-4">No Route Data</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            Upload a GPX file to visualize your route on the map with weather data
+          </p>
+        </div>
+      </Card>
+    </div>
+  );
+
+  // Render map or placeholder based on data availability
+  return (
+    <div className="h-full w-full relative z-0">
+      {(!gpxData || forecastPoints.length === 0) ? (
+        noDataContent
+      ) : (
+        <>
+          <div ref={mapContainerRef} className={cn(responsive.mapContainer, "w-full")}></div>
+
+          {/* Center map button */}
+          <Button
+            onClick={centerMap}
+            size="icon"
+            variant="secondary"
+            data-slot="button"
+            className="absolute top-3 right-3 z-[500] bg-theme-card/80 backdrop-blur-sm hover:bg-theme-accent text-theme-text hover:text-white shadow-md map-control-button"
+            aria-label="Center map"
+          >
+            <Locate className="h-4 w-4" />
+          </Button>
+
+          {/* Enhanced Weather info panel */}
+          {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
+            <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:w-80 z-[400] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20 max-h-[80vh] overflow-y-auto">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="font-medium text-sm flex items-center">
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs mr-2">
+                      {selectedMarker + 1}
+                    </div>
+                    <span>of {forecastPoints.length}</span>
+                  </div>
+                  <div className="text-2xl">
+                    {getWeatherIconEmoji(weatherData[selectedMarker]?.conditionCode || 800)}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-lg font-semibold">
+                    {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
+                    <span className="text-sm font-normal text-muted-foreground ml-2">
+                      Feels like {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
+                    </span>
+                  </div>
+                  <div className="text-sm text-muted-foreground capitalize">
+                    {weatherData[selectedMarker]?.conditionDescription || 'Unknown'}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <div className="col-span-2 pb-2 mb-2 border-b border-border">
+                    <span className="font-medium">Weather Details</span>
+                  </div>
+
+                  <div className="text-muted-foreground">Wind:</div>
+                  <div className="font-medium">
+                    {((weatherData[selectedMarker]?.windSpeed || 0) / 3.6).toFixed(1)} m/s
+                    <span className="text-xs text-muted-foreground ml-1">
+                      {getWindDirection(weatherData[selectedMarker]?.windDirection || 0)}
+                    </span>
+                  </div>
+
+                  <div className="text-muted-foreground">Humidity:</div>
+                  <div className="font-medium">
+                    {weatherData[selectedMarker]?.humidity || 'N/A'}%
+                  </div>
+
+                  <div className="text-muted-foreground">Precipitation:</div>
+                  <div className="font-medium">
+                    {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
+                    {weatherData[selectedMarker]?.precipitationProbability > 0 && (
+                      <span className="text-xs text-muted-foreground ml-1">
+                        ({(weatherData[selectedMarker]?.precipitationProbability * 100).toFixed(0)}%)
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-muted-foreground">UV Index:</div>
+                  <div className="font-medium">
+                    {weatherData[selectedMarker]?.uvIndex?.toFixed(1) || 'N/A'}
+                    <span className="text-xs text-muted-foreground ml-1">
+                      {getUVIndexCategory(weatherData[selectedMarker]?.uvIndex || 0)}
+                    </span>
+                  </div>
+
+                  <div className="text-muted-foreground">Pressure:</div>
+                  <div className="font-medium">
+                    {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
+                  </div>
+
+                  <div className="text-muted-foreground">Cloud Cover:</div>
+                  <div className="font-medium">
+                    {weatherData[selectedMarker]?.cloudCover || 'N/A'}%
+                  </div>
+
+                  <div className="col-span-2 pt-2 mt-2 border-t border-border text-xs text-center text-muted-foreground">
+                    {forecastPoints[selectedMarker] && (
+                      <span>Distance: {forecastPoints[selectedMarker].distance.toFixed(1)} km</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+        </>
       )}
     </div>
   );

@@ -53,8 +53,8 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   return (
     <NotificationContext.Provider value={{ addNotification, removeNotification }}>
       {children}
-      <div className="fixed top-4 right-4 z-50 w-80 max-w-[calc(100vw-2rem)] space-y-2 pointer-events-none">
-        <div className="pointer-events-auto">
+      <div className="fixed top-4 right-4 z-[200] w-80 max-w-[calc(100vw-2rem)] space-y-2 pointer-events-none">
+        <div className="pointer-events-auto w-full">
           {notifications.map(notification => (
             <Notification
               key={notification.id}

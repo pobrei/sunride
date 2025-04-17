@@ -1,6 +1,6 @@
 # Code Quality Tools
 
-This document provides an overview of the code quality tools and processes set up in the RideWeather Planner project.
+This document provides an overview of the code quality tools and processes set up in the SunRide project.
 
 ## Tools Installed
 

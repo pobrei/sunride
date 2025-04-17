@@ -43,19 +43,19 @@ export function Charts({
   className,
 }: ChartsProps) {
   return (
-    <div className={cn('p-4 bg-transparent overflow-visible text-zinc-700', className)}>
-      <Tabs defaultValue="temperature" className="w-full bg-transparent">
-        <TabsList className="mb-4 flex flex-wrap bg-white overflow-x-auto snap-x scroll-smooth px-2 min-w-[300px]">
-          <TabsTrigger value="temperature" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Temperature</TabsTrigger>
-          <TabsTrigger value="precipitation" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Precipitation</TabsTrigger>
-          <TabsTrigger value="wind" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Wind</TabsTrigger>
-          <TabsTrigger value="humidity" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Humidity</TabsTrigger>
-          <TabsTrigger value="pressure" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Pressure</TabsTrigger>
-          <TabsTrigger value="elevation" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">Elevation</TabsTrigger>
-          <TabsTrigger value="uv-index" className="transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">UV Index</TabsTrigger>
+    <div className={cn('bg-transparent overflow-visible text-zinc-700 w-full max-w-full', className)}>
+      <Tabs defaultValue="temperature" className="w-full max-w-full bg-transparent">
+        <TabsList className="mb-2 flex flex-wrap bg-white overflow-x-auto px-2 py-1 min-w-[250px] rounded-md">
+          <TabsTrigger value="temperature" className="text-xs py-1 px-2">Temperature</TabsTrigger>
+          <TabsTrigger value="precipitation" className="text-xs py-1 px-2">Precipitation</TabsTrigger>
+          <TabsTrigger value="wind" className="text-xs py-1 px-2">Wind</TabsTrigger>
+          <TabsTrigger value="humidity" className="text-xs py-1 px-2">Humidity</TabsTrigger>
+          <TabsTrigger value="pressure" className="text-xs py-1 px-2">Pressure</TabsTrigger>
+          <TabsTrigger value="elevation" className="text-xs py-1 px-2">Elevation</TabsTrigger>
+          <TabsTrigger value="uv-index" className="text-xs py-1 px-2">UV Index</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="temperature" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="temperature" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <TemperatureChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -65,7 +65,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="precipitation" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="precipitation" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <PrecipitationChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -75,7 +75,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="wind" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="wind" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <WindChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -85,7 +85,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="humidity" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="humidity" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <HumidityChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -95,7 +95,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="pressure" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="pressure" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <PressureChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}
@@ -105,7 +105,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="elevation" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="elevation" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <ElevationChart
             gpxData={gpxData}
             forecastPoints={forecastPoints}
@@ -115,7 +115,7 @@ export function Charts({
           />
         </TabsContent>
 
-        <TabsContent value="uv-index" className="mt-0 bg-transparent overflow-visible">
+        <TabsContent value="uv-index" className="mt-0 bg-transparent overflow-visible w-full max-w-full">
           <UVIndexChart
             forecastPoints={forecastPoints}
             weatherData={weatherData}

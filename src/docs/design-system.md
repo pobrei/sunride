@@ -1,6 +1,6 @@
-# RideWeather Design System Documentation
+# SunRide Design System Documentation
 
-This document provides an overview of the design system used in the RideWeather application. The design system is built on top of Tailwind CSS and provides a consistent set of utilities, components, and patterns for building the application.
+This document provides an overview of the design system used in the SunRide application. The design system is built on top of Tailwind CSS and provides a consistent set of utilities, components, and patterns for building the application.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document provides an overview of the design system used in the RideWeather 
 
 ## Introduction
 
-The RideWeather design system is a collection of reusable components, utilities, and patterns that provide a consistent look and feel across the application. It is built on top of Tailwind CSS and uses the `class-variance-authority` (cva) pattern for creating component variants.
+The SunRide design system is a collection of reusable components, utilities, and patterns that provide a consistent look and feel across the application. It is built on top of Tailwind CSS and uses the `class-variance-authority` (cva) pattern for creating component variants.
 
 The design system is implemented in the `src/styles/tailwind-utils.ts` file, which provides a set of utility functions for applying consistent styling to components.
 
@@ -260,11 +260,11 @@ interface FeatureCardProps {
 
 export function FeatureCard({ title, description, icon, className }: FeatureCardProps) {
   return (
-    <div 
+    <div
       className={cn(
-        effects.cardHoverable, 
-        animation.fadeIn, 
-        "p-6", 
+        effects.cardHoverable,
+        animation.fadeIn,
+        "p-6",
         className
       )}
     >

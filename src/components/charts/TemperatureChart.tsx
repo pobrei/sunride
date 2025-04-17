@@ -13,7 +13,7 @@ import {
   Area,
   ReferenceLine,
 } from 'recharts';
-import ChartCard from './ChartCard';
+import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance, formatTemperature } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
@@ -26,8 +26,6 @@ interface TemperatureChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
-  /** Animation delay in seconds */
-  delay?: number;
 }
 
 const TemperatureChart: React.FC<TemperatureChartProps> = ({
@@ -35,7 +33,6 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
-  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -140,9 +137,8 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
   const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   return (
-    <ChartCard title="Temperature & Feels Like" unitLabel="°C">
-      <div className={cn(responsive.chartContainer, "chart-wrapper-visible")}>
-        <ResponsiveContainer width="100%" height="100%">
+    <BaseChart title="Temperature & Feels Like" unitLabel="°C" forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={selectedMarker} onChartClick={onChartClick}>
+      <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
@@ -234,8 +230,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
             />
           </ComposedChart>
         </ResponsiveContainer>
-      </div>
-    </ChartCard>
+    </BaseChart>
   );
 };
 

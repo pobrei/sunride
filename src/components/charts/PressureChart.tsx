@@ -12,7 +12,7 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
-import ChartCard from './ChartCard';
+import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
@@ -23,8 +23,6 @@ interface PressureChartProps {
   weatherData: (WeatherData | null)[];
   selectedMarker: number | null;
   onChartClick?: (index: number) => void;
-  /** Animation delay in seconds */
-  delay?: number;
 }
 
 const PressureChart: React.FC<PressureChartProps> = ({
@@ -32,7 +30,6 @@ const PressureChart: React.FC<PressureChartProps> = ({
   weatherData,
   selectedMarker,
   onChartClick,
-  delay = 0,
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chartData, setChartData] = useState<
@@ -132,9 +129,8 @@ const PressureChart: React.FC<PressureChartProps> = ({
   const standardPressure = 1013.25; // hPa
 
   return (
-    <ChartCard title="Pressure" unitLabel="hPa">
-      <div className="h-[350px] w-full px-4 pb-6 chart-wrapper-visible">
-        <ResponsiveContainer width="100%" height="100%">
+    <BaseChart title="Pressure" unitLabel="hPa" forecastPoints={forecastPoints} weatherData={weatherData} selectedMarker={selectedMarker} onChartClick={onChartClick}>
+      <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
@@ -194,8 +190,7 @@ const PressureChart: React.FC<PressureChartProps> = ({
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-    </ChartCard>
+    </BaseChart>
   );
 };
 

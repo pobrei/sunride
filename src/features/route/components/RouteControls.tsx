@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Save, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 /**
  * Props for the RouteControls component
@@ -14,12 +14,10 @@ import { Save, RefreshCw } from 'lucide-react';
 interface RouteControlsProps {
   /** Callback function when settings are updated */
   onUpdateSettings: (settings: RouteSettings) => void;
-  /** Callback function when PDF export is requested */
-  onExportPDF: () => void;
   /** Whether the forecast is currently being generated */
   isGenerating: boolean;
   /** Whether a PDF is currently being exported */
-  isExporting: boolean;
+  isExporting?: boolean;
 }
 
 /**
@@ -41,9 +39,8 @@ export interface RouteSettings {
  */
 export default function RouteControls({
   onUpdateSettings,
-  onExportPDF,
   isGenerating,
-  isExporting,
+  isExporting = false,
 }: RouteControlsProps): React.ReactElement {
   /**
    * Get tomorrow at 8:00 AM for default start time
@@ -160,11 +157,11 @@ export default function RouteControls({
             />
           </div>
 
-          <div className="flex items-center justify-between gap-3 mt-6">
+          <div className="flex items-center justify-center mt-6">
             <Button
               onClick={handleGenerateForecast}
               disabled={isGenerating}
-              className="flex-1 h-10"
+              className="w-full h-10"
               size="default"
             >
               {isGenerating ? (
@@ -174,26 +171,6 @@ export default function RouteControls({
                 </>
               ) : (
                 'Generate Forecast'
-              )}
-            </Button>
-
-            <Button
-              onClick={onExportPDF}
-              disabled={isExporting || isGenerating}
-              variant="outline"
-              className="h-10 px-4"
-              size="default"
-            >
-              {isExporting ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Exporting...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Export PDF
-                </>
               )}
             </Button>
           </div>

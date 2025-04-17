@@ -108,18 +108,19 @@ export function WeatherAlerts({
 
       // Check for high winds
       if (weather.windSpeed > 30) {
+        const windSpeedInMS = weather.windSpeed / 3.6;
         newAlerts.push({
           id: `wind-${index}`,
           type: 'highWind',
           title: 'High Wind Alert',
-          description: `Wind speeds of ${Math.round(weather.windSpeed)} km/h expected at ${formatTime(point.timestamp)}`,
+          description: `Wind speeds of ${windSpeedInMS.toFixed(1)} m/s expected at ${formatTime(point.timestamp)}`,
           severity: 'warning',
           icon: <Wind className="h-5 w-5 text-primary" />,
           timestamp: formatTime(point.timestamp),
           location: `${point.distance.toFixed(1)} km`,
           details: `High winds can make cycling or outdoor activities difficult and potentially dangerous. Consider alternative routes or timing.`,
           pointIndex: index,
-          value: `${Math.round(weather.windSpeed)} km/h`,
+          value: `${windSpeedInMS.toFixed(1)} m/s`,
         });
       }
 
@@ -189,7 +190,7 @@ export function WeatherAlerts({
     switch (type) {
       case 'extremeHeat':
         return {
-          icon: <Sun className="h-4 w-4 text-red-500" />,
+          icon: <Sun className="h-3 w-3 text-red-500" />,
           title: 'Extreme Heat',
           color: 'text-red-600',
           bgColor: 'bg-red-50',
@@ -197,7 +198,7 @@ export function WeatherAlerts({
         };
       case 'freezing':
         return {
-          icon: <Snowflake className="h-4 w-4 text-blue-500" />,
+          icon: <Snowflake className="h-3 w-3 text-blue-500" />,
           title: 'Freezing',
           color: 'text-blue-600',
           bgColor: 'bg-blue-50',
@@ -205,7 +206,7 @@ export function WeatherAlerts({
         };
       case 'highWind':
         return {
-          icon: <Wind className="h-4 w-4 text-amber-500" />,
+          icon: <Wind className="h-3 w-3 text-amber-500" />,
           title: 'High Wind',
           color: 'text-amber-600',
           bgColor: 'bg-amber-50',
@@ -213,7 +214,7 @@ export function WeatherAlerts({
         };
       case 'heavyRain':
         return {
-          icon: <CloudRain className="h-4 w-4 text-cyan-500" />,
+          icon: <CloudRain className="h-3 w-3 text-cyan-500" />,
           title: 'Heavy Rain',
           color: 'text-cyan-600',
           bgColor: 'bg-cyan-50',
@@ -221,7 +222,7 @@ export function WeatherAlerts({
         };
       default:
         return {
-          icon: <AlertTriangle className="h-4 w-4 text-gray-500" />,
+          icon: <AlertTriangle className="h-3 w-3 text-gray-500" />,
           title: 'Alert',
           color: 'text-gray-600',
           bgColor: 'bg-zinc-50',
@@ -238,34 +239,32 @@ export function WeatherAlerts({
     const { icon, title, color, bgColor, borderColor } = getAlertTypeDetails(type);
 
     return (
-      <Card key={type} className={cn("overflow-hidden border max-w-7xl mx-auto text-zinc-700", borderColor, animation.fadeIn)}>
-        <CardHeader className={cn("py-4 px-4", bgColor, "border-b", borderColor)}>
-          <CardTitle className={cn("text-sm font-semibold flex items-center", color)}>
+      <Card key={type} className={cn("overflow-hidden border text-zinc-800 dark:text-zinc-200 shadow-sm", borderColor, animation.fadeIn)}>
+        <CardHeader className={cn("py-1 px-2", bgColor, "border-b", borderColor)}>
+          <CardTitle className={cn("text-[10px] font-medium flex items-center", color)}>
             {icon}
-            <span className="ml-2">
+            <span className="ml-1">
               {title} ({typeAlerts.length})
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="p-1.5">
+          <div className="flex flex-wrap gap-0.5">
             {typeAlerts.map(alert => (
               <Badge
                 key={alert.id}
                 variant="outline"
                 className={cn(
-                  "flex items-center gap-1 py-1 px-2",
+                  "flex items-center gap-0.5 py-0.5 px-1.5",
                   bgColor,
-                  "hover:bg-opacity-20 transition-colors text-xs"
+                  "hover:bg-opacity-20 transition-colors text-[10px]"
                 )}
+                title={`${alert.timestamp} at ${alert.location}`}
               >
-                <Clock className="h-3 w-3" />
-                {alert.timestamp}
-                <span className="mx-0.5">•</span>
                 <span className="font-semibold">{alert.value}</span>
                 <span className="mx-0.5">•</span>
-                <MapPin className="h-3 w-3" />
-                {alert.location}
+                <MapPin className="h-2 w-2" />
+                {alert.location.replace(' km', '')}
               </Badge>
             ))}
           </div>
@@ -279,16 +278,16 @@ export function WeatherAlerts({
   }
 
   return (
-    <div className={cn('space-y-4 p-4 border border-zinc-200 rounded-lg bg-white text-zinc-700', animation.fadeIn, className)}>
-      <div className={cn(layout.flexBetween)}>
-        <h3 className={cn("text-lg font-semibold", layout.flexRow, "gap-2")}>
-          <AlertTriangle className="h-5 w-5 text-primary" />
+    <div className={cn('p-2 border border-zinc-100 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-sm', animation.fadeIn, className)}>
+      <div className={cn(layout.flexBetween, "pb-1 mb-1 border-b border-zinc-100 dark:border-zinc-700")}>
+        <h3 className={cn("text-xs font-semibold", layout.flexRow, "gap-1")}>
+          <AlertTriangle className="h-3.5 w-3.5 text-primary" />
           Weather Alerts
-          <span className="text-sm font-medium text-zinc-500">({visibleAlerts.length})</span>
+          <span className="text-xs font-medium text-zinc-500">({visibleAlerts.length})</span>
         </h3>
       </div>
 
-      <div className={cn("space-y-4", animation.fadeInSlideUp)}>
+      <div className={cn("space-y-1", animation.fadeInSlideUp)}>
         {renderCompactAlerts('highWind')}
         {renderCompactAlerts('extremeHeat')}
         {renderCompactAlerts('freezing')}

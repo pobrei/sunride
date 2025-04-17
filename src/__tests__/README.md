@@ -1,6 +1,6 @@
 # Testing Documentation
 
-This directory contains tests for the Weather App project. The tests are organized by type and component.
+This directory contains tests for the SunRide project. The tests are organized by type and component.
 
 ## Test Structure
 

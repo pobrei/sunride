@@ -139,7 +139,7 @@ function ToastViewport() {
   const { toasts, removeToast } = useToast();
 
   return (
-    <div className="fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]">
+    <div className="fixed bottom-0 right-0 z-[200] flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-[420px]">
       {toasts.map(toast => (
         <Toast
           key={toast.id}

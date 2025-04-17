@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { effects } from '@/styles/tailwind-utils';
 
 const cardVariants = cva(
-  'bg-white shadow-md rounded-2xl transition-all duration-300 ease-in-out border border-border/30 hover:shadow active:scale-[0.98] text-zinc-700',
+  'bg-white dark:bg-zinc-800 shadow-sm rounded-lg transition-all duration-300 ease-in-out border border-zinc-100 dark:border-zinc-700 text-zinc-800 dark:text-white',
   {
     variants: {
       variant: {
@@ -73,8 +73,8 @@ const CardHeader = React.forwardRef<
     ref={ref}
     data-slot="card-header"
     className={cn(
-      'flex items-center justify-between px-4 py-4',
-      bordered && 'border-b pb-4 mb-4',
+      'flex items-center justify-between p-4 bg-white dark:bg-zinc-800',
+      bordered && 'border-b border-zinc-100 dark:border-zinc-700',
       className
     )}
     {...props}
@@ -89,7 +89,7 @@ const CardTitle = React.forwardRef<
   <Comp
     ref={ref}
     data-slot="card-title"
-    className={cn('text-lg font-semibold', className)}
+    className={cn('text-lg font-semibold text-zinc-800 dark:text-white', className)}
     {...props}
   />
 ));
@@ -102,7 +102,7 @@ const CardDescription = React.forwardRef<
   <p
     ref={ref}
     data-slot="card-description"
-    className={cn('text-sm font-medium text-zinc-500', className)}
+    className={cn('text-sm font-medium text-zinc-700 dark:text-zinc-300', className)}
     {...props}
   />
 ));
@@ -115,7 +115,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     data-slot="card-content"
-    className={cn('space-y-4 px-4 py-4', className)}
+    className={cn('p-4 bg-white dark:bg-zinc-800', className)}
     {...props}
   />
 ));
@@ -132,8 +132,8 @@ const CardFooter = React.forwardRef<
     ref={ref}
     data-slot="card-footer"
     className={cn(
-      'flex items-center justify-between px-4 py-4',
-      bordered && 'border-t mt-4 pt-4',
+      'flex items-center justify-between p-4 bg-white dark:bg-zinc-800',
+      bordered && 'border-t border-zinc-100 dark:border-zinc-700',
       className
     )}
     {...props}

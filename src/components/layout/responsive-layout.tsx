@@ -63,12 +63,12 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen container-transition')}>
+    <div className={cn(layout.flexCol, 'min-h-screen bg-zinc-50 dark:bg-zinc-900 container-transition')}>
       {/* Header */}
       {showHeader && <Header title={headerTitle} showBackButton={showBackButton} backUrl={backUrl} />}
 
       {/* Main content */}
-      <div className={cn(layout.flexRow, 'flex-1 overflow-hidden')}>
+      <div className={cn(layout.flexRow, 'flex-1 overflow-hidden bg-zinc-50 dark:bg-zinc-900')}>
         {/* Desktop sidebar */}
         <div className="hidden md:block">
           <Sidebar
@@ -97,12 +97,12 @@ export function ResponsiveLayout({
         {/* Mobile sidebar */}
         <div
           className={cn(
-            'fixed inset-y-0 left-0 z-30 w-[280px] transform bg-background shadow-xl transition-transform duration-300 ease-in-out md:hidden',
+            'fixed inset-y-0 left-0 z-30 w-[280px] transform bg-white dark:bg-zinc-800 shadow-xl transition-transform duration-300 ease-in-out md:hidden',
             mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-          <div className="flex h-16 items-center justify-between border-b border-border px-4">
-            <h2 className={cn(typography.h5)}>{sidebarTitle}</h2>
+          <div className="flex h-16 items-center justify-between border-b border-zinc-100 dark:border-zinc-700 px-4">
+            <h2 className="text-lg font-semibold text-zinc-800 dark:text-white">{sidebarTitle}</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -120,11 +120,11 @@ export function ResponsiveLayout({
         <main className={cn('flex-1 overflow-auto', className)}>
           {/* Optional header content */}
           {headerContent && (
-            <div className="border-b border-border bg-card/50 px-4 py-4 max-w-7xl mx-auto">{headerContent}</div>
+            <div className="border-b border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-4 max-w-7xl mx-auto shadow-sm">{headerContent}</div>
           )}
 
           {/* Main content */}
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">{children}</div>
+          <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 md:py-8">{children}</div>
         </main>
       </div>
 

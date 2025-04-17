@@ -383,17 +383,17 @@ export const responsive = {
   mobileContainer: 'w-full px-4 sm:px-6 md:px-8',
 
   // Scrollable container utilities
-  scrollContainer: 'overflow-x-auto overflow-y-visible snap-x scroll-smooth px-2 pb-2',
+  scrollContainer: 'overflow-x-auto overflow-y-hidden snap-x scroll-smooth px-2 pb-2',
   scrollItem: 'min-w-[300px] flex-shrink-0 snap-center',
   scrollItemSm: 'min-w-[200px] flex-shrink-0 snap-center',
   scrollItemLg: 'min-w-[400px] flex-shrink-0 snap-center',
 
   // Chart and map container utilities
-  chartContainer: 'h-[350px] w-full px-4 pb-6 overflow-visible',
+  chartContainer: 'h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] w-full max-w-full overflow-visible',
   mapContainer: 'h-[300px] sm:h-[400px] md:h-[500px] w-full rounded-lg overflow-hidden',
 
   // Timeline utilities
-  timelineItem: 'min-w-[150px] flex-shrink-0 snap-center',
+  timelineItem: 'min-w-[180px] flex-shrink-0 snap-center',
 
   // Spacing utilities for mobile
   mobileSpacing: 'p-3 sm:p-4 md:p-6',

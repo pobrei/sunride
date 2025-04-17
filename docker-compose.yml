@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nextjs:
-    container_name: weatherapp-nextjs
+    container_name: sunride-nextjs
     build:
       context: .
       dockerfile: Dockerfile

@@ -16,7 +16,7 @@ interface SafeTimelineWrapperProps {
   /** Callback when a timeline item is clicked */
   onTimelineClick: (index: number) => void;
   /** Reference to the timeline container for scrolling */
-  timelineRef?: React.RefObject<HTMLDivElement>;
+  timelineRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 /**

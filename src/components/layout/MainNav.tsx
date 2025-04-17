@@ -19,11 +19,11 @@ export function MainNav() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 container-transition">
+    <header className="sticky top-0 z-30 w-full border-b border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm container-transition">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-lg">RideWeather</span>
+            <span className="font-bold text-lg text-zinc-800 dark:text-white">SunRide</span>
           </Link>
         </div>
         <nav className="flex items-center space-x-6 text-sm font-medium flex-1">
@@ -32,8 +32,8 @@ export function MainNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'transition-colors hover:text-foreground/80',
-                pathname === item.href ? 'text-foreground' : 'text-foreground/60'
+                'transition-colors hover:text-zinc-800 dark:hover:text-white',
+                pathname === item.href ? 'text-zinc-800 dark:text-white font-medium' : 'text-zinc-600 dark:text-zinc-400'
               )}
             >
               {item.label}

@@ -10,7 +10,7 @@ const Loading = () => (
       <div className="absolute top-0 left-0 w-full h-full border-4 border-primary/20 rounded-full"></div>
       <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-primary rounded-full animate-spin"></div>
     </div>
-    <div className="text-primary font-medium animate-pulse">Loading RideWeather...</div>
+    <div className="text-primary font-medium animate-pulse">Loading SunRide...</div>
   </div>
 );
 
