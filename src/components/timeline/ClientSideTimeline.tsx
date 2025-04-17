@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { typography, animation, effects, layout, loading } from '@/styles/tailwind-utils';
+import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
 
 // Dynamically import the Timeline component with no SSR
 const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
@@ -56,6 +56,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   showPlaceholder = true,
   showNavigation = true,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

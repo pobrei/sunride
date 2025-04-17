@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { ForecastPoint, WeatherData } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Thermometer, Wind, CloudRain, Snowflake, Sun, AlertTriangle, Clock, MapPin } from 'lucide-react';
-import { formatTime, formatDate } from '@/utils/formatters';
+
+import { Wind, CloudRain, Snowflake, Sun, AlertTriangle, Clock, MapPin } from 'lucide-react';
+import { formatTime } from '@/utils/formatters';
 import { cn } from '@/lib/utils';
-import { typography, animation, effects, layout } from '@/styles/tailwind-utils';
+import { typography, animation, layout } from '@/styles/tailwind-utils';
 
 interface WeatherAlertsProps {
   /** Forecast points along the route */
@@ -45,9 +45,11 @@ export function WeatherAlerts({
   weatherData,
   className,
   maxInitialAlerts = 3,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   compact = true,
 }: WeatherAlertsProps) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAll, setShowAll] = useState(false);
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
 
@@ -157,9 +159,11 @@ export function WeatherAlerts({
   const visibleAlerts = alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
   // Determine which alerts to show based on showAll state
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const displayedAlerts = showAll ? visibleAlerts : visibleAlerts.slice(0, maxInitialAlerts);
 
   // Handle alert dismissal
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDismiss = (id: string) => {
     setDismissedAlerts(prev => new Set([...prev, id]));
   };

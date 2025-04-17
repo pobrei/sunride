@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Clock, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Clock, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { ForecastPoint, WeatherData } from '@/types';
 import { formatTime, formatTemperature, formatWindSpeed } from '@/utils/formatters';
@@ -24,7 +24,7 @@ export function Timeline({
   className,
   timelineRef,
 }: TimelineProps) {
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const setScrollPosition = useState(0)[1];
   const localTimelineRef = useRef<HTMLDivElement>(null);
   const containerRef = timelineRef || localTimelineRef;
 

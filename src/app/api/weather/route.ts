@@ -44,7 +44,7 @@ function checkRateLimit(ip: string): boolean {
  * @param point - The point to validate
  * @returns True if the point is valid, false otherwise
  */
-function validatePoint(point: any): boolean {
+function validatePoint(point: { lat: number; lon: number; timestamp: number; distance: number }): boolean {
   return (
     point &&
     typeof point.lat === 'number' &&
@@ -179,7 +179,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Create a response with additional metadata
     const response: WeatherApiResponse = {
       success: true,
-      data: weatherData as any, // Type assertion to handle backend/shared type differences
+      data: weatherData as WeatherData[], // Type assertion to handle backend/shared type differences
       provider: 'OpenWeather',
       timestamp: Date.now(),
       pointsProcessed: weatherData.length,
@@ -241,7 +241,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // Create a response with additional metadata
     const response: WeatherApiResponse = {
       success: true,
-      data: [weatherData] as any, // Type assertion to handle backend/shared type differences
+      data: [weatherData] as WeatherData[], // Type assertion to handle backend/shared type differences
       provider: 'OpenWeather',
       timestamp: Date.now(),
       pointsProcessed: 1,

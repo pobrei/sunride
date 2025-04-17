@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import { Map as MapIcon, Upload, CloudRain, BarChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { layout } from '@/styles/tailwind-utils';
+// import { layout } from '@/styles/tailwind-utils';
 import gsap from 'gsap';
 
 // Import from feature folders
