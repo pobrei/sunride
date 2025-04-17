@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import './UserGuide.css';
 import {
   HelpCircle,
   X,
@@ -147,8 +148,7 @@ export function UserGuide({ className }: UserGuideProps) {
           {/* Progress bar */}
           <div className="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full bg-primary transition-all duration-300"
-              style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+              className={`progress-bar progress-width-${Math.round(((activeStep + 1) / steps.length) * 100)}`}
             />
           </div>
         </CardContent>
