@@ -43,3 +43,7 @@ yarn-error.log*
 next-env.d.ts
 
 # weatherapp is now part of the main repository
+
+# build fingerprint
+build-fingerprint.json
+public/build-fingerprint.json

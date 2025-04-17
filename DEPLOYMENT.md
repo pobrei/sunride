@@ -66,6 +66,20 @@ After deployment, verify that:
 3. There are no console errors
 4. The UI matches what you tested locally
 
+### 5. Verify Build Consistency
+
+To ensure the deployed version is identical to your local build:
+
+```bash
+# First, run the local verification to generate a build fingerprint
+npm run verify:deployment
+
+# Then compare with the Vercel deployment
+npm run compare:builds https://your-vercel-url
+```
+
+If the builds match, you'll see a confirmation message. If they don't match, the script will provide possible reasons for the discrepancy.
+
 ## Troubleshooting
 
 If the deployed version differs from your local version, check:
