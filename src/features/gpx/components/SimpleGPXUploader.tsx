@@ -51,12 +51,23 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
           throw new Error('No valid route points found in the GPX file');
         }
 
+        // Check if this is a sample route (fallback)
+        const isSampleRoute = gpxData.name === 'Sample Route (Amsterdam)';
+
         // Success!
         onGPXLoaded(gpxData);
-        addNotification(
-          'success',
-          `Successfully loaded ${gpxData.points.length} points from ${file.name}`
-        );
+
+        if (isSampleRoute) {
+          addNotification(
+            'warning',
+            'Could not parse the GPX file. Using a sample route instead.'
+          );
+        } else {
+          addNotification(
+            'success',
+            `Successfully loaded ${gpxData.points.length} points from ${file.name}`
+          );
+        }
       } catch (err) {
         // Handle error with our utility
         const errorMsg = handleError(err, {
