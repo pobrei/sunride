@@ -11,6 +11,78 @@ import {
   formatPrecipitation,
 } from '@/utils/formatUtils';
 
+/**
+ * Helper function to handle modern CSS color functions that html2canvas doesn't support
+ * This is used in the onclone callback for html2canvas
+ */
+function handleModernCssColors(document: Document, clone: Document): void {
+  // Find all elements with styles in the cloned document
+  const elementsWithStyles = clone.querySelectorAll('*');
+
+  // Replace modern color functions with standard hex or rgb colors
+  elementsWithStyles.forEach(el => {
+    if (el instanceof HTMLElement) {
+      try {
+        const computedStyle = window.getComputedStyle(el);
+
+        // Apply computed background color directly
+        if (computedStyle.backgroundColor &&
+            (computedStyle.backgroundColor.includes('oklch') ||
+             computedStyle.backgroundColor.includes('hsl'))) {
+          // Get the actual computed color as rendered by the browser
+          const bgColor = getRgbFromComputedStyle(computedStyle.backgroundColor);
+          el.style.backgroundColor = bgColor || '#ffffff';
+        }
+
+        // Apply computed text color directly
+        if (computedStyle.color &&
+            (computedStyle.color.includes('oklch') ||
+             computedStyle.color.includes('hsl'))) {
+          const textColor = getRgbFromComputedStyle(computedStyle.color);
+          el.style.color = textColor || '#000000';
+        }
+
+        // Apply computed border color directly
+        if (computedStyle.borderColor &&
+            (computedStyle.borderColor.includes('oklch') ||
+             computedStyle.borderColor.includes('hsl'))) {
+          const borderColor = getRgbFromComputedStyle(computedStyle.borderColor);
+          el.style.borderColor = borderColor || '#e5e7eb';
+        }
+      } catch (e) {
+        // Ignore errors and continue with other elements
+        console.warn('Error processing element styles:', e);
+      }
+    }
+  });
+}
+
+/**
+ * Helper function to extract RGB values from computed style
+ * This handles cases where the browser returns the actual computed RGB values
+ */
+function getRgbFromComputedStyle(styleValue: string): string | null {
+  // If it's already a standard format, return it
+  if (styleValue.startsWith('#') ||
+      styleValue.startsWith('rgb') ||
+      styleValue.startsWith('rgba')) {
+    return styleValue;
+  }
+
+  // Try to extract RGB values using a temporary element
+  try {
+    const tempEl = document.createElement('div');
+    tempEl.style.color = styleValue;
+    document.body.appendChild(tempEl);
+    const computedColor = window.getComputedStyle(tempEl).color;
+    document.body.removeChild(tempEl);
+    return computedColor;
+  } catch (e) {
+    console.warn('Error extracting RGB value:', e);
+    return null;
+  }
+}
+
 interface PDFExportOptions {
   gpxData: GPXData;
   forecastPoints: ForecastPoint[];
@@ -80,6 +152,7 @@ export async function exportToPDF({
           scale: 2,
           allowTaint: true,
           logging: false,
+          onclone: handleModernCssColors,
         });
 
         const mapImgData = mapCanvas.toDataURL('image/png');
@@ -107,12 +180,14 @@ export async function exportToPDF({
       pdf.text('Weather Charts', margin, currentY + 10);
 
       try {
+        // Process the DOM before capturing to handle modern CSS color functions
         const chartsCanvas = await html2canvas(chartsRef.current, {
           useCORS: true,
           scale: 1.5,
           allowTaint: true,
           logging: false,
           backgroundColor: '#ffffff',
+          onclone: handleModernCssColors,
         });
 
         const chartsImgData = chartsCanvas.toDataURL('image/png');
@@ -178,7 +253,7 @@ export async function exportToPDF({
       if ((index > 0 && index % maxRowsPerPage === 0) || rowY > pageHeight - 20) {
         pdf.addPage();
         rowY = 30;
-        
+
         // Add headers on new page
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
