@@ -1,18 +1,17 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { GPXData, ForecastPoint } from '@/types';
-import { Locate } from 'lucide-react';
+import { Locate, Wind, Droplets, CloudRain, Sun, Gauge, Cloud } from 'lucide-react';
 import { responsive } from '@/styles/tailwind-utils';
 import './MapStyles.css';
 import './WeatherCardFix.css';
 
 // Import Leaflet types but use dynamic import for the actual library
-import type { Map as LeafletMap, Marker, Polyline, DivIcon } from 'leaflet';
+import type { Map as LeafletMap, Marker, Polyline } from 'leaflet';
 
 interface WeatherDataPoint {
   temperature: number;
@@ -76,7 +75,24 @@ function getWeatherIconEmoji(conditionCode: number): string {
  * Get wind direction as a cardinal direction
  */
 function getWindDirection(degrees: number): string {
-  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const directions = [
+    'N',
+    'NNE',
+    'NE',
+    'ENE',
+    'E',
+    'ESE',
+    'SE',
+    'SSE',
+    'S',
+    'SSW',
+    'SW',
+    'WSW',
+    'W',
+    'WNW',
+    'NW',
+    'NNW',
+  ];
   const index = Math.round(degrees / 22.5) % 16;
   return directions[index];
 }
@@ -103,8 +119,14 @@ interface SimpleLeafletMapProps {
 /**
  * A simple Leaflet map component that displays the route and weather data
  */
-export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Element {
-  const { gpxData, forecastPoints = [], weatherData = [], onMarkerClick = () => {}, selectedMarker = null } = props;
+export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.ReactElement {
+  const {
+    gpxData,
+    forecastPoints = [],
+    weatherData = [],
+    onMarkerClick = () => {},
+    selectedMarker = null,
+  } = props;
 
   // Refs
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -142,6 +164,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
         }
 
         // Fix Leaflet icon paths
+        // @ts-expect-error - Leaflet types issue with _getIconUrl
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -185,6 +208,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
         mapRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update map when data changes
@@ -201,6 +225,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
     };
 
     updateMapData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gpxData, forecastPoints, weatherData, selectedMarker]);
 
   // Function to update the map with route and markers
@@ -224,9 +249,13 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
       const routeCoords = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
 
       routeRef.current = L.polyline(routeCoords, {
-        color: '#3b82f6',
+        color: 'hsl(var(--primary))',
         weight: 4,
-        opacity: 0.8,
+        opacity: 0.85,
+        lineCap: 'round',
+        lineJoin: 'round',
+        dashArray: undefined,
+        smoothFactor: 1.5,
       }).addTo(map);
 
       // Fit map to route bounds
@@ -243,9 +272,9 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
       // Create custom icon
       const icon = L.divIcon({
         className: 'custom-marker-icon',
-        html: `<div class="${isSelected ? 'marker-selected' : 'marker-normal'}">${index + 1}</div>`,
-        iconSize: [isSelected ? 36 : 24, isSelected ? 36 : 24],
-        iconAnchor: [isSelected ? 18 : 12, isSelected ? 18 : 12],
+        html: `<div class="${isSelected ? 'marker-selected' : 'marker-normal'} transition-all duration-300">${index + 1}</div>`,
+        iconSize: [isSelected ? 44 : 30, isSelected ? 44 : 30],
+        iconAnchor: [isSelected ? 22 : 15, isSelected ? 22 : 15],
       });
 
       // Create marker
@@ -289,63 +318,52 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
-          background-color: #3b82f6;
-          color: white;
+          width: 28px;
+          height: 28px;
+          background-color: white;
+          color: hsl(var(--foreground));
           font-weight: 500;
+          border: 2px solid hsl(var(--border));
           border-radius: 50%;
           font-size: 12px;
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
-          transition: all 0.2s ease;
           z-index: 400;
-        }
-        .marker-normal:hover {
-          transform: scale(1.1);
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .marker-selected {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 36px;
-          height: 36px;
-          background-color: #2563eb;
-          color: white;
+          width: 40px;
+          height: 40px;
+          background-color: hsl(var(--primary));
+          color: hsl(var(--primary-foreground));
           font-weight: 600;
+          border: none;
           border-radius: 50%;
           font-size: 14px;
-          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
-          transition: all 0.3s ease;
           z-index: 500;
-          animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-          }
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+          transform: scale(1.1);
         }
         .weather-popup {
           text-align: center;
-          padding: 4px;
+          padding: 8px;
+          min-width: 100px;
         }
         .weather-temp {
           font-weight: bold;
-          font-size: 14px;
+          font-size: 16px;
+          margin-bottom: 4px;
         }
         .weather-wind {
           font-size: 12px;
-          color: #64748b;
+          color: hsl(var(--muted-foreground));
         }
         .leaflet-popup-content-wrapper {
-          border-radius: 8px;
           padding: 0;
+          border: 1px solid hsl(var(--border));
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         .leaflet-popup-content {
           margin: 8px;
@@ -379,7 +397,12 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
 
   // Render placeholder if no data
   const noDataContent = (
-    <div className={cn(responsive.mapContainer, "bg-muted flex items-center justify-center max-w-7xl mx-auto")}>
+    <div
+      className={cn(
+        responsive.mapContainer,
+        'bg-muted flex items-center justify-center max-w-7xl mx-auto'
+      )}
+    >
       <Card className="w-full max-w-md mx-auto">
         <div className="text-center p-4">
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -410,99 +433,144 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): JSX.Elem
   // Render map or placeholder based on data availability
   return (
     <div className="h-full w-full relative z-0">
-      {(!gpxData || forecastPoints.length === 0) ? (
+      {!gpxData || forecastPoints.length === 0 ? (
         noDataContent
       ) : (
         <>
-          <div ref={mapContainerRef} className={cn(responsive.mapContainer, "w-full")}></div>
+          <div ref={mapContainerRef} className={cn(responsive.mapContainer, 'w-full overflow-hidden animate-fade-in shadow-lg border border-border/20')}></div>
 
-          {/* Center map button */}
-          <Button
-            onClick={centerMap}
-            size="icon"
-            variant="secondary"
-            data-slot="button"
-            className="absolute top-3 right-3 z-[500] bg-theme-card/80 backdrop-blur-sm hover:bg-theme-accent text-theme-text hover:text-white shadow-md map-control-button"
-            aria-label="Center map"
-          >
-            <Locate className="h-4 w-4" />
-          </Button>
+          {/* Center map button - iOS 19 style */}
+          <div className="absolute top-4 right-4 z-[500]">
+            <Button
+              onClick={centerMap}
+              size="icon"
+              variant="ghost"
+              data-slot="button"
+              className="map-control-button bg-white/80 dark:bg-card/80 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg button-press rounded-full w-10 h-10 border border-border/20 shadow-sm"
+              aria-label="Center map"
+              title="Center map on route"
+            >
+              <Locate className="h-5 w-5 text-primary" />
+            </Button>
+          </div>
 
           {/* Enhanced Weather info panel */}
           {selectedMarker !== null && weatherData && weatherData[selectedMarker] && (
-            <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:w-80 z-[400] p-0 bg-background/80 backdrop-blur-sm shadow-lg border-primary/20 max-h-[80vh] overflow-y-auto">
+            <Card className="absolute top-16 right-4 md:w-96 z-[400] p-0 bg-white/90 dark:bg-card/90 backdrop-blur-md shadow-lg rounded-2xl border border-border/30 max-h-[70vh] overflow-y-auto transition-all duration-300 animate-slide-up">
               <div className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="font-medium text-sm flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs mr-2">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="font-medium text-xs flex items-center">
+                    <div className="w-6 h-6 bg-primary/90 rounded-full flex items-center justify-center text-primary-foreground text-xs mr-1.5 shadow-md ring-1 ring-primary/20 animate-pulse">
                       {selectedMarker + 1}
                     </div>
-                    <span>of {forecastPoints.length}</span>
+                    <span className="text-muted-foreground font-medium">of {forecastPoints.length}</span>
                   </div>
-                  <div className="text-2xl">
+                  <div className="text-3xl">
                     {getWeatherIconEmoji(weatherData[selectedMarker]?.conditionCode || 800)}
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <div className="text-lg font-semibold">
+                <div className="mb-4 bg-primary/5 p-3 rounded-xl">
+                  <div className="text-xl font-semibold flex items-baseline">
                     {weatherData[selectedMarker]?.temperature?.toFixed(1) || 'N/A'}°C
-                    <span className="text-sm font-normal text-muted-foreground ml-2">
+                    <span className="text-xs font-medium text-muted-foreground ml-2">
                       Feels like {weatherData[selectedMarker]?.feelsLike?.toFixed(1) || 'N/A'}°C
                     </span>
                   </div>
-                  <div className="text-sm text-muted-foreground capitalize">
-                    {weatherData[selectedMarker]?.conditionDescription || 'Unknown'}
+                  <div className="text-sm text-muted-foreground capitalize mt-1 font-medium">
+                    {weatherData[selectedMarker]?.conditionDescription || weatherData[selectedMarker]?.weatherDescription || 'Clear sky'}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  <div className="col-span-2 pb-2 mb-2 border-b border-border">
-                    <span className="font-medium">Weather Details</span>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+                  <div className="col-span-2 pb-1 mb-1">
+                    <span className="font-semibold text-foreground/90 text-base">Weather Details</span>
                   </div>
 
-                  <div className="text-muted-foreground">Wind:</div>
-                  <div className="font-medium">
-                    {((weatherData[selectedMarker]?.windSpeed || 0) / 3.6).toFixed(1)} m/s
-                    <span className="text-xs text-muted-foreground ml-1">
-                      {getWindDirection(weatherData[selectedMarker]?.windDirection || 0)}
-                    </span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                      <Wind className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Wind</div>
+                      <div className="font-semibold text-sm">
+                        {((weatherData[selectedMarker]?.windSpeed || 0) / 3.6).toFixed(1)} m/s
+                        <span className="text-xs text-muted-foreground ml-1">
+                          {getWindDirection(weatherData[selectedMarker]?.windDirection || 0)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-muted-foreground">Humidity:</div>
-                  <div className="font-medium">
-                    {weatherData[selectedMarker]?.humidity || 'N/A'}%
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                      <Droplets className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Humidity</div>
+                      <div className="font-semibold text-sm">
+                        {weatherData[selectedMarker]?.humidity || 'N/A'}%
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-muted-foreground">Precipitation:</div>
-                  <div className="font-medium">
-                    {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
-                    {weatherData[selectedMarker]?.precipitationProbability > 0 && (
-                      <span className="text-xs text-muted-foreground ml-1">
-                        ({(weatherData[selectedMarker]?.precipitationProbability * 100).toFixed(0)}%)
-                      </span>
-                    )}
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                      <CloudRain className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Precipitation</div>
+                      <div className="font-semibold text-sm">
+                        {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
+                        {(weatherData[selectedMarker]?.precipitationProbability || 0) > 0 && (
+                          <span className="text-xs text-muted-foreground ml-1">
+                            ({((weatherData[selectedMarker]?.precipitationProbability || 0) * 100).toFixed(0)}%)
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-muted-foreground">UV Index:</div>
-                  <div className="font-medium">
-                    {weatherData[selectedMarker]?.uvIndex?.toFixed(1) || 'N/A'}
-                    <span className="text-xs text-muted-foreground ml-1">
-                      {getUVIndexCategory(weatherData[selectedMarker]?.uvIndex || 0)}
-                    </span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                      <Sun className="h-3.5 w-3.5 text-amber-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">UV Index</div>
+                      <div className="font-semibold text-sm">
+                        {weatherData[selectedMarker]?.uvIndex?.toFixed(1) || 'N/A'}
+                        <span className="text-xs text-muted-foreground ml-1">
+                          {getUVIndexCategory(weatherData[selectedMarker]?.uvIndex || 0)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-muted-foreground">Pressure:</div>
-                  <div className="font-medium">
-                    {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-900/20 flex items-center justify-center">
+                      <Gauge className="h-3.5 w-3.5 text-slate-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Pressure</div>
+                      <div className="font-semibold text-sm">
+                        {weatherData[selectedMarker]?.pressure || 'N/A'} hPa
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-muted-foreground">Cloud Cover:</div>
-                  <div className="font-medium">
-                    {weatherData[selectedMarker]?.cloudCover || 'N/A'}%
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-900/20 flex items-center justify-center">
+                      <Cloud className="h-3.5 w-3.5 text-slate-500" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground font-medium">Cloud Cover</div>
+                      <div className="font-semibold text-sm">
+                        {weatherData[selectedMarker]?.cloudCover !== undefined ? `${weatherData[selectedMarker]?.cloudCover}%` : '0%'}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="col-span-2 pt-2 mt-2 border-t border-border text-xs text-center text-muted-foreground">
+                  <div className="col-span-2 pt-2 mt-1 border-t border-border/30 text-xs text-center font-medium text-muted-foreground">
                     {forecastPoints[selectedMarker] && (
                       <span>Distance: {forecastPoints[selectedMarker].distance.toFixed(1)} km</span>
                     )}
