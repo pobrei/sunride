@@ -179,11 +179,33 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           // Create map instance
           mapRef.current = L.map(mapContainerRef.current).setView([0, 0], 2);
 
-          // Add tile layer
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          // Add OpenCycleMap tile layer (better for cycling routes)
+          L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
             attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19,
+          }).addTo(mapRef.current);
+
+          // Add layer control with multiple map options
+          const baseMaps = {
+            "Cycle Map": L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+              attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19,
+            }),
+            "Standard Map": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19,
+            }),
+            "Terrain Map": L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+              attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19,
+            }),
+          };
+
+          // Add layer control to the map
+          L.control.layers(baseMaps, {}, {
+            position: 'topright',
+            collapsed: true,
           }).addTo(mapRef.current);
 
           console.log('SimpleLeafletMap: Map created successfully');
@@ -249,13 +271,15 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
       const routeCoords = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
 
       routeRef.current = L.polyline(routeCoords, {
-        color: 'hsl(var(--primary))',
-        weight: 4,
-        opacity: 0.85,
+        color: '#00C2A8', // Primary color (hardcoded for consistency)
+        weight: 5,
+        opacity: 0.9,
         lineCap: 'round',
         lineJoin: 'round',
         dashArray: undefined,
         smoothFactor: 1.5,
+        // Add a white outline to make the route more visible on the map
+        className: 'route-path-with-outline',
       }).addTo(map);
 
       // Fit map to route bounds
@@ -373,7 +397,36 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         }
         /* Dark mode support */
         .dark .leaflet-tile {
-          filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+          filter: brightness(0.8) contrast(1.2) saturate(0.8);
+        }
+        /* Layer control styling */
+        .leaflet-control-layers {
+          border-radius: 8px !important;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+          border: 1px solid hsl(var(--border)) !important;
+        }
+        .leaflet-control-layers-toggle {
+          width: 36px !important;
+          height: 36px !important;
+          background-size: 20px 20px !important;
+        }
+        .leaflet-control-layers-expanded {
+          padding: 8px !important;
+          background-color: white !important;
+          color: black !important;
+        }
+        .dark .leaflet-control-layers-expanded {
+          background-color: hsl(var(--card)) !important;
+          color: white !important;
+        }
+        /* Route path styling with outline */
+        .route-path-with-outline {
+          stroke-width: 5px;
+          filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+        }
+        .dark .route-path-with-outline {
+          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
         }
       `;
       document.head.appendChild(style);
