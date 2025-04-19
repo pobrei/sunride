@@ -15,45 +15,9 @@ import {
  * Helper function to handle modern CSS color functions that html2canvas doesn't support
  * This is used in the onclone callback for html2canvas
  */
-function handleModernCssColors(document: Document, clone: Document): void {
+function handleModernCssColors(document: Document, clone: DocumentFragment): void {
   try {
-    // First, try to inject a style tag to override all oklch colors
-    const styleTag = clone.createElement('style');
-    styleTag.textContent = `
-      * {
-        color: #000000 !important;
-        background-color: #ffffff !important;
-        border-color: #e5e7eb !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-      }
-      .recharts-surface, .recharts-layer {
-        fill: #ffffff !important;
-      }
-      .recharts-cartesian-grid line {
-        stroke: #e5e7eb !important;
-      }
-      .recharts-cartesian-axis-line {
-        stroke: #e5e7eb !important;
-      }
-      .recharts-text {
-        fill: #000000 !important;
-      }
-      .recharts-curve {
-        stroke: #000000 !important;
-      }
-      .recharts-bar-rectangle {
-        fill: #e5e7eb !important;
-      }
-    `;
-
-    // Add the style tag to the head of the cloned document
-    const head = clone.head || clone.getElementsByTagName('head')[0];
-    if (head) {
-      head.appendChild(styleTag);
-    }
-
-    // Also apply inline styles to all elements
+    // Apply inline styles to all elements
     const elementsWithStyles = clone.querySelectorAll('*');
     elementsWithStyles.forEach(el => {
       if (el instanceof HTMLElement) {
@@ -158,12 +122,25 @@ export async function exportToPDF({
         // Create a simplified version of the map for export
         const mapContainer = mapRef.current;
 
-        // First try with our custom color handling
+        // Pre-process the map container to remove problematic styles
+        if (mapContainer) {
+          const allElements = mapContainer.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              // Apply safe styles
+              el.style.color = '#000000';
+              el.style.backgroundColor = '#ffffff';
+              el.style.borderColor = '#e5e7eb';
+            }
+          });
+        }
+
+        // First try with a simplified approach
         const mapCanvas = await html2canvas(mapContainer, {
           useCORS: true,
           scale: 2,
           allowTaint: true,
-          logging: true, // Enable logging to debug issues
+          logging: false,
           backgroundColor: '#ffffff',
           onclone: handleModernCssColors,
           ignoreElements: (element) => {
@@ -172,6 +149,8 @@ export async function exportToPDF({
                    element.classList?.contains('leaflet-control-scale') ||
                    element.tagName === 'BUTTON';
           },
+          // Force a white background and black text
+          foreignObjectRendering: false,
         });
 
         const mapImgData = mapCanvas.toDataURL('image/png');
@@ -216,12 +195,36 @@ export async function exportToPDF({
         // Create a simplified version of the charts for export
         const chartsContainer = chartsRef.current;
 
-        // First try with our custom color handling
+        // Pre-process the charts container to remove problematic styles
+        if (chartsContainer) {
+          const allElements = chartsContainer.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              // Apply safe styles
+              el.style.color = '#000000';
+              el.style.backgroundColor = '#ffffff';
+              el.style.borderColor = '#e5e7eb';
+
+              // Handle SVG elements
+              if (el.tagName.toLowerCase() === 'svg' || el.closest('svg')) {
+                if (el.hasAttribute('fill')) {
+                  el.setAttribute('fill', '#000000');
+                }
+                if (el.hasAttribute('stroke')) {
+                  el.setAttribute('stroke', '#000000');
+                }
+              }
+            }
+          });
+        }
+
+        // Try a different approach for charts
+        // First, create a simplified version by taking a screenshot of just the container
         const chartsCanvas = await html2canvas(chartsContainer, {
           useCORS: true,
           scale: 1.5,
           allowTaint: true,
-          logging: true, // Enable logging to debug issues
+          logging: false,
           backgroundColor: '#ffffff',
           onclone: handleModernCssColors,
           ignoreElements: (element) => {
@@ -230,7 +233,8 @@ export async function exportToPDF({
                    element.classList?.contains('scroll-area-thumb') ||
                    element.tagName === 'BUTTON';
           },
-          removeContainer: true, // Remove the container after rendering
+          removeContainer: false,
+          foreignObjectRendering: false,
         });
 
         const chartsImgData = chartsCanvas.toDataURL('image/png');
