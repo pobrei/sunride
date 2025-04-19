@@ -103,7 +103,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
     });
 
     setChartData(data);
-  }, [forecastPoints, weatherData, selectedMarker]);
+  }, [forecastPoints, weatherData, selectedMarker, isDarkMode]);
 
   // Handle chart click
   const handleClick = (data: { activePayload?: Array<{ payload: { index: number } }> }) => {

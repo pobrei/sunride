@@ -111,13 +111,13 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
   // If no GPX data, show a message
   if (!gpxData || !gpxData.points || gpxData.points.length === 0) {
     return (
-      <ChartCard title="Elevation" unitLabel="m">
+      <BaseChart title="Elevation" unitLabel="m">
         <div className="h-[350px] w-full flex items-center justify-center">
           <p className="text-[#1E2A38] dark:text-[#F5F7FA] opacity-70">
             No elevation data available
           </p>
         </div>
-      </ChartCard>
+      </BaseChart>
     );
   }
 
