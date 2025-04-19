@@ -131,13 +131,85 @@ export function parseGPX(gpxString: string): GPXData {
         // Check if we still have errors
         parseError = xmlDoc.querySelector('parsererror');
         if (parseError) {
-          const errorMessage = parseError.textContent || 'XML parsing error';
-          throw new Error(`Failed to parse GPX file: ${errorMessage}`);
-        }
+          // Try one more approach - create a minimal valid GPX structure
+          console.warn('Second parsing attempt failed, trying minimal GPX structure');
 
-        console.log('Fallback parsing succeeded');
+          // Extract track points using regex
+          const trkptRegex = /<trkpt[^>]*lat=["']([^"\']+)["'][^>]*lon=["']([^"\']+)["'][^>]*>([\s\S]*?)<\/trkpt>/g;
+          const rteptRegex = /<rtept[^>]*lat=["']([^"\']+)["'][^>]*lon=["']([^"\']+)["'][^>]*>([\s\S]*?)<\/rtept>/g;
+
+          let points = [];
+          let match;
+
+          // Extract track points
+          while ((match = trkptRegex.exec(processedGpxString)) !== null) {
+            points.push({
+              lat: match[1],
+              lon: match[2],
+              content: match[3]
+            });
+          }
+
+          // If no track points, try route points
+          if (points.length === 0) {
+            while ((match = rteptRegex.exec(processedGpxString)) !== null) {
+              points.push({
+                lat: match[1],
+                lon: match[2],
+                content: match[3]
+              });
+            }
+          }
+
+          if (points.length > 0) {
+            // Create a minimal valid GPX document
+            let minimalGpx = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            minimalGpx += '<gpx version="1.1" creator="SunRide" xmlns="http://www.topografix.com/GPX/1/1">\n';
+            minimalGpx += '<trk><trkseg>\n';
+
+            // Add all points
+            for (const point of points) {
+              minimalGpx += `<trkpt lat="${point.lat}" lon="${point.lon}">\n`;
+
+              // Try to extract elevation
+              const eleMatch = point.content.match(/<ele>([^<]+)<\/ele>/);
+              if (eleMatch) {
+                minimalGpx += `<ele>${eleMatch[1]}</ele>\n`;
+              }
+
+              // Try to extract time
+              const timeMatch = point.content.match(/<time>([^<]+)<\/time>/);
+              if (timeMatch) {
+                minimalGpx += `<time>${timeMatch[1]}</time>\n`;
+              }
+
+              minimalGpx += '</trkpt>\n';
+            }
+
+            minimalGpx += '</trkseg></trk>\n';
+            minimalGpx += '</gpx>';
+
+            // Try parsing the minimal GPX
+            const lastChanceParser = new DOMParser();
+            xmlDoc = lastChanceParser.parseFromString(minimalGpx, 'text/xml');
+
+            // Check if we still have errors
+            parseError = xmlDoc.querySelector('parsererror');
+            if (parseError) {
+              const errorMessage = parseError.textContent || 'XML parsing error';
+              throw new Error(`Failed to parse GPX file: ${errorMessage}`);
+            }
+
+            console.log('Minimal GPX structure parsing succeeded');
+          } else {
+            const errorMessage = parseError.textContent || 'XML parsing error';
+            throw new Error(`Failed to parse GPX file: ${errorMessage}`);
+          }
+        } else {
+          console.log('Fallback parsing succeeded');
+        }
       } catch (_) {
-        // If fallback also fails, throw the original error
+        // If all fallbacks fail, throw the original error
         const errorMessage = parseError.textContent || 'XML parsing error';
         throw new Error(`Failed to parse GPX file: ${errorMessage}`);
       }
@@ -247,6 +319,26 @@ function preprocessGpxNamespaces(gpxString: string): string {
     return gpxString; // Not a GPX file, return as is
   }
 
+  // Fix common issues with GPX files
+
+  // 1. Fix non-absolute URIs in xmlns attributes (add http: if missing)
+  gpxString = gpxString.replace(/xmlns\s*=\s*["']\s*\/\/([^"']+)["']/g, 'xmlns="http://$1"');
+  gpxString = gpxString.replace(/xmlns:([^\s=]+)\s*=\s*["']\s*\/\/([^"']+)["']/g, 'xmlns:$1="http://$2"');
+
+  // 2. Remove any XML declarations after the first one (extra content issue)
+  const xmlDeclRegex = /<\?xml[^>]*\?>/g;
+  let firstMatch = true;
+  gpxString = gpxString.replace(xmlDeclRegex, (match) => {
+    if (firstMatch) {
+      firstMatch = false;
+      return match;
+    }
+    return ''; // Remove additional XML declarations
+  });
+
+  // 3. Remove any DOCTYPE declarations (can cause parsing issues)
+  gpxString = gpxString.replace(/<!DOCTYPE[^>]*>/g, '');
+
   // Find the opening gpx tag
   const gpxTagMatch = gpxString.match(/<gpx[^>]*>/);
   if (!gpxTagMatch) {
@@ -311,6 +403,15 @@ function preprocessGpxNamespaces(gpxString: string): string {
     }
     return match;
   });
+
+  // 3. Ensure there's only one root element by wrapping everything in a gpx tag if needed
+  if (processedString.match(/<\/gpx>/g)?.length > 1) {
+    // Multiple closing gpx tags found, try to fix by extracting content from the first complete gpx element
+    const fullGpxMatch = processedString.match(/<gpx[^>]*>([\s\S]*?)<\/gpx>/);
+    if (fullGpxMatch) {
+      processedString = fullGpxMatch[0]; // Just keep the first complete gpx element
+    }
+  }
 
   return processedString;
 }
