@@ -22,16 +22,37 @@ function handleModernCssColors(document: Document, clone: DocumentFragment): voi
     elementsWithStyles.forEach(el => {
       if (el instanceof HTMLElement) {
         try {
-          // Apply safe styles directly to each element
-          el.style.setProperty('color', '#000000', 'important');
-          el.style.setProperty('background-color', '#ffffff', 'important');
-          el.style.setProperty('border-color', '#e5e7eb', 'important');
-          el.style.setProperty('box-shadow', 'none', 'important');
-          el.style.setProperty('text-shadow', 'none', 'important');
+          // Skip marker elements to preserve their styling
+          const isMarker = el.classList.contains('marker-normal') ||
+                          el.classList.contains('marker-selected') ||
+                          el.classList.contains('custom-marker-icon') ||
+                          el.closest('.leaflet-marker-icon');
 
-          // Remove any problematic styles
-          el.style.removeProperty('background-image');
-          el.style.removeProperty('background-gradient');
+          if (!isMarker) {
+            // Apply safe styles directly to each element
+            el.style.setProperty('color', '#000000', 'important');
+            el.style.setProperty('background-color', '#ffffff', 'important');
+            el.style.setProperty('border-color', '#e5e7eb', 'important');
+            el.style.setProperty('box-shadow', 'none', 'important');
+            el.style.setProperty('text-shadow', 'none', 'important');
+
+            // Remove any problematic styles
+            el.style.removeProperty('background-image');
+            el.style.removeProperty('background-gradient');
+          } else {
+            // For markers, just fix any oklch colors but preserve the styling
+            if (el.style.backgroundColor && el.style.backgroundColor.includes('oklch')) {
+              if (el.classList.contains('marker-normal')) {
+                el.style.backgroundColor = '#ffffff';
+                el.style.color = '#000000';
+                el.style.borderRadius = '50%';
+              } else if (el.classList.contains('marker-selected')) {
+                el.style.backgroundColor = '#00C2A8'; // Primary color
+                el.style.color = '#ffffff';
+                el.style.borderRadius = '50%';
+              }
+            }
+          }
 
           // Handle SVG elements specially
           if (el.tagName.toLowerCase() === 'svg' || el.closest('svg')) {
@@ -127,10 +148,49 @@ export async function exportToPDF({
           const allElements = mapContainer.querySelectorAll('*');
           allElements.forEach(el => {
             if (el instanceof HTMLElement) {
-              // Apply safe styles
-              el.style.color = '#000000';
-              el.style.backgroundColor = '#ffffff';
-              el.style.borderColor = '#e5e7eb';
+              // Check if this is a marker element
+              const isMarker = el.classList.contains('marker-normal') ||
+                              el.classList.contains('marker-selected') ||
+                              el.classList.contains('custom-marker-icon') ||
+                              el.closest('.leaflet-marker-icon');
+
+              if (!isMarker) {
+                // Apply safe styles to non-marker elements
+                el.style.color = '#000000';
+                el.style.backgroundColor = '#ffffff';
+                el.style.borderColor = '#e5e7eb';
+              } else {
+                // For markers, ensure they have the correct styling
+                if (el.classList.contains('marker-normal')) {
+                  // Normal marker styling
+                  el.style.display = 'flex';
+                  el.style.alignItems = 'center';
+                  el.style.justifyContent = 'center';
+                  el.style.width = '28px';
+                  el.style.height = '28px';
+                  el.style.backgroundColor = '#ffffff';
+                  el.style.color = '#000000';
+                  el.style.fontWeight = '500';
+                  el.style.border = '2px solid #e5e7eb';
+                  el.style.borderRadius = '50%';
+                  el.style.fontSize = '12px';
+                  el.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                } else if (el.classList.contains('marker-selected')) {
+                  // Selected marker styling
+                  el.style.display = 'flex';
+                  el.style.alignItems = 'center';
+                  el.style.justifyContent = 'center';
+                  el.style.width = '40px';
+                  el.style.height = '40px';
+                  el.style.backgroundColor = '#00C2A8'; // Primary color
+                  el.style.color = '#ffffff';
+                  el.style.fontWeight = '600';
+                  el.style.border = 'none';
+                  el.style.borderRadius = '50%';
+                  el.style.fontSize = '14px';
+                  el.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }
+              }
             }
           });
         }
@@ -200,18 +260,72 @@ export async function exportToPDF({
           const allElements = chartsContainer.querySelectorAll('*');
           allElements.forEach(el => {
             if (el instanceof HTMLElement) {
-              // Apply safe styles
-              el.style.color = '#000000';
-              el.style.backgroundColor = '#ffffff';
-              el.style.borderColor = '#e5e7eb';
+              // Check if this is a marker element (unlikely in charts, but just in case)
+              const isMarker = el.classList.contains('marker-normal') ||
+                              el.classList.contains('marker-selected') ||
+                              el.classList.contains('custom-marker-icon') ||
+                              el.closest('.leaflet-marker-icon');
 
-              // Handle SVG elements
-              if (el.tagName.toLowerCase() === 'svg' || el.closest('svg')) {
-                if (el.hasAttribute('fill')) {
-                  el.setAttribute('fill', '#000000');
+              if (!isMarker) {
+                // Apply safe styles to non-marker elements
+                el.style.color = '#000000';
+                el.style.backgroundColor = '#ffffff';
+                el.style.borderColor = '#e5e7eb';
+
+                // Handle SVG elements
+                if (el.tagName.toLowerCase() === 'svg' || el.closest('svg')) {
+                  if (el.hasAttribute('fill')) {
+                    // Preserve some chart colors
+                    if (el.classList.contains('recharts-rectangle') ||
+                        el.classList.contains('recharts-area') ||
+                        el.classList.contains('recharts-line') ||
+                        el.classList.contains('recharts-curve')) {
+                      // Don't change fill for chart elements
+                    } else {
+                      el.setAttribute('fill', '#000000');
+                    }
+                  }
+                  if (el.hasAttribute('stroke')) {
+                    // Preserve some chart colors
+                    if (el.classList.contains('recharts-curve') ||
+                        el.classList.contains('recharts-line-curve') ||
+                        el.classList.contains('recharts-area-curve')) {
+                      // Don't change stroke for chart elements
+                    } else {
+                      el.setAttribute('stroke', '#000000');
+                    }
+                  }
                 }
-                if (el.hasAttribute('stroke')) {
-                  el.setAttribute('stroke', '#000000');
+              } else {
+                // For markers, ensure they have the correct styling
+                if (el.classList.contains('marker-normal')) {
+                  // Normal marker styling
+                  el.style.display = 'flex';
+                  el.style.alignItems = 'center';
+                  el.style.justifyContent = 'center';
+                  el.style.width = '28px';
+                  el.style.height = '28px';
+                  el.style.backgroundColor = '#ffffff';
+                  el.style.color = '#000000';
+                  el.style.fontWeight = '500';
+                  el.style.border = '2px solid #e5e7eb';
+                  el.style.borderRadius = '50%';
+                  el.style.fontSize = '12px';
+                  el.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                } else if (el.classList.contains('marker-selected')) {
+                  // Selected marker styling
+                  el.style.display = 'flex';
+                  el.style.alignItems = 'center';
+                  el.style.justifyContent = 'center';
+                  el.style.width = '40px';
+                  el.style.height = '40px';
+                  el.style.backgroundColor = '#00C2A8'; // Primary color
+                  el.style.color = '#ffffff';
+                  el.style.fontWeight = '600';
+                  el.style.border = 'none';
+                  el.style.borderRadius = '50%';
+                  el.style.fontSize = '14px';
+                  el.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
                 }
               }
             }
