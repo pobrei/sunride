@@ -14,25 +14,16 @@ interface MotionCardProps {
 }
 
 /**
- * A card component with motion animations
+ * A card component - Flat Design Version (no animations)
  */
 export function MotionCard({
   children,
   className,
-  animate = true,
-  hover = true,
-  delay = 0,
 }: MotionCardProps) {
   return (
-    <motion.div
-      initial={animate ? { opacity: 0, y: 20 } : false}
-      animate={animate ? { opacity: 1, y: 0 } : false}
-      transition={{ duration: 0.4, delay, ease: 'easeOut' }}
-      whileHover={hover ? { y: -5, transition: { duration: 0.2 } } : undefined}
-      className={className}
-    >
+    <div className={className}>
       <Card className="h-full">{children}</Card>
-    </motion.div>
+    </div>
   );
 }
 
@@ -52,7 +43,7 @@ export function MotionCardHeader({
 }
 
 /**
- * A motion-enhanced card title
+ * A card title - Flat Design Version (no animations)
  */
 export function MotionCardTitle({
   children,
@@ -61,19 +52,13 @@ export function MotionCardTitle({
 }: React.ComponentProps<typeof CardTitle>) {
   return (
     <CardTitle className={cn(className)} {...props}>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        {children}
-      </motion.span>
+      {children}
     </CardTitle>
   );
 }
 
 /**
- * A motion-enhanced card description
+ * A card description - Flat Design Version (no animations)
  */
 export function MotionCardDescription({
   children,
@@ -82,19 +67,13 @@ export function MotionCardDescription({
 }: React.ComponentProps<typeof CardDescription>) {
   return (
     <CardDescription className={cn(className)} {...props}>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        {children}
-      </motion.span>
+      {children}
     </CardDescription>
   );
 }
 
 /**
- * A motion-enhanced card content
+ * A card content - Flat Design Version (no animations)
  */
 export function MotionCardContent({
   children,
@@ -103,19 +82,13 @@ export function MotionCardContent({
 }: React.ComponentProps<typeof CardContent>) {
   return (
     <CardContent className={cn(className)} {...props}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.3 }}
-      >
-        {children}
-      </motion.div>
+      {children}
     </CardContent>
   );
 }
 
 /**
- * A motion-enhanced card footer
+ * A card footer - Flat Design Version (no animations)
  */
 export function MotionCardFooter({
   children,
@@ -124,13 +97,7 @@ export function MotionCardFooter({
 }: React.ComponentProps<typeof CardFooter>) {
   return (
     <CardFooter className={cn(className)} {...props}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.4 }}
-      >
-        {children}
-      </motion.div>
+      {children}
     </CardFooter>
   );
 }

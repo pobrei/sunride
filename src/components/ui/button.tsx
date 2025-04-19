@@ -6,26 +6,32 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 ease-in-out hover:shadow-sm active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px] max-w-7xl mx-auto",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive min-h-[36px] max-w-7xl mx-auto rounded-md transition-all duration-300 active:scale-[0.97] shadow-sm backdrop-blur-[2px]",
   {
     variants: {
       variant: {
         default:
-          'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-light)] active:bg-[var(--color-accent-dark)] active:scale-95 shadow-sm',
+          'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md ring-1 ring-primary/20 hover:scale-[1.02]',
         destructive:
-          'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 active:scale-95 shadow-sm',
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-md ring-1 ring-destructive/20 hover:scale-[1.02]',
         outline:
-          'bg-transparent border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600 active:scale-95',
+          'bg-white/80 dark:bg-transparent border border-border hover:bg-white dark:hover:bg-muted hover:border-primary/20 text-foreground hover:scale-[1.02]',
         secondary:
-          'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 dark:active:bg-zinc-600 active:scale-95 shadow-sm',
-        ghost: 'bg-transparent text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-700 active:scale-95',
-        link: 'text-[var(--color-accent)] underline-offset-4 hover:underline hover:text-[var(--color-accent-light)]',
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-md ring-1 ring-secondary/20 hover:scale-[1.02]',
+        ghost: 'hover:bg-white/80 dark:hover:bg-muted/50 text-foreground hover:shadow-sm hover:scale-[1.02]',
+        link: 'text-primary underline-offset-4 hover:underline shadow-none',
+        success: 'bg-success text-success-foreground hover:bg-success/90 hover:shadow-md ring-1 ring-success/20 hover:scale-[1.02]',
+        info: 'bg-info text-info-foreground hover:bg-info/90 hover:shadow-md ring-1 ring-info/20 hover:scale-[1.02]',
+        warning: 'bg-warning text-warning-foreground hover:bg-warning/90 hover:shadow-md ring-1 ring-warning/20 hover:scale-[1.02]',
       },
       size: {
-        default: 'px-4 py-2 has-[>svg]:px-4',
-        sm: 'rounded-xl gap-2 px-4 py-2 has-[>svg]:px-4 min-h-[32px] text-xs',
-        lg: 'rounded-xl px-8 py-4 has-[>svg]:px-4 min-h-[40px] text-base',
-        icon: 'aspect-square min-w-[36px] min-h-[36px] p-2',
+        default: 'h-10 px-5 py-2',
+        sm: 'h-8 rounded-md px-3 py-1.5 text-xs',
+        lg: 'h-12 rounded-md px-8 py-3 text-base',
+        xl: 'h-14 rounded-md px-10 py-4 text-lg',
+        icon: 'h-10 w-10 p-2 aspect-square',
+        'icon-sm': 'h-8 w-8 p-1.5 aspect-square text-xs',
+        'icon-lg': 'h-12 w-12 p-2.5 aspect-square text-base',
       },
     },
     defaultVariants: {

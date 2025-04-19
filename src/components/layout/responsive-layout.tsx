@@ -63,12 +63,12 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={cn(layout.flexCol, 'min-h-screen bg-zinc-50 dark:bg-zinc-900 container-transition')}>
+    <div className={cn(layout.flexCol, 'min-h-screen bg-white dark:bg-zinc-900')}>
       {/* Header */}
       {showHeader && <Header title={headerTitle} showBackButton={showBackButton} backUrl={backUrl} />}
 
       {/* Main content */}
-      <div className={cn(layout.flexRow, 'flex-1 overflow-hidden bg-zinc-50 dark:bg-zinc-900')}>
+      <div className={cn(layout.flexRow, 'flex-1 overflow-hidden bg-white dark:bg-zinc-900')}>
         {/* Desktop sidebar */}
         <div className="hidden md:block">
           <Sidebar
@@ -87,7 +87,7 @@ export function ResponsiveLayout({
             variant="default"
             size="icon"
             onClick={toggleMobileSidebar}
-            className={cn('h-12 w-12 rounded-full shadow-lg', animation.buttonPress)}
+            className="h-12 w-12 border border-border"
             aria-label={mobileSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
           >
             {mobileSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -97,7 +97,7 @@ export function ResponsiveLayout({
         {/* Mobile sidebar */}
         <div
           className={cn(
-            'fixed inset-y-0 left-0 z-30 w-[280px] transform bg-white dark:bg-zinc-800 shadow-xl transition-transform duration-300 ease-in-out md:hidden',
+            'fixed inset-y-0 left-0 z-30 w-[280px] transform bg-white dark:bg-zinc-800 border-r border-border md:hidden',
             mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
@@ -120,7 +120,7 @@ export function ResponsiveLayout({
         <main className={cn('flex-1 overflow-auto', className)}>
           {/* Optional header content */}
           {headerContent && (
-            <div className="border-b border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-4 max-w-7xl mx-auto shadow-sm">{headerContent}</div>
+            <div className="border-b border-border bg-white dark:bg-zinc-800 px-4 py-4 max-w-7xl mx-auto">{headerContent}</div>
           )}
 
           {/* Main content */}

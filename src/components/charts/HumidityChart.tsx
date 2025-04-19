@@ -117,12 +117,7 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
-            <defs>
-              <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={theme.humidity} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={theme.humidity} stopOpacity={0} />
-              </linearGradient>
-            </defs>
+            {/* No gradients in flat design */}
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="name"
@@ -153,8 +148,8 @@ const HumidityChart: React.FC<HumidityChartProps> = ({
               dataKey="humidity"
               name="Humidity (%)"
               stroke={theme.humidity}
-              fillOpacity={1}
-              fill="url(#humidityGradient)"
+              fillOpacity={0.05}
+              fill={theme.humidity}
               activeDot={{
                 r: 8,
                 stroke: theme.card,

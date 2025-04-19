@@ -1,74 +1,54 @@
-/* Micro Interactions */
+/* Flat Design - No Micro Interactions */
 
-/* Base transitions for containers */
+/* Base containers - no transitions */
 .container-transition {
-  @apply transition-all duration-300 ease-in-out;
+  /* No transitions in flat design */
 }
 
-/* Card hover and active states */
+/* Card states - no interactions */
 .card-interactive {
-  @apply transition-all duration-300 ease-in-out hover:shadow-lg active:scale-98;
+  /* No interactions in flat design */
 }
 
-/* Button hover and active states */
+/* Button states - no interactions */
 .button-interactive {
-  @apply transition-all duration-300 ease-in-out hover:shadow-lg active:scale-98;
+  /* No interactions in flat design */
 }
 
-/* Link hover states */
+/* Link states - no interactions */
 .link-interactive {
-  @apply transition-all duration-200 ease-in-out hover:opacity-80;
+  /* No interactions in flat design */
 }
 
-/* Input focus states */
+/* Input states - no interactions */
 .input-interactive {
-  @apply transition-all duration-200 ease-in-out focus:shadow-md;
+  /* No interactions in flat design */
 }
 
-/* Hover scale effect */
+/* No hover scale effect */
 .hover-scale {
-  @apply transition-transform duration-300 ease-in-out hover:scale-105;
+  /* No scale effect in flat design */
 }
 
-/* Hover lift effect */
+/* No hover lift effect */
 .hover-lift {
-  @apply transition-transform duration-300 ease-in-out hover:-translate-y-1;
+  /* No lift effect in flat design */
 }
 
-/* Animation classes using standard CSS */
+/* No animations in flat design */
 .fade-in {
-  animation: fadeIn 0.3s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  /* No fade-in animation in flat design */
 }
 
 .pulse-animation {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  /* No pulse animation in flat design */
 }
 
 .bounce-animation {
-  animation: bounce 1s infinite;
+  /* No bounce animation in flat design */
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(-25%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
-
+/* Keep spin animation only for loading indicators */
 .spin-animation {
   animation: spin 1s linear infinite;
 }

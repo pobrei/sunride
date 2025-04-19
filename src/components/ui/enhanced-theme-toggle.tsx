@@ -16,7 +16,7 @@ interface EnhancedThemeToggleProps {
 }
 
 /**
- * An enhanced theme toggle component with animations
+ * A theme toggle component - Flat Design (no animations)
  */
 export function EnhancedThemeToggle({
   className,
@@ -41,7 +41,7 @@ export function EnhancedThemeToggle({
         disabled
         aria-label="Toggle theme"
       >
-        <div className="h-5 w-5 bg-muted-foreground/20 rounded-full animate-pulse" />
+        <div className="h-5 w-5 bg-muted-foreground/20" />
       </Button>
     );
   }
@@ -61,18 +61,12 @@ export function EnhancedThemeToggle({
       className={cn('relative', className)}
       aria-label={label}
     >
-      <motion.div
-        initial={{ scale: 0.5, opacity: 0, rotate: -30 }}
-        animate={{ scale: 1, opacity: 1, rotate: 0 }}
-        exit={{ scale: 0.5, opacity: 0, rotate: 30 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        key={theme}
-      >
+      <div key={theme}>
         <Icon className={cn(
           'h-[1.2rem] w-[1.2rem]',
-          theme === 'dark' ? 'text-yellow-400' : 'text-primary'
+          theme === 'dark' ? 'text-white' : 'text-black'
         )} />
-      </motion.div>
+      </div>
     </Button>
   );
 

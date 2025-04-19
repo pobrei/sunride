@@ -190,43 +190,43 @@ export function WeatherAlerts({
     switch (type) {
       case 'extremeHeat':
         return {
-          icon: <Sun className="h-3 w-3 text-red-500" />,
+          icon: <Sun className="h-4 w-4 text-primary" />,
           title: 'Extreme Heat',
-          color: 'text-red-600',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-200',
+          color: 'text-foreground',
+          bgColor: 'bg-red-50 dark:bg-red-900/10',
+          borderColor: 'border-red-100 dark:border-red-900/20',
         };
       case 'freezing':
         return {
-          icon: <Snowflake className="h-3 w-3 text-blue-500" />,
+          icon: <Snowflake className="h-4 w-4 text-primary" />,
           title: 'Freezing',
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-200',
+          color: 'text-foreground',
+          bgColor: 'bg-blue-50 dark:bg-blue-900/10',
+          borderColor: 'border-blue-100 dark:border-blue-900/20',
         };
       case 'highWind':
         return {
-          icon: <Wind className="h-3 w-3 text-amber-500" />,
+          icon: <Wind className="h-4 w-4 text-primary" />,
           title: 'High Wind',
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-200',
+          color: 'text-foreground',
+          bgColor: 'bg-amber-50 dark:bg-amber-900/10',
+          borderColor: 'border-amber-100 dark:border-amber-900/20',
         };
       case 'heavyRain':
         return {
-          icon: <CloudRain className="h-3 w-3 text-cyan-500" />,
+          icon: <CloudRain className="h-4 w-4 text-primary" />,
           title: 'Heavy Rain',
-          color: 'text-cyan-600',
-          bgColor: 'bg-cyan-50',
-          borderColor: 'border-cyan-200',
+          color: 'text-foreground',
+          bgColor: 'bg-blue-50 dark:bg-blue-900/10',
+          borderColor: 'border-blue-100 dark:border-blue-900/20',
         };
       default:
         return {
-          icon: <AlertTriangle className="h-3 w-3 text-gray-500" />,
+          icon: <AlertTriangle className="h-4 w-4 text-primary" />,
           title: 'Alert',
-          color: 'text-gray-600',
-          bgColor: 'bg-zinc-50',
-          borderColor: 'border-zinc-200',
+          color: 'text-foreground',
+          bgColor: 'bg-zinc-50 dark:bg-zinc-900/10',
+          borderColor: 'border-border',
         };
     }
   };
@@ -239,32 +239,33 @@ export function WeatherAlerts({
     const { icon, title, color, bgColor, borderColor } = getAlertTypeDetails(type);
 
     return (
-      <Card key={type} className={cn("overflow-hidden border text-zinc-800 dark:text-zinc-200 shadow-sm", borderColor, animation.fadeIn)}>
-        <CardHeader className={cn("py-1 px-2", bgColor, "border-b", borderColor)}>
-          <CardTitle className={cn("text-[10px] font-medium flex items-center", color)}>
-            {icon}
-            <span className="ml-1">
-              {title} ({typeAlerts.length})
+      <Card key={type} className={cn("overflow-hidden border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 bg-white/95 dark:bg-card stagger-item animate-fade-in", borderColor)}>
+        <CardHeader className={cn("py-3 px-4", "border-b", borderColor)}>
+          <CardTitle className={cn("text-sm font-medium flex items-center gap-2", color)}>
+            <div className="p-1.5 bg-primary/10 rounded-full shadow-sm ring-1 ring-primary/5">
+              {icon}
+            </div>
+            <span>
+              {title} <span className="text-xs font-normal text-muted-foreground ml-1">({typeAlerts.length})</span>
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-1.5">
-          <div className="flex flex-wrap gap-0.5">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap gap-2">
             {typeAlerts.map(alert => (
               <Badge
                 key={alert.id}
                 variant="outline"
                 className={cn(
-                  "flex items-center gap-0.5 py-0.5 px-1.5",
-                  bgColor,
-                  "hover:bg-opacity-20 transition-colors text-[10px]"
+                  "flex items-center gap-1.5 py-1.5 px-2.5",
+                  "text-xs hover:bg-muted/50 transition-all duration-200 hover:shadow-sm hover:scale-105"
                 )}
                 title={`${alert.timestamp} at ${alert.location}`}
               >
                 <span className="font-semibold">{alert.value}</span>
-                <span className="mx-0.5">•</span>
-                <MapPin className="h-2 w-2" />
-                {alert.location.replace(' km', '')}
+                <span className="mx-0.5 text-muted-foreground">•</span>
+                <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-muted-foreground">{alert.location.replace(' km', '')}</span>
               </Badge>
             ))}
           </div>
@@ -278,16 +279,18 @@ export function WeatherAlerts({
   }
 
   return (
-    <div className={cn('p-2 border border-zinc-100 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-sm', animation.fadeIn, className)}>
-      <div className={cn(layout.flexBetween, "pb-1 mb-1 border-b border-zinc-100 dark:border-zinc-700")}>
-        <h3 className={cn("text-xs font-semibold", layout.flexRow, "gap-1")}>
-          <AlertTriangle className="h-3.5 w-3.5 text-primary" />
+    <div className={cn('p-5 border border-border bg-white/95 dark:bg-card rounded-lg shadow-sm text-foreground transition-all duration-300 backdrop-blur-[2px] card-hover-effect', className)}>
+      <div className={cn("flex items-center justify-between pb-3 mb-4 border-b border-border")}>
+        <h3 className={cn("text-base font-semibold flex items-center gap-2.5")}>
+          <div className="p-1.5 bg-primary/10 rounded-full shadow-sm ring-1 ring-primary/5 animate-pulse">
+            <AlertTriangle className="h-4 w-4 text-primary" />
+          </div>
           Weather Alerts
-          <span className="text-xs font-medium text-zinc-500">({visibleAlerts.length})</span>
+          <span className="text-xs font-medium px-2.5 py-0.5 bg-muted rounded-full shadow-sm">{visibleAlerts.length}</span>
         </h3>
       </div>
 
-      <div className={cn("space-y-1", animation.fadeInSlideUp)}>
+      <div className={cn("space-y-4")}>
         {renderCompactAlerts('highWind')}
         {renderCompactAlerts('extremeHeat')}
         {renderCompactAlerts('freezing')}

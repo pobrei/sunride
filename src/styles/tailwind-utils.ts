@@ -45,36 +45,37 @@ export const spacing = {
 
 /**
  * Typography system for consistent text styling across the application
+ * Using Inter font with a clean, modern hierarchy
  */
 export const typography = {
   // Headings
-  h1: 'text-2xl font-semibold leading-tight',
-  h2: 'text-xl font-semibold leading-tight',
-  h3: 'text-lg font-semibold leading-snug',
-  h4: 'text-lg font-semibold leading-snug',
-  h5: 'text-lg font-semibold leading-snug',
-  h6: 'text-base font-semibold leading-normal',
+  h1: 'text-3xl font-semibold leading-tight tracking-tight text-foreground',
+  h2: 'text-2xl font-semibold leading-tight tracking-tight text-foreground',
+  h3: 'text-xl font-semibold leading-snug text-foreground',
+  h4: 'text-lg font-semibold leading-snug text-foreground',
+  h5: 'text-base font-semibold leading-normal text-foreground',
+  h6: 'text-sm font-semibold leading-normal text-foreground',
 
   // Body text
-  body: 'text-base text-zinc-700 leading-relaxed',
-  bodyLg: 'text-lg text-zinc-700 leading-relaxed',
-  bodySm: 'text-sm text-zinc-700 leading-relaxed',
-  bodyXs: 'text-xs text-zinc-700 leading-normal',
+  body: 'text-base text-foreground/90 leading-relaxed',
+  bodyLg: 'text-lg text-foreground/90 leading-relaxed',
+  bodySm: 'text-sm text-foreground/90 leading-relaxed',
+  bodyXs: 'text-xs text-foreground/90 leading-normal',
 
   // Display text (larger than headings, for hero sections)
-  display1: 'text-6xl font-bold tracking-tighter leading-none',
-  display2: 'text-5xl font-bold tracking-tight leading-none',
+  display1: 'text-5xl font-bold tracking-tight leading-none text-foreground',
+  display2: 'text-4xl font-bold tracking-tight leading-none text-foreground',
 
   // Text styles
-  muted: 'text-zinc-500',
-  subtle: 'text-zinc-500',
+  muted: 'text-muted-foreground',
+  subtle: 'text-foreground/70',
   strong: 'font-semibold',
   emphasis: 'italic',
   underline: 'underline underline-offset-4',
   strike: 'line-through',
 
   // Interactive text
-  link: 'text-primary hover:underline hover:text-primary-dark transition-colors',
+  link: 'text-primary hover:underline hover:text-primary/80 transition-colors',
   linkMuted: 'text-muted-foreground hover:text-foreground hover:underline transition-colors',
   linkSubtle: 'text-foreground/70 hover:text-foreground hover:underline transition-colors',
 
@@ -97,17 +98,17 @@ export const typography = {
   info: 'text-info',
 
   // Combinations
-  sectionTitle: 'text-lg font-semibold mb-4',
-  cardTitle: 'text-lg font-semibold leading-none',
-  cardDescription: 'text-sm font-medium text-zinc-500',
-  formLabel: 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-  formDescription: 'text-sm text-zinc-500',
+  sectionTitle: 'text-xl font-semibold mb-4 text-foreground',
+  cardTitle: 'text-lg font-semibold leading-none text-foreground',
+  cardDescription: 'text-sm font-medium text-muted-foreground',
+  formLabel: 'text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+  formDescription: 'text-sm text-muted-foreground',
   formMessage: 'text-sm font-medium text-destructive',
-  breadcrumb: 'text-sm text-zinc-500 hover:text-foreground',
-  caption: 'text-xs text-zinc-500',
+  breadcrumb: 'text-sm text-muted-foreground hover:text-foreground',
+  caption: 'text-xs text-muted-foreground',
   badge: 'text-xs font-medium',
-  code: 'font-mono text-sm',
-  blockquote: 'pl-4 border-l-2 border-muted italic text-zinc-500',
+  code: 'font-mono text-sm bg-muted/50 px-1.5 py-0.5 rounded',
+  blockquote: 'pl-4 border-l-2 border-muted italic text-muted-foreground',
 };
 
 /**
@@ -153,14 +154,14 @@ export const layout = {
   sectionLg: 'py-16',
   sectionDivider: 'border-t border-border my-8',
 
-  // Card layouts
-  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 transition-all duration-200',
-  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
-  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-4 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
-  cardCompact: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 space-y-2 transition-all duration-200',
+  // Card layouts - Modern Design
+  card: 'bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm',
+  cardHoverable: 'bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm hover:shadow-md transition-all duration-200',
+  cardInteractive: 'bg-card rounded-lg border border-border p-4 space-y-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200',
+  cardCompact: 'bg-card rounded-lg border border-border p-3 space-y-2 shadow-sm',
   cardHeader: 'flex items-center justify-between mb-4',
-  cardTitle: 'text-lg font-medium text-foreground',
-  cardDescription: 'text-sm text-muted',
+  cardTitle: 'text-lg font-semibold text-foreground',
+  cardDescription: 'text-sm text-muted-foreground',
   cardContent: 'space-y-4',
   cardFooter: 'flex items-center justify-between pt-4 mt-4',
   cardFooterEnd: 'flex items-center justify-end pt-4 border-t border-border mt-4',
@@ -237,16 +238,16 @@ export const layout = {
 };
 
 /**
- * Animation system for consistent animations across the application
+ * Animation system - Modern Design with subtle animations
  */
 export const animation = {
   // Basic animations
-  fadeIn: 'opacity-0 animate-[fadeIn_0.3s_ease-in-out_forwards]',
-  fadeOut: 'opacity-100 animate-[fadeOut_0.3s_ease-in-out_forwards]',
-  slideInFromRight: 'translate-x-full animate-[slideInFromRight_0.3s_ease-in-out_forwards]',
-  slideInFromLeft: '-translate-x-full animate-[slideInFromLeft_0.3s_ease-in-out_forwards]',
-  slideInFromTop: '-translate-y-full animate-[slideInFromTop_0.3s_ease-in-out_forwards]',
-  slideInFromBottom: 'translate-y-full animate-[slideInFromBottom_0.3s_ease-in-out_forwards]',
+  fadeIn: 'animate-fade-in',
+  fadeOut: 'animate-fade-out',
+  slideInFromRight: 'animate-slide-in-from-right',
+  slideInFromLeft: 'animate-slide-in-from-left',
+  slideInFromTop: 'animate-slide-in-from-top',
+  slideInFromBottom: 'animate-slide-in-from-bottom',
   spin: 'animate-spin',
   pulse: 'animate-pulse',
   bounce: 'animate-bounce',
@@ -254,13 +255,13 @@ export const animation = {
   progress: 'animate-indeterminate-progress',
 
   // Transition utilities
-  transition: 'transition-all duration-200 ease-in-out',
-  transitionSlow: 'transition-all duration-300 ease-in-out',
-  transitionFast: 'transition-all duration-150 ease-in-out',
-  transitionColor: 'transition-colors duration-200 ease-in-out',
-  transitionOpacity: 'transition-opacity duration-200 ease-in-out',
-  transitionTransform: 'transition-transform duration-200 ease-in-out',
-  transitionScale: 'transition-transform duration-150 ease-out',
+  transition: 'transition-all duration-200',
+  transitionSlow: 'transition-all duration-300',
+  transitionFast: 'transition-all duration-150',
+  transitionColor: 'transition-colors duration-200',
+  transitionOpacity: 'transition-opacity duration-200',
+  transitionTransform: 'transition-transform duration-200',
+  transitionScale: 'transition-transform duration-150',
 
   // Hover animations
   hoverScale: 'hover:scale-105 transition-transform duration-200',
@@ -273,31 +274,31 @@ export const animation = {
   clickScaleSm: 'active:scale-98 transition-transform duration-150',
 
   // Combined animations
-  buttonPress: 'active:scale-95 transition-transform duration-150',
-  cardHover: 'hover:-translate-y-1 hover:shadow-md transition-all duration-200',
-  linkHover: 'hover:underline hover:text-primary-dark transition-colors duration-200',
-  fadeInSlideUp: 'opacity-0 translate-y-4 animate-[fadeIn_0.3s_ease-in-out_forwards]',
+  buttonPress: 'hover:scale-102 active:scale-98 transition-transform duration-150',
+  cardHover: 'hover:shadow-md transition-all duration-200',
+  linkHover: 'hover:underline hover:text-primary/80 transition-colors duration-200',
+  fadeInSlideUp: 'animate-fade-in motion-safe:animate-slide-in-from-bottom',
 
-  // Attention grabbing
-  pulse3Times: 'animate-[pulse_1s_ease-in-out_3]',
-  wiggle: 'animate-[wiggle_0.5s_ease-in-out]',
-  flash: 'animate-[flash_0.5s_ease-in-out]',
-  shake: 'animate-[shake_0.5s_ease-in-out]',
+  // Attention grabbing - removed for flat design
+  pulse3Times: '',
+  wiggle: '',
+  flash: '',
+  shake: '',
 };
 
 /**
- * Effect system for consistent visual effects across the application
+ * Effect system - Modern Design with subtle effects
  */
 export const effects = {
   // Interactive states
-  hover: 'hover:bg-accent/10 hover:text-accent transition-colors duration-200',
-  hoverSubtle: 'hover:bg-muted/50 transition-colors duration-200',
-  hoverPrimary: 'hover:bg-primary-light hover:text-primary-foreground transition-colors duration-200',
-  hoverSecondary: 'hover:bg-secondary-light hover:text-secondary-foreground transition-colors duration-200',
-  active: 'active:scale-95 transition-transform duration-150',
-  activeSubtle: 'active:scale-98 transition-transform duration-150',
-  focus: 'focus:outline-none focus:ring-2 focus:ring-ring/50 focus:ring-offset-2 focus:ring-offset-background',
-  focusWithin: 'focus-within:outline-none focus-within:ring-2 focus-within:ring-ring/50 focus-within:ring-offset-2',
+  hover: 'hover:bg-muted/50 transition-colors',
+  hoverSubtle: 'hover:bg-muted/30 transition-colors',
+  hoverPrimary: 'hover:bg-primary/90 transition-colors',
+  hoverSecondary: 'hover:bg-secondary/90 transition-colors',
+  active: 'active:scale-[0.98] transition-transform',
+  activeSubtle: 'active:bg-muted/50 transition-colors',
+  focus: 'focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background',
+  focusWithin: 'focus-within:outline-none focus-within:ring-2 focus-within:ring-primary/40',
   disabled: 'opacity-50 cursor-not-allowed pointer-events-none',
 
   // Shadows
@@ -308,11 +309,11 @@ export const effects = {
   shadowInner: 'shadow-inner',
   shadowNone: 'shadow-none',
 
-  // Visual effects
-  glassmorphism: 'bg-background/80 backdrop-blur-sm',
-  glassmorphismDark: 'bg-background/90 backdrop-blur-md',
-  glassmorphismLight: 'bg-background/60 backdrop-blur-sm',
-  frost: 'bg-white/30 backdrop-blur-lg backdrop-saturate-150 backdrop-filter',
+  // Visual effects - removed for flat design
+  glassmorphism: '',
+  glassmorphismDark: '',
+  glassmorphismLight: '',
+  frost: '',
 
   // Borders
   border: 'border border-border',
@@ -326,7 +327,7 @@ export const effects = {
   borderAccent: 'border border-accent/20',
 
   // Border radius
-  rounded: 'rounded-md',
+  rounded: 'rounded',
   roundedSm: 'rounded-sm',
   roundedLg: 'rounded-lg',
   roundedXl: 'rounded-xl',
@@ -335,22 +336,22 @@ export const effects = {
   roundedNone: 'rounded-none',
 
   // Special effects
-  elevate: 'shadow-md hover:shadow-lg transition-shadow duration-200',
-  elevateOnHover: 'hover:shadow-md transition-shadow duration-200',
-  depressed: 'shadow-inner bg-muted/50',
-  outlined: 'border-2 border-border',
-  outlinedPrimary: 'border-2 border-primary/50',
-  outlinedAccent: 'border-2 border-accent/50',
+  elevate: 'shadow-md',
+  elevateOnHover: 'hover:shadow-md transition-all duration-200',
+  depressed: 'shadow-inner',
+  outlined: 'border border-border rounded-md',
+  outlinedPrimary: 'border border-primary/50 rounded-md',
+  outlinedAccent: 'border border-accent/50 rounded-md',
 
   // Combinations
-  card: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl',
-  cardHoverable: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-200',
-  cardInteractive: 'bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-200',
-  cardInner: 'p-4 rounded-md bg-background/50 border border-border/50',
-  button: 'rounded-md shadow-sm hover:shadow transition-all duration-200 active:scale-95',
-  buttonHover: 'hover:bg-accent/10 hover:text-accent transition-colors duration-200',
-  input: 'rounded-md border border-input bg-transparent shadow-sm focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200',
-  pill: 'rounded-full px-3 py-1 text-xs font-medium',
+  card: 'bg-card rounded-lg border border-border shadow-sm',
+  cardHoverable: 'bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-200',
+  cardInteractive: 'bg-card rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200',
+  cardInner: 'p-4 bg-background/50 border border-border/50 rounded-md',
+  button: 'border border-border rounded-md transition-colors',
+  buttonHover: 'hover:bg-muted/50 active:scale-[0.98] transition-all duration-200',
+  input: 'border border-input bg-transparent rounded-md focus:border-primary focus:ring-2 focus:ring-primary/20',
+  pill: 'border px-3 py-1 text-xs font-medium rounded-full',
 };
 
 /**
@@ -389,8 +390,8 @@ export const responsive = {
   scrollItemLg: 'min-w-[400px] flex-shrink-0 snap-center',
 
   // Chart and map container utilities
-  chartContainer: 'h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] w-full max-w-full overflow-visible',
-  mapContainer: 'h-[300px] sm:h-[400px] md:h-[500px] w-full rounded-lg overflow-hidden',
+  chartContainer: 'h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] w-full max-w-full overflow-visible mb-4',
+  mapContainer: 'h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden',
 
   // Timeline utilities
   timelineItem: 'min-w-[180px] flex-shrink-0 snap-center',
@@ -412,47 +413,47 @@ export const status = {
   info: 'bg-info/10 text-info border-info/20',
   neutral: 'bg-muted-foreground/10 text-muted-foreground border-muted-foreground/20',
 
-  // Badge variants
-  badgeSuccess: 'bg-success/10 text-success text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeError: 'bg-destructive/10 text-destructive text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeWarning: 'bg-warning/10 text-warning text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeInfo: 'bg-info/10 text-info text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeNeutral: 'bg-muted-foreground/10 text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-full',
+  // Badge variants - simplified for flat design
+  badgeSuccess: 'bg-success/10 text-success text-xs font-medium px-2 py-0.5',
+  badgeError: 'bg-destructive/10 text-destructive text-xs font-medium px-2 py-0.5',
+  badgeWarning: 'bg-warning/10 text-warning text-xs font-medium px-2 py-0.5',
+  badgeInfo: 'bg-info/10 text-info text-xs font-medium px-2 py-0.5',
+  badgeNeutral: 'bg-muted-foreground/10 text-muted-foreground text-xs font-medium px-2 py-0.5',
 
-  // Solid badge variants
-  badgeSuccessSolid: 'bg-success text-success-foreground text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeErrorSolid: 'bg-destructive text-destructive-foreground text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeWarningSolid: 'bg-warning text-warning-foreground text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeInfoSolid: 'bg-info text-info-foreground text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeNeutralSolid: 'bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-full',
+  // Solid badge variants - simplified for flat design
+  badgeSuccessSolid: 'bg-success text-success-foreground text-xs font-medium px-2 py-0.5',
+  badgeErrorSolid: 'bg-destructive text-destructive-foreground text-xs font-medium px-2 py-0.5',
+  badgeWarningSolid: 'bg-warning text-warning-foreground text-xs font-medium px-2 py-0.5',
+  badgeInfoSolid: 'bg-info text-info-foreground text-xs font-medium px-2 py-0.5',
+  badgeNeutralSolid: 'bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5',
 
-  // Outline badge variants
-  badgeSuccessOutline: 'border border-success/50 text-success text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeErrorOutline: 'border border-destructive/50 text-destructive text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeWarningOutline: 'border border-warning/50 text-warning text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeInfoOutline: 'border border-info/50 text-info text-xs font-medium px-2 py-0.5 rounded-full',
-  badgeNeutralOutline: 'border border-muted-foreground/50 text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-full',
+  // Outline badge variants - simplified for flat design
+  badgeSuccessOutline: 'border border-success/50 text-success text-xs font-medium px-2 py-0.5',
+  badgeErrorOutline: 'border border-destructive/50 text-destructive text-xs font-medium px-2 py-0.5',
+  badgeWarningOutline: 'border border-warning/50 text-warning text-xs font-medium px-2 py-0.5',
+  badgeInfoOutline: 'border border-info/50 text-info text-xs font-medium px-2 py-0.5',
+  badgeNeutralOutline: 'border border-muted-foreground/50 text-muted-foreground text-xs font-medium px-2 py-0.5',
 
-  // Alert variants
-  alertSuccess: 'bg-success/10 text-success border-l-4 border-success p-4 rounded-md',
-  alertError: 'bg-destructive/10 text-destructive border-l-4 border-destructive p-4 rounded-md',
-  alertWarning: 'bg-warning/10 text-warning border-l-4 border-warning p-4 rounded-md',
-  alertInfo: 'bg-info/10 text-info border-l-4 border-info p-4 rounded-md',
-  alertNeutral: 'bg-muted-foreground/10 text-muted-foreground border-l-4 border-muted-foreground p-4 rounded-md',
+  // Alert variants - simplified for flat design
+  alertSuccess: 'bg-success/10 text-success border-l-4 border-success p-4',
+  alertError: 'bg-destructive/10 text-destructive border-l-4 border-destructive p-4',
+  alertWarning: 'bg-warning/10 text-warning border-l-4 border-warning p-4',
+  alertInfo: 'bg-info/10 text-info border-l-4 border-info p-4',
+  alertNeutral: 'bg-muted-foreground/10 text-muted-foreground border-l-4 border-muted-foreground p-4',
 
-  // Toast variants
-  toastSuccess: 'bg-success/10 text-success border border-success/20 shadow-md rounded-md',
-  toastError: 'bg-destructive/10 text-destructive border border-destructive/20 shadow-md rounded-md',
-  toastWarning: 'bg-warning/10 text-warning border border-warning/20 shadow-md rounded-md',
-  toastInfo: 'bg-info/10 text-info border border-info/20 shadow-md rounded-md',
-  toastNeutral: 'bg-muted-foreground/10 text-muted-foreground border border-muted-foreground/20 shadow-md rounded-md',
+  // Toast variants - simplified for flat design
+  toastSuccess: 'bg-success/10 text-success border border-success/20',
+  toastError: 'bg-destructive/10 text-destructive border border-destructive/20',
+  toastWarning: 'bg-warning/10 text-warning border border-warning/20',
+  toastInfo: 'bg-info/10 text-info border border-info/20',
+  toastNeutral: 'bg-muted-foreground/10 text-muted-foreground border border-muted-foreground/20',
 
-  // Status dot indicators
-  dotSuccess: 'h-2 w-2 rounded-full bg-success',
-  dotError: 'h-2 w-2 rounded-full bg-destructive',
-  dotWarning: 'h-2 w-2 rounded-full bg-warning',
-  dotInfo: 'h-2 w-2 rounded-full bg-info',
-  dotNeutral: 'h-2 w-2 rounded-full bg-muted-foreground',
+  // Status dot indicators - simplified for flat design
+  dotSuccess: 'h-2 w-2 bg-success',
+  dotError: 'h-2 w-2 bg-destructive',
+  dotWarning: 'h-2 w-2 bg-warning',
+  dotInfo: 'h-2 w-2 bg-info',
+  dotNeutral: 'h-2 w-2 bg-muted-foreground',
 
   // Status text
   textSuccess: 'text-success',
@@ -463,44 +464,44 @@ export const status = {
 };
 
 /**
- * Loading system for consistent loading indicators across the application
+ * Loading system - Flat Design (minimal loading indicators)
  */
 export const loading = {
-  // Skeleton loaders
-  skeleton: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded',
-  skeletonText: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded h-4 w-full',
-  skeletonCircle: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded-full',
-  skeletonButton: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded-md h-9 w-24',
-  skeletonImage: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded-md',
-  skeletonCard: 'animate-pulse bg-muted/60 dark:bg-muted/40 rounded-lg border border-border',
-  skeletonShimmer: 'animate-shimmer bg-gradient-to-r from-transparent via-muted-foreground/10 to-transparent bg-[length:200%_100%] rounded',
+  // Skeleton loaders - simplified for flat design
+  skeleton: 'bg-muted/60 dark:bg-muted/40',
+  skeletonText: 'bg-muted/60 dark:bg-muted/40 h-4 w-full',
+  skeletonCircle: 'bg-muted/60 dark:bg-muted/40',
+  skeletonButton: 'bg-muted/60 dark:bg-muted/40 h-9 w-24',
+  skeletonImage: 'bg-muted/60 dark:bg-muted/40',
+  skeletonCard: 'bg-muted/60 dark:bg-muted/40 border border-border',
+  skeletonShimmer: '',
 
-  // Spinners
+  // Spinners - keep for functional loading indicators
   spinner: 'animate-spin',
   spinnerSm: 'h-4 w-4 animate-spin',
   spinnerMd: 'h-6 w-6 animate-spin',
   spinnerLg: 'h-8 w-8 animate-spin',
   spinnerXl: 'h-12 w-12 animate-spin',
 
-  // Progress indicators
-  progress: 'animate-indeterminate-progress h-1 w-full bg-primary/20 overflow-hidden rounded-full',
-  progressBar: 'h-full bg-primary rounded-full',
-  progressIndeterminate: 'h-1 w-full bg-primary/20 overflow-hidden rounded-full relative',
-  progressIndeterminateBar: 'absolute inset-0 bg-primary rounded-full animate-indeterminate-progress',
+  // Progress indicators - simplified for flat design
+  progress: 'h-1 w-full bg-primary/20 overflow-hidden',
+  progressBar: 'h-full bg-primary',
+  progressIndeterminate: 'h-1 w-full bg-primary/20 overflow-hidden relative',
+  progressIndeterminateBar: 'absolute inset-0 bg-primary',
 
-  // Dots loading
+  // Dots loading - simplified for flat design
   dots: 'flex space-x-1',
-  dot: 'h-2 w-2 bg-current rounded-full animate-pulse',
+  dot: 'h-2 w-2 bg-current',
 
-  // Pulse effects
-  pulse: 'animate-pulse',
-  pulseSlow: 'animate-[pulse_2s_ease-in-out_infinite]',
-  pulseFast: 'animate-[pulse_0.5s_ease-in-out_infinite]',
+  // Pulse effects - removed for flat design
+  pulse: '',
+  pulseSlow: '',
+  pulseFast: '',
 
-  // Loading overlays
-  overlay: 'absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50',
-  overlayDark: 'absolute inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-50',
-  overlayLight: 'absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-50',
+  // Loading overlays - simplified for flat design
+  overlay: 'absolute inset-0 bg-background/80 flex items-center justify-center z-50',
+  overlayDark: 'absolute inset-0 bg-background/90 flex items-center justify-center z-50',
+  overlayLight: 'absolute inset-0 bg-background/50 flex items-center justify-center z-50',
 
   // Loading containers
   container: 'flex flex-col items-center justify-center space-y-2 p-4',

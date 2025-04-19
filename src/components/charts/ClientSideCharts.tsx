@@ -4,7 +4,7 @@ import React from 'react';
 import { GPXData, ForecastPoint, WeatherData } from '@/types';
 import { cn } from '@/lib/utils';
 import { effects, responsive } from '@/styles/tailwind-utils';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import dynamic from 'next/dynamic';
 
@@ -13,7 +13,7 @@ const SafeChartsWrapper = dynamic(() => import('./SafeChartsWrapper'), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] flex items-center justify-center">
-      <LoadingSpinner size="lg" />
+      <LoadingSpinner size="lg" variant="train" />
     </div>
   ),
 });

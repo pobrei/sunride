@@ -19,7 +19,7 @@ export function MainNav() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm container-transition">
+    <header className="sticky top-0 z-30 w-full border-b border-border bg-white dark:bg-zinc-800">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
@@ -32,7 +32,6 @@ export function MainNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'transition-colors hover:text-zinc-800 dark:hover:text-white',
                 pathname === item.href ? 'text-zinc-800 dark:text-white font-medium' : 'text-zinc-600 dark:text-zinc-400'
               )}
             >

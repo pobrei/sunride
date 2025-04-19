@@ -70,8 +70,7 @@ export function OfflineDetector({
           <div className="flex flex-col gap-3">
             <Button
               onClick={checkConnection}
-              variant="default"
-              className="w-full flex items-center justify-center gap-2 transition-transform hover:scale-105"
+              className="w-full flex items-center justify-center gap-2"
             >
               <Wifi className="h-4 w-4" />
               {retryText}

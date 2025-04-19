@@ -1,0 +1,77 @@
+.loader {
+  width: 180px;
+  height: 140px;
+  display: block;
+  margin: 0 auto 20px;
+  background-image: radial-gradient(circle 25px at 25px 25px, #333 100%, transparent 0), radial-gradient(circle 50px at 50px 50px, #333 100%, transparent 0), radial-gradient(circle 25px at 25px 25px, #333 100%, transparent 0), radial-gradient(circle 15px at 15px 15px, #333 100%, transparent 0), linear-gradient(#333 50px, transparent 0);
+  background-size: 50px 50px, 100px 75px, 50px 50px, 30px 32px, 136px 20px;
+  background-repeat: no-repeat;
+  background-position: 0px 30px, 30px 0px, 113px 29px, 147px 50px, 23px 60px;
+  position: relative;
+  box-sizing: border-box;
+}
+.loader::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 65px;
+  width: 2px;
+  height: 6px;
+  color: #333;
+  box-sizing: border-box;
+  animation: animloader 0.6s linear infinite;
+}
+
+/* Dark mode support */
+.dark .loader {
+  background-image: radial-gradient(circle 25px at 25px 25px, hsl(var(--foreground)) 100%, transparent 0), radial-gradient(circle 50px at 50px 50px, hsl(var(--foreground)) 100%, transparent 0), radial-gradient(circle 25px at 25px 25px, hsl(var(--foreground)) 100%, transparent 0), radial-gradient(circle 15px at 15px 15px, hsl(var(--foreground)) 100%, transparent 0), linear-gradient(hsl(var(--foreground)) 50px, transparent 0);
+}
+
+.dark .loader::after {
+  color: hsl(var(--foreground));
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow: 25px 0 #333, 50px 0 #333, 75px 0 #333, 100px 0 #333, 125px 0 #333, 150px 0 #333, 25px 0 #333, 50px 0 #333, 75px 0 #333, 100px 0 #333, 125px 0 #333, 150px 0 #333;
+  }
+  50% {
+    box-shadow: 25px 20px #333, 50px 60px rgba(51, 51, 51, 0), 75px 30px rgba(51, 51, 51, 0), 100px 70px rgba(51, 51, 51, 0), 125px 40px #333, 150px 60px rgba(51, 51, 51, 0), 25px 20px #333, 50px 30px #333, 75px 10px #333, 100px 30px #333, 125px 30px rgba(51, 51, 51, 0), 150px 30px rgba(51, 51, 51, 0);
+  }
+  100% {
+    box-shadow: 25px 60px rgba(51, 51, 51, 0), 50px 60px rgba(51, 51, 51, 0), 75px 50px rgba(51, 51, 51, 0), 100px 70px rgba(51, 51, 51, 0), 125px 70px rgba(51, 51, 51, 0), 150px 60px rgba(51, 51, 51, 0), 25px 80px rgba(51, 51, 51, 0), 50px 80px rgba(51, 51, 51, 0), 75px 70px rgba(51, 51, 51, 0), 100px 60px rgba(51, 51, 51, 0), 125px 30px rgba(51, 51, 51, 0), 150px 30px rgba(51, 51, 51, 0);
+  }
+}
+
+@keyframes animloader-dark {
+  0% {
+    box-shadow: 25px 0 hsl(var(--foreground)), 50px 0 hsl(var(--foreground)), 75px 0 hsl(var(--foreground)), 100px 0 hsl(var(--foreground)), 125px 0 hsl(var(--foreground)), 150px 0 hsl(var(--foreground)), 25px 0 hsl(var(--foreground)), 50px 0 hsl(var(--foreground)), 75px 0 hsl(var(--foreground)), 100px 0 hsl(var(--foreground)), 125px 0 hsl(var(--foreground)), 150px 0 hsl(var(--foreground));
+  }
+  50% {
+    box-shadow: 25px 20px hsl(var(--foreground)), 50px 60px hsla(var(--foreground), 0), 75px 30px hsla(var(--foreground), 0), 100px 70px hsla(var(--foreground), 0), 125px 40px hsl(var(--foreground)), 150px 60px hsla(var(--foreground), 0), 25px 20px hsl(var(--foreground)), 50px 30px hsl(var(--foreground)), 75px 10px hsl(var(--foreground)), 100px 30px hsl(var(--foreground)), 125px 30px hsla(var(--foreground), 0), 150px 30px hsla(var(--foreground), 0);
+  }
+  100% {
+    box-shadow: 25px 60px hsla(var(--foreground), 0), 50px 60px hsla(var(--foreground), 0), 75px 50px hsla(var(--foreground), 0), 100px 70px hsla(var(--foreground), 0), 125px 70px hsla(var(--foreground), 0), 150px 60px hsla(var(--foreground), 0), 25px 80px hsla(var(--foreground), 0), 50px 80px hsla(var(--foreground), 0), 75px 70px hsla(var(--foreground), 0), 100px 60px hsla(var(--foreground), 0), 125px 30px hsla(var(--foreground), 0), 150px 30px hsla(var(--foreground), 0);
+  }
+}
+
+/* Responsive sizing */
+.custom-loader-sm {
+  transform: scale(0.5);
+  margin: 0 auto 10px;
+}
+
+.custom-loader-md {
+  transform: scale(0.75);
+  margin: 0 auto 15px;
+}
+
+.custom-loader-lg {
+  transform: scale(1);
+  margin: 0 auto 20px;
+}
+
+.custom-loader-xl {
+  transform: scale(1.25);
+  margin: 0 auto 25px;
+}

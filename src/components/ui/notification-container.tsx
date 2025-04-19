@@ -93,18 +93,17 @@ export function NotificationContainer({
   };
 
   // Expose methods via ref
-  React.useImperativeHandle(
-    React.useRef<{
-      addNotification: (notification: Omit<NotificationProps, 'id' | 'onDismiss'>) => string;
-      removeNotification: (id: string) => void;
-      clearNotifications: () => void;
-    }>(),
-    () => ({
-      addNotification,
-      removeNotification,
-      clearNotifications,
-    })
-  );
+  const methodsRef = React.useRef<{
+    addNotification: (notification: Omit<NotificationProps, 'id' | 'onDismiss'>) => string;
+    removeNotification: (id: string) => void;
+    clearNotifications: () => void;
+  }>(null);
+
+  React.useImperativeHandle(methodsRef, () => ({
+    addNotification,
+    removeNotification,
+    clearNotifications,
+  }));
 
   if (!isMounted) return null;
 
@@ -139,7 +138,8 @@ const NotificationContext = React.createContext<{
  * A provider for the notification context
  */
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<NotificationProps[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setNotificationItems] = useState<NotificationProps[]>([]);
 
   // Add a new notification
   const addNotification = (notification: Omit<NotificationProps, 'id' | 'onDismiss'>) => {
@@ -150,7 +150,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       onDismiss: id => removeNotification(id),
     };
 
-    setNotifications(prev => [newNotification, ...prev]);
+    setNotificationItems(prev => [newNotification, ...prev]);
 
     // Auto-dismiss if duration is provided
     if (notification.duration && notification.duration > 0) {
@@ -164,12 +164,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   // Remove a notification by ID
   const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
+    setNotificationItems(prev => prev.filter(notification => notification.id !== id));
   };
 
   // Clear all notifications
   const clearNotifications = () => {
-    setNotifications([]);
+    setNotificationItems([]);
   };
 
   return (
@@ -197,14 +197,56 @@ export function useNotification() {
   return context;
 }
 
+// Define a type for the notification context
+type NotificationContextType = {
+  addNotification: (notification: Omit<NotificationProps, 'id' | 'onDismiss'>) => string;
+  removeNotification: (id: string) => void;
+  clearNotifications: () => void;
+} | null;
+
+// Define a type for the global window with our custom property
+interface CustomWindow extends Window {
+  __NOTIFICATION_CONTEXT__?: NotificationContextType;
+}
+
 /**
  * A utility function to show a notification
+ * Note: This should only be used in non-React components
  */
 export function showNotification(notification: Omit<NotificationProps, 'id' | 'onDismiss'>) {
-  const context = React.useContext(NotificationContext);
+  // Get the context from the global window object if available
+  // This avoids using React hooks outside of React components
+  const customWindow = window as CustomWindow;
+  const context = typeof window !== 'undefined' && customWindow.__NOTIFICATION_CONTEXT__ ?
+    customWindow.__NOTIFICATION_CONTEXT__ : null;
+
   if (!context) {
     console.error('showNotification must be used within a NotificationProvider');
     return '';
   }
   return context.addNotification(notification);
+}
+
+// Store the context in the global window object for non-React components
+if (typeof window !== 'undefined') {
+  const customWindow = window as CustomWindow;
+  customWindow.__NOTIFICATION_CONTEXT__ = null;
+
+  // Update the context reference when the provider mounts
+  const originalCreateContext = React.createContext;
+  // We need to use any here because we're monkey-patching React's internal API
+
+  React.createContext = function<T>(defaultValue: T) {
+    const context = originalCreateContext<T>(defaultValue);
+    if (context === NotificationContext) {
+      const originalProvider = context.Provider;
+
+      context.Provider = function(props: React.ProviderProps<T>) {
+        const customWindow = window as CustomWindow;
+        customWindow.__NOTIFICATION_CONTEXT__ = props.value as unknown as NotificationContextType;
+        return originalProvider(props);
+      } as typeof context.Provider;
+    }
+    return context;
+  } as typeof React.createContext;
 }

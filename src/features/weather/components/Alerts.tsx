@@ -172,41 +172,41 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
         return {
           icon: <Thermometer className="h-5 w-5" />,
           title: 'Extreme Heat',
-          color: 'text-red-600',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-l-red-200',
+          color: 'text-destructive',
+          bgColor: 'bg-destructive/10',
+          borderColor: 'border-l-destructive',
         };
       case 'freezing':
         return {
           icon: <Thermometer className="h-5 w-5" />,
           title: 'Freezing Temperature',
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-l-blue-200',
+          color: 'text-primary',
+          bgColor: 'bg-primary/10',
+          borderColor: 'border-l-primary',
         };
       case 'highWind':
         return {
           icon: <Wind className="h-5 w-5" />,
           title: 'High Wind',
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-l-amber-200',
+          color: 'text-amber-500',
+          bgColor: 'bg-amber-500/10',
+          borderColor: 'border-l-amber-500',
         };
       case 'heavyRain':
         return {
           icon: <Droplets className="h-5 w-5" />,
           title: 'Heavy Rain',
-          color: 'text-cyan-600',
-          bgColor: 'bg-cyan-50',
-          borderColor: 'border-l-cyan-200',
+          color: 'text-secondary',
+          bgColor: 'bg-secondary/10',
+          borderColor: 'border-l-secondary',
         };
       default:
         return {
           icon: <AlertCircle className="h-5 w-5" />,
           title: 'Weather Alert',
-          color: 'text-zinc-600',
-          bgColor: 'bg-zinc-50',
-          borderColor: 'border-l-zinc-200',
+          color: 'text-primary',
+          bgColor: 'bg-primary/10',
+          borderColor: 'border-l-primary',
         };
     }
   };
@@ -224,7 +224,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
       getAlertTypeDetails(type);
 
     return (
-      <Card className="weather-alert overflow-hidden transition-all duration-200 ease-in-out hover:shadow active:scale-[0.98]">
+      <Card className="weather-alert overflow-hidden">
         <CardHeader className={`py-2 px-3 ${bgColor} border-b`}>
           <CardTitle className={`text-base font-semibold flex items-center ${color}`}>
             {icon}
@@ -239,7 +239,7 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
               <Badge
                 key={alert.id}
                 variant="outline"
-                className={`flex items-center gap-1 py-1 px-2 ${bgColor} hover:bg-opacity-20 hover:shadow active:scale-[0.98] transition-all duration-200 ease-in-out text-xs`}
+                className={`flex items-center gap-1 py-1 px-2 ${bgColor} hover:bg-opacity-20 transition-colors text-xs`}
               >
                 <Clock className="h-3 w-3" />
                 {formatTime(alert.point.timestamp)}
@@ -261,20 +261,19 @@ export default function Alerts({ forecastPoints, weatherData }: AlertsProps): Re
   };
 
   return (
-    <Card className="rounded-2xl shadow-sm bg-white mt-4 animate-slide-up transition-all duration-200 ease-in-out hover:shadow text-zinc-700">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <AlertTriangle className="mr-2 h-5 w-5 text-primary" />
-          Weather Alerts
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
+    <div className="space-y-2 mt-4 animate-slide-up">
+      <h2 className="text-lg font-semibold flex items-center">
+        <AlertTriangle className="mr-2 h-5 w-5 text-primary" />
+        Weather Alerts
+      </h2>
+
+      <div className="space-y-2">
         {/* Compact Alerts for all types */}
         {renderCompactAlerts('highWind')}
         {renderCompactAlerts('extremeHeat')}
         {renderCompactAlerts('freezing')}
         {renderCompactAlerts('heavyRain')}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ export * from './dialog';
 export * from './dropdown-menu';
 export * from './input';
 export * from './label';
-export * from './loading-spinner';
+// export * from './loading-spinner'; // Removed in favor of LoadingSpinner.tsx
 export * from './progress-steps';
 export * from './scroll-area';
 export * from './select';

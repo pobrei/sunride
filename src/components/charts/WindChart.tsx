@@ -195,7 +195,7 @@ const WindChart: React.FC<WindChartProps> = ({
               dataKey="windSpeed"
               name="Wind Speed (m/s)"
               fill={theme.wind}
-              radius={[4, 4, 0, 0]}
+              radius={[0, 0, 0, 0]}
               barSize={20}
             />
             <Line
@@ -203,7 +203,7 @@ const WindChart: React.FC<WindChartProps> = ({
               type="monotone"
               dataKey="windGust"
               name="Wind Gust (m/s)"
-              stroke="#ff7300"
+              stroke={theme.wind}
               strokeDasharray="3 3"
               strokeWidth={2}
               dot={false}

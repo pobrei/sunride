@@ -141,33 +141,26 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
       <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 50 }}
             onClick={handleClick}
           >
-            <defs>
-              <linearGradient id="temperatureGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={theme.temperature} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={theme.temperature} stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="feelsLikeGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={theme.feelsLike} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={theme.feelsLike} stopOpacity={0} />
-              </linearGradient>
-            </defs>
+            {/* No gradients in flat design */}
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={true}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dy={15}
             />
             <YAxis
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={false}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dx={-10}
               domain={[minTemp, maxTemp]}
               tickFormatter={value => `${value}°`}
@@ -177,19 +170,21 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               verticalAlign="top"
               height={36}
               iconType="circle"
-              wrapperStyle={{ fontSize: '12px', color: theme.text }}
+              wrapperStyle={{ fontSize: '12px', fontWeight: '500', color: theme.text }}
             />
 
             {/* Reference line for freezing temperature */}
             <ReferenceLine
               y={0}
-              stroke="#90cdf4"
+              stroke={theme.primary}
               strokeDasharray="3 3"
+              strokeWidth={1.5}
               label={{
                 value: 'Freezing',
                 position: 'insideBottomRight',
-                fill: theme.text,
-                fontSize: 10,
+                fill: theme.primary,
+                fontSize: 11,
+                fontWeight: 500,
               }}
             />
 
@@ -200,8 +195,8 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({
               dataKey="temperature"
               stroke={theme.temperature}
               strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#temperatureGradient)"
+              fillOpacity={0.05}
+              fill={theme.temperature}
               connectNulls
               activeDot={{
                 r: 8,

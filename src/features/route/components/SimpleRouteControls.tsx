@@ -11,11 +11,7 @@ import { RefreshCw, Clock, Cloud, Gauge } from 'lucide-react';
  * Props for the RouteControls component
  */
 interface RouteControlsProps {
-  onUpdateSettings?: (settings: {
-    startTime: Date;
-    weatherInterval: number;
-    avgSpeed: number;
-  }) => void;
+  onUpdateSettings?: (settings: { startTime: Date, weatherInterval: number, avgSpeed: number }) => void;
   onGenerateForecast?: (startTime: Date, weatherInterval: number, avgSpeed: number) => void;
   isGenerating?: boolean;
 }
@@ -23,11 +19,7 @@ interface RouteControlsProps {
 /**
  * A component for controlling route settings
  */
-export default function SimpleRouteControls({
-  onUpdateSettings,
-  onGenerateForecast,
-  isGenerating = false,
-}: RouteControlsProps) {
+export default function SimpleRouteControls({ onUpdateSettings, onGenerateForecast, isGenerating = false }: RouteControlsProps) {
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [weatherInterval, setWeatherInterval] = useState<number>(5);
   const [avgSpeed, setAvgSpeed] = useState<number>(20);
@@ -122,10 +114,7 @@ export default function SimpleRouteControls({
 
           <div className="space-y-3 bg-gray-50 dark:bg-gray-800/60 p-3 sm:p-4 rounded-xl border border-gray-200">
             <div className="flex flex-wrap justify-between items-center gap-2">
-              <Label
-                htmlFor="weatherInterval"
-                className="text-sm font-medium flex items-center gap-1.5 sm:gap-2"
-              >
+              <Label htmlFor="weatherInterval" className="text-sm font-medium flex items-center gap-1.5 sm:gap-2">
                 <Cloud className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-500" />
                 Weather Interval
               </Label>
@@ -147,10 +136,7 @@ export default function SimpleRouteControls({
 
           <div className="space-y-3 bg-gray-50 dark:bg-gray-800/60 p-3 sm:p-4 rounded-xl border border-gray-200">
             <div className="flex flex-wrap justify-between items-center gap-2">
-              <Label
-                htmlFor="avgSpeed"
-                className="text-sm font-medium flex items-center gap-1.5 sm:gap-2"
-              >
+              <Label htmlFor="avgSpeed" className="text-sm font-medium flex items-center gap-1.5 sm:gap-2">
                 <Gauge className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-500" />
                 Average Speed
               </Label>

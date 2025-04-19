@@ -1,7 +1,7 @@
-/* Card Styles */
+/* Card Styles - Flat Design */
 
 .card-base {
-  @apply bg-white dark:bg-[var(--color-card)] shadow-md rounded-2xl p-4 md:p-6 space-y-2;
+  @apply bg-white dark:bg-[var(--color-card)] border border-border p-4 md:p-6 space-y-2;
 }
 
 .card-header {
@@ -53,9 +53,9 @@
   @apply border-l-4 border-red-500;
 }
 
-/* Card with hover effect */
+/* Card with hover effect - removed for flat design */
 .card-hoverable {
-  @apply transition-transform duration-200 hover:-translate-y-1;
+  @apply border border-border;
 }
 
 /* Card with minimal outline */

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import '@/styles/custom-loader.css';
 import Providers from './providers';
 import { Footer } from '@/components/layout/footer';
 
@@ -59,7 +60,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="relative flex min-h-screen flex-col container-transition">
+          <div className="relative flex min-h-screen flex-col">
             <main className="flex-1 pb-16">
               {' '}
               {/* Reduced padding as footer is no longer fixed */}

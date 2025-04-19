@@ -141,15 +141,17 @@ const PressureChart: React.FC<PressureChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={true}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dy={15}
             />
             <YAxis
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={false}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dx={-10}
               domain={[minPressure, maxPressure]}
             />

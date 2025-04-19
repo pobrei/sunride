@@ -44,9 +44,8 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        'flex flex-col border-r border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 transition-all duration-300',
+        'flex flex-col border-r border-border bg-white dark:bg-zinc-800',
         collapsed ? 'w-[60px]' : 'w-[300px]',
-        animation.fadeIn,
         className
       )}
       {...props}
@@ -55,7 +54,7 @@ export function Sidebar({
       <div
         className={cn(
           layout.flexBetween,
-          'h-14 px-4 border-b border-zinc-100 dark:border-zinc-700',
+          'h-14 px-4 border-b border-border',
           collapsed && 'justify-center px-2'
         )}
       >
@@ -70,7 +69,7 @@ export function Sidebar({
             variant="ghost"
             size="icon"
             onClick={toggleCollapsed}
-            className={cn('h-8 w-8', animation.buttonPress)}
+            className="h-8 w-8"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -82,8 +81,7 @@ export function Sidebar({
       <div
         className={cn(
           'flex-1 overflow-auto p-4',
-          collapsed && 'p-2',
-          animation.transition
+          collapsed && 'p-2'
         )}
       >
         {collapsed ? (

@@ -11,3 +11,9 @@
   z-index: 9500 !important;
   position: absolute !important;
 }
+
+/* Ensure weather panel fits within viewport */
+.absolute.top-16.right-4 {
+  max-height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+}

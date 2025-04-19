@@ -11,7 +11,7 @@ interface PageTransitionProps {
 }
 
 /**
- * A component that adds page transitions
+ * A component that adds page transitions - Flat Design (no animations)
  */
 export function PageTransition({
   children,
@@ -19,22 +19,14 @@ export function PageTransition({
   mode = 'wait',
 }: PageTransitionProps) {
   return (
-    <AnimatePresence mode={mode}>
-      <motion.div
-        className={cn(className)}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div className={cn(className)}>
+      {children}
+    </div>
   );
 }
 
 /**
- * A component that adds fade transitions
+ * A component that adds fade transitions - Flat Design (no animations)
  */
 export function FadeTransition({
   children,
@@ -42,22 +34,14 @@ export function FadeTransition({
   duration = 0.3,
 }: PageTransitionProps & { duration?: number }) {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        className={cn(className)}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration, ease: 'easeInOut' }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div className={cn(className)}>
+      {children}
+    </div>
   );
 }
 
 /**
- * A component that adds slide transitions
+ * A component that adds slide transitions - Flat Design (no animations)
  */
 export function SlideTransition({
   children,
@@ -65,48 +49,20 @@ export function SlideTransition({
   direction = 'up',
   distance = 20,
   duration = 0.4,
-}: PageTransitionProps & { 
+}: PageTransitionProps & {
   direction?: 'up' | 'down' | 'left' | 'right';
   distance?: number;
   duration?: number;
 }) {
-  const directionMap = {
-    up: { y: distance },
-    down: { y: -distance },
-    left: { x: distance },
-    right: { x: -distance },
-  };
-
-  const initial = directionMap[direction];
-  const exit = {
-    ...directionMap[
-      direction === 'up' 
-        ? 'down' 
-        : direction === 'down' 
-        ? 'up' 
-        : direction === 'left' 
-        ? 'right' 
-        : 'left'
-    ],
-  };
-
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        className={cn(className)}
-        initial={{ opacity: 0, ...initial }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        exit={{ opacity: 0, ...exit }}
-        transition={{ duration, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div className={cn(className)}>
+      {children}
+    </div>
   );
 }
 
 /**
- * A component that adds scale transitions
+ * A component that adds scale transitions - Flat Design (no animations)
  */
 export function ScaleTransition({
   children,
@@ -114,16 +70,8 @@ export function ScaleTransition({
   duration = 0.4,
 }: PageTransitionProps & { duration?: number }) {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        className={cn(className)}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div className={cn(className)}>
+      {children}
+    </div>
   );
 }

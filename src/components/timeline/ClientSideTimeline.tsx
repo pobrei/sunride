@@ -15,11 +15,11 @@ import { typography, animation, effects, layout, responsive } from '@/styles/tai
 const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
   ssr: false,
   loading: () => (
-    <div className={cn("h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]", layout.flexCenter, effects.border, effects.rounded, "bg-muted/30", animation.fadeIn)}>
+    <div className={cn("h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]", layout.flexCenter, "border border-border bg-muted/30")}>
       <LoadingSpinner
         message="Loading timeline..."
         centered
-        variant="dots"
+        variant="train"
         withContainer
         size="md"
       />
@@ -157,7 +157,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If everything is fine, render the timeline
   return (
     <div
-      className={cn(height, 'relative overflow-hidden', effects.rounded, effects.border, animation.fadeIn, className)}
+      className={cn(height, 'relative overflow-hidden border border-border/30 rounded-2xl shadow-sm', className)}
     >
       {/* Navigation arrows */}
       {showNavigation && (
@@ -165,20 +165,20 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute left-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm hover:shadow active:scale-[0.98] transition-all duration-200 ease-in-out", effects.buttonHover)}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-[5] h-10 w-10 bg-white/80 dark:bg-card/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white dark:hover:bg-card transition-all duration-300"
             onClick={() => handleScroll('left')}
             disabled={scrollPosition <= 10}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5 text-primary" />
           </Button>
 
           <Button
             variant="ghost"
             size="icon"
-            className={cn("absolute right-0 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-background/80 shadow-sm hover:shadow active:scale-[0.98] transition-all duration-200 ease-in-out", effects.buttonHover)}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-[5] h-10 w-10 bg-white/80 dark:bg-card/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white dark:hover:bg-card transition-all duration-300"
             onClick={() => handleScroll('right')}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5 text-primary" />
           </Button>
         </>
       )}

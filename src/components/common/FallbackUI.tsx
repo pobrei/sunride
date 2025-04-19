@@ -41,18 +41,10 @@ const FallbackUI: React.FC<FallbackUIProps> = ({ error, resetErrorBoundary }) =>
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={handleReset}
-            variant="default"
-            className="w-full transition-transform hover:scale-105"
-          >
+          <Button onClick={handleReset} className="w-full">
             Try Again
           </Button>
-          <Button
-            onClick={handleGoHome}
-            variant="outline"
-            className="w-full transition-transform hover:scale-105"
-          >
+          <Button onClick={handleGoHome} variant="outline" className="w-full">
             Go to Home Page
           </Button>
           <div className="text-xs text-muted-foreground mt-4">

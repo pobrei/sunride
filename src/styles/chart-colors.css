@@ -1,62 +1,55 @@
-/* Chart-specific colors for both light and dark modes */
+/* Chart-specific colors for both light and dark modes - Flat Design */
 
 /* Chart canvas elements */
 canvas {
-  /* Ensure canvas elements have proper contrast */
-  filter: brightness(1.5) contrast(1.5);
+  /* No filters in flat design */
 }
 
 /* Chart container styles */
 .chart-container {
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
+  background-color: transparent;
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
 }
 
 /* Chart legend styles */
 .chart-legend,
 .chartjs-legend {
-  color: white !important;
-  text-shadow: 0 0 2px black !important;
+  color: var(--color-text) !important;
 }
 
 /* Chart tooltip styles */
 .chartjs-tooltip,
 .chart-tooltip {
-  background-color: rgba(0, 0, 0, 0.9) !important;
-  color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+  background-color: var(--color-card) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
 }
 
 /* Chart axis styles */
 .chart-axis,
 .chartjs-axis-title,
 .chartjs-axis-label {
-  color: white !important;
-  text-shadow: 0 0 2px black !important;
+  color: var(--color-text) !important;
 }
 
 /* Chart grid styles */
 .chart-grid,
 .chartjs-grid-line {
-  stroke: rgba(255, 255, 255, 0.2) !important;
+  stroke: var(--color-border) !important;
 }
 
 /* Chart point styles */
 .chart-point,
 .chartjs-point {
-  stroke: white !important;
-  stroke-width: 2px !important;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
+  stroke: var(--color-text) !important;
+  stroke-width: 1px !important;
 }
 
 /* Chart line styles */
 .chart-line,
 .chartjs-line {
-  stroke-width: 3px !important;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
+  stroke-width: 1px !important;
 }
 
 /* Chart area styles */
@@ -69,5 +62,4 @@ canvas {
 .chart-bar,
 .chartjs-bar {
   opacity: 1.0 !important;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8)) !important;
 }

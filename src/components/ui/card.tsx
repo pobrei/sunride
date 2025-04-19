@@ -4,37 +4,44 @@ import { cn } from '@/lib/utils';
 import { effects } from '@/styles/tailwind-utils';
 
 const cardVariants = cva(
-  'bg-white dark:bg-zinc-800 shadow-sm rounded-lg transition-all duration-300 ease-in-out border border-zinc-100 dark:border-zinc-700 text-zinc-800 dark:text-white',
+  'bg-card border border-border text-foreground rounded-lg overflow-hidden transition-all duration-300 backdrop-blur-[2px]',
   {
     variants: {
       variant: {
-        default: '',
-        elevated: 'shadow-lg',
-        outline: 'border border-border',
-        ghost: 'shadow-none bg-transparent',
-        glass: effects.glassmorphism,
-        primary: 'border-l-4 border-primary',
-        secondary: 'border-l-4 border-secondary',
-        accent: 'border-l-4 border-accent',
+        default: 'shadow-sm bg-white/90 dark:bg-card',
+        elevated: 'shadow-md bg-white/95 dark:bg-card',
+        outline: 'border border-border bg-white/90 dark:bg-card',
+        ghost: 'bg-transparent border-none',
+        glass: 'bg-white/80 dark:bg-card/80 backdrop-blur-sm',
+        primary: 'border-l-4 border-primary bg-white/90 dark:bg-card',
+        secondary: 'border-l-4 border-secondary bg-white/90 dark:bg-card',
+        accent: 'border-l-4 border-accent bg-white/90 dark:bg-card',
+        info: 'border-l-4 border-info bg-white/90 dark:bg-card',
+        success: 'border-l-4 border-success bg-white/90 dark:bg-card',
+        warning: 'border-l-4 border-warning bg-white/90 dark:bg-card',
+        destructive: 'border-l-4 border-destructive bg-white/90 dark:bg-card',
       },
       size: {
-        default: 'p-4 space-y-4',
-        sm: 'p-4 space-y-2',
-        lg: 'p-8 space-y-4',
-        compact: 'p-4 space-y-2',
+        default: 'p-5 space-y-4',
+        sm: 'p-3 space-y-3',
+        lg: 'p-6 space-y-5',
+        compact: 'p-2.5 space-y-2',
         none: 'p-0',
       },
       hover: {
-        default: 'hover:shadow-lg hover:-translate-y-1 hover:border-border/50 dark:hover:border-border/20 active:scale-[0.98]',
-        subtle: 'hover:shadow-md hover:-translate-y-0.5 hover:border-border/50 dark:hover:border-border/20 active:scale-[0.98]',
-        glow: 'hover:shadow-[0_0_15px_rgba(var(--accent),0.3)]',
+        default: 'transition-all duration-300',
+        subtle: 'transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white dark:hover:bg-card/90',
+        glow: 'transition-all duration-300 hover:shadow-lg hover:border-primary/50 hover:bg-white dark:hover:bg-card/90',
+        scale: 'transition-all duration-300 hover:scale-[1.02] hover:shadow-md hover:bg-white dark:hover:bg-card/90',
+        lift: 'transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white dark:hover:bg-card/90',
+        pulse: 'transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white dark:hover:bg-card/90 hover:animate-pulse',
         none: '',
       },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      hover: 'subtle',
+      hover: 'none',
     },
   }
 );
@@ -53,7 +60,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       data-slot="card"
       className={cn(
         cardVariants({ variant, size, hover }),
-        interactive && 'cursor-pointer',
+        interactive && 'cursor-pointer hover:shadow-md hover:border-primary/20 hover:bg-white dark:hover:bg-card/90 transition-all duration-300 hover:scale-[1.01]',
         className
       )}
       {...props}
@@ -73,8 +80,9 @@ const CardHeader = React.forwardRef<
     ref={ref}
     data-slot="card-header"
     className={cn(
-      'flex items-center justify-between p-4 bg-white dark:bg-zinc-800',
-      bordered && 'border-b border-zinc-100 dark:border-zinc-700',
+      'flex items-center justify-between p-4 bg-card',
+      bordered && 'border-b border-border',
+      'sticky top-0 z-10',
       className
     )}
     {...props}
@@ -89,7 +97,7 @@ const CardTitle = React.forwardRef<
   <Comp
     ref={ref}
     data-slot="card-title"
-    className={cn('text-lg font-semibold text-zinc-800 dark:text-white', className)}
+    className={cn('text-lg font-semibold text-foreground tracking-tight', className)}
     {...props}
   />
 ));
@@ -102,7 +110,7 @@ const CardDescription = React.forwardRef<
   <p
     ref={ref}
     data-slot="card-description"
-    className={cn('text-sm font-medium text-zinc-700 dark:text-zinc-300', className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ));
@@ -115,7 +123,7 @@ const CardContent = React.forwardRef<
   <div
     ref={ref}
     data-slot="card-content"
-    className={cn('p-4 bg-white dark:bg-zinc-800', className)}
+    className={cn('p-4 bg-card overflow-auto', className)}
     {...props}
   />
 ));
@@ -132,8 +140,9 @@ const CardFooter = React.forwardRef<
     ref={ref}
     data-slot="card-footer"
     className={cn(
-      'flex items-center justify-between p-4 bg-white dark:bg-zinc-800',
-      bordered && 'border-t border-zinc-100 dark:border-zinc-700',
+      'flex items-center justify-between p-4 bg-card',
+      bordered && 'border-t border-border',
+      'sticky bottom-0 z-10',
       className
     )}
     {...props}

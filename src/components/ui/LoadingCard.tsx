@@ -33,7 +33,7 @@ export function LoadingCard({
         </CardHeader>
       )}
       <CardContent className="flex items-center justify-center h-full">
-        <LoadingSpinner message={message} centered />
+        <LoadingSpinner message={message} centered variant="train" />
       </CardContent>
     </Card>
   );

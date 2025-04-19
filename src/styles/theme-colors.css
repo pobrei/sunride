@@ -1,23 +1,23 @@
 /**
- * Sunride Theme Color System
- * Refined color palette with light and dark mode support
+ * Sunride Theme Color System - Modern Design
+ * Calm and readable color palette with soft blues and neutrals
  * These variables can be used throughout the application
  */
 
 :root {
   /* Base theme colors - Light Mode */
-  --color-bg: #F6F8FA;        /* Soft Light Gray */
-  --color-text: #1E2A38;      /* Deep Navy Blue */
-  --color-accent: #00C2A8;    /* Vibrant Teal */
+  --color-bg: #F5F8FC;        /* Soft Blue-tinted White */
+  --color-text: #364356;      /* Deep Blue-Gray */
+  --color-accent: #3B82F6;    /* Calm Blue */
   --color-card: #FFFFFF;      /* Pure White */
-  --color-shadow: rgba(0, 0, 0, 0.05);
+  --color-shadow: rgba(0, 0, 0, 0.05); /* Subtle shadow */
 
   /* Derived colors for UI elements */
-  --color-accent-light: #33CFBA; /* Lighter teal for hover states */
-  --color-accent-dark: #00A08A;  /* Darker teal for active states */
-  --color-border: #E5E7EB;       /* Light gray for borders */
-  --color-muted: #F3F4F6;        /* Muted background */
-  --color-muted-text: #6B7280;   /* Muted text */
+  --color-accent-light: #60A5FA; /* Lighter blue */
+  --color-accent-dark: #2563EB;  /* Darker blue */
+  --color-border: #E2E8F4;       /* Soft Blue-Gray for borders */
+  --color-muted: #F1F5FB;        /* Soft Blue-Gray */
+  --color-muted-text: #526580;   /* Medium Blue-Gray */
 
   /* Map theme colors to existing system for compatibility */
   --theme-bg: var(--color-bg);
@@ -27,67 +27,67 @@
   --theme-shadow: var(--color-shadow);
 
   /* Map to HSL variables for Tailwind */
-  --background: 210 20% 98%;     /* #F6F8FA */
-  --foreground: 215 30% 17%;     /* #1E2A38 */
-  --primary: 170 100% 38%;       /* #00C2A8 */
+  --background: 210 30% 98%;    /* #F5F8FC - Soft Blue-tinted White */
+  --foreground: 215 25% 27%;    /* #364356 - Deep Blue-Gray */
+  --primary: 210 90% 54%;       /* #3B82F6 - Calm Blue */
   --primary-foreground: 0 0% 100%;
-  --card: 0 0% 100%;             /* #FFFFFF */
-  --card-foreground: 215 30% 17%; /* #1E2A38 */
-  --border: 220 13% 91%;         /* #E5E7EB */
-  --input: 220 13% 91%;          /* #E5E7EB */
+  --card: 0 0% 100%;            /* #FFFFFF - Pure White */
+  --card-foreground: 215 25% 27%; /* #364356 - Deep Blue-Gray */
+  --border: 210 30% 92%;        /* #E2E8F4 - Soft Blue-Gray */
+  --input: 210 30% 92%;         /* #E2E8F4 - Soft Blue-Gray */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* Base theme colors - Dark Mode */
-    --color-bg: #0E1116;        /* Dark Charcoal */
-    --color-text: #F5F7FA;      /* Soft White */
-    --color-accent: #00C2A8;    /* Vibrant Teal */
-    --color-card: #1C1F24;      /* Dark Slate */
-    --color-shadow: rgba(0, 0, 0, 0.25);
+    --color-bg: #161C26;        /* Deep Blue-Gray */
+    --color-text: #F5F9FF;      /* Soft Blue-White */
+    --color-accent: #3B82F6;    /* Calm Blue */
+    --color-card: #232A36;      /* Dark Blue-Gray */
+    --color-shadow: rgba(0, 0, 0, 0.2); /* Subtle shadow */
 
     /* Derived colors for UI elements */
-    --color-accent-light: #33CFBA; /* Lighter teal for hover states */
-    --color-accent-dark: #00A08A;  /* Darker teal for active states */
-    --color-border: #2E374A;       /* Darker border color */
-    --color-muted: #232A3B;        /* Muted background */
-    --color-muted-text: #A1A9B8;   /* Muted text */
+    --color-accent-light: #60A5FA; /* Lighter blue */
+    --color-accent-dark: #2563EB;  /* Darker blue */
+    --color-border: #364356;       /* Medium Blue-Gray for borders */
+    --color-muted: #2F3A4A;        /* Dark Blue-Gray */
+    --color-muted-text: #B4CCEB;   /* Light Blue-Gray */
 
     /* Map to HSL variables for Tailwind */
-    --background: 220 15% 7%;      /* #0E1116 */
-    --foreground: 210 20% 98%;     /* #F5F7FA */
-    --primary: 170 100% 38%;       /* #00C2A8 */
+    --background: 215 28% 12%;    /* #161C26 - Deep Blue-Gray */
+    --foreground: 210 40% 98%;    /* #F5F9FF - Soft Blue-White */
+    --primary: 210 90% 54%;       /* #3B82F6 - Calm Blue */
     --primary-foreground: 0 0% 100%;
-    --card: 220 13% 13%;           /* #1C1F24 */
-    --card-foreground: 210 20% 98%; /* #F5F7FA */
-    --border: 217 19% 27%;         /* #2E374A */
-    --input: 217 19% 27%;          /* #2E374A */
+    --card: 215 25% 18%;          /* #232A36 - Dark Blue-Gray */
+    --card-foreground: 210 40% 98%; /* #F5F9FF - Soft Blue-White */
+    --border: 215 25% 27%;        /* #364356 - Medium Blue-Gray */
+    --input: 215 25% 27%;         /* #364356 - Medium Blue-Gray */
   }
 }
 
 /* For next-themes or manual class-based dark mode */
 .dark {
   /* Base theme colors - Dark Mode */
-  --color-bg: #0E1116;        /* Dark Charcoal */
-  --color-text: #F5F7FA;      /* Soft White */
-  --color-accent: #00C2A8;    /* Vibrant Teal */
-  --color-card: #1C1F24;      /* Dark Slate */
-  --color-shadow: rgba(0, 0, 0, 0.25);
+  --color-bg: #161C26;        /* Deep Blue-Gray */
+  --color-text: #F5F9FF;      /* Soft Blue-White */
+  --color-accent: #3B82F6;    /* Calm Blue */
+  --color-card: #232A36;      /* Dark Blue-Gray */
+  --color-shadow: rgba(0, 0, 0, 0.2); /* Subtle shadow */
 
   /* Derived colors for UI elements */
-  --color-accent-light: #33CFBA; /* Lighter teal for hover states */
-  --color-accent-dark: #00A08A;  /* Darker teal for active states */
-  --color-border: #2E374A;       /* Darker border color */
-  --color-muted: #232A3B;        /* Muted background */
-  --color-muted-text: #A1A9B8;   /* Muted text */
+  --color-accent-light: #60A5FA; /* Lighter blue */
+  --color-accent-dark: #2563EB;  /* Darker blue */
+  --color-border: #364356;       /* Medium Blue-Gray for borders */
+  --color-muted: #2F3A4A;        /* Dark Blue-Gray */
+  --color-muted-text: #B4CCEB;   /* Light Blue-Gray */
 
   /* Map to HSL variables for Tailwind */
-  --background: 220 15% 7%;      /* #0E1116 */
-  --foreground: 210 20% 98%;     /* #F5F7FA */
-  --primary: 170 100% 38%;       /* #00C2A8 */
+  --background: 215 28% 12%;    /* #161C26 - Deep Blue-Gray */
+  --foreground: 210 40% 98%;    /* #F5F9FF - Soft Blue-White */
+  --primary: 210 90% 54%;       /* #3B82F6 - Calm Blue */
   --primary-foreground: 0 0% 100%;
-  --card: 220 13% 13%;           /* #1C1F24 */
-  --card-foreground: 210 20% 98%; /* #F5F7FA */
-  --border: 217 19% 27%;         /* #2E374A */
-  --input: 217 19% 27%;          /* #2E374A */
+  --card: 215 25% 18%;          /* #232A36 - Dark Blue-Gray */
+  --card-foreground: 210 40% 98%; /* #F5F9FF - Soft Blue-White */
+  --border: 215 25% 27%;        /* #364356 - Medium Blue-Gray */
+  --input: 215 25% 27%;         /* #364356 - Medium Blue-Gray */
 }

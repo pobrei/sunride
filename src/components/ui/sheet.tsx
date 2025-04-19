@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
 interface SheetProps {
   /** Whether the sheet is open */
@@ -80,14 +79,9 @@ export function SheetTrigger({
   }
 
   return (
-    <Button
-      variant="default"
-      onClick={() => onOpenChange(true)}
-      className="transition-transform hover:scale-105"
-      {...props}
-    >
+    <button type="button" onClick={() => onOpenChange(true)} {...props}>
       {children}
-    </Button>
+    </button>
   );
 }
 
@@ -191,11 +185,9 @@ export function SheetClose({ className, ...props }: React.ButtonHTMLAttributes<H
   const { onOpenChange } = useSheetContext();
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
       className={cn(
-        'absolute right-4 top-4 opacity-70 transition-transform hover:scale-105 hover:opacity-100 disabled:pointer-events-none',
+        'absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none',
         className
       )}
       onClick={() => onOpenChange(false)}
@@ -203,6 +195,6 @@ export function SheetClose({ className, ...props }: React.ButtonHTMLAttributes<H
     >
       <X className="h-4 w-4" />
       <span className="sr-only">Close</span>
-    </Button>
+    </button>
   );
 }

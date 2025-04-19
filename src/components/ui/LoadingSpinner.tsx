@@ -4,8 +4,10 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { typography, animation, effects, loading, layout } from '@/styles/tailwind-utils';
+import { TrainLoader } from './TrainLoader';
+import '@/styles/custom-loader.css';
 
-type LoadingVariant = 'spinner' | 'pulse' | 'skeleton' | 'dots';
+type LoadingVariant = 'spinner' | 'pulse' | 'skeleton' | 'dots' | 'train';
 type LoadingSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface LoadingSpinnerProps {
@@ -43,7 +45,7 @@ export function LoadingSpinner({
   className,
   centered = false,
   fullPage = false,
-  variant = 'spinner',
+  variant = 'train',
   withContainer = false,
   icon,
   withBackground = false,
@@ -63,6 +65,15 @@ export function LoadingSpinner({
   // Create the spinner content based on variant
   let variantContent;
   switch (variant) {
+    case 'train':
+      variantContent = (
+        <TrainLoader
+          size={typeof size === 'string' ? size : 'md'}
+          message={message}
+          ariaLabel={accessibilityLabel}
+        />
+      );
+      break;
     case 'pulse':
       variantContent = (
         <div className="flex items-center gap-2">

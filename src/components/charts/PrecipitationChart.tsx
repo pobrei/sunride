@@ -186,7 +186,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
             <ReferenceLine
               yAxisId="left"
               y={5}
-              stroke="#90cdf4"
+              stroke={theme.grid}
               strokeDasharray="3 3"
               label={{
                 value: 'Moderate',
@@ -199,7 +199,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
             <ReferenceLine
               yAxisId="right"
               y={50}
-              stroke="#9f7aea"
+              stroke={theme.grid}
               strokeDasharray="3 3"
               label={{
                 value: '50%',
@@ -222,7 +222,7 @@ const PrecipitationChart: React.FC<PrecipitationChartProps> = ({
               dataKey="precipitation"
               name="Precipitation (mm)"
               fill={precipColor}
-              radius={[4, 4, 0, 0]}
+              radius={[0, 0, 0, 0]}
               barSize={20}
               opacity={0.8}
             />

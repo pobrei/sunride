@@ -34,7 +34,7 @@ const BaseChart: React.FC<BaseChartProps & { children: React.ReactNode }> = ({
 }) => {
   return (
     <div className={cn("w-full max-w-full", className)}>
-      <div className="flex items-center justify-between pb-2 px-2 bg-white dark:bg-zinc-800 rounded-t-lg shadow-sm">
+      <div className="flex items-center justify-between pb-2 px-2 bg-white dark:bg-zinc-800 border-b border-border">
         <h2 className="text-sm sm:text-base font-semibold text-zinc-800 dark:text-white">{title}</h2>
         {unitLabel && (
           <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
@@ -42,7 +42,7 @@ const BaseChart: React.FC<BaseChartProps & { children: React.ReactNode }> = ({
           </span>
         )}
       </div>
-      <div className={cn(responsive.chartContainer, "bg-white dark:bg-zinc-800 rounded-b-lg shadow-sm p-2 sm:p-3 border border-zinc-100 dark:border-zinc-700")}>
+      <div className={cn(responsive.chartContainer, "bg-white dark:bg-zinc-800 p-2 sm:p-3 pb-6 border border-border overflow-visible")}>
         {children}
       </div>
     </div>

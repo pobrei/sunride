@@ -33,9 +33,9 @@ const BaseCard: React.FC<BaseCardProps> = ({
   withPadding = true,
 }) => {
   return (
-    <div className={cn("w-full max-w-full rounded-lg overflow-hidden bg-white dark:bg-zinc-800 shadow-sm border border-zinc-100 dark:border-zinc-700", className)}>
+    <div className={cn("w-full max-w-full overflow-hidden bg-white dark:bg-zinc-800 border border-border", className)}>
       {(title || subtitle || headerContent) && (
-        <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-700">
+        <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-800 border-b border-border">
           <div className="flex flex-col">
             {title && <h2 className="text-sm sm:text-base font-semibold text-zinc-800 dark:text-white">{title}</h2>}
             {subtitle && <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">{subtitle}</span>}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, AlertCircle } from 'lucide-react';
@@ -21,16 +22,11 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
   const [error, setError] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Use notifications context
-  const { addNotification } = useSimpleNotifications() || {
-    addNotification: (type: string, message: string) => {
-      console.log(`[Notification] ${type}: ${message}`);
-      return '';
-    },
-  };
+  // Get notifications context
+  const { addNotification } = useSimpleNotifications();
 
   const processGpxFile = (file: File) => {
     if (!file) return;
@@ -51,23 +47,12 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
           throw new Error('No valid route points found in the GPX file');
         }
 
-        // Check if this is a sample route (fallback)
-        const isSampleRoute = gpxData.name === 'Sample Route (Amsterdam)';
-
         // Success!
         onGPXLoaded(gpxData);
-
-        if (isSampleRoute) {
-          addNotification(
-            'warning',
-            'Could not parse the GPX file. Using a sample route instead.'
-          );
-        } else {
-          addNotification(
-            'success',
-            `Successfully loaded ${gpxData.points.length} points from ${file.name}`
-          );
-        }
+        addNotification(
+          'success',
+          `Successfully loaded ${gpxData.points.length} points from ${file.name}`
+        );
       } catch (err) {
         // Handle error with our utility
         const errorMsg = handleError(err, {
@@ -220,7 +205,9 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate text-sm">{fileName}</p>
+                    <p className="font-medium truncate text-sm">
+                      {fileName}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {isLoading ? 'Processing...' : `${(fileSize / 1024).toFixed(1)} KB`}
                     </p>
@@ -230,14 +217,9 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
             )}
 
             {error && (
-              <Alert
-                variant="destructive"
-                className="py-4 px-4 rounded-xl bg-red-50 border border-red-200 mt-4"
-              >
+              <Alert variant="destructive" className="py-4 px-4 rounded-xl bg-red-50 border border-red-200 mt-4">
                 <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                <AlertDescription className="text-sm font-medium text-red-700">
-                  {error}
-                </AlertDescription>
+                <AlertDescription className="text-sm font-medium text-red-700">{error}</AlertDescription>
               </Alert>
             )}
 

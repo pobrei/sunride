@@ -3,7 +3,6 @@ import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { FormErrorMessage } from './FormErrorMessage';
-import { Button } from '@/components/ui/button';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Optional left icon */
@@ -57,8 +56,8 @@ function Input({
         type={type}
         data-slot="input"
         className={cn(
-          'input w-full rounded-xl border border-border bg-transparent px-4 py-2 text-sm transition-all duration-300 ease-in-out',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus:shadow-md',
+          'input w-full border border-border bg-transparent px-4 py-2 text-sm',
+          'focus:outline-none focus-visible:ring-1 focus-visible:ring-accent',
           'placeholder:text-muted disabled:opacity-50 disabled:cursor-not-allowed',
           'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
           leftIcon && 'input-with-icon-left pl-10',
@@ -71,7 +70,7 @@ function Input({
           isValid && 'input-success border-green-500 focus-visible:ring-green-500',
           className
         )}
-        aria-invalid={isInvalid}
+        aria-invalid={isInvalid ? 'true' : 'false'}
         aria-describedby={cn(
           errorMessage && isInvalid ? errorId || `${props.id || props.name}-error` : undefined,
           description ? descriptionId || `${props.id || props.name}-description` : undefined
@@ -89,16 +88,15 @@ function Input({
         </div>
       )}
       {initialType === 'password' && showPasswordToggle && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="input-icon-right h-6 w-6 p-0 text-muted transition-transform hover:scale-105 hover:text-foreground"
+        <button
+          type="button"
+          className="input-icon-right text-muted hover:text-foreground"
           onClick={togglePasswordVisibility}
           tabIndex={-1}
           aria-label={type === 'password' ? 'Show password' : 'Hide password'}
         >
           {type === 'password' ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-        </Button>
+        </button>
       )}
       {rightIcon &&
         !isValid &&

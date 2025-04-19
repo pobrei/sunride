@@ -5,14 +5,19 @@ import * as SliderPrimitive from '@radix-ui/react-slider';
 
 import { cn } from '@/lib/utils';
 
+interface SliderProps extends React.ComponentProps<typeof SliderPrimitive.Root> {
+  thumbClassName?: string;
+}
+
 function Slider({
   className,
+  thumbClassName,
   defaultValue,
   value,
   min = 0,
   max = 100,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: SliderProps) {
   const _values = React.useMemo(
     () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
     [value, defaultValue, min, max]
@@ -34,13 +39,13 @@ function Slider({
       <SliderPrimitive.Track
         data-slot="slider-track"
         className={cn(
-          'bg-slate-100 dark:bg-slate-800 relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-2 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2 border border-slate-200 dark:border-slate-700'
+          'bg-[#E5E7EB] dark:bg-[#2D3748] relative grow overflow-hidden data-[orientation=horizontal]:h-2 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2 rounded-full'
         )}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            'bg-primary/70 dark:bg-primary/60 absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full'
+            'bg-[#00C2A8]/70 dark:bg-[#00C2A8]/60 absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full rounded-full'
           )}
         />
       </SliderPrimitive.Track>
@@ -48,7 +53,10 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
-          className="border-primary/50 dark:border-primary/50 bg-white dark:bg-slate-800 hover:border-primary dark:hover:border-primary block size-5 shrink-0 rounded-full border-2 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-110 focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          className={cn(
+            "border-primary/50 dark:border-primary/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+            thumbClassName
+          )}
         />
       ))}
     </SliderPrimitive.Root>

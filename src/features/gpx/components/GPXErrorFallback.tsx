@@ -91,7 +91,7 @@ export function GPXErrorFallback({
           <Button
             variant="outline"
             size="sm"
-            className="w-full flex items-center justify-center gap-2 transition-transform hover:scale-105"
+            className="w-full flex items-center justify-center gap-2"
             onClick={handleRetry}
           >
             <Upload className="h-4 w-4" />
@@ -114,24 +114,17 @@ export function GPXWidgetFallback({
   error?: Error | string | null;
 }) {
   return (
-    <Card className="rounded-2xl shadow-sm bg-white min-h-[100px]">
-      <CardContent className="flex flex-col items-center justify-center text-center">
-        <FileX className="h-5 w-5 text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground mb-2">
-          {error instanceof Error ? error.message : error || 'GPX file error'}
-        </p>
-        {onRetry && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mt-1 transition-transform hover:scale-105"
-            onClick={onRetry}
-          >
-            <Upload className="h-3 w-3 mr-1" />
-            Try Another File
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+    <div className="p-3 bg-muted/50 rounded-md flex flex-col items-center justify-center text-center min-h-[100px]">
+      <FileX className="h-5 w-5 text-muted-foreground mb-2" />
+      <p className="text-sm text-muted-foreground mb-2">
+        {error instanceof Error ? error.message : error || 'GPX file error'}
+      </p>
+      {onRetry && (
+        <Button variant="ghost" size="sm" className="mt-1" onClick={onRetry}>
+          <Upload className="h-3 w-3 mr-1" />
+          Try Another File
+        </Button>
+      )}
+    </div>
   );
 }

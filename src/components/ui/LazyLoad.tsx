@@ -25,7 +25,7 @@ interface LazyLoadProps {
 export function LazyLoad({
   component: Component,
   componentProps = {},
-  fallback = <LoadingSpinner centered />,
+  fallback = <LoadingSpinner centered variant="train" />,
   errorComponent = <ErrorMessage message="Failed to load component" />,
   onlyWhenVisible = false,
   rootMargin = '100px',

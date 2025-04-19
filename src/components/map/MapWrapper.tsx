@@ -2,10 +2,10 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { GPXData, ForecastPoint } from '@/types';
 import { responsive } from '@/styles/tailwind-utils';
 import { cn } from '@/lib/utils';
+import { SimpleLoader } from '@/components/ui/SimpleLoader';
 
 interface WeatherDataPoint {
   temperature: number;
@@ -36,8 +36,16 @@ interface MapWrapperProps {
 const DynamicMap = dynamic(() => import('./SimpleLeafletMap'), {
   ssr: false,
   loading: () => (
-    <div className={cn(responsive.mapContainer, "bg-muted flex items-center justify-center max-w-7xl mx-auto")}>
-      <LoadingSpinner message="Loading map..." centered variant="spinner" size="lg" />
+    <div
+      className={cn(
+        responsive.mapContainer,
+        'bg-muted flex items-center justify-center max-w-7xl mx-auto'
+      )}
+    >
+      <div className="flex flex-col items-center justify-center">
+        <SimpleLoader />
+        <p className="text-sm text-muted-foreground font-medium mt-2">Loading map...</p>
+      </div>
     </div>
   ),
 });

@@ -5,6 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RefreshCw, AlertTriangle, Cloud, Thermometer, Droplets, Wind } from 'lucide-react';
+import { useSimpleNotifications } from '@/features/notifications/context';
+import { handleError, ErrorType } from '@/utils/errorHandlers';
+import { captureException } from '@/features/monitoring';
+import type { ForecastPoint, WeatherProvider } from '@/features/weather/types';
+
 // Mock function for fetchWeatherComparison
 const fetchWeatherComparison = async (points: ForecastPoint[]) => {
   // This is a mock implementation
@@ -33,18 +38,12 @@ const fetchWeatherComparison = async (points: ForecastPoint[]) => {
     },
   ];
 };
-import { useSimpleNotifications } from '@/features/notifications/context';
-import { handleError, ErrorType } from '@/utils/errorHandlers';
-import { captureException } from '@/features/monitoring';
-import type { ForecastPoint, WeatherProvider } from '@/features/weather/types';
 
 interface WeatherProviderComparisonProps {
   forecastPoints: ForecastPoint[];
 }
 
-export default function SimpleWeatherProviderComparison({
-  forecastPoints = [],
-}: WeatherProviderComparisonProps) {
+export default function SimpleWeatherProviderComparison({ forecastPoints = [] }: WeatherProviderComparisonProps) {
   const [isComparing, setIsComparing] = useState(false);
   const [providers, setProviders] = useState<WeatherProvider[]>([]);
   const [activeTab, setActiveTab] = useState('overview');
@@ -66,10 +65,7 @@ export default function SimpleWeatherProviderComparison({
       const comparisonData = await fetchWeatherComparison(samplePoints);
 
       setProviders(comparisonData);
-      addNotification(
-        'success',
-        `Successfully compared ${comparisonData.length} weather providers`
-      );
+      addNotification('success', `Successfully compared ${comparisonData.length} weather providers`);
     } catch (err) {
       const errorMsg = handleError(err, {
         context: 'WeatherProviderComparison',
@@ -98,8 +94,7 @@ export default function SimpleWeatherProviderComparison({
           {providers.length === 0 ? (
             <div className="space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Compare weather data from multiple providers to get a more accurate forecast for
-                your route.
+                Compare weather data from multiple providers to get a more accurate forecast for your route.
               </p>
 
               <Button
@@ -130,12 +125,8 @@ export default function SimpleWeatherProviderComparison({
             <div className="space-y-6">
               <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="overview" className="text-sm">
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger value="details" className="text-sm">
-                    Detailed Comparison
-                  </TabsTrigger>
+                  <TabsTrigger value="overview" className="text-sm">Overview</TabsTrigger>
+                  <TabsTrigger value="details" className="text-sm">Detailed Comparison</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6">
@@ -145,9 +136,7 @@ export default function SimpleWeatherProviderComparison({
                         <div className="flex items-center justify-between">
                           <h4 className="text-base font-medium">{provider.name}</h4>
                           {provider.isPremium && (
-                            <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">
-                              Premium
-                            </span>
+                            <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">Premium</span>
                           )}
                         </div>
 
@@ -175,10 +164,8 @@ export default function SimpleWeatherProviderComparison({
                             </div>
                             <p className="text-base sm:text-lg font-semibold text-teal-600">
                               {Math.round(
-                                provider.data.reduce(
-                                  (sum, data) => sum + (data?.humidity || 0),
-                                  0
-                                ) / provider.data.length
+                                provider.data.reduce((sum, data) => sum + (data?.humidity || 0), 0) /
+                                  provider.data.length
                               )}
                               %
                             </p>
@@ -191,10 +178,8 @@ export default function SimpleWeatherProviderComparison({
                             </div>
                             <p className="text-base sm:text-lg font-semibold text-teal-600">
                               {(
-                                provider.data.reduce(
-                                  (sum, data) => sum + (data?.windSpeed || 0),
-                                  0
-                                ) / provider.data.length
+                                provider.data.reduce((sum, data) => sum + (data?.windSpeed || 0), 0) /
+                                provider.data.length
                               ).toFixed(1)}{' '}
                               m/s
                             </p>
@@ -206,8 +191,7 @@ export default function SimpleWeatherProviderComparison({
                               <p className="text-xs sm:text-sm font-medium">Max Precipitation</p>
                             </div>
                             <p className="text-base sm:text-lg font-semibold text-teal-600">
-                              {Math.max(...provider.data.map(data => data?.rain || 0)).toFixed(1)}{' '}
-                              mm
+                              {Math.max(...provider.data.map(data => data?.rain || 0)).toFixed(1)} mm
                             </p>
                           </div>
                         </div>
@@ -221,63 +205,45 @@ export default function SimpleWeatherProviderComparison({
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-gray-800/60">
                         <tr>
-                          <th
-                            scope="col"
-                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Time
                           </th>
                           {providers.map(provider => (
-                            <th
-                              key={provider.id}
-                              scope="col"
-                              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
+                            <th key={provider.id} scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               {provider.name}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {(forecastPoints || [])
-                          .filter((_, i) => i % 3 === 0)
-                          .map((point, index) => (
-                            <tr
-                              key={index}
-                              className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800/60' : ''}
-                            >
-                              <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-500">
-                                {new Date(point.time).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </td>
-                              {providers.map(provider => {
-                                const data = provider.data[index];
-                                return (
-                                  <td
-                                    key={provider.id}
-                                    className="px-4 py-3 whitespace-nowrap text-xs"
-                                  >
-                                    {data ? (
-                                      <div className="space-y-1">
-                                        <div className="flex items-center gap-1">
-                                          <Thermometer className="h-3 w-3 text-teal-500" />
-                                          <span>{data.temperature.toFixed(1)}°C</span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                          <Wind className="h-3 w-3 text-teal-500" />
-                                          <span>{data.windSpeed.toFixed(1)} m/s</span>
-                                        </div>
+                        {(forecastPoints || []).filter((_, i) => i % 3 === 0).map((point, index) => (
+                          <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800/60' : ''}>
+                            <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-500">
+                              {new Date(point.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                            {providers.map(provider => {
+                              const data = provider.data[index];
+                              return (
+                                <td key={provider.id} className="px-4 py-3 whitespace-nowrap text-xs">
+                                  {data ? (
+                                    <div className="space-y-1">
+                                      <div className="flex items-center gap-1">
+                                        <Thermometer className="h-3 w-3 text-teal-500" />
+                                        <span>{data.temperature.toFixed(1)}°C</span>
                                       </div>
-                                    ) : (
-                                      <Skeleton className="h-8 w-16" />
-                                    )}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          ))}
+                                      <div className="flex items-center gap-1">
+                                        <Wind className="h-3 w-3 text-teal-500" />
+                                        <span>{data.windSpeed.toFixed(1)} m/s</span>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <Skeleton className="h-8 w-16" />
+                                  )}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>

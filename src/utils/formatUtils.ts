@@ -184,22 +184,22 @@ export function formatUVIndex(uvIndex: number): string {
 }
 
 /**
- * Get UV risk level information based on UV index
+ * Get UV risk level information based on UV index - Flat Design (monochrome)
  *
  * @param uvIndex - UV index value
  * @returns Object with risk level and color
  */
 export function getUVRiskLevel(uvIndex: number): { level: string; color: string } {
   if (uvIndex < 3) {
-    return { level: 'Low', color: 'rgba(76, 175, 80, 1)' }; // Green
+    return { level: 'Low', color: 'rgba(204, 204, 204, 1)' }; // Light gray
   } else if (uvIndex < 6) {
-    return { level: 'Moderate', color: 'rgba(255, 235, 59, 1)' }; // Yellow
+    return { level: 'Moderate', color: 'rgba(153, 153, 153, 1)' }; // Medium gray
   } else if (uvIndex < 8) {
-    return { level: 'High', color: 'rgba(255, 152, 0, 1)' }; // Orange
+    return { level: 'High', color: 'rgba(102, 102, 102, 1)' }; // Dark gray
   } else if (uvIndex < 11) {
-    return { level: 'Very High', color: 'rgba(244, 67, 54, 1)' }; // Red
+    return { level: 'Very High', color: 'rgba(51, 51, 51, 1)' }; // Very dark gray
   } else {
-    return { level: 'Extreme', color: 'rgba(156, 39, 176, 1)' }; // Purple
+    return { level: 'Extreme', color: 'rgba(0, 0, 0, 1)' }; // Black
   }
 }
 
@@ -234,59 +234,39 @@ export function getWeatherIconUrl(iconCode: string): string {
 }
 
 /**
- * Get the appropriate marker color based on weather conditions
+ * Get the appropriate marker color based on weather conditions - Flat Design (monochrome)
  *
  * @param weather - Weather data object or null
  * @returns Hex color code for the marker
  */
 export function getMarkerColor(weather: WeatherData | null): string {
-  // If no weather data, return a neutral gray color
-  if (!weather) return '#9E9E9E'; // Gray for no data
+  // In flat design, we use a monochrome palette
+  if (!weather) return '#CCCCCC'; // Light gray for no data
 
   const alerts: ReturnType<typeof checkWeatherAlerts> = checkWeatherAlerts(weather);
 
-  if (alerts.extremeHeat) return '#FF5722'; // Red-orange for extreme heat
-  if (alerts.freezing) return '#2196F3'; // Blue for freezing
-  if (alerts.highWind) return '#FFC107'; // Amber for high wind
-  if (alerts.heavyRain) return '#673AB7'; // Deep purple for heavy rain
+  if (alerts.extremeHeat) return '#000000'; // Black for extreme heat
+  if (alerts.freezing) return '#333333'; // Dark gray for freezing
+  if (alerts.highWind) return '#666666'; // Medium gray for high wind
+  if (alerts.heavyRain) return '#999999'; // Gray for heavy rain
 
   // Default - normal conditions
-  return '#4CAF50'; // Green
+  return '#000000'; // Black
 }
 
 /**
- * Create a temperature gradient for charts
+ * Create a solid color for temperature charts - Flat Design (no gradients)
  *
  * @param ctx - Canvas context
  * @param minTemp - Minimum temperature
  * @param maxTemp - Maximum temperature
- * @returns Canvas gradient
+ * @returns Solid color
  */
 export function createTemperatureGradient(
   ctx: CanvasRenderingContext2D,
   minTemp: number,
   maxTemp: number
-): CanvasGradient {
-  const gradient: CanvasGradient = ctx.createLinearGradient(0, 0, 0, 300);
-
-  if (minTemp < 0 && maxTemp > 30) {
-    // Wide range: cold to hot
-    gradient.addColorStop(0, 'rgba(255, 87, 34, 0.8)'); // Hot (red-orange)
-    gradient.addColorStop(0.4, 'rgba(76, 175, 80, 0.5)'); // Pleasant (green)
-    gradient.addColorStop(1, 'rgba(33, 150, 243, 0.8)'); // Cold (blue)
-  } else if (minTemp < 0) {
-    // Cold range
-    gradient.addColorStop(0, 'rgba(33, 150, 243, 0.5)');
-    gradient.addColorStop(1, 'rgba(33, 150, 243, 0.8)');
-  } else if (maxTemp > 30) {
-    // Hot range
-    gradient.addColorStop(0, 'rgba(255, 87, 34, 0.8)');
-    gradient.addColorStop(1, 'rgba(255, 152, 0, 0.5)');
-  } else {
-    // Pleasant range
-    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');
-    gradient.addColorStop(1, 'rgba(76, 175, 80, 0.8)');
-  }
-
-  return gradient;
+): string {
+  // In flat design, we don't use gradients, just return a solid color
+  return '#000000'; // Black for light mode (would be white in dark mode)
 }

@@ -16,91 +16,41 @@ interface MotionComponentProps extends MotionProps {
 }
 
 /**
- * A wrapper component for Framer Motion animations
+ * A wrapper component for Framer Motion animations - Flat Design Version
+ * In flat design, we don't use animations, so this just renders the children
  */
 export function MotionDiv({
   children,
   className,
-  variant = 'fadeIn',
-  delay = 0,
-  duration = 0.5,
+  variant = 'none',
   as = 'div',
-  once = true,
-  amount = 0.3,
   ...props
 }: MotionComponentProps) {
-  // Define animation variants
+  // In flat design, we don't use animations
   const variants: Record<string, Variants> = {
     fadeIn: {
-      hidden: { opacity: 0 },
-      visible: { 
-        opacity: 1,
-        transition: { 
-          duration,
-          delay,
-          ease: 'easeOut'
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     fadeInUp: {
-      hidden: { opacity: 0, y: 20 },
-      visible: { 
-        opacity: 1, 
-        y: 0,
-        transition: { 
-          duration,
-          delay,
-          ease: 'easeOut'
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     fadeInDown: {
-      hidden: { opacity: 0, y: -20 },
-      visible: { 
-        opacity: 1, 
-        y: 0,
-        transition: { 
-          duration,
-          delay,
-          ease: 'easeOut'
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     fadeInLeft: {
-      hidden: { opacity: 0, x: -20 },
-      visible: { 
-        opacity: 1, 
-        x: 0,
-        transition: { 
-          duration,
-          delay,
-          ease: 'easeOut'
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     fadeInRight: {
-      hidden: { opacity: 0, x: 20 },
-      visible: { 
-        opacity: 1, 
-        x: 0,
-        transition: { 
-          duration,
-          delay,
-          ease: 'easeOut'
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     scale: {
-      hidden: { opacity: 0, scale: 0.9 },
-      visible: { 
-        opacity: 1, 
-        scale: 1,
-        transition: { 
-          duration,
-          delay,
-          ease: [0.175, 0.885, 0.32, 1]
-        }
-      }
+      hidden: {},
+      visible: {}
     },
     none: {
       hidden: {},
@@ -110,13 +60,10 @@ export function MotionDiv({
 
   const Component = motion[as as keyof typeof motion] || motion.div;
 
+  // Just render the component without animations
   return (
     <Component
       className={cn(className)}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once, amount }}
-      variants={variants[variant]}
       {...props}
     >
       {children}
@@ -263,32 +210,17 @@ export function ScaleIn({
 }
 
 /**
- * A motion component for staggered children animations
+ * A motion component for staggered children animations - Flat Design Version
+ * In flat design, we don't use staggered animations
  */
 export function StaggerContainer({
   children,
   className,
-  delay = 0,
-  staggerDelay = 0.1,
   ...props
 }: Omit<MotionComponentProps, 'variant' | 'duration'> & { staggerDelay?: number }) {
   return (
     <motion.div
       className={cn(className)}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            delay,
-            staggerChildren: staggerDelay,
-            delayChildren: delay,
-          }
-        }
-      }}
       {...props}
     >
       {children}
@@ -297,20 +229,17 @@ export function StaggerContainer({
 }
 
 /**
- * A motion component for hover animations
+ * A motion component for hover animations - Flat Design Version
+ * In flat design, we don't use hover animations
  */
 export function HoverMotion({
   children,
   className,
-  scale = 1.05,
   ...props
 }: Omit<MotionComponentProps, 'variant' | 'delay' | 'duration' | 'once' | 'amount'> & { scale?: number }) {
   return (
     <motion.div
       className={cn(className)}
-      whileHover={{ scale }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2 }}
       {...props}
     >
       {children}

@@ -10,6 +10,7 @@
 @import '../styles/micro-interactions.css';
 @import '../styles/new-charts.css';
 @import '../styles/chart-styles.css';
+@import '../styles/animations.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -54,37 +55,37 @@
 }
 
 :root {
-  /* Base radius for consistent rounded corners */
-  --radius: 0.75rem;
+  /* Modern subtle border radius */
+  --radius: 0.5rem;
 
-  /* Light mode - Sunride refined color palette */
+  /* Light mode - Calm and readable color palette */
   /* Background and text colors */
-  --background: 210 20% 98%; /* #F6F8FA - Soft Light Gray */
-  --foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
+  --background: 216 100% 97%; /* #F0F5FF - Soft Blue-tinted White */
+  --foreground: 217 33% 18%; /* #1E293B - Deep Blue-Gray */
 
   /* Card colors */
   --card: 0 0% 100%; /* #FFFFFF - Pure White */
-  --card-foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
+  --card-foreground: 217 33% 18%; /* #1E293B - Deep Blue-Gray */
 
   /* Popover colors */
   --popover: 0 0% 100%; /* #FFFFFF - Pure White */
-  --popover-foreground: 215 30% 17%; /* #1E2A38 - Deep Navy Blue */
+  --popover-foreground: 217 33% 18%; /* #1E293B - Deep Blue-Gray */
 
-  /* Primary colors - Vibrant Teal */
-  --primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
-  --primary-foreground: 0 0% 100%; /* White text on teal */
-  --primary-light: 170 100% 50%; /* #00F5D4 - Lighter teal for hover states */
-  --primary-dark: 170 100% 30%; /* #009A85 - Darker teal for active states */
+  /* Primary colors - Calm Blue */
+  --primary: 210 90% 54%; /* #3B82F6 - Calm Blue */
+  --primary-foreground: 0 0% 100%; /* White text on blue */
+  --primary-light: 210 90% 65%; /* #60A5FA - Lighter blue for hover states */
+  --primary-dark: 210 90% 45%; /* #2563EB - Darker blue for active states */
 
-  /* Secondary colors - complementary to teal */
-  --secondary: 200 60% 50%; /* #3399CC - Sky Blue */
-  --secondary-foreground: 0 0% 100%; /* White text on blue */
-  --secondary-light: 200 60% 65%; /* #66B8E0 - Lighter blue for hover states */
-  --secondary-dark: 200 60% 40%; /* #297AA6 - Darker blue for active states */
+  /* Secondary colors - Soft Slate */
+  --secondary: 215 16% 47%; /* #64748B - Soft Slate */
+  --secondary-foreground: 0 0% 100%; /* White text on slate */
+  --secondary-light: 215 16% 57%; /* #7E8CA2 - Lighter slate for hover states */
+  --secondary-dark: 215 16% 37%; /* #4B5563 - Darker slate for active states */
 
   /* Muted colors for subtle UI elements */
-  --muted: 220 14% 96%; /* #F3F4F6 - light gray */
-  --muted-foreground: 215 25% 40%; /* #5A6A80 - medium navy for subtle text */
+  --muted: 213 60% 97%; /* #EDF2FF - light blue-gray */
+  --muted-foreground: 215 25% 47%; /* #64748B - medium navy for subtle text */
 
   /* Accent colors - using the same teal as primary for consistency */
   --accent: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
@@ -117,8 +118,8 @@
   --info-dark: 199 89% 35%; /* Darker sky blue for active states */
 
   /* Border, input, and ring colors */
-  --border: 220 13% 91%; /* #E5E7EB - soft gray for borders/dividers */
-  --input: 220 13% 91%; /* #E5E7EB - soft gray for inputs */
+  --border: 214 100% 91%; /* #D1E0FF - soft blue for borders/dividers */
+  --input: 214 100% 91%; /* #D1E0FF - soft blue for inputs */
   --ring: 217 91% 60%; /* #3B82F6 - vibrant blue for focus rings */
 
   /* Chart colors - expanded palette */
@@ -143,30 +144,30 @@
 }
 
 .dark {
-  /* Dark mode - Sunride refined color palette */
+  /* Dark mode - Calm and readable color palette */
   /* Background and text colors */
-  --background: 220 15% 7%; /* #0E1116 - Dark Charcoal */
-  --foreground: 210 20% 98%; /* #F5F7FA - Soft White */
+  --background: 215 28% 12%; /* #161C26 - Deep Blue-Gray */
+  --foreground: 210 40% 98%; /* #F5F9FF - Soft Blue-White */
 
   /* Card colors */
-  --card: 220 13% 13%; /* #1C1F24 - Dark Slate */
-  --card-foreground: 210 20% 98%; /* #F5F7FA - Soft White */
+  --card: 215 25% 18%; /* #232A36 - Dark Blue-Gray */
+  --card-foreground: 210 40% 98%; /* #F5F9FF - Soft Blue-White */
 
   /* Popover colors */
-  --popover: 220 13% 13%; /* #1C1F24 - Dark Slate */
-  --popover-foreground: 210 20% 98%; /* #F5F7FA - Soft White */
+  --popover: 215 25% 18%; /* #232A36 - Dark Blue-Gray */
+  --popover-foreground: 210 40% 98%; /* #F5F9FF - Soft Blue-White */
 
-  /* Primary colors - Vibrant Teal adjusted for dark mode */
-  --primary: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
+  /* Primary colors - Calm Blue adjusted for dark mode */
+  --primary: 210 90% 54%; /* #3B82F6 - Calm Blue */
   --primary-foreground: 0 0% 100%; /* White text */
-  --primary-light: 170 100% 45%; /* #00DBC0 - Lighter teal for hover states */
-  --primary-dark: 170 100% 32%; /* #00A38C - Darker teal for active states */
+  --primary-light: 210 90% 65%; /* #60A5FA - Lighter blue for hover states */
+  --primary-dark: 210 90% 45%; /* #2563EB - Darker blue for active states */
 
-  /* Secondary colors - complementary to teal adjusted for dark mode */
-  --secondary: 200 60% 50%; /* #3399CC - Sky Blue */
+  /* Secondary colors - Soft Slate adjusted for dark mode */
+  --secondary: 215 16% 57%; /* #7E8CA2 - Soft Slate */
   --secondary-foreground: 0 0% 100%; /* White text */
-  --secondary-light: 200 60% 60%; /* #4DAAD9 - Lighter blue for hover states */
-  --secondary-dark: 200 60% 42%; /* #2B82AD - Darker blue for active states */
+  --secondary-light: 215 16% 67%; /* #99A6BA - Lighter slate for hover states */
+  --secondary-dark: 215 16% 47%; /* #64748B - Darker slate for active states */
 
   /* Muted colors for subtle UI elements */
   --muted: 220 15% 16%; /* #232A3B - dark muted background */
@@ -243,26 +244,24 @@
       'calt' 1;
   }
 
-  /* Custom scrollbar styles */
+  /* Modern scrollbar styles */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--background);
+    background: hsl(var(--background));
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--accent);
+    background: hsl(var(--muted-foreground) / 0.3);
     border-radius: 4px;
-    opacity: 0.7;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-light);
-    opacity: 1;
+    background: hsl(var(--muted-foreground) / 0.5);
   }
 
   /* Datetime input styles for dark theme */
@@ -271,55 +270,18 @@
   }
 }
 
-/* Enhanced animations and transitions */
+/* Modern design utilities */
 @layer utilities {
-  .transition-smooth {
-    transition: all 0.2s ease-in-out;
-  }
-
-  .hover-lift {
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
-
-  .micro-shadow {
-    box-shadow: 0 1px 2px var(--color-shadow);
-  }
-
-  .card-shadow {
-    box-shadow:
-      0 4px 12px var(--color-shadow),
-      0 1px 3px var(--color-shadow);
-  }
-
-  .inner-shadow {
-    box-shadow: inset 0 1px 3px var(--color-shadow);
-  }
-
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-accent/40 focus:ring-offset-1 focus:ring-offset-background;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent/40 focus:ring-offset-2 focus:ring-offset-background transition-colors;
   }
 
-  /* Use Tailwind's built-in animations instead */
-
-  .animate-slide-up {
-    animation: slideUp 0.3s ease-in-out;
+  .card-hover {
+    @apply hover:shadow-md transition-all duration-200;
   }
 
-  @keyframes slideUp {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  .interactive-element {
+    @apply transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
   }
 
   /* Custom classes for chart bars */
@@ -458,30 +420,36 @@
     width: 100%;
   }
 
-  /* Map marker styles */
+  /* Map marker styles - modern */
   .map-marker {
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .map-marker-normal {
     width: 24px;
     height: 24px;
-    border: 2px solid white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-size: 12px;
-    font-weight: normal;
+    font-weight: medium;
   }
 
   .map-marker-selected {
     width: 32px;
     height: 32px;
-    border: 3px solid #ffffff;
-    box-shadow: 0 0 15px var(--color-shadow);
+    border: 2px solid hsl(var(--primary));
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
     font-size: 14px;
     font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(1.1);
   }
 
   /* Map popup styles */

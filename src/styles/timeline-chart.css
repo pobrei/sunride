@@ -116,7 +116,6 @@
 .elevation-chart-container {
   position: relative;
   overflow: hidden;
-  border-radius: 0.5rem; /* rounded-lg */
 }
 
 @media (max-width: 768px) {
@@ -126,7 +125,7 @@
     background-color: var(--color-bg); /* bg-background */
     padding-top: 0.5rem; /* pt-2 */
     padding-bottom: 1rem; /* pb-4 */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* No shadows in flat design */
   }
 }
 
@@ -135,26 +134,23 @@
   position: absolute; /* absolute */
   width: 0.75rem; /* w-3 */
   height: 0.75rem; /* h-3 */
-  border-radius: 9999px; /* rounded-full */
-  background-color: var(--chart-humidity-color, var(--color-accent)); /* Use chart color with accent as fallback */
+  background-color: #000000; /* Black for light mode */
   transform: translate(-50%, -50%); /* transform -translate-x-1/2 -translate-y-1/2 */
   z-index: 2; /* z-2 */
-  box-shadow: 0 0 0 2px var(--color-card);
+  border: 1px solid #FFFFFF;
 }
 
 .chart-point-marker.active {
   width: 1rem; /* w-4 */
   height: 1rem; /* h-4 */
-  background-color: var(--chart-humidity-color, var(--color-accent)); /* Use chart color with accent as fallback */
-  box-shadow: 0 0 0 2px var(--chart-humidity-color, var(--color-accent)), 0 0 0 4px var(--color-card); /* ring-2 ring-accent */
+  background-color: #000000; /* Black for light mode */
+  border: 2px solid #FFFFFF;
 }
 
 /* Chart tooltip */
 .chart-custom-tooltip {
   padding: 0.5rem; /* p-2 */
   background-color: var(--color-card); /* bg-card */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* shadow-md */
-  border-radius: 0.5rem; /* rounded-lg */
   border: 1px solid var(--color-border); /* border border-border */
   font-size: 0.875rem; /* text-sm */
 }

@@ -48,7 +48,7 @@ export function LoadingOverlay({
       )}
     >
       {children && <div className="opacity-50 pointer-events-none">{children}</div>}
-      
+
       <div
         className={cn(
           'absolute inset-0 flex items-center justify-center',
@@ -61,7 +61,7 @@ export function LoadingOverlay({
         aria-busy="true"
       >
         <div className="flex flex-col items-center justify-center space-y-3 p-4 text-center">
-          {showSpinner && <LoadingSpinner size={spinnerSize} />}
+          {showSpinner && <LoadingSpinner size={spinnerSize} variant="train" />}
           {message && (
             <p className="text-sm font-medium text-foreground">{message}</p>
           )}
@@ -96,7 +96,7 @@ export function FullPageLoadingOverlay({
       aria-busy="true"
     >
       <div className="flex flex-col items-center justify-center space-y-3 p-4 text-center">
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size="lg" variant="train" />
         {message && (
           <p className="text-base font-medium text-foreground">{message}</p>
         )}
