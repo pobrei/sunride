@@ -134,10 +134,10 @@ export async function exportToPDF({
     pdf.text(`Min Elevation: ${formatElevation(gpxData.minElevation)}`, margin, 72);
 
     // Add map screenshot if map ref is available
-    let currentY = 72;
+    let currentY = 80; // Increase starting position to avoid overlap
     if (mapRef.current) {
-      pdf.text('Route Map', margin, 84);
-      currentY = 84;
+      pdf.text('Route Map', margin, currentY + 8);
+      currentY += 8;
 
       try {
         // Create a simplified version of the map for export
@@ -217,39 +217,42 @@ export async function exportToPDF({
         const mapImgWidth = contentWidth;
         const mapImgHeight = (mapCanvas.height / mapCanvas.width) * mapImgWidth;
 
-        pdf.addImage(mapImgData, 'PNG', margin, 88, mapImgWidth, mapImgHeight);
-        currentY = 88 + mapImgHeight;
+        // Add some spacing before the map image
+        pdf.addImage(mapImgData, 'PNG', margin, currentY + 10, mapImgWidth, mapImgHeight);
+        currentY = currentY + 10 + mapImgHeight + 10; // Add spacing after the map
       } catch (error) {
         console.error('Error capturing map:', error);
 
         // Add text explaining the map couldn't be captured
-        pdf.text('Route map could not be captured due to browser limitations.', margin, 88);
-        pdf.text('Please view the map in the web application.', margin, 95);
+        pdf.text('Route map could not be captured due to browser limitations.', margin, currentY + 10);
+        pdf.text('Please view the map in the web application.', margin, currentY + 17);
 
         // Add a simple placeholder rectangle
         pdf.setDrawColor(200, 200, 200);
         pdf.setFillColor(245, 245, 245);
-        pdf.roundedRect(margin, 102, contentWidth, 100, 3, 3, 'FD');
+        pdf.roundedRect(margin, currentY + 24, contentWidth, 100, 3, 3, 'FD');
 
         // Add some text in the placeholder
         pdf.setFontSize(14);
         pdf.setTextColor(100, 100, 100);
-        pdf.text('Map Preview Not Available', margin + contentWidth/2 - 40, 152);
+        pdf.text('Map Preview Not Available', margin + contentWidth/2 - 40, currentY + 74);
 
         // Update the current Y position
-        currentY = 212;
+        currentY = currentY + 134; // 24 + 100 + 10
       }
     }
 
     // Add charts if available
     if (chartsRef.current) {
-      // Check if we need a new page
-      if (currentY > pageHeight - 100) {
+      // Check if we need a new page - ensure at least 150px available for charts
+      if (currentY > pageHeight - 150) {
         pdf.addPage();
         currentY = 20;
       }
 
-      pdf.text('Weather Charts', margin, currentY + 10);
+      // Add some spacing before the charts section
+      currentY += 10;
+      pdf.text('Weather Charts', margin, currentY);
 
       try {
         // Create a simplified version of the charts for export
@@ -364,39 +367,41 @@ export async function exportToPDF({
             chartsImgData,
             'PNG',
             margin,
-            currentY + 5,
+            currentY + 10,
             chartsImgWidth,
             chartsImgHeight
           );
+          currentY = currentY + 10 + chartsImgHeight + 10; // Update position after adding image
         } else {
           pdf.addImage(
             chartsImgData,
             'PNG',
             margin,
-            currentY + 15,
+            currentY + 10,
             chartsImgWidth,
             chartsImgHeight
           );
+          currentY = currentY + 10 + chartsImgHeight + 10; // Update position after adding image
         }
       } catch (error) {
         console.error('Error capturing charts:', error);
 
         // Just add text explaining the charts couldn't be captured
-        pdf.text('Weather charts could not be captured due to browser limitations.', margin, currentY + 15);
-        pdf.text('Please view the charts in the web application.', margin, currentY + 22);
+        pdf.text('Weather charts could not be captured due to browser limitations.', margin, currentY + 10);
+        pdf.text('Please view the charts in the web application.', margin, currentY + 17);
 
         // Add a simple placeholder rectangle
         pdf.setDrawColor(200, 200, 200);
         pdf.setFillColor(245, 245, 245);
-        pdf.roundedRect(margin, currentY + 30, contentWidth, 100, 3, 3, 'FD');
+        pdf.roundedRect(margin, currentY + 24, contentWidth, 100, 3, 3, 'FD');
 
         // Add some text in the placeholder
         pdf.setFontSize(14);
         pdf.setTextColor(100, 100, 100);
-        pdf.text('Charts Preview Not Available', margin + contentWidth/2 - 40, currentY + 80);
+        pdf.text('Charts Preview Not Available', margin + contentWidth/2 - 40, currentY + 74);
 
         // Update the current Y position
-        currentY += 140;
+        currentY += 134; // 24 + 100 + 10
       }
     }
 
@@ -405,15 +410,15 @@ export async function exportToPDF({
     pdf.setFontSize(16);
     pdf.text('Weather Forecast Data', margin, 20);
 
-    // Table headers
+    // Table headers - add a bit more spacing between columns
     pdf.setFontSize(10);
     pdf.setTextColor(100, 100, 100);
     pdf.text('Distance', margin, 30);
-    pdf.text('Time', margin + 25, 30);
-    pdf.text('Temperature', margin + 60, 30);
-    pdf.text('Feels Like', margin + 95, 30);
-    pdf.text('Wind', margin + 130, 30);
-    pdf.text('Precipitation', margin + 155, 30);
+    pdf.text('Time', margin + 30, 30);
+    pdf.text('Temperature', margin + 65, 30);
+    pdf.text('Feels Like', margin + 100, 30);
+    pdf.text('Wind', margin + 135, 30);
+    pdf.text('Precipitation', margin + 160, 30);
     pdf.text('Humidity', margin + 190, 30);
 
     // Table rows
@@ -431,15 +436,15 @@ export async function exportToPDF({
         pdf.addPage();
         rowY = 30;
 
-        // Add headers on new page
+        // Add headers on new page - match the same positions as the first page
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
         pdf.text('Distance', margin, 20);
-        pdf.text('Time', margin + 25, 20);
-        pdf.text('Temperature', margin + 60, 20);
-        pdf.text('Feels Like', margin + 95, 20);
-        pdf.text('Wind', margin + 130, 20);
-        pdf.text('Precipitation', margin + 155, 20);
+        pdf.text('Time', margin + 30, 20);
+        pdf.text('Temperature', margin + 65, 20);
+        pdf.text('Feels Like', margin + 100, 20);
+        pdf.text('Wind', margin + 135, 20);
+        pdf.text('Precipitation', margin + 160, 20);
         pdf.text('Humidity', margin + 190, 20);
         pdf.setTextColor(0, 0, 0);
       }
@@ -456,13 +461,13 @@ export async function exportToPDF({
       const precip = `${formatPrecipitation(weather.precipitation || 0)}`;
       const humidity = `${weather.humidity}%`;
 
-      // Draw row
+      // Draw row - match the header positions
       pdf.text(distance, margin, rowY);
-      pdf.text(time, margin + 25, rowY);
-      pdf.text(temp, margin + 60, rowY);
-      pdf.text(feelsLike, margin + 95, rowY);
-      pdf.text(wind, margin + 130, rowY);
-      pdf.text(precip, margin + 155, rowY);
+      pdf.text(time, margin + 30, rowY);
+      pdf.text(temp, margin + 65, rowY);
+      pdf.text(feelsLike, margin + 100, rowY);
+      pdf.text(wind, margin + 135, rowY);
+      pdf.text(precip, margin + 160, rowY);
       pdf.text(humidity, margin + 190, rowY);
 
       rowY += rowHeight;
