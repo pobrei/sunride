@@ -98,6 +98,58 @@ function getWindDirection(degrees: number): string {
 }
 
 /**
+ * Generate an SVG arrow for wind direction
+ * @param degrees - Wind direction in degrees (meteorological, 0 = N, 90 = E, etc.)
+ * @param windSpeed - Wind speed in km/h
+ * @param isSelected - Whether this is the selected marker
+ * @returns SVG string for the wind direction arrow
+ */
+function getWindArrowSVG(degrees: number, windSpeed: number, isSelected: boolean): string {
+  // Convert meteorological degrees to mathematical degrees (0 = E, 90 = N, etc.)
+  // Meteorological: 0 = N, 90 = E, 180 = S, 270 = W
+  // Mathematical: 0 = E, 90 = N, 180 = W, 270 = S
+  // So we need to subtract 90 and take the modulo
+  const mathDegrees = (degrees - 90 + 360) % 360;
+
+  // Scale arrow size based on wind speed (min 10px, max 24px)
+  const baseSize = isSelected ? 20 : 16;
+  const minSize = baseSize;
+  const maxSize = baseSize * 1.5;
+  const size = Math.min(maxSize, minSize + (windSpeed / 10) * 5);
+
+  // Calculate arrow color based on wind speed
+  let color = '#4299e1'; // Default blue
+  if (windSpeed > 30) {
+    color = '#e53e3e'; // Red for strong wind
+  } else if (windSpeed > 20) {
+    color = '#ed8936'; // Orange for moderate wind
+  } else if (windSpeed > 10) {
+    color = '#48bb78'; // Green for light wind
+  }
+
+  // Create SVG for the arrow
+  return `
+    <svg
+      width="${size}"
+      height="${size}"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="transform: rotate(${mathDegrees}deg); position: absolute; top: -${size/2}px; left: ${isSelected ? '20px' : '14px'};"
+      class="wind-arrow"
+    >
+      <path
+        d="M12 2L12 19M12 19L7 14M12 19L17 14"
+        stroke="${color}"
+        stroke-width="${isSelected ? 3 : 2}"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `;
+}
+
+/**
  * Get UV index category
  */
 function getUVIndexCategory(uvIndex: number): string {
@@ -293,12 +345,25 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
     forecastPoints.forEach((point, index) => {
       const isSelected = index === selectedMarkerRef.current;
 
-      // Create custom icon
+      // Get wind data for this point
+      const weather = weatherData && weatherData[index];
+      const windDirection = weather?.windDirection || 0;
+      const windSpeed = weather?.windSpeed || 0;
+
+      // Generate wind arrow SVG
+      const windArrow = getWindArrowSVG(windDirection, windSpeed, isSelected);
+
+      // Create custom icon with wind direction arrow
       const icon = L.divIcon({
         className: 'custom-marker-icon',
-        html: `<div class="${isSelected ? 'marker-selected' : 'marker-normal'} transition-all duration-300">${index + 1}</div>`,
-        iconSize: [isSelected ? 44 : 30, isSelected ? 44 : 30],
-        iconAnchor: [isSelected ? 22 : 15, isSelected ? 22 : 15],
+        html: `
+          <div class="marker-container">
+            <div class="${isSelected ? 'marker-selected' : 'marker-normal'} transition-all duration-300">${index + 1}</div>
+            ${windArrow}
+          </div>
+        `,
+        iconSize: [isSelected ? 60 : 50, isSelected ? 60 : 50],
+        iconAnchor: [isSelected ? 30 : 25, isSelected ? 30 : 25],
       });
 
       // Create marker
@@ -309,12 +374,19 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         });
 
       // Add popup with weather info
-      if (weatherData && weatherData[index]) {
-        const weather = weatherData[index];
+      if (weather) {
+        const windDirectionText = getWindDirection(windDirection);
         marker.bindPopup(`
           <div class="weather-popup">
-            <div class="weather-temp">${weather?.temperature?.toFixed(1) || 'N/A'}°C</div>
-            <div class="weather-wind">${weather?.windSpeed?.toFixed(1) || 'N/A'} km/h</div>
+            <div class="weather-temp">${weather.temperature?.toFixed(1) || 'N/A'}°C</div>
+            <div class="weather-wind">
+              ${weather.windSpeed?.toFixed(1) || 'N/A'} km/h
+              <span class="wind-direction">${windDirectionText}</span>
+            </div>
+            <div class="weather-wind-arrow">
+              ${getWindArrowSVG(windDirection, windSpeed, false).replace('position: absolute; top: -8px; left: 14px;', 'display: inline-block; vertical-align: middle; margin-right: 4px;')}
+              <span>Wind direction</span>
+            </div>
           </div>
         `);
       }
@@ -337,6 +409,12 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         .custom-marker-icon {
           background: transparent;
           border: none;
+        }
+        .marker-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .marker-normal {
           display: flex;
@@ -369,19 +447,39 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
           transform: scale(1.1);
         }
+        .wind-arrow {
+          z-index: 450;
+          filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
+          transition: all 0.3s ease;
+        }
         .weather-popup {
           text-align: center;
-          padding: 8px;
-          min-width: 100px;
+          padding: 10px;
+          min-width: 140px;
         }
         .weather-temp {
           font-weight: bold;
           font-size: 16px;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
         }
         .weather-wind {
           font-size: 12px;
           color: hsl(var(--muted-foreground));
+          margin-bottom: 8px;
+        }
+        .wind-direction {
+          font-weight: 500;
+          margin-left: 4px;
+        }
+        .weather-wind-arrow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          color: hsl(var(--muted-foreground));
+          margin-top: 6px;
+          padding-top: 6px;
+          border-top: 1px dashed rgba(0,0,0,0.1);
         }
         .leaflet-popup-content-wrapper {
           padding: 0;
