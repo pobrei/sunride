@@ -16,70 +16,78 @@ import {
  * This is used in the onclone callback for html2canvas
  */
 function handleModernCssColors(document: Document, clone: Document): void {
-  // Find all elements with styles in the cloned document
-  const elementsWithStyles = clone.querySelectorAll('*');
-
-  // Replace modern color functions with standard hex or rgb colors
-  elementsWithStyles.forEach(el => {
-    if (el instanceof HTMLElement) {
-      try {
-        const computedStyle = window.getComputedStyle(el);
-
-        // Apply computed background color directly
-        if (computedStyle.backgroundColor &&
-            (computedStyle.backgroundColor.includes('oklch') ||
-             computedStyle.backgroundColor.includes('hsl'))) {
-          // Get the actual computed color as rendered by the browser
-          const bgColor = getRgbFromComputedStyle(computedStyle.backgroundColor);
-          el.style.backgroundColor = bgColor || '#ffffff';
-        }
-
-        // Apply computed text color directly
-        if (computedStyle.color &&
-            (computedStyle.color.includes('oklch') ||
-             computedStyle.color.includes('hsl'))) {
-          const textColor = getRgbFromComputedStyle(computedStyle.color);
-          el.style.color = textColor || '#000000';
-        }
-
-        // Apply computed border color directly
-        if (computedStyle.borderColor &&
-            (computedStyle.borderColor.includes('oklch') ||
-             computedStyle.borderColor.includes('hsl'))) {
-          const borderColor = getRgbFromComputedStyle(computedStyle.borderColor);
-          el.style.borderColor = borderColor || '#e5e7eb';
-        }
-      } catch (e) {
-        // Ignore errors and continue with other elements
-        console.warn('Error processing element styles:', e);
-      }
-    }
-  });
-}
-
-/**
- * Helper function to extract RGB values from computed style
- * This handles cases where the browser returns the actual computed RGB values
- */
-function getRgbFromComputedStyle(styleValue: string): string | null {
-  // If it's already a standard format, return it
-  if (styleValue.startsWith('#') ||
-      styleValue.startsWith('rgb') ||
-      styleValue.startsWith('rgba')) {
-    return styleValue;
-  }
-
-  // Try to extract RGB values using a temporary element
   try {
-    const tempEl = document.createElement('div');
-    tempEl.style.color = styleValue;
-    document.body.appendChild(tempEl);
-    const computedColor = window.getComputedStyle(tempEl).color;
-    document.body.removeChild(tempEl);
-    return computedColor;
+    // First, try to inject a style tag to override all oklch colors
+    const styleTag = clone.createElement('style');
+    styleTag.textContent = `
+      * {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border-color: #e5e7eb !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      .recharts-surface, .recharts-layer {
+        fill: #ffffff !important;
+      }
+      .recharts-cartesian-grid line {
+        stroke: #e5e7eb !important;
+      }
+      .recharts-cartesian-axis-line {
+        stroke: #e5e7eb !important;
+      }
+      .recharts-text {
+        fill: #000000 !important;
+      }
+      .recharts-curve {
+        stroke: #000000 !important;
+      }
+      .recharts-bar-rectangle {
+        fill: #e5e7eb !important;
+      }
+    `;
+
+    // Add the style tag to the head of the cloned document
+    const head = clone.head || clone.getElementsByTagName('head')[0];
+    if (head) {
+      head.appendChild(styleTag);
+    }
+
+    // Also apply inline styles to all elements
+    const elementsWithStyles = clone.querySelectorAll('*');
+    elementsWithStyles.forEach(el => {
+      if (el instanceof HTMLElement) {
+        try {
+          // Apply safe styles directly to each element
+          el.style.setProperty('color', '#000000', 'important');
+          el.style.setProperty('background-color', '#ffffff', 'important');
+          el.style.setProperty('border-color', '#e5e7eb', 'important');
+          el.style.setProperty('box-shadow', 'none', 'important');
+          el.style.setProperty('text-shadow', 'none', 'important');
+
+          // Remove any problematic styles
+          el.style.removeProperty('background-image');
+          el.style.removeProperty('background-gradient');
+
+          // Handle SVG elements specially
+          if (el.tagName.toLowerCase() === 'svg' || el.closest('svg')) {
+            if (el.hasAttribute('fill') && el.getAttribute('fill')?.includes('oklch')) {
+              el.setAttribute('fill', '#000000');
+            }
+            if (el.hasAttribute('stroke') && el.getAttribute('stroke')?.includes('oklch')) {
+              el.setAttribute('stroke', '#000000');
+            }
+          }
+        } catch (e) {
+          // Ignore errors and continue with other elements
+          console.warn('Error processing element styles:', e);
+        }
+      }
+    });
+
+    console.log('Successfully applied style overrides to cloned document');
   } catch (e) {
-    console.warn('Error extracting RGB value:', e);
-    return null;
+    console.error('Error in handleModernCssColors:', e);
   }
 }
 
@@ -147,12 +155,23 @@ export async function exportToPDF({
       currentY = 84;
 
       try {
-        const mapCanvas = await html2canvas(mapRef.current, {
+        // Create a simplified version of the map for export
+        const mapContainer = mapRef.current;
+
+        // First try with our custom color handling
+        const mapCanvas = await html2canvas(mapContainer, {
           useCORS: true,
           scale: 2,
           allowTaint: true,
-          logging: false,
+          logging: true, // Enable logging to debug issues
+          backgroundColor: '#ffffff',
           onclone: handleModernCssColors,
+          ignoreElements: (element) => {
+            // Ignore elements that might cause issues
+            return element.classList?.contains('leaflet-control-attribution') ||
+                   element.classList?.contains('leaflet-control-scale') ||
+                   element.tagName === 'BUTTON';
+          },
         });
 
         const mapImgData = mapCanvas.toDataURL('image/png');
@@ -163,9 +182,23 @@ export async function exportToPDF({
         currentY = 88 + mapImgHeight;
       } catch (error) {
         console.error('Error capturing map:', error);
-        pdf.text('Error capturing map image', margin, 88);
-        pdf.text('Please try again or use a different browser', margin, 95);
-        currentY = 102;
+
+        // Add text explaining the map couldn't be captured
+        pdf.text('Route map could not be captured due to browser limitations.', margin, 88);
+        pdf.text('Please view the map in the web application.', margin, 95);
+
+        // Add a simple placeholder rectangle
+        pdf.setDrawColor(200, 200, 200);
+        pdf.setFillColor(245, 245, 245);
+        pdf.roundedRect(margin, 102, contentWidth, 100, 3, 3, 'FD');
+
+        // Add some text in the placeholder
+        pdf.setFontSize(14);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('Map Preview Not Available', margin + contentWidth/2 - 40, 152);
+
+        // Update the current Y position
+        currentY = 212;
       }
     }
 
@@ -180,14 +213,24 @@ export async function exportToPDF({
       pdf.text('Weather Charts', margin, currentY + 10);
 
       try {
-        // Process the DOM before capturing to handle modern CSS color functions
-        const chartsCanvas = await html2canvas(chartsRef.current, {
+        // Create a simplified version of the charts for export
+        const chartsContainer = chartsRef.current;
+
+        // First try with our custom color handling
+        const chartsCanvas = await html2canvas(chartsContainer, {
           useCORS: true,
           scale: 1.5,
           allowTaint: true,
-          logging: false,
+          logging: true, // Enable logging to debug issues
           backgroundColor: '#ffffff',
           onclone: handleModernCssColors,
+          ignoreElements: (element) => {
+            // Ignore elements that might cause issues
+            return element.classList?.contains('scroll-area-scrollbar') ||
+                   element.classList?.contains('scroll-area-thumb') ||
+                   element.tagName === 'BUTTON';
+          },
+          removeContainer: true, // Remove the container after rendering
         });
 
         const chartsImgData = chartsCanvas.toDataURL('image/png');
@@ -219,7 +262,23 @@ export async function exportToPDF({
         }
       } catch (error) {
         console.error('Error capturing charts:', error);
-        pdf.text('Error capturing charts image', margin, currentY + 15);
+
+        // Just add text explaining the charts couldn't be captured
+        pdf.text('Weather charts could not be captured due to browser limitations.', margin, currentY + 15);
+        pdf.text('Please view the charts in the web application.', margin, currentY + 22);
+
+        // Add a simple placeholder rectangle
+        pdf.setDrawColor(200, 200, 200);
+        pdf.setFillColor(245, 245, 245);
+        pdf.roundedRect(margin, currentY + 30, contentWidth, 100, 3, 3, 'FD');
+
+        // Add some text in the placeholder
+        pdf.setFontSize(14);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('Charts Preview Not Available', margin + contentWidth/2 - 40, currentY + 80);
+
+        // Update the current Y position
+        currentY += 140;
       }
     }
 
