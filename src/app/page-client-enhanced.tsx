@@ -10,7 +10,7 @@ import gsap from 'gsap';
 import { useWeather } from '@/features/weather/context';
 import { WeatherProviderComparison } from '@/features/weather/components';
 import { RouteControls } from '@/features/route/components';
-import { PDFExport } from '@/features/export/components';
+import { ExportMenu } from '@/features/export/components';
 import { KeyboardNavigation } from '@/features/navigation/components';
 import { useNotifications } from '@/features/notifications/context';
 
@@ -188,7 +188,7 @@ export default function Home() {
         />
         <div className="flex items-center space-x-2">
           <EnhancedThemeToggle />
-          <PDFExport {...pdfExportProps} />
+          <ExportMenu {...pdfExportProps} />
         </div>
       </div>
 
