@@ -94,8 +94,19 @@ export default function Home() {
 
   // Handle route settings update
   const handleUpdateSettings = async (settings: RouteSettings) => {
+    console.log('handleUpdateSettings called with:', settings);
     // Use the generateWeatherForecast function from context
-    await generateWeatherForecast(settings.weatherInterval, settings.startTime, settings.avgSpeed);
+    try {
+      await generateWeatherForecast(
+        settings.weatherInterval,
+        settings.startTime,
+        settings.avgSpeed
+      );
+      console.log('Weather forecast generated successfully');
+    } catch (error) {
+      console.error('Error generating weather forecast:', error);
+      addNotification('error', 'Failed to generate weather forecast');
+    }
   };
 
   // Handle marker click on map
@@ -160,11 +171,8 @@ export default function Home() {
         showSuccess={true}
         helpText="Upload a GPX file to visualize your route with detailed weather forecasts"
       />
-      <RouteControls
-        onUpdateSettings={handleUpdateSettings}
-        isGenerating={isGenerating}
-      />
-      <WeatherProviderComparison />
+      <RouteControls onUpdateSettings={handleUpdateSettings} isGenerating={isGenerating} />
+      <WeatherProviderComparison forecastPoints={forecastPoints} />
     </div>
   );
 
@@ -197,26 +205,27 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header title="SunRide" />
 
-      <div className="container mx-auto px-4 py-6 pb-24 bg-zinc-50 dark:bg-zinc-900"> {/* Added more bottom padding */}
+      <div className="container mx-auto px-4 sm:px-6 py-8 pb-24">
+        {' '}
+        {/* Improved responsive padding */}
         {headerContent}
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 mt-8 animate-fade-in">
           {/* Left panel with controls */}
-          <div className="lg:col-span-1 space-y-4">
+          <div className="lg:col-span-1 space-y-6 order-2 lg:order-1 animate-slide-in-left">
             {sidebarContent}
           </div>
 
           {/* Main content area */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-8 order-1 lg:order-2 animate-slide-in-right">
             {isLoading ? (
-              <div className="flex items-center justify-center h-[500px] bg-white dark:bg-zinc-800 rounded-lg border border-zinc-100 dark:border-zinc-700 shadow-sm">
+              <div className="flex items-center justify-center h-[400px] sm:h-[450px] md:h-[500px] bg-card rounded-lg border border-border shadow-sm animate-scale-up">
                 <LoadingSpinner
                   message={loadingMessage || 'Loading weather data...'}
                   centered
-                  variant="spinner"
+                  variant="train"
                   withContainer
                   size="lg"
                 />
@@ -224,7 +233,7 @@ export default function Home() {
             ) : (
               <>
                 <div className="relative" ref={mapRef}>
-                  <div className="h-[500px] rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-700 shadow-sm">
+                  <div className="h-[400px] sm:h-[450px] md:h-[500px] rounded-lg overflow-hidden border border-border shadow-sm animate-scale-up">
                     <MapWrapper
                       gpxData={gpxData}
                       forecastPoints={forecastPoints}
@@ -238,20 +247,20 @@ export default function Home() {
                     <KeyboardNavigation
                       onNavigate={direction => console.log(`Navigate ${direction}`)}
                       onZoom={direction => console.log(`Zoom ${direction}`)}
-                      onSelectMarker={(index) => index !== null && handleMarkerClick(index)}
+                      onSelectMarker={index => index !== null && handleMarkerClick(index)}
                       markerCount={forecastPoints.length}
                     />
                   )}
                 </div>
 
                 {forecastPoints.length > 0 && weatherData.length > 0 && (
-                  <div className={cn("space-y-6 mt-6")}>
-                    <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-6")}>
+                  <div className={cn('space-y-6 sm:space-y-8 mt-6 sm:mt-8 animate-slide-up')}>
+                    <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8')}>
                       <RouteSummary
                         gpxData={gpxData}
                         forecastPoints={forecastPoints}
                         weatherData={weatherData}
-                        className="fade-in"
+                        className="animate-fade-in stagger-item rounded-lg shadow-sm hover:shadow-md transition-all duration-300 card-hover-effect"
                       />
 
                       <WeatherAlerts
@@ -259,7 +268,7 @@ export default function Home() {
                         weatherData={weatherData}
                         maxInitialAlerts={3}
                         compact={true}
-                        className="fade-in"
+                        className="animate-fade-in stagger-item rounded-lg shadow-sm hover:shadow-md transition-all duration-300 card-hover-effect"
                       />
                     </div>
 
@@ -272,7 +281,12 @@ export default function Home() {
                       showNavigation={true}
                     />
 
-                    <div ref={chartsRef} className="mb-6 sm:mb-8 md:mb-10 w-full max-w-full overflow-hidden"> {/* Responsive bottom margin with full width */}
+                    <div
+                      ref={chartsRef}
+                      className="mb-8 sm:mb-10 md:mb-12 w-full max-w-full overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border bg-card p-4 sm:p-5 animate-fade-in stagger-item card-hover-effect"
+                    >
+                      {' '}
+                      {/* Responsive bottom margin with full width */}
                       <ClientSideCharts
                         gpxData={gpxData}
                         forecastPoints={forecastPoints}
@@ -285,8 +299,12 @@ export default function Home() {
                   </div>
                 )}
 
-                <div className={cn("mt-6")}>
-                  <UserGuide className={cn("fade-in")} />
+                <div className={cn('mt-6 sm:mt-8')}>
+                  <UserGuide
+                    className={cn(
+                      'animate-fade-in stagger-item rounded-lg shadow-sm hover:shadow-md transition-all duration-300 card-hover-effect'
+                    )}
+                  />
                 </div>
               </>
             )}
