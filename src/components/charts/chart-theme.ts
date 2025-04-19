@@ -1,42 +1,78 @@
 /**
- * Chart theme configuration for light and dark modes
+ * Chart theme configuration - Flat Design with improved color palette
  */
 export const chartTheme = {
   light: {
-    background: '#F6F8FA',
-    text: '#1E2A38',
-    grid: '#CBD5E1',         // Darker grid lines for better visibility
-    primary: '#00C2A8',
-    shadow: 'rgba(0,0,0,0.05)',
+    background: '#F0F5FF',
+    text: '#1E293B',         // Darker text for better contrast
+    grid: '#D1E0FF',         // Slightly darker grid lines for better visibility
+    primary: '#1E293B',      // Darker primary color for better contrast
+    shadow: 'rgba(0, 0, 0, 0.1)',
     card: '#FFFFFF',
-    // Chart-specific colors
-    temperature: '#E53E3E',  // Darker red for temperature
-    feelsLike: '#6D28D9',    // Darker purple for feels like
-    precipitation: '#2563EB', // Darker blue for precipitation
-    probability: '#7C3AED',   // Darker purple for probability
-    wind: '#3B82F6',         // Darker blue for wind
-    humidity: '#0EA5E9',     // Darker sky blue for humidity
-    pressure: '#059669',     // Darker sea green for pressure
-    uvIndex: '#D97706',      // Darker orange for UV index
-    elevation: '#9A3412',    // Darker sienna for elevation
+    // Chart-specific colors with better contrast for light mode
+    // Temperature group - warm colors
+    temperature: '#F87171',  // Red for temperature
+    feelsLike: '#FB923C',    // Orange for feels like
+
+    // Precipitation group - blue colors
+    precipitation: '#38BDF8', // Sky blue for precipitation
+    probability: '#0369A1',   // Darker sky blue for probability
+
+    // Wind group - teal/cyan colors
+    wind: '#0D9488',         // Teal for wind
+
+    // Humidity group - blue/purple colors
+    humidity: '#818CF8',     // Indigo for humidity
+
+    // Pressure group - purple colors
+    pressure: '#A855F7',     // Purple for pressure
+
+    // Elevation group - neutral colors
+    elevation: '#78716C',    // Stone for elevation
+
+    // UV Index group - colors by risk level
+    uvIndex: '#FBBF24',      // Default amber for UV index
+    uvLow: '#22C55E',        // Green for low UV (0-2)
+    uvModerate: '#FBBF24',   // Amber for moderate UV (3-5)
+    uvHigh: '#F97316',       // Orange for high UV (6-7)
+    uvVeryHigh: '#EF4444',   // Red for very high UV (8-10)
+    uvExtreme: '#9333EA',    // Purple for extreme UV (11+)
   },
   dark: {
-    background: '#0E1116',
-    text: '#F5F7FA',
-    grid: '#4B5563',         // Lighter grid lines for better visibility
-    primary: '#00C2A8',
-    shadow: 'rgba(0,0,0,0.25)',
-    card: '#1C1F24',
-    // Chart-specific colors - brighter and more saturated for dark mode
-    temperature: '#F87171',  // Brighter red for temperature
-    feelsLike: '#C4B5FD',    // Brighter purple for feels like
-    precipitation: '#60A5FA', // Brighter blue for precipitation
-    probability: '#DDD6FE',   // Brighter purple for probability
-    wind: '#93C5FD',         // Brighter blue for wind
-    humidity: '#7DD3FC',     // Brighter sky blue for humidity
-    pressure: '#6EE7B7',     // Brighter sea green for pressure
-    uvIndex: '#FBBF24',      // Brighter orange for UV index
-    elevation: '#FDBA74',    // Brighter sienna for elevation
+    background: '#1A1A1A',
+    text: '#F9F9FF',
+    grid: '#333333',         // Dark gray grid lines
+    primary: '#FFFFFF',
+    shadow: 'transparent',
+    card: '#1A1A1A',
+    // Chart-specific colors with better contrast for dark mode
+    // Temperature group - warm colors
+    temperature: '#FCA5A5',  // Lighter red for temperature
+    feelsLike: '#FDBA74',    // Lighter orange for feels like
+
+    // Precipitation group - blue colors
+    precipitation: '#7DD3FC', // Lighter sky blue for precipitation
+    probability: '#38BDF8',   // Sky blue for probability
+
+    // Wind group - teal/cyan colors
+    wind: '#2DD4BF',         // Lighter teal for wind
+
+    // Humidity group - blue/purple colors
+    humidity: '#A5B4FC',     // Lighter indigo for humidity
+
+    // Pressure group - purple colors
+    pressure: '#C084FC',     // Lighter purple for pressure
+
+    // Elevation group - neutral colors
+    elevation: '#A8A29E',    // Lighter stone for elevation
+
+    // UV Index group - colors by risk level (lighter for dark mode)
+    uvIndex: '#FCD34D',      // Default lighter amber for UV index
+    uvLow: '#4ADE80',        // Lighter green for low UV (0-2)
+    uvModerate: '#FCD34D',   // Lighter amber for moderate UV (3-5)
+    uvHigh: '#FB923C',       // Lighter orange for high UV (6-7)
+    uvVeryHigh: '#FCA5A5',   // Lighter red for very high UV (8-10)
+    uvExtreme: '#C084FC',    // Lighter purple for extreme UV (11+)
   }
 };
 
@@ -54,14 +90,10 @@ export const getCurrentTheme = () => {
 };
 
 /**
- * Create a gradient for chart fills
+ * Create a solid color for chart fills - Flat Design (no gradients)
  */
 export const createGradient = (ctx: CanvasRenderingContext2D, isDark: boolean) => {
-  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  // In flat design, we don't use gradients, just return a solid color with very low opacity
   const theme = isDark ? chartTheme.dark : chartTheme.light;
-
-  gradient.addColorStop(0, `${theme.primary}50`); // 50% opacity
-  gradient.addColorStop(1, `${theme.primary}00`); // 0% opacity
-
-  return gradient;
+  return theme.primary;
 };

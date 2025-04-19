@@ -1,171 +1,121 @@
 /**
- * Chart styles for consistent appearance
+ * Chart styles for flat design
  */
 
 /* Chart tooltip styles */
 .chart-tooltip {
-  background-color: #ffffff;
+  background-color: var(--color-card);
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-border);
   max-width: 250px;
   z-index: 50;
-}
-
-:root.dark .chart-tooltip {
-  background-color: #1f2937;
-  border-color: #374151;
 }
 
 .chart-tooltip-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #111827;
+  color: var(--color-foreground);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .chart-tooltip-title {
-  color: #f9fafb;
 }
 
 .chart-tooltip-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #4b5563;
+  color: var(--color-foreground);
+  opacity: 0.8;
   margin-bottom: 0.25rem;
-}
-
-:root.dark .chart-tooltip-label {
-  color: #e5e7eb;
 }
 
 /* Temperature chart specific styles */
 .temperature-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #dc2626;
+  color: var(--chart-temperature-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .temperature-value {
-  color: #f87171;
 }
 
 .feels-like-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #7c3aed;
+  color: var(--chart-feels-like-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .feels-like-value {
-  color: #c4b5fd;
 }
 
 /* Precipitation chart specific styles */
 .precipitation-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #2563eb;
+  color: var(--chart-precipitation-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .precipitation-value {
-  color: #60a5fa;
 }
 
 .probability-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #7c3aed;
+  color: var(--chart-probability-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .probability-value {
-  color: #a78bfa;
 }
 
 /* Wind chart specific styles */
-.wind-speed-value {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #2563eb;
-  margin-bottom: 0.25rem;
-}
-
-:root.dark .wind-speed-value {
-  color: #60a5fa;
-}
-
-.wind-gust-value {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1d4ed8;
-  margin-bottom: 0.25rem;
-}
-
-:root.dark .wind-gust-value {
-  color: #93c5fd;
-}
-
+.wind-speed-value,
+.wind-gust-value,
 .wind-direction-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0d9488;
+  color: var(--chart-wind-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .wind-direction-value {
-  color: #2dd4bf;
 }
 
 /* Humidity chart specific styles */
 .humidity-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0284c7;
+  color: var(--chart-humidity-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .humidity-value {
-  color: #38bdf8;
 }
 
 /* Pressure chart specific styles */
 .pressure-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #059669;
+  color: var(--chart-pressure-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .pressure-value {
-  color: #34d399;
 }
 
 /* UV Index chart specific styles */
 .uv-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #d97706;
   margin-bottom: 0.25rem;
 }
 
-:root.dark .uv-value {
-  color: #fbbf24;
+/* UV Index risk level specific colors */
+.uv-low-text {
+  color: var(--chart-uv-low);
+}
+
+.uv-moderate-text {
+  color: var(--chart-uv-moderate);
+}
+
+.uv-high-text {
+  color: var(--chart-uv-high);
+}
+
+.uv-very-high-text {
+  color: var(--chart-uv-very-high);
+}
+
+.uv-extreme-text {
+  color: var(--chart-uv-extreme);
 }
 
 /* Elevation chart specific styles */
 .elevation-value {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #9a3412;
+  color: var(--chart-elevation-color);
   margin-bottom: 0.25rem;
-}
-
-:root.dark .elevation-value {
-  color: #fdba74;
 }
 
 /* Chart wrapper with visible overflow */
@@ -173,21 +123,50 @@
   overflow: visible !important;
 }
 
+/* Ensure chart containers have proper spacing */
+.recharts-wrapper {
+  overflow: visible !important;
+  margin-bottom: 10px !important;
+}
+
 /* Improve axis labels */
 .recharts-cartesian-axis-tick-value {
   font-weight: 500 !important;
-  fill: #4b5563 !important;
+  fill: var(--color-foreground) !important;
+  font-size: 12px !important;
 }
 
-:root.dark .recharts-cartesian-axis-tick-value {
-  fill: #e5e7eb !important;
+/* Ensure bottom axis labels are visible */
+.recharts-xAxis .recharts-cartesian-axis-tick-value {
+  transform: translateY(0) !important;
+}
+
+/* Ensure x-axis has proper spacing */
+.recharts-xAxis {
+  transform: translateY(5px) !important;
 }
 
 .recharts-legend-item-text {
   font-weight: 500 !important;
-  color: #4b5563 !important;
+  color: var(--color-foreground) !important;
 }
 
-:root.dark .recharts-legend-item-text {
-  color: #e5e7eb !important;
+/* Ensure grid lines are visible */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--chart-grid-color) !important;
+  stroke-width: 1 !important;
+}
+
+/* Ensure reference lines are visible */
+.recharts-reference-line line {
+  stroke: var(--color-accent) !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 3 3 !important;
+}
+
+/* Ensure reference line labels are visible */
+.recharts-reference-line-label {
+  fill: var(--color-foreground) !important;
+  font-weight: 500 !important;
 }

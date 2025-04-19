@@ -1,51 +1,89 @@
 :root {
-  /* Base colors */
-  --color-bg: #F6F8FA;
-  --color-foreground: #1E2A38;
-  --color-accent: #00C2A8;
-  --color-card: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-muted: #6B7280;
-  --color-primary: #1E2A38;
+  /* Base colors - Calm and readable palette */
+  --color-bg: #F0F5FF;        /* Soft Blue-tinted White */
+  --color-foreground: #1E293B; /* Deep Blue-Gray */
+  --color-accent: #3B82F6;     /* Calm Blue */
+  --color-card: #FFFFFF;       /* Pure White */
+  --color-border: #D1E0FF;     /* Soft Blue-Gray */
+  --color-muted: #64748B;      /* Medium Blue-Gray */
+  --color-primary: #3B82F6;    /* Calm Blue */
 
   /* Chart colors */
-  --chart-grid-color: rgba(0, 0, 0, 0.1);
-  --chart-tooltip-bg: rgba(0, 0, 0, 0.8);
+  --chart-grid-color: rgba(0, 0, 0, 0.05);
+  --chart-tooltip-bg: rgba(30, 41, 59, 0.95); /* Deep Blue-Gray */
   --chart-tooltip-text: #FFFFFF;
 
-  /* Chart specific colors */
-  --chart-humidity-color: #87CEF9;
-  --chart-pressure-color: #9370DB;
-  --chart-uv-color: #FFA500;
-  --chart-temperature-color: #FFB6C1;
-  --chart-feels-like-color: #98FB98;
-  --chart-precipitation-color: #4682B4;
-  --chart-wind-color: #6495ED;
-  --chart-elevation-color: #A0522D;
+  /* Chart specific colors - Organized by chart type */
+  /* Temperature group - warm colors */
+  --chart-temperature-color: #F87171; /* Red */
+  --chart-feels-like-color: #FB923C; /* Orange */
+
+  /* Precipitation group - blue colors */
+  --chart-precipitation-color: #38BDF8; /* Sky blue */
+  --chart-probability-color: #0369A1; /* Darker sky blue */
+
+  /* Wind group - teal/cyan colors */
+  --chart-wind-color: #0D9488;     /* Teal */
+
+  /* Humidity group - blue/purple colors */
+  --chart-humidity-color: #818CF8; /* Indigo */
+
+  /* Pressure group - purple colors */
+  --chart-pressure-color: #A855F7; /* Purple */
+
+  /* Elevation group - neutral colors */
+  --chart-elevation-color: #78716C; /* Stone */
+
+  /* UV Index group - colors by risk level */
+  --chart-uv-color: #FBBF24;       /* Default amber */
+  --chart-uv-low: #22C55E;         /* Green for low UV (0-2) */
+  --chart-uv-moderate: #FBBF24;    /* Amber for moderate UV (3-5) */
+  --chart-uv-high: #F97316;        /* Orange for high UV (6-7) */
+  --chart-uv-very-high: #EF4444;   /* Red for very high UV (8-10) */
+  --chart-uv-extreme: #9333EA;     /* Purple for extreme UV (11+) */
 }
 
 .dark {
-  /* Base colors */
-  --color-bg: #0E1116;
-  --color-foreground: #F5F7FA;
-  --color-accent: #00C2A8;
-  --color-card: #1C1F24;
-  --color-border: #2D3748;
-  --color-muted: #9CA3AF;
-  --color-primary: #F5F7FA;
+  /* Base colors - Calm and readable palette for dark mode */
+  --color-bg: #161C26;        /* Deep Blue-Gray */
+  --color-foreground: #F5F9FF; /* Soft Blue-White */
+  --color-accent: #3B82F6;     /* Calm Blue */
+  --color-card: #232A36;       /* Dark Blue-Gray */
+  --color-border: #364356;     /* Medium Blue-Gray */
+  --color-muted: #B4CCEB;      /* Light Blue-Gray */
+  --color-primary: #3B82F6;    /* Calm Blue */
 
   /* Chart colors */
-  --chart-grid-color: rgba(255, 255, 255, 0.1);
-  --chart-tooltip-bg: rgba(255, 255, 255, 0.9);
-  --chart-tooltip-text: #111111;
+  --chart-grid-color: rgba(255, 255, 255, 0.07);
+  --chart-tooltip-bg: rgba(245, 249, 255, 0.9); /* Soft Blue-White */
+  --chart-tooltip-text: #161C26; /* Deep Blue-Gray */
 
-  /* Chart specific colors */
-  --chart-humidity-color: #6495ED;
-  --chart-pressure-color: #BA55D3;
-  --chart-uv-color: #FF8C00;
-  --chart-temperature-color: #B4465A;
-  --chart-feels-like-color: #50AA64;
-  --chart-precipitation-color: #6495ED;
-  --chart-wind-color: #6495ED;
-  --chart-elevation-color: #CD853F;
+  /* Chart specific colors - Organized by chart type */
+  /* Temperature group - warm colors */
+  --chart-temperature-color: #FCA5A5; /* Lighter red */
+  --chart-feels-like-color: #FDBA74; /* Lighter orange */
+
+  /* Precipitation group - blue colors */
+  --chart-precipitation-color: #7DD3FC; /* Lighter sky blue */
+  --chart-probability-color: #38BDF8; /* Sky blue */
+
+  /* Wind group - teal/cyan colors */
+  --chart-wind-color: #2DD4BF;     /* Lighter teal */
+
+  /* Humidity group - blue/purple colors */
+  --chart-humidity-color: #A5B4FC; /* Lighter indigo */
+
+  /* Pressure group - purple colors */
+  --chart-pressure-color: #C084FC; /* Lighter purple */
+
+  /* Elevation group - neutral colors */
+  --chart-elevation-color: #A8A29E; /* Lighter stone */
+
+  /* UV Index group - colors by risk level (lighter for dark mode) */
+  --chart-uv-color: #FCD34D;       /* Default lighter amber */
+  --chart-uv-low: #4ADE80;         /* Lighter green for low UV (0-2) */
+  --chart-uv-moderate: #FCD34D;    /* Lighter amber for moderate UV (3-5) */
+  --chart-uv-high: #FB923C;        /* Lighter orange for high UV (6-7) */
+  --chart-uv-very-high: #FCA5A5;   /* Lighter red for very high UV (8-10) */
+  --chart-uv-extreme: #C084FC;     /* Lighter purple for extreme UV (11+) */
 }

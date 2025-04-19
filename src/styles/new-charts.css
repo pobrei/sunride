@@ -11,7 +11,7 @@ canvas.elevation-chart,
 canvas.chartjs-render-monitor,
 canvas[data-chartjs] {
   background-color: transparent !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
 }
 
 /* Global canvas styling for Chart.js */
@@ -22,7 +22,7 @@ canvas {
 /* Chart container styles */
 .chart-container {
   background-color: transparent !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
   padding: 8px !important;
 }
 
@@ -95,23 +95,23 @@ canvas {
   color: var(--muted-foreground) !important;
 }
 
-/* UV Index legend colors */
+/* UV Index legend colors - using risk level colors */
 .uv-low {
-  background-color: rgb(0, 255, 0) !important;
+  background-color: var(--chart-uv-low) !important;
 }
 
 .uv-moderate {
-  background-color: rgb(255, 255, 0) !important;
+  background-color: var(--chart-uv-moderate) !important;
 }
 
 .uv-high {
-  background-color: rgb(255, 165, 0) !important;
+  background-color: var(--chart-uv-high) !important;
 }
 
 .uv-very-high {
-  background-color: rgb(255, 0, 0) !important;
+  background-color: var(--chart-uv-very-high) !important;
 }
 
 .uv-extreme {
-  background-color: rgb(255, 0, 255) !important;
+  background-color: var(--chart-uv-extreme) !important;
 }

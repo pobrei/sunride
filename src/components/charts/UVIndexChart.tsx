@@ -26,13 +26,16 @@ interface UVIndexChartProps {
   onChartClick?: (index: number) => void;
 }
 
-// Function to get UV index color based on value
-const getUVColor = (value: number) => {
-  if (value <= 2) return '#3ECF8E'; // Low
-  if (value <= 5) return '#FFD60A'; // Moderate
-  if (value <= 7) return '#FB8B24'; // High
-  if (value <= 10) return '#E53E3E'; // Very High
-  return '#9F2B68'; // Extreme
+// Function to get UV index color based on value and risk level
+const getUVColor = (value: number, isDarkMode: boolean) => {
+  const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
+
+  // Return different colors based on UV index value
+  if (value <= 2) return theme.uvLow;        // Low (0-2)
+  if (value <= 5) return theme.uvModerate;   // Moderate (3-5)
+  if (value <= 7) return theme.uvHigh;       // High (6-7)
+  if (value <= 10) return theme.uvVeryHigh;  // Very High (8-10)
+  return theme.uvExtreme;                    // Extreme (11+)
 };
 
 // Function to get UV risk level
@@ -92,7 +95,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
         distance: formatDistance(point.distance * 1000), // Convert km to meters before formatting
         uvIndex: uvIndex,
         riskLevel: getUVRiskLevel(uvIndex),
-        color: getUVColor(uvIndex),
+        color: getUVColor(uvIndex, isDarkMode),
         index: index,
         isSelected: index === selectedMarker,
         timestamp: point.timestamp,
@@ -131,15 +134,16 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
           <p className="chart-tooltip-title">{label}</p>
           <p className="chart-tooltip-label">{data.distance}</p>
           <div className="flex items-center mt-2">
-            <div
-              className="w-3 h-3 rounded-full mr-2"
-              // Using inline style for dynamic color based on UV index
-              // This is an exception to the no-inline-styles rule
-              style={{ backgroundColor: data.color }}
-            />
-            <p className="uv-value">
-              UV Index: {data.uvIndex} ({data.riskLevel})
-            </p>
+            {data.riskLevel === 'Low' && <div className="w-3 h-3 mr-2 bg-[var(--chart-uv-low)]" />}
+            {data.riskLevel === 'Moderate' && <div className="w-3 h-3 mr-2 bg-[var(--chart-uv-moderate)]" />}
+            {data.riskLevel === 'High' && <div className="w-3 h-3 mr-2 bg-[var(--chart-uv-high)]" />}
+            {data.riskLevel === 'Very High' && <div className="w-3 h-3 mr-2 bg-[var(--chart-uv-very-high)]" />}
+            {data.riskLevel === 'Extreme' && <div className="w-3 h-3 mr-2 bg-[var(--chart-uv-extreme)]" />}
+            {data.riskLevel === 'Low' && <p className="uv-value uv-low-text">UV Index: {data.uvIndex} ({data.riskLevel})</p>}
+            {data.riskLevel === 'Moderate' && <p className="uv-value uv-moderate-text">UV Index: {data.uvIndex} ({data.riskLevel})</p>}
+            {data.riskLevel === 'High' && <p className="uv-value uv-high-text">UV Index: {data.uvIndex} ({data.riskLevel})</p>}
+            {data.riskLevel === 'Very High' && <p className="uv-value uv-very-high-text">UV Index: {data.uvIndex} ({data.riskLevel})</p>}
+            {data.riskLevel === 'Extreme' && <p className="uv-value uv-extreme-text">UV Index: {data.uvIndex} ({data.riskLevel})</p>}
           </div>
         </div>
       );
@@ -160,15 +164,17 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               dataKey="name"
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={true}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dy={15}
             />
             <YAxis
               stroke={theme.text}
               fontSize={12}
+              fontWeight="500"
               tickLine={false}
-              axisLine={{ stroke: theme.grid }}
+              axisLine={{ stroke: theme.grid, strokeWidth: 1.5 }}
               dx={-10}
               domain={[0, 12]}
               ticks={[0, 2, 5, 7, 10, 12]}
@@ -179,15 +185,39 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
+              content={({ payload }) => (
+                <div className="flex flex-wrap items-center justify-center gap-3 mb-2">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-low)]"></div>
+                    <span className="text-xs">Low (0-2)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-moderate)]"></div>
+                    <span className="text-xs">Moderate (3-5)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-high)]"></div>
+                    <span className="text-xs">High (6-7)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-very-high)]"></div>
+                    <span className="text-xs">Very High (8-10)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-extreme)]"></div>
+                    <span className="text-xs">Extreme (11+)</span>
+                  </div>
+                </div>
+              )}
             />
 
             {/* Reference lines for UV categories */}
-            <ReferenceLine y={2} stroke="#3ECF8E" strokeDasharray="3 3" />
-            <ReferenceLine y={5} stroke="#FFD60A" strokeDasharray="3 3" />
-            <ReferenceLine y={7} stroke="#FB8B24" strokeDasharray="3 3" />
-            <ReferenceLine y={10} stroke="#E53E3E" strokeDasharray="3 3" />
+            <ReferenceLine y={2} stroke={theme.grid} strokeDasharray="3 3" />
+            <ReferenceLine y={5} stroke={theme.grid} strokeDasharray="3 3" />
+            <ReferenceLine y={7} stroke={theme.grid} strokeDasharray="3 3" />
+            <ReferenceLine y={10} stroke={theme.grid} strokeDasharray="3 3" />
 
-            <Bar dataKey="uvIndex" name="UV Index" radius={[4, 4, 0, 0]} barSize={20}>
+            <Bar dataKey="uvIndex" name="UV Index" barSize={20}>
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}

@@ -68,7 +68,8 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
       .filter((_, i) => i % sampleRate === 0)
       .map(point => {
         const distance = point.distance || 0;
-        const elevation = point.elevation || 0;
+        // Ensure elevation is never negative
+        const elevation = Math.max(0, point.elevation || 0);
 
         // Find the closest forecast point to this GPX point
         let closestForecastIndex = -1;
@@ -128,12 +129,7 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
             margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             onClick={handleClick}
           >
-            <defs>
-              <linearGradient id="elevationGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
+            {/* No gradients in flat design */}
             <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="name"
@@ -149,16 +145,20 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
               tickLine={false}
               axisLine={{ stroke: theme.grid }}
               dx={-10}
+              domain={[0, 'auto']} // Set minimum domain to 0 to prevent negative values
+              allowDataOverflow={true} // Allow data to overflow the domain
             />
             <Tooltip
               contentStyle={{
                 backgroundColor: theme.card,
                 borderColor: theme.grid,
-                color: theme.text,
-                borderRadius: '8px',
-                boxShadow: `0 4px 12px ${theme.shadow}`,
+                color: theme.text
               }}
               labelStyle={{ color: theme.text }}
+              formatter={(value: number) => {
+                // Ensure elevation is never negative in the tooltip
+                return [Math.max(0, value) + ' m', 'Elevation'];
+              }}
             />
             <Legend
               verticalAlign="top"
@@ -171,14 +171,14 @@ const ElevationChart: React.FC<ElevationChartProps> = ({
               type="monotone"
               dataKey="elevation"
               name="Elevation (m)"
-              stroke="#10b981"
-              fillOpacity={1}
-              fill="url(#elevationGradient)"
+              stroke={theme.elevation}
+              fillOpacity={0.05}
+              fill={theme.elevation}
               activeDot={{
-                r: 8,
+                r: 6,
                 stroke: theme.card,
-                strokeWidth: 2,
-                fill: '#10b981',
+                strokeWidth: 1,
+                fill: theme.elevation,
               }}
               dot={(props: { cx: number; cy: number; payload: { isSelected: boolean } }) => {
                 const { cx, cy, payload } = props;
