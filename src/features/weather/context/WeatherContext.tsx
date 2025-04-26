@@ -6,7 +6,7 @@ import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 import { captureException, captureMessage } from '@/lib/sentry';
-import { useNotifications } from '@/features/notifications/context';
+import { useSimpleNotifications } from '@/features/notifications/context';
 import { useSafeData } from '@/features/data-validation/context';
 
 interface WeatherContextType {
@@ -52,8 +52,8 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
   const [error, setError] = useState<Error | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string>('');
 
-  // Use the NotificationProvider
-  const { addNotification } = useNotifications();
+  // Use the SimpleNotificationProvider
+  const { addNotification } = useSimpleNotifications();
 
   // Use the SafeDataProvider
   const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
