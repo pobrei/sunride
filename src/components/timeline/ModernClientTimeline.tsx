@@ -1,25 +1,24 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ForecastPoint, WeatherData } from '@/types';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Card, CardContent } from '@/components/ui/card';
-import { Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { typography, animation, effects, layout, responsive } from '@/styles/tailwind-utils';
 
-// Dynamically import the Timeline component with no SSR
-const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
+// Dynamically import the ModernTimeline component with no SSR
+const ModernTimelineWrapper = dynamic(() => import('./ModernTimelineWrapper'), {
   ssr: false,
   loading: () => (
-    <div className={cn("h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]", layout.flexCenter, "border border-border bg-muted/30")}>
+    <div className="h-full w-full flex items-center justify-center border border-border/20 rounded-2xl bg-white/50 dark:bg-card/50 backdrop-blur-sm">
       <LoadingSpinner
         message="Loading timeline..."
         centered
-        variant="train"
+        variant="dots"
         withContainer
         size="md"
       />
@@ -27,7 +26,7 @@ const SafeTimelineWrapper = dynamic(() => import('./SafeTimelineWrapper'), {
   ),
 });
 
-interface ClientSideTimelineProps {
+interface ModernClientTimelineProps {
   /** Forecast points along the route */
   forecastPoints: ForecastPoint[];
   /** Weather data for each forecast point */
@@ -46,22 +45,21 @@ interface ClientSideTimelineProps {
   showNavigation?: boolean;
 }
 
-export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
+export const ModernClientTimeline: React.FC<ModernClientTimelineProps> = ({
   forecastPoints,
   weatherData,
   selectedMarker,
   onTimelineClick,
   className,
-  height = 'h-[450px] sm:h-[500px] md:h-[550px] lg:h-[580px]',
+  height = 'h-[420px] sm:h-[440px] md:h-[460px] lg:h-[480px]',
   showPlaceholder = true,
   showNavigation = true,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
-  const timelineRef = React.useRef<HTMLDivElement | null>(null);
+  const timelineRef = useRef<HTMLDivElement | null>(null);
 
   // Simulate timeline initialization
   useEffect(() => {
@@ -85,20 +83,6 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
     }
   }, [forecastPoints, weatherData]);
 
-  // Scroll to selected marker
-  useEffect(() => {
-    if (selectedMarker !== null && timelineRef.current) {
-      const timelineItems = timelineRef.current.querySelectorAll('.timeline-item');
-      if (timelineItems[selectedMarker]) {
-        timelineItems[selectedMarker].scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center',
-        });
-      }
-    }
-  }, [selectedMarker]);
-
   // Handle scroll navigation
   const handleScroll = (direction: 'left' | 'right') => {
     if (timelineRef.current) {
@@ -120,20 +104,18 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
     showPlaceholder
   ) {
     return (
-      <Card className={cn(height, 'overflow-hidden', animation.fadeIn, className)}>
-        <CardContent className={cn("p-0 h-full")}>
-          <div className={cn(layout.flexCenter, "h-full bg-muted/20")}>
-            <div className={cn(typography.center, "p-6", animation.fadeInSlideUp)}>
-              <div className={cn(layout.flexCenter, "mx-auto w-10 h-10 rounded-full bg-muted/40 mb-3", animation.fadeIn)}>
-                <Clock className={cn("h-5 w-5", typography.muted)} />
-              </div>
-              <h3 className={cn(typography.h5, "mb-1")}>No Timeline Data</h3>
-              <p className={cn(typography.bodySm, typography.muted, "max-w-xs")}>
-                Upload a GPX file to see your route timeline with weather data
-              </p>
+      <Card className={cn(height, 'overflow-hidden', 'animate-fade-in', className)}>
+        <div className="h-full w-full flex items-center justify-center bg-white/50 dark:bg-card/50 backdrop-blur-sm">
+          <div className="text-center p-6 animate-fade-in-up">
+            <div className="mx-auto w-10 h-10 rounded-full bg-muted/40 flex items-center justify-center mb-3 animate-fade-in">
+              <Clock className="h-5 w-5 text-muted-foreground" />
             </div>
+            <h3 className="text-lg font-semibold mb-1">No Timeline Data</h3>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Upload a GPX file to see your route timeline with weather data
+            </p>
           </div>
-        </CardContent>
+        </div>
       </Card>
     );
   }
@@ -141,7 +123,7 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If there's an error, show an error message
   if (hasError) {
     return (
-      <div className={cn(height, effects.rounded, 'overflow-hidden', animation.fadeIn, className)}>
+      <div className={cn(height, 'rounded-2xl overflow-hidden animate-fade-in', className)}>
         <ErrorMessage
           title="Timeline Error"
           message={errorMessage || 'Failed to load the timeline component'}
@@ -157,7 +139,12 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
   // If everything is fine, render the timeline
   return (
     <div
-      className={cn(height, 'relative overflow-hidden border border-border/30 rounded-2xl shadow-sm', className)}
+      className={cn(
+        height,
+        'relative overflow-hidden rounded-xl shadow-sm animate-fade-in',
+        'bg-white/30 dark:bg-card/30 backdrop-blur-sm border border-border/20',
+        className
+      )}
     >
       {/* Navigation arrows */}
       {showNavigation && (
@@ -165,26 +152,32 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-1 sm:left-2 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 sm:h-10 sm:w-10 bg-white/90 dark:bg-card/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white dark:hover:bg-card transition-all duration-300"
+            className={cn(
+              "absolute left-1 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full",
+              "bg-primary/10 dark:bg-primary/20 backdrop-blur-md shadow-sm",
+              "hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300",
+              "border border-primary/20",
+              scrollPosition <= 10 && "opacity-50 pointer-events-none"
+            )}
             onClick={() => handleScroll('left')}
             disabled={scrollPosition <= 10}
           >
-            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <ChevronLeft className="h-4 w-4 text-primary dark:text-primary/90" />
           </Button>
 
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 sm:h-10 sm:w-10 bg-white/90 dark:bg-card/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white dark:hover:bg-card transition-all duration-300"
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 z-[5] h-8 w-8 rounded-full bg-primary/10 dark:bg-primary/20 backdrop-blur-md shadow-sm hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 border border-primary/20"
             onClick={() => handleScroll('right')}
           >
-            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <ChevronRight className="h-4 w-4 text-primary dark:text-primary/90" />
           </Button>
         </>
       )}
 
-      <div className={cn("h-full", responsive.scrollContainer)} onScroll={handleScrollEvent}>
-        <SafeTimelineWrapper
+      <div className="h-full p-1" onScroll={handleScrollEvent}>
+        <ModernTimelineWrapper
           forecastPoints={forecastPoints}
           weatherData={weatherData}
           selectedMarker={selectedMarker}
@@ -195,3 +188,5 @@ export const ClientSideTimeline: React.FC<ClientSideTimelineProps> = ({
     </div>
   );
 };
+
+export default ModernClientTimeline;

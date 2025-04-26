@@ -42,7 +42,7 @@ const BaseChart: React.FC<BaseChartProps & { children: React.ReactNode }> = ({
           </span>
         )}
       </div>
-      <div className={cn(responsive.chartContainer, "bg-white dark:bg-zinc-800 p-2 sm:p-3 pb-6 border border-border overflow-visible")}>
+      <div className="bg-white dark:bg-zinc-800 p-2 sm:p-3 border border-border overflow-visible h-[350px] sm:h-[380px] md:h-[410px] lg:h-[430px]">
         {children}
       </div>
     </div>

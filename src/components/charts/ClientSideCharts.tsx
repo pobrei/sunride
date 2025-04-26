@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 const SafeChartsWrapper = dynamic(() => import('./SafeChartsWrapper'), {
   ssr: false,
   loading: () => (
-    <div className="h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] flex items-center justify-center">
+    <div className="h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px] flex items-center justify-center">
       <LoadingSpinner size="lg" variant="train" />
     </div>
   ),
@@ -45,7 +45,7 @@ const ClientSideCharts: React.FC<ClientSideChartsProps> = ({
   selectedMarker,
   onChartClick,
   className,
-  height = 'h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px]',
+  height = 'h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px]',
 }) => {
   // Check if we have valid data
   if (!forecastPoints || forecastPoints.length === 0 || !weatherData || weatherData.length === 0) {

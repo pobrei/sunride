@@ -31,10 +31,10 @@ import { Header } from '@/components/layout/header';
 
 // Import the map component
 import MapWrapper from '@/components/map/MapWrapper';
-import { ClientSideTimeline } from '@/components/timeline/ClientSideTimeline';
-import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
-import { TripSummary as RouteSummary } from '@/components/route/TripSummary';
-import { UserGuide } from '@/components/help/UserGuide';
+import { ModernClientTimeline } from '@/components/timeline/ModernClientTimeline';
+import { Alerts as WeatherAlerts } from '@/features/weather/components';
+import { ModernTripSummary as RouteSummary } from '@/features/route/components';
+import { UserGuide } from '@/features/help/components';
 
 // Import charts
 import ClientSideCharts from '@/components/charts/ClientSideCharts';
@@ -161,8 +161,8 @@ export default function Home() {
     return 0;
   };
 
-  // Create sidebar content
-  const sidebarContent = (
+  // Create controls content
+  const controlsContent = (
     <div className="space-y-4">
       <GPXUploader
         onGPXLoaded={handleGPXLoaded}
@@ -178,15 +178,22 @@ export default function Home() {
 
   // Create header content with breadcrumb and progress steps
   const headerContent = (
-    <div className="flex flex-col space-y-4">
-      <div className="flex justify-between items-center">
-        <Breadcrumb
-          segments={[
-            { label: 'Home', href: '/' },
-            { label: 'Route Planner', href: '#' },
-          ]}
-        />
-        <div className="flex items-center space-x-2">
+    <div className="flex flex-col space-y-3 sm:space-y-4">
+      <div className="flex flex-wrap justify-between items-center gap-2">
+        {/* Hide breadcrumb on smallest screens */}
+        <div className="hidden sm:block">
+          <Breadcrumb
+            segments={[
+              { label: 'Home', href: '/' },
+              { label: 'Route Planner', href: '#' },
+            ]}
+          />
+        </div>
+        {/* Show simplified title on smallest screens */}
+        <div className="sm:hidden text-sm font-medium">
+          Route Planner
+        </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <EnhancedThemeToggle />
           <ExportMenu {...pdfExportProps} />
         </div>
@@ -197,7 +204,9 @@ export default function Home() {
           steps={uploadSteps}
           activeStep={getActiveStep()}
           showStepNumbers={false}
-          showDescriptions={true}
+          showDescriptions={false}
+          showDescriptionsOnMobile={false}
+          showLabelsOnMobile={true}
           className="mt-2"
         />
       )}
@@ -208,20 +217,21 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header title="SunRide" />
 
-      <div className="container mx-auto px-4 sm:px-6 py-8 pb-24">
-        {' '}
-        {/* Improved responsive padding */}
+      <div className="container mx-auto px-2 sm:px-4 md:px-6 py-3 sm:py-6 pb-12 sm:pb-16 md:pb-24">
         {headerContent}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 mt-8 animate-fade-in">
-          {/* Left panel with controls */}
-          <div className="lg:col-span-1 space-y-6 order-2 lg:order-1 animate-slide-in-left">
-            {sidebarContent}
+
+        {/* Mobile-first layout with logical order of components */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mt-3 sm:mt-6 animate-fade-in">
+          {/* On mobile: Controls first for better UX */}
+          <div className="lg:col-span-1 space-y-3 sm:space-y-4 order-1 lg:order-1 animate-slide-in-left">
+            {/* Controls content - always visible at the top on mobile */}
+            {controlsContent}
           </div>
 
           {/* Main content area */}
-          <div className="lg:col-span-3 space-y-8 order-1 lg:order-2 animate-slide-in-right">
+          <div className="lg:col-span-3 space-y-4 sm:space-y-6 order-2 lg:order-2 animate-slide-in-right">
             {isLoading ? (
-              <div className="flex items-center justify-center h-[400px] sm:h-[450px] md:h-[500px] bg-card rounded-lg border border-border shadow-sm animate-scale-up">
+              <div className="flex items-center justify-center h-[320px] sm:h-[350px] md:h-[450px] bg-card rounded-lg border border-border shadow-sm animate-scale-up">
                 <LoadingSpinner
                   message={loadingMessage || 'Loading weather data...'}
                   centered
@@ -232,8 +242,9 @@ export default function Home() {
               </div>
             ) : (
               <>
+                {/* Map - most important visual element */}
                 <div className="relative" ref={mapRef}>
-                  <div className="h-[400px] sm:h-[450px] md:h-[500px] rounded-lg overflow-hidden border border-border shadow-sm animate-scale-up">
+                  <div className="h-[320px] sm:h-[350px] md:h-[450px] rounded-lg overflow-hidden border border-border shadow-sm animate-scale-up">
                     <MapWrapper
                       gpxData={gpxData}
                       forecastPoints={forecastPoints}
@@ -254,14 +265,17 @@ export default function Home() {
                 </div>
 
                 {forecastPoints.length > 0 && weatherData.length > 0 && (
-                  <div className={cn('space-y-6 sm:space-y-8 mt-6 sm:mt-8 animate-slide-up')}>
-                    <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8')}>
-                      <RouteSummary
-                        gpxData={gpxData}
-                        forecastPoints={forecastPoints}
-                        weatherData={weatherData}
-                        className="animate-fade-in stagger-item rounded-lg shadow-sm hover:shadow-md transition-all duration-300 card-hover-effect"
-                      />
+                  <div className={cn('space-y-3 sm:space-y-4 md:space-y-6 mt-3 sm:mt-4 md:mt-6 animate-slide-up')}>
+                    {/* Summary and alerts - stacked on mobile, side by side on larger screens */}
+                    <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4')}>
+                      <div className="w-full overflow-hidden rounded-xl">
+                        <RouteSummary
+                          gpxData={gpxData}
+                          forecastPoints={forecastPoints}
+                          weatherData={weatherData}
+                          className="animate-fade-in stagger-item h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px] overflow-auto"
+                        />
+                      </div>
 
                       <WeatherAlerts
                         forecastPoints={forecastPoints}
@@ -272,34 +286,41 @@ export default function Home() {
                       />
                     </div>
 
-                    <ClientSideTimeline
-                      forecastPoints={forecastPoints}
-                      weatherData={weatherData}
-                      selectedMarker={selectedMarker}
-                      onTimelineClick={handleTimelineClick}
-                      height="h-[400px] sm:h-[450px] md:h-[480px] lg:h-[500px]"
-                      showNavigation={true}
-                    />
-
-                    <div
-                      ref={chartsRef}
-                      className="mb-8 sm:mb-10 md:mb-12 w-full max-w-full overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border bg-card p-4 sm:p-5 animate-fade-in stagger-item card-hover-effect"
-                    >
-                      {' '}
-                      {/* Responsive bottom margin with full width */}
-                      <ClientSideCharts
-                        gpxData={gpxData}
+                    {/* Modern iOS 19-style Timeline */}
+                    <div className="w-full overflow-hidden rounded-xl border border-border/20">
+                      <ModernClientTimeline
                         forecastPoints={forecastPoints}
                         weatherData={weatherData}
                         selectedMarker={selectedMarker}
-                        onChartClick={handleChartClick}
-                        height="h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px]"
+                        onTimelineClick={handleTimelineClick}
+                        height="h-[420px] sm:h-[440px] md:h-[460px] lg:h-[480px]"
+                        showNavigation={true}
+                        className="border-0"
                       />
+                    </div>
+
+                    {/* Charts - adjusted padding and height for mobile */}
+                    <div
+                      ref={chartsRef}
+                      className="mb-4 sm:mb-6 md:mb-8 w-full overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-border/20 bg-white/30 dark:bg-card/30 backdrop-blur-sm p-2 sm:p-3 animate-fade-in stagger-item"
+                    >
+                      <div className="w-full overflow-hidden rounded-xl">
+                        <ClientSideCharts
+                          gpxData={gpxData}
+                          forecastPoints={forecastPoints}
+                          weatherData={weatherData}
+                          selectedMarker={selectedMarker}
+                          onChartClick={handleChartClick}
+                          height="h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px]"
+                          className="border-0"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
 
-                <div className={cn('mt-6 sm:mt-8')}>
+                {/* User guide - moved to the bottom as it's less critical */}
+                <div className={cn('mt-3 sm:mt-4 md:mt-6')}>
                   <UserGuide
                     className={cn(
                       'animate-fade-in stagger-item rounded-lg shadow-sm hover:shadow-md transition-all duration-300 card-hover-effect'
