@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { FileDown, FileText, FileSpreadsheet, FileJson, Loader2 } from 'lucide-react';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
-import { useNotifications } from '@/features/notifications/context';
+import { useSimpleNotifications } from '@/features/notifications/context';
 import { exportToPDF } from '../utils/pdfExport';
 import { exportToCSV } from '../utils/csvExport';
 import { exportToJSON } from '../utils/jsonExport';
@@ -35,7 +35,7 @@ export default function ExportMenu({
   chartsRef,
 }: ExportMenuProps) {
   const [isExporting, setIsExporting] = useState<string | null>(null);
-  const { addNotification } = useNotifications();
+  const { addNotification } = useSimpleNotifications();
 
   const handleExport = async (format: 'pdf' | 'csv' | 'json' | 'gpx') => {
     if (!gpxData || forecastPoints.length === 0) {
@@ -127,7 +127,7 @@ export default function ExportMenu({
       <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-[#1E2A38] border-[#E5E7EB] dark:border-[#2D3748]">
         <DropdownMenuLabel className="text-[#1A1A1A] dark:text-white">Export Options</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-[#E5E7EB] dark:bg-[#2D3748]" />
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => handleExport('pdf')}
           disabled={isDisabled}
           className="cursor-pointer hover:bg-[#00C2A8]/10 dark:hover:bg-[#00C2A8]/20 text-[#1A1A1A] dark:text-white focus:bg-[#00C2A8]/10 dark:focus:bg-[#00C2A8]/20"
@@ -135,7 +135,7 @@ export default function ExportMenu({
           <FileText className="mr-2 h-4 w-4 text-[#00C2A8]" />
           <span>PDF Report</span>
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => handleExport('csv')}
           disabled={isDisabled}
           className="cursor-pointer hover:bg-[#00C2A8]/10 dark:hover:bg-[#00C2A8]/20 text-[#1A1A1A] dark:text-white focus:bg-[#00C2A8]/10 dark:focus:bg-[#00C2A8]/20"
@@ -143,7 +143,7 @@ export default function ExportMenu({
           <FileSpreadsheet className="mr-2 h-4 w-4 text-[#00C2A8]" />
           <span>CSV Spreadsheet</span>
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => handleExport('json')}
           disabled={isDisabled}
           className="cursor-pointer hover:bg-[#00C2A8]/10 dark:hover:bg-[#00C2A8]/20 text-[#1A1A1A] dark:text-white focus:bg-[#00C2A8]/10 dark:focus:bg-[#00C2A8]/20"
@@ -151,7 +151,7 @@ export default function ExportMenu({
           <FileJson className="mr-2 h-4 w-4 text-[#00C2A8]" />
           <span>JSON Data</span>
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => handleExport('gpx')}
           disabled={isDisabled}
           className="cursor-pointer hover:bg-[#00C2A8]/10 dark:hover:bg-[#00C2A8]/20 text-[#1A1A1A] dark:text-white focus:bg-[#00C2A8]/10 dark:focus:bg-[#00C2A8]/20"
