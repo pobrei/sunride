@@ -12,7 +12,7 @@ import { WeatherProviderComparison } from '@/features/weather/components';
 import { RouteControls } from '@/features/route/components';
 import { ExportMenu } from '@/features/export/components';
 import { KeyboardNavigation } from '@/features/navigation/components';
-import { useNotifications } from '@/features/notifications/context';
+import { useSimpleNotifications } from '@/features/notifications/context';
 
 // Import from components
 import { EnhancedThemeToggle } from '@/components/ui/enhanced-theme-toggle';
@@ -53,7 +53,7 @@ export default function Home() {
     loadingMessage,
   } = useWeather();
 
-  const { addNotification } = useNotifications();
+  const { addNotification } = useSimpleNotifications();
 
   // Refs for PDF export
   const mapRef = useRef<HTMLDivElement>(null);
