@@ -109,9 +109,9 @@
   font: inherit;
 }
 
-/* Dark mode support */
+/* Dark mode support - iOS 19 style */
 .dark .leaflet-tile {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+  filter: brightness(0.7) invert(1) contrast(1.5) hue-rotate(200deg) saturate(0.5) brightness(0.8);
 }
 
 .dark .leaflet-container {
@@ -120,11 +120,14 @@
 
 .dark .leaflet-control-attribution {
   background: rgba(0, 0, 0, 0.5);
-  color: #ccc;
+  color: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
 }
 
 .dark .leaflet-control-attribution a {
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Map control buttons - iOS 19 style */

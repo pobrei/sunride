@@ -1,0 +1,506 @@
+'use client';
+
+import React, { useEffect, useRef, useCallback } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { GPXData, ForecastPoint } from '@/types';
+import { Locate, Wind, Droplets, CloudRain, Sun, Gauge, Cloud } from 'lucide-react';
+import { responsive } from '@/styles/tailwind-utils';
+import './MapStyles.css';
+import './WeatherCardFix.css';
+
+// Import Leaflet types but use dynamic import for the actual library
+import type { Map as LeafletMap, Marker, Polyline } from 'leaflet';
+
+interface WeatherDataPoint {
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  windSpeed: number;
+  windDirection: number;
+  precipitation: number;
+  precipitationProbability?: number;
+  cloudCover: number;
+  uvIndex: number;
+  visibility: number;
+  pressure: number;
+  weatherCode: number;
+  conditionCode?: number;
+  weatherDescription: string;
+  conditionDescription?: string;
+  weatherIcon: string;
+  time: string;
+}
+
+/**
+ * Get weather icon emoji based on condition code
+ */
+function getWeatherIconEmoji(conditionCode: number): string {
+  // Weather condition codes based on OpenWeatherMap API
+  // https://openweathermap.org/weather-conditions
+
+  // Thunderstorm
+  if (conditionCode >= 200 && conditionCode < 300) return '⛈️';
+
+  // Drizzle
+  if (conditionCode >= 300 && conditionCode < 400) return '🌦️';
+
+  // Rain
+  if (conditionCode >= 500 && conditionCode < 600) {
+    if (conditionCode === 511) return '🌨️'; // Freezing rain
+    return '🌧️';
+  }
+
+  // Snow
+  if (conditionCode >= 600 && conditionCode < 700) return '❄️';
+
+  // Atmosphere (fog, mist, etc.)
+  if (conditionCode >= 700 && conditionCode < 800) return '🌫️';
+
+  // Clear
+  if (conditionCode === 800) return '☀️';
+
+  // Clouds
+  if (conditionCode > 800 && conditionCode < 900) {
+    if (conditionCode === 801) return '🌤️'; // Few clouds
+    if (conditionCode === 802) return '⛅'; // Scattered clouds
+    return '☁️'; // Broken or overcast clouds
+  }
+
+  return '🌡️'; // Default
+}
+
+/**
+ * Get wind direction as a cardinal direction
+ */
+function getWindDirection(degrees: number): string {
+  const directions = [
+    'N',
+    'NNE',
+    'NE',
+    'ENE',
+    'E',
+    'ESE',
+    'SE',
+    'SSE',
+    'S',
+    'SSW',
+    'SW',
+    'WSW',
+    'W',
+    'WNW',
+    'NW',
+    'NNW',
+  ];
+  const index = Math.round(degrees / 22.5) % 16;
+  return directions[index];
+}
+
+/**
+ * Generate an SVG arrow for wind direction
+ */
+function getWindArrowSVG(degrees: number, windSpeed: number, isSelected: boolean): string {
+  // Convert meteorological degrees to mathematical degrees
+  const mathDegrees = (degrees - 90 + 360) % 360;
+
+  // Scale arrow size based on wind speed (min 10px, max 24px)
+  const baseSize = isSelected ? 20 : 16;
+  const minSize = baseSize;
+  const maxSize = baseSize * 1.5;
+  const size = Math.min(maxSize, minSize + (windSpeed / 10) * 5);
+
+  // Calculate arrow color based on wind speed
+  let color = '#4299e1'; // Default blue
+  if (windSpeed > 30) {
+    color = '#e53e3e'; // Red for strong wind
+  } else if (windSpeed > 20) {
+    color = '#ed8936'; // Orange for moderate wind
+  } else if (windSpeed > 10) {
+    color = '#48bb78'; // Green for light wind
+  }
+
+  // Create SVG for the arrow
+  return `
+    <svg
+      width="${size}"
+      height="${size}"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="transform: rotate(${mathDegrees}deg); position: absolute; top: -${size/2}px; left: ${isSelected ? '20px' : '14px'};"
+      class="wind-arrow"
+    >
+      <path
+        d="M12 2L12 19M12 19L7 14M12 19L17 14"
+        stroke="${color}"
+        stroke-width="${isSelected ? 3 : 2}"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `;
+}
+
+/**
+ * Get UV index category
+ */
+function getUVIndexCategory(uvIndex: number): string {
+  if (uvIndex < 3) return 'Low';
+  if (uvIndex < 6) return 'Moderate';
+  if (uvIndex < 8) return 'High';
+  if (uvIndex < 11) return 'Very High';
+  return 'Extreme';
+}
+
+interface SimpleLeafletMapProps {
+  gpxData?: GPXData;
+  forecastPoints: ForecastPoint[];
+  weatherData?: WeatherDataPoint[];
+  onMarkerClick?: (index: number) => void;
+  selectedMarker?: number | null;
+}
+
+/**
+ * A simple Leaflet map component that displays the route and weather data
+ */
+export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.ReactElement {
+  const {
+    gpxData,
+    forecastPoints = [],
+    weatherData = [],
+    onMarkerClick = () => {},
+    selectedMarker = null,
+  } = props;
+
+  // Refs
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
+  const markersRef = useRef<Marker[]>([]);
+  const routeRef = useRef<Polyline | null>(null);
+
+  // State refs to avoid dependency issues
+  const selectedMarkerRef = useRef<number | null>(selectedMarker);
+
+  // Update ref when prop changes
+  useEffect(() => {
+    selectedMarkerRef.current = selectedMarker;
+  }, [selectedMarker]);
+
+  // Initialize map on mount
+  useEffect(() => {
+    // Only run this on the client
+    if (typeof window === 'undefined') return;
+
+    console.log('SimpleLeafletMap: Initializing map...');
+
+    // Load Leaflet dynamically
+    const initMap = async () => {
+      try {
+        // Import Leaflet
+        const L = await import('leaflet');
+
+        // Add Leaflet CSS
+        if (!document.querySelector('link[href*="leaflet.css"]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+          document.head.appendChild(link);
+        }
+
+        // Fix Leaflet icon paths
+        // @ts-expect-error - Leaflet types issue with _getIconUrl
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+
+        // Create map if it doesn't exist
+        if (!mapRef.current && mapContainerRef.current) {
+          console.log('SimpleLeafletMap: Creating new map instance');
+
+          // Create map instance
+          mapRef.current = L.map(mapContainerRef.current).setView([0, 0], 2);
+
+          // Add a minimalistic map style as default (CartoDB Positron)
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20,
+          }).addTo(mapRef.current);
+        }
+
+        // Update map with data if available
+        if (gpxData && forecastPoints.length > 0) {
+          updateMap(L);
+        }
+      } catch (error) {
+        console.error('SimpleLeafletMap: Error initializing map:', error);
+      }
+    };
+
+    initMap();
+
+    // Cleanup on unmount
+    return () => {
+      if (mapRef.current) {
+        console.log('SimpleLeafletMap: Cleaning up map');
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update map when data changes
+  useEffect(() => {
+    if (!mapRef.current || !gpxData || forecastPoints.length === 0) {
+      return;
+    }
+
+    console.log('SimpleLeafletMap: Updating map with data');
+
+    const updateMapData = async () => {
+      const L = await import('leaflet');
+      updateMap(L);
+    };
+
+    updateMapData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gpxData, forecastPoints]);
+
+  // Function to update the map with route and markers
+  const updateMap = (L: typeof import('leaflet')): void => {
+    if (!mapRef.current || !gpxData) return;
+
+    const map = mapRef.current;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Clear existing route
+    if (routeRef.current) {
+      routeRef.current.remove();
+      routeRef.current = null;
+    }
+
+    // Add route line
+    if (gpxData.points && gpxData.points.length > 0) {
+      const routeCoords = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
+
+      routeRef.current = L.polyline(routeCoords, {
+        color: '#3B82F6', // Primary blue color to match app theme
+        weight: 5,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+        dashArray: undefined,
+        smoothFactor: 1.5,
+        // Add a white outline to make the route more visible on the map
+        className: 'route-path-with-outline',
+      }).addTo(map);
+
+      // Fit map to route bounds
+      map.fitBounds(routeRef.current.getBounds(), {
+        padding: [50, 50],
+        maxZoom: 14,
+      });
+    }
+
+    // Add markers for forecast points
+    forecastPoints.forEach((point, index) => {
+      const isSelected = index === selectedMarkerRef.current;
+
+      // Get wind data for this point
+      const weather = weatherData && weatherData[index];
+      const windDirection = weather?.windDirection || 0;
+      const windSpeed = weather?.windSpeed || 0;
+
+      // Generate wind arrow SVG
+      const windArrow = getWindArrowSVG(windDirection, windSpeed, isSelected);
+
+      // Create custom icon with wind direction arrow - larger for better touch targets
+      const icon = L.divIcon({
+        className: 'custom-marker-icon',
+        html: `
+          <div class="marker-container">
+            <div class="${isSelected ? 'marker-selected' : 'marker-normal'} transition-all duration-300">${index + 1}</div>
+            ${windArrow}
+          </div>
+        `,
+        iconSize: [isSelected ? 64 : 54, isSelected ? 64 : 54],
+        iconAnchor: [isSelected ? 32 : 27, isSelected ? 32 : 27],
+      });
+
+      // Create marker
+      const marker = L.marker([point.lat, point.lon], { icon })
+        .addTo(map)
+        .on('click', () => {
+          if (onMarkerClick) onMarkerClick(index);
+        });
+
+      // Add popup with weather info - more compact for mobile
+      if (weather) {
+        const windDirectionText = getWindDirection(windDirection);
+        marker.bindPopup(`
+          <div class="weather-popup">
+            <div class="weather-temp">${weather.temperature?.toFixed(1) || 'N/A'}°C</div>
+            <div class="weather-wind">
+              ${weather.windSpeed?.toFixed(1) || 'N/A'} km/h
+              <span class="wind-direction">${windDirectionText}</span>
+            </div>
+          </div>
+        `);
+      }
+
+      markersRef.current.push(marker);
+    });
+
+    console.log('SimpleLeafletMap: Map updated successfully');
+  };
+
+  // Add CSS for markers
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const styleId = 'leaflet-custom-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.innerHTML = `
+        .custom-marker-icon {
+          background: transparent;
+          border: none;
+        }
+        .marker-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .marker-normal {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          background-color: white;
+          color: hsl(var(--foreground));
+          font-weight: 500;
+          border: 2px solid hsl(var(--border));
+          border-radius: 50%;
+          font-size: 12px;
+          z-index: 400;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .marker-selected {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          background-color: hsl(var(--primary));
+          color: hsl(var(--primary-foreground));
+          font-weight: 600;
+          border: none;
+          border-radius: 50%;
+          font-size: 14px;
+          z-index: 500;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+          transform: scale(1.1);
+        }
+        .wind-arrow {
+          z-index: 450;
+          filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
+          transition: all 0.3s ease;
+        }
+        .route-path-with-outline {
+          stroke-width: 5px;
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+          transition: all 0.3s ease;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  // Function to center the map on the route
+  const centerMap = useCallback(async () => {
+    if (!mapRef.current || !routeRef.current) return;
+
+    try {
+      // Center the map on the route bounds
+      mapRef.current.fitBounds(routeRef.current.getBounds(), {
+        padding: [50, 50],
+        maxZoom: 14,
+      });
+    } catch (error) {
+      console.error('Error centering map:', error);
+    }
+  }, []);
+
+  // Render placeholder if no data
+  const noDataContent = (
+    <div
+      className={cn(
+        responsive.mapContainer,
+        'bg-muted flex items-center justify-center max-w-7xl mx-auto'
+      )}
+    >
+      <Card className="w-full max-w-md mx-auto">
+        <div className="text-center p-4">
+          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-4">No Route Data</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+            Upload a GPX file to visualize your route on the map with weather data
+          </p>
+        </div>
+      </Card>
+    </div>
+  );
+
+  // Render map or placeholder based on data availability
+  return (
+    <div className="h-full w-full relative z-0">
+      {!gpxData || forecastPoints.length === 0 ? (
+        noDataContent
+      ) : (
+        <>
+          <div ref={mapContainerRef} className={cn(responsive.mapContainer, 'w-full overflow-hidden animate-fade-in shadow-lg border border-border/20')}></div>
+
+          {/* Center map button - iOS 19 style */}
+          <div className="absolute top-4 right-4 z-[500]">
+            <Button
+              onClick={centerMap}
+              size="icon"
+              variant="ghost"
+              data-slot="button"
+              className="bg-white/80 dark:bg-card/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-xl shadow-md rounded-full w-10 h-10 border border-border/20"
+              aria-label="Center map"
+              title="Center map on route"
+            >
+              <Locate className="h-5 w-5 text-primary" />
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );

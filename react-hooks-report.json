@@ -1,0 +1,30 @@
+{
+  "totalFiles": 114,
+  "fixedFiles": 24,
+  "fixedFilesList": [
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/ElevationChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/HumidityChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/PrecipitationChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/PressureChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/TemperatureChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/UVIndexChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/charts/WindChart.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/common/OfflineDetector.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/common/ThemeToggle.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/layout/header.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/map/SimpleLeafletMap.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/providers/performance-provider.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/timeline/ClientSideTimeline.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/timeline/ModernClientTimeline.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/timeline/ModernTimeline.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/timeline/Timeline.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/ui/KeyboardFocusOutline.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/ui/ResponsiveGrid.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/ui/notification.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/ui/simple-notification.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/components/ui/toast.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/features/navigation/components/KeyboardNavigation.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/features/notifications/context/SimpleNotificationProvider.tsx",
+    "/Users/filippsh/dev/nextjs-main/src/features/weather/components/Alerts.tsx"
+  ]
+}

@@ -135,7 +135,7 @@ function getWindArrowSVG(degrees: number, windSpeed: number, isSelected: boolean
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style="transform: rotate(${mathDegrees}deg); position: absolute; top: -${size/2}px; left: ${isSelected ? '20px' : '14px'};"
+      style="transform: rotate(${mathDegrees}deg); position: absolute; top: -${size / 2}px; left: ${isSelected ? '20px' : '14px'};"
       class="wind-arrow"
     >
       <path
@@ -231,34 +231,63 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           // Create map instance
           mapRef.current = L.map(mapContainerRef.current).setView([0, 0], 2);
 
-          // Add OpenCycleMap tile layer (better for cycling routes)
-          L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+          // Add a minimalistic map style as default (CartoDB Voyager)
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution:
-              '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19,
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20,
           }).addTo(mapRef.current);
 
           // Add layer control with multiple map options
           const baseMaps = {
-            "Cycle Map": L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
-              attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-              maxZoom: 19,
-            }),
-            "Standard Map": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-              maxZoom: 19,
-            }),
-            "Terrain Map": L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
-              attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-              maxZoom: 19,
-            }),
+            Minimalist: L.tileLayer(
+              'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+              {
+                attribution:
+                  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20,
+              }
+            ),
+            'Light Mode': L.tileLayer(
+              'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+              {
+                attribution:
+                  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20,
+              }
+            ),
+            'Cycle Map': L.tileLayer(
+              'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38',
+              {
+                attribution:
+                  '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+              }
+            ),
+            'Terrain Map': L.tileLayer(
+              'https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38',
+              {
+                attribution:
+                  '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+              }
+            ),
           };
 
           // Add layer control to the map
-          L.control.layers(baseMaps, {}, {
-            position: 'topright',
-            collapsed: true,
-          }).addTo(mapRef.current);
+          L.control
+            .layers(
+              baseMaps,
+              {},
+              {
+                position: 'topright',
+                collapsed: true,
+              }
+            )
+            .addTo(mapRef.current);
 
           console.log('SimpleLeafletMap: Map created successfully');
         }
@@ -282,7 +311,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         mapRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update map when data changes
@@ -299,7 +328,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
     };
 
     updateMapData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gpxData, forecastPoints, weatherData, selectedMarker]);
 
   // Function to update the map with route and markers
@@ -323,14 +352,14 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
       const routeCoords = gpxData.points.map(point => [point.lat, point.lon] as [number, number]);
 
       routeRef.current = L.polyline(routeCoords, {
-        color: '#00C2A8', // Primary color (hardcoded for consistency)
-        weight: 5,
-        opacity: 0.9,
+        color: 'hsl(var(--primary))', // Use primary color from theme
+        weight: 4,
+        opacity: 0.85,
         lineCap: 'round',
         lineJoin: 'round',
         dashArray: undefined,
         smoothFactor: 1.5,
-        // Add a white outline to make the route more visible on the map
+        // Add a subtle outline to make the route more visible on the map
         className: 'route-path-with-outline',
       }).addTo(map);
 
@@ -518,13 +547,27 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           background-color: hsl(var(--card)) !important;
           color: white !important;
         }
-        /* Route path styling with outline */
+        /* Route path styling with outline - iOS 19 style */
         .route-path-with-outline {
-          stroke-width: 5px;
-          filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+          stroke-width: 4px;
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
+          transition: all 0.3s ease;
         }
         .dark .route-path-with-outline {
-          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+          filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+        }
+        /* Improve map aesthetics */
+        .leaflet-control-attribution {
+          background-color: rgba(255, 255, 255, 0.7) !important;
+          -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+          border-radius: 4px;
+          padding: 2px 5px;
+          font-size: 10px;
+        }
+        .dark .leaflet-control-attribution {
+          background-color: rgba(0, 0, 0, 0.5) !important;
+          color: rgba(255, 255, 255, 0.7);
         }
       `;
       document.head.appendChild(style);
@@ -588,7 +631,13 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
         noDataContent
       ) : (
         <>
-          <div ref={mapContainerRef} className={cn(responsive.mapContainer, 'w-full overflow-hidden animate-fade-in shadow-lg border border-border/20')}></div>
+          <div
+            ref={mapContainerRef}
+            className={cn(
+              responsive.mapContainer,
+              'w-full overflow-hidden animate-fade-in shadow-lg border border-border/20'
+            )}
+          ></div>
 
           {/* Center map button - iOS 19 style */}
           <div className="absolute top-4 right-4 z-[500]">
@@ -614,7 +663,9 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                     <div className="w-6 h-6 bg-primary/90 rounded-full flex items-center justify-center text-primary-foreground text-xs mr-1.5 shadow-md ring-1 ring-primary/20 animate-pulse">
                       {selectedMarker + 1}
                     </div>
-                    <span className="text-muted-foreground font-medium">of {forecastPoints.length}</span>
+                    <span className="text-muted-foreground font-medium">
+                      of {forecastPoints.length}
+                    </span>
                   </div>
                   <div className="text-3xl">
                     {getWeatherIconEmoji(weatherData[selectedMarker]?.conditionCode || 800)}
@@ -629,13 +680,17 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                     </span>
                   </div>
                   <div className="text-sm text-muted-foreground capitalize mt-1 font-medium">
-                    {weatherData[selectedMarker]?.conditionDescription || weatherData[selectedMarker]?.weatherDescription || 'Clear sky'}
+                    {weatherData[selectedMarker]?.conditionDescription ||
+                      weatherData[selectedMarker]?.weatherDescription ||
+                      'Clear sky'}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
                   <div className="col-span-2 pb-1 mb-1">
-                    <span className="font-semibold text-foreground/90 text-base">Weather Details</span>
+                    <span className="font-semibold text-foreground/90 text-base">
+                      Weather Details
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-1.5">
@@ -675,7 +730,11 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                         {weatherData[selectedMarker]?.precipitation?.toFixed(1) || '0'} mm
                         {(weatherData[selectedMarker]?.precipitationProbability || 0) > 0 && (
                           <span className="text-xs text-muted-foreground ml-1">
-                            ({((weatherData[selectedMarker]?.precipitationProbability || 0) * 100).toFixed(0)}%)
+                            (
+                            {(
+                              (weatherData[selectedMarker]?.precipitationProbability || 0) * 100
+                            ).toFixed(0)}
+                            %)
                           </span>
                         )}
                       </div>
@@ -716,7 +775,9 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
                     <div>
                       <div className="text-xs text-muted-foreground font-medium">Cloud Cover</div>
                       <div className="font-semibold text-sm">
-                        {weatherData[selectedMarker]?.cloudCover !== undefined ? `${weatherData[selectedMarker]?.cloudCover}%` : '0%'}
+                        {weatherData[selectedMarker]?.cloudCover !== undefined
+                          ? `${weatherData[selectedMarker]?.cloudCover}%`
+                          : '0%'}
                       </div>
                     </div>
                   </div>
