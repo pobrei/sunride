@@ -80,6 +80,34 @@ export async function fetchWeatherForPoints(
     // Validate input
     validateForecastPoints(points);
 
+    // If we have more than 100 points, process in batches
+    const BATCH_SIZE = 100;
+    if (points.length > BATCH_SIZE) {
+      console.log(`Processing ${points.length} points in batches of ${BATCH_SIZE}`);
+      const results: (WeatherData | null)[] = [];
+
+      for (let i = 0; i < points.length; i += BATCH_SIZE) {
+        const batch = points.slice(i, i + BATCH_SIZE);
+        console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(points.length / BATCH_SIZE)}`);
+
+        try {
+          const batchResults = await fetchWeatherForPoints(batch);
+          results.push(...batchResults);
+
+          // Small delay between batches to prevent overwhelming the server
+          if (i + BATCH_SIZE < points.length) {
+            await delay(500);
+          }
+        } catch (error) {
+          console.error(`Error processing batch ${Math.floor(i / BATCH_SIZE) + 1}:`, error);
+          // Fill with nulls for failed batch
+          results.push(...batch.map(() => null));
+        }
+      }
+
+      return results;
+    }
+
     // Define retry logic in a separate function
     const fetchWithRetry = async (): Promise<(WeatherData | null)[]> => {
       try {

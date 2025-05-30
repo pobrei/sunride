@@ -89,26 +89,7 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
 
   const maxUvIndex: number = Math.max(...validWeatherData.map(data => data.uvIndex || 0));
 
-  // Calculate headwind hours (simplified - assuming route direction is constant)
-  let headwindHours: number = 0;
-  if (forecastPoints.length >= 2) {
-    // Calculate overall route direction
-    const startPoint: ForecastPoint = forecastPoints[0];
-    const endPoint: ForecastPoint = forecastPoints[forecastPoints.length - 1];
-    const routeDirection: number =
-      Math.atan2(endPoint.lat - startPoint.lat, endPoint.lon - startPoint.lon) * (180 / Math.PI);
 
-    // Count points where wind direction is opposite to route direction (±45°)
-    const headwindPoints: WeatherData[] = validWeatherData.filter(data => {
-      const windDirection: number = data.windDirection;
-      const directionDiff: number = Math.abs(windDirection - routeDirection);
-      return directionDiff > 135 && directionDiff < 225;
-    });
-
-    headwindHours = Math.round(
-      headwindPoints.length * (estimatedDuration / validWeatherData.length)
-    );
-  }
 
   // Count and categorize weather alerts
   interface WeatherAlerts {
@@ -142,8 +123,8 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
   const totalAlerts: number = Object.values(weatherAlerts).reduce((sum, count) => sum + count, 0);
 
   // Calculate elevation gain/loss
-  const elevationGain: number = gpxData.elevation?.gain || 0;
-  const elevationLoss: number = gpxData.elevation?.loss || 0;
+  const elevationGain: number = gpxData.elevation?.gain || gpxData.elevationGain || 0;
+  const elevationLoss: number = gpxData.elevation?.loss || gpxData.elevationLoss || 0;
 
   // Temperature range visualization data
   const temperatureRange = useMemo(() => {
@@ -192,16 +173,7 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
             </div>
           </div>
 
-          {/* Duration */}
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 p-2 rounded-full">
-              <Clock className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Duration</p>
-              <p className="font-medium text-sm">{formatDuration(estimatedDuration)}</p>
-            </div>
-          </div>
+
 
           {/* Elevation */}
           <div className="flex items-center gap-2">
@@ -242,16 +214,7 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
             </div>
           </div>
 
-          {/* Headwind */}
-          <div className="flex items-center gap-2">
-            <div className="bg-emerald-500/10 p-2 rounded-full">
-              <Wind className="h-4 w-4 text-emerald-500" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Headwind</p>
-              <p className="font-medium text-sm">~{headwindHours} hours</p>
-            </div>
-          </div>
+
 
           {/* Rain Chance */}
           <div className="flex items-center gap-2">

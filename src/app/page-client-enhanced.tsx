@@ -273,7 +273,7 @@ export default function Home() {
                           gpxData={gpxData}
                           forecastPoints={forecastPoints}
                           weatherData={weatherData}
-                          className="animate-fade-in stagger-item h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px] overflow-auto"
+                          className="animate-fade-in stagger-item"
                         />
                       </div>
 

@@ -24,6 +24,10 @@ interface ProgressStepsProps extends React.HTMLAttributes<HTMLDivElement> {
   showStepNumbers?: boolean;
   /** Whether to show the step descriptions */
   showDescriptions?: boolean;
+  /** Whether to show descriptions on mobile devices */
+  showDescriptionsOnMobile?: boolean;
+  /** Whether to show labels on mobile devices */
+  showLabelsOnMobile?: boolean;
   /** The orientation of the steps */
   orientation?: 'horizontal' | 'vertical';
 }
@@ -36,6 +40,8 @@ export function ProgressSteps({
   activeStep,
   showStepNumbers = false,
   showDescriptions = true,
+  showDescriptionsOnMobile = true,
+  showLabelsOnMobile = true,
   orientation = 'horizontal',
   className,
   ...props
@@ -115,13 +121,23 @@ export function ProgressSteps({
                   isActive && 'text-foreground',
                   isComplete && 'text-foreground',
                   isError && 'text-destructive',
-                  !isActive && !isComplete && !isError && 'text-muted-foreground'
+                  !isActive && !isComplete && !isError && 'text-muted-foreground',
+                  // Hide labels on mobile if showLabelsOnMobile is false
+                  !showLabelsOnMobile && 'hidden sm:block'
                 )}
               >
                 {step.label}
               </span>
               {showDescriptions && step.description && (
-                <span className="mt-0.5 text-xs text-muted-foreground">{step.description}</span>
+                <span
+                  className={cn(
+                    'mt-0.5 text-xs text-muted-foreground',
+                    // Hide descriptions on mobile if showDescriptionsOnMobile is false
+                    !showDescriptionsOnMobile && 'hidden sm:block'
+                  )}
+                >
+                  {step.description}
+                </span>
               )}
             </div>
           </div>

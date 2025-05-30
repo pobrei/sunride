@@ -87,26 +87,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 
   const maxUvIndex: number = Math.max(...validWeatherData.map(data => data.uvIndex || 0));
 
-  // Calculate headwind hours (simplified - assuming route direction is constant)
-  let headwindHours: number = 0;
-  if (forecastPoints.length >= 2) {
-    // Calculate overall route direction
-    const startPoint: ForecastPoint = forecastPoints[0];
-    const endPoint: ForecastPoint = forecastPoints[forecastPoints.length - 1];
-    const routeDirection: number =
-      Math.atan2(endPoint.lat - startPoint.lat, endPoint.lon - startPoint.lon) * (180 / Math.PI);
 
-    // Count points where wind direction is opposite to route direction (±45°)
-    const headwindPoints: WeatherData[] = validWeatherData.filter(data => {
-      const windDirection: number = data.windDirection;
-      const directionDiff: number = Math.abs(windDirection - routeDirection);
-      return directionDiff > 135 && directionDiff < 225;
-    });
-
-    headwindHours = Math.round(
-      headwindPoints.length * (estimatedDuration / validWeatherData.length)
-    );
-  }
 
   // Count and categorize weather alerts
   /**
@@ -169,16 +150,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
           </div>
 
-          {/* Duration */}
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 p-2 rounded-full">
-              <Clock className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Duration</p>
-              <p className="font-medium">{formatDuration(estimatedDuration)}</p>
-            </div>
-          </div>
+
 
           {/* Elevation */}
           <div className="flex items-center gap-2">
@@ -219,16 +191,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
             </div>
           </div>
 
-          {/* Headwind */}
-          <div className="flex items-center gap-2">
-            <div className="bg-blue-500/10 p-2 rounded-full">
-              <Wind className="h-5 w-5 text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Headwind</p>
-              <p className="font-medium">~{headwindHours} hours</p>
-            </div>
-          </div>
+
 
           {/* Rain Chance */}
           <div className="flex items-center gap-2">
