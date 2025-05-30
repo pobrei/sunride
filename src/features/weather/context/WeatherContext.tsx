@@ -8,6 +8,7 @@ import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 import { captureException, captureMessage } from '@/lib/sentry';
 import { useNotifications } from '@/features/notifications/context';
 import { useSafeData } from '@/features/data-validation/context';
+import { trackWeatherAPI } from '@/lib/analytics';
 
 interface WeatherContextType {
   gpxData: GPXData | null;
@@ -103,9 +104,13 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
       setLoadingMessage(`Fetching weather data for ${points.length} points...`);
 
       // Fetch weather data for each point using client API
+      const weatherStartTime = performance.now();
       try {
         console.log('Sending points to fetchWeatherForPoints:', points);
         const data = await fetchWeatherForPoints(points);
+
+        // Track successful weather API call
+        trackWeatherAPI(weatherStartTime, points.length, true);
 
         // Log the received data for debugging
         console.log(
@@ -119,19 +124,28 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
           if (!hasValidData) {
             console.warn('All weather data points are null, using fallback data');
             // Generate mock data instead of using null values
-            const mockData = points.map((point, index) => {
+            const mockData = points.map(point => {
               // Use the point's timestamp to create time-based variations
               const date = new Date(point.timestamp * 1000);
               const hour = date.getHours();
 
               // UV index varies by time of day (higher at noon)
-              const uvIndex = Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
+              const uvIndex = Math.max(
+                0,
+                Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5))
+              );
 
               // Humidity varies by time (higher in morning and evening)
-              const humidity = 50 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 20) + Math.floor(Math.random() * 10);
+              const humidity =
+                50 +
+                Math.floor(Math.sin((hour / 24) * Math.PI * 2) * 20) +
+                Math.floor(Math.random() * 10);
 
               // Pressure varies slightly throughout the day
-              const pressure = 1013 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 5) + Math.floor(Math.random() * 5);
+              const pressure =
+                1013 +
+                Math.floor(Math.sin((hour / 24) * Math.PI * 2) * 5) +
+                Math.floor(Math.random() * 5);
 
               return {
                 temperature: 15 + Math.sin(point.lat * 10) * 10,
@@ -147,11 +161,14 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
                 windGust: 8 + Math.random() * 10,
                 precipitationProbability: Math.random(),
                 precipitation: Math.random() < 0.3 ? Math.random() * 5 : 0,
-                snow: 0
+                snow: 0,
               };
             });
             setWeatherData(mockData);
-            addNotification('warning', 'Weather data unavailable. Using simulated data for display.');
+            addNotification(
+              'warning',
+              'Weather data unavailable. Using simulated data for display.'
+            );
             return;
           }
         } else {
@@ -169,18 +186,21 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
         // Only show success if we have some valid data points
         const validPointsCount = data.filter(item => item !== null).length;
         if (validPointsCount > 0) {
-          addNotification('success', `Weather forecast generated with ${validPointsCount} data points`);
+          addNotification(
+            'success',
+            `Weather forecast generated with ${validPointsCount} data points`
+          );
           captureMessage('Weather forecast generated successfully', 'info');
         } else {
           addNotification('warning', 'Weather data unavailable. Using fallback display.');
           captureMessage('Weather forecast generated with fallback data', 'warning');
         }
       } catch (error) {
-        // Handle network or API errors
-        let errorMessage = 'Failed to fetch weather data';
+        // Track failed weather API call
+        trackWeatherAPI(weatherStartTime, points.length, false);
 
+        // Handle network or API errors
         if (error instanceof Error) {
-          errorMessage = error.message;
           setError(error);
           captureException(error, {
             context: 'fetchWeatherForPoints',
@@ -195,7 +215,7 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
         }
 
         // Generate mock data instead of using null values
-        const mockData = points.map((point, index) => {
+        const mockData = points.map(point => {
           // Use the point's timestamp to create time-based variations
           const date = new Date(point.timestamp * 1000);
           const hour = date.getHours();
@@ -204,10 +224,16 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
           const uvIndex = Math.max(0, Math.min(11, Math.floor((6 - Math.abs(hour - 12)) * 1.5)));
 
           // Humidity varies by time (higher in morning and evening)
-          const humidity = 50 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 20) + Math.floor(Math.random() * 10);
+          const humidity =
+            50 +
+            Math.floor(Math.sin((hour / 24) * Math.PI * 2) * 20) +
+            Math.floor(Math.random() * 10);
 
           // Pressure varies slightly throughout the day
-          const pressure = 1013 + Math.floor(Math.sin(hour / 24 * Math.PI * 2) * 5) + Math.floor(Math.random() * 5);
+          const pressure =
+            1013 +
+            Math.floor(Math.sin((hour / 24) * Math.PI * 2) * 5) +
+            Math.floor(Math.random() * 5);
 
           return {
             temperature: 15 + Math.sin(point.lat * 10) * 10,
@@ -223,11 +249,14 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
             windGust: 8 + Math.random() * 10,
             precipitationProbability: Math.random(),
             precipitation: Math.random() < 0.3 ? Math.random() * 5 : 0,
-            snow: 0
+            snow: 0,
           };
         });
         setWeatherData(mockData);
-        addNotification('warning', 'Error fetching weather data. Using simulated data for display.');
+        addNotification(
+          'warning',
+          'Error fetching weather data. Using simulated data for display.'
+        );
         console.error('Error fetching weather data:', error);
       }
     } catch (error) {
@@ -267,7 +296,7 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
       setSelectedMarker(null);
       setError(null);
     }
-  }, [gpxData]);
+  }, [gpxData, setForecastPoints, setWeatherData]);
 
   const value: WeatherContextType = {
     gpxData,

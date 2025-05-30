@@ -47,12 +47,38 @@ export function middleware(request: NextRequest) {
 
   // Set headers
   const response = NextResponse.next();
+
+  // Rate limiting headers
   response.headers.set('X-RateLimit-Limit', maxRequests.toString());
   response.headers.set(
     'X-RateLimit-Remaining',
     Math.max(0, maxRequests - rateData.count).toString()
   );
   response.headers.set('X-RateLimit-Reset', (rateData.lastReset + windowMs).toString());
+
+  // Security headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+  // Content Security Policy
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "connect-src 'self' https://api.openweathermap.org",
+    "font-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ');
+
+  response.headers.set('Content-Security-Policy', csp);
 
   // Check if rate limit exceeded
   if (rateData.count > maxRequests) {

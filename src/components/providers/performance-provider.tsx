@@ -3,6 +3,7 @@
 import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 import { initializeChartDefaults } from '@/lib/chart-init';
+import { initPerformanceMonitoring } from '@/lib/analytics';
 
 interface PerformanceContextType {
   supportsWebP: boolean;
@@ -38,9 +39,11 @@ interface PerformanceProviderProps {
 export function PerformanceProvider({ children }: PerformanceProviderProps) {
   const performanceFeatures = usePerformanceOptimization();
 
-  // Initialize Chart.js defaults when the component mounts
-  // This is a fallback in case ChartInitializer isn't used
+  // Initialize Chart.js defaults and performance monitoring when the component mounts
   useEffect(() => {
+    // Initialize performance monitoring
+    initPerformanceMonitoring();
+
     // Add a small delay to avoid conflicts with ChartInitializer
     const timer = setTimeout(() => {
       console.log('Chart.js initialized by PerformanceProvider (fallback)');
