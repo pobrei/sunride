@@ -3,10 +3,8 @@
 import React from 'react';
 import { SimpleGPXUploader } from '@/features/gpx/components/SimpleGPXUploader';
 import { MapWrapper } from '@/features/map/components';
-import { WeatherCharts } from '@/features/weather/components';
-import { WeatherTimeline } from '@/features/weather/components';
-import { RouteSummary } from '@/features/route/components';
-import { WeatherAlerts } from '@/features/weather/components';
+import { WeatherInfoPanel } from '@/features/weather/components';
+import { Alerts } from '@/features/weather/components';
 import type { GPXData } from '@/types';
 
 interface MainContentProps {
@@ -18,11 +16,9 @@ interface MainContentProps {
 }
 
 // Memoized components for performance
-const MemoizedCharts = React.memo(WeatherCharts);
-const MemoizedTimeline = React.memo(WeatherTimeline);
+const MemoizedWeatherInfo = React.memo(WeatherInfoPanel);
 const MemoizedMapWrapper = React.memo(MapWrapper);
-const MemoizedRouteSummary = React.memo(RouteSummary);
-const MemoizedWeatherAlerts = React.memo(WeatherAlerts);
+const MemoizedAlerts = React.memo(Alerts);
 
 const MainContent = React.memo<MainContentProps>(({ 
   gpxData, 
@@ -50,7 +46,7 @@ const MainContent = React.memo<MainContentProps>(({
   return (
     <div className="space-y-6">
       {/* Weather Alerts */}
-      <MemoizedWeatherAlerts />
+      <MemoizedAlerts />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -62,32 +58,22 @@ const MainContent = React.memo<MainContentProps>(({
           </div>
         </div>
 
-        {/* Charts Section */}
+        {/* Weather Info Section */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Weather Analysis</h2>
+          <h2 className="text-lg font-semibold">Weather Information</h2>
           <div className="rounded-lg border bg-card p-4">
-            <MemoizedCharts 
-              onChartClick={onChartClick}
-              showDescriptionsOnMobile={showDescriptionsOnMobile}
-              showLabelsOnMobile={showLabelsOnMobile}
-            />
+            <MemoizedWeatherInfo />
           </div>
         </div>
       </div>
 
-      {/* Timeline Section */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Weather Timeline</h2>
-        <div className="rounded-lg border bg-card p-4">
-          <MemoizedTimeline />
-        </div>
-      </div>
-
-      {/* Route Summary */}
+      {/* Additional Weather Data */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Route Summary</h2>
         <div className="rounded-lg border bg-card p-4">
-          <MemoizedRouteSummary />
+          <p className="text-muted-foreground">
+            Route analysis and summary will be displayed here once weather data is loaded.
+          </p>
         </div>
       </div>
     </div>

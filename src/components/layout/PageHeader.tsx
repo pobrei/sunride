@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Upload, Map, CloudRain, BarChart } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { ProgressSteps } from '@/components/ui/progress-steps';
 import { ExportMenu } from '@/features/export/components';
 import type { GPXData } from '@/types';
@@ -38,17 +38,12 @@ const PageHeader = React.memo<PageHeaderProps>(({ gpxData, uploadSteps, activeSt
   return (
     <div className="space-y-6">
       {/* Breadcrumb Navigation */}
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Route Analysis</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <Breadcrumb
+        segments={[
+          { label: 'Home', href: '/' },
+          { label: 'Route Analysis' }
+        ]}
+      />
 
       {/* Header with Export */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

@@ -265,3 +265,5 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
     </div>
   );
 }
+
+export { SimpleGPXUploader };
