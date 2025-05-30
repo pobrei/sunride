@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { generateForecastPoints } from '@/features/gpx/utils/gpxParser';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
@@ -8,7 +15,6 @@ import { fetchWeatherForPoints } from '@/lib/mongodb-api';
 import { captureException, captureMessage } from '@/lib/sentry';
 import { useNotifications } from '@/features/notifications/context';
 import { useSafeData } from '@/features/data-validation/context';
-import { trackWeatherAPI } from '@/lib/analytics';
 
 interface WeatherContextType {
   gpxData: GPXData | null;
@@ -59,18 +65,27 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
   // Use the SafeDataProvider
   const { validateGPXData, validateForecastPoints, validateWeatherData } = useSafeData();
 
-  // Wrap the state setters with validation
-  const setGpxData = (data: GPXData | null): void => {
-    setGpxDataInternal(validateGPXData(data));
-  };
+  // Wrap the state setters with validation and useCallback
+  const setGpxData = useCallback(
+    (data: GPXData | null): void => {
+      setGpxDataInternal(validateGPXData(data));
+    },
+    [validateGPXData]
+  );
 
-  const setForecastPoints = (points: ForecastPoint[]): void => {
-    setForecastPointsInternal(validateForecastPoints(points));
-  };
+  const setForecastPoints = useCallback(
+    (points: ForecastPoint[]): void => {
+      setForecastPointsInternal(validateForecastPoints(points));
+    },
+    [validateForecastPoints]
+  );
 
-  const setWeatherData = (data: (WeatherData | null)[]): void => {
-    setWeatherDataInternal(validateWeatherData(data));
-  };
+  const setWeatherData = useCallback(
+    (data: (WeatherData | null)[]): void => {
+      setWeatherDataInternal(validateWeatherData(data));
+    },
+    [validateWeatherData]
+  );
 
   /**
    * Generate weather forecast for the route
@@ -104,13 +119,9 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
       setLoadingMessage(`Fetching weather data for ${points.length} points...`);
 
       // Fetch weather data for each point using client API
-      const weatherStartTime = performance.now();
       try {
         console.log('Sending points to fetchWeatherForPoints:', points);
         const data = await fetchWeatherForPoints(points);
-
-        // Track successful weather API call
-        trackWeatherAPI(weatherStartTime, points.length, true);
 
         // Log the received data for debugging
         console.log(
@@ -196,9 +207,6 @@ export function WeatherProvider({ children }: { children: ReactNode }): React.Re
           captureMessage('Weather forecast generated with fallback data', 'warning');
         }
       } catch (error) {
-        // Track failed weather API call
-        trackWeatherAPI(weatherStartTime, points.length, false);
-
         // Handle network or API errors
         if (error instanceof Error) {
           setError(error);

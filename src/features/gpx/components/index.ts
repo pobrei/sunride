@@ -1,2 +1,2 @@
 // Export all GPX components
-export { SimpleGPXUploader } from './SimpleGPXUploader';
+export { default as GPXUploader } from './SimpleGPXUploader';

@@ -2,7 +2,7 @@
 
 /**
  * MobileToast Component
- * 
+ *
  * This component provides a mobile-friendly toast notification system
  * following iOS 19 design principles.
  */
@@ -61,7 +61,7 @@ const MobileToast: React.FC<MobileToastProps> = ({
       const timer = setTimeout(() => {
         onClose(toast.id);
       }, toast.duration || 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [toast, onClose]);
@@ -132,12 +132,8 @@ const MobileToast: React.FC<MobileToastProps> = ({
         <div className="flex items-start">
           <div className="flex-shrink-0">{getIcon()}</div>
           <div className="ml-3 w-0 flex-1 pt-0.5">
-            {toast.title && (
-              <p className="text-sm font-medium">{toast.title}</p>
-            )}
-            <p className="mt-1 text-sm text-muted-foreground">
-              {toast.message}
-            </p>
+            {toast.title && <p className="text-sm font-medium">{toast.title}</p>}
+            <p className="mt-1 text-sm text-muted-foreground">{toast.message}</p>
             {toast.action && (
               <div className="mt-3">
                 <button
@@ -152,6 +148,7 @@ const MobileToast: React.FC<MobileToastProps> = ({
           </div>
           <div className="ml-4 flex-shrink-0 flex">
             <button
+              type="button"
               className="inline-flex text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               onClick={() => onClose(toast.id)}
             >
@@ -169,7 +166,13 @@ interface MobileToastProviderProps {
   /** Children components */
   children: React.ReactNode;
   /** Position of the toast container */
-  position?: 'top-left' | 'top-right' | 'top-center' | 'bottom-left' | 'bottom-right' | 'bottom-center';
+  position?:
+    | 'top-left'
+    | 'top-right'
+    | 'top-center'
+    | 'bottom-left'
+    | 'bottom-right'
+    | 'bottom-center';
   /** Maximum number of toasts to show at once */
   maxToasts?: number;
   /** Whether to use a glass effect */
@@ -216,21 +219,24 @@ export function MobileToastProvider({
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   // Show a new toast
-  const showToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    
-    setToasts(prev => {
-      // Remove oldest toasts if we exceed maxToasts
-      const newToasts = [...prev];
-      if (newToasts.length >= maxToasts) {
-        newToasts.shift();
-      }
-      
-      return [...newToasts, { ...toast, id }];
-    });
-    
-    return id;
-  }, [maxToasts]);
+  const showToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = Math.random().toString(36).substring(2, 9);
+
+      setToasts(prev => {
+        // Remove oldest toasts if we exceed maxToasts
+        const newToasts = [...prev];
+        if (newToasts.length >= maxToasts) {
+          newToasts.shift();
+        }
+
+        return [...newToasts, { ...toast, id }];
+      });
+
+      return id;
+    },
+    [maxToasts]
+  );
 
   // Hide a toast by ID
   const hideToast = useCallback((id: string) => {
@@ -264,7 +270,7 @@ export function MobileToastProvider({
   return (
     <ToastContext.Provider value={{ showToast, hideToast, clearToasts }}>
       {children}
-      
+
       {/* Toast container */}
       <div
         className={cn(

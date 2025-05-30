@@ -10,8 +10,6 @@ import { useSimpleNotifications } from '@/features/notifications/context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { handleError, ErrorType } from '@/utils/errorHandlers';
 import { captureException } from '@/features/monitoring';
-import { validateFile, extractFileMetadata } from '@/lib/file-validation';
-import { trackGPXProcessing } from '@/lib/analytics';
 import type { GPXData } from '@/features/gpx/types';
 
 interface SimpleGPXUploaderProps {
@@ -24,16 +22,15 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
   const [error, setError] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-
+  const [, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get notifications context
   const { addNotification } = useSimpleNotifications();
 
-  const processGpxFile = async (file: File) => {
+  const processGpxFile = (file: File) => {
     if (!file) return;
 
-    const startTime = performance.now();
     console.log('Starting GPX file processing:', file.name, `${(file.size / 1024).toFixed(1)} KB`);
 
     const reader = new FileReader();
@@ -62,9 +59,6 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
         onGPXLoaded(gpxData);
         console.log('onGPXLoaded callback completed');
 
-        // Track successful processing
-        trackGPXProcessing(startTime, gpxData.points.length, true);
-
         addNotification(
           'success',
           `Successfully loaded ${gpxData.points.length} points from ${file.name}`
@@ -80,9 +74,6 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
             fileType: file.type,
           },
         });
-
-        // Track failed processing
-        trackGPXProcessing(startTime, 0, false);
 
         setError(errorMsg);
         addNotification('error', 'Failed to parse GPX file: ' + errorMsg);
@@ -102,47 +93,37 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
     reader.readAsText(file);
   };
 
-  const validateAndProcessFile = async (file: File) => {
+  const validateAndProcessFile = (file: File) => {
     if (!file) return;
 
     setFileName(file.name);
     setFileSize(file.size);
+    setSelectedFile(file);
     setError(null);
 
-    try {
-      // Enhanced validation with magic number checking
-      const validationResult = await validateFile(file, {
-        maxSizeMB: 10,
-        allowedExtensions: ['gpx'],
-        requireMagicNumber: true,
-        expectedType: 'gpx',
-      });
+    // Validate file type
+    const validExtensions = ['.gpx'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
 
-      if (!validationResult.isValid) {
-        const errorMsg = validationResult.errors.join('; ');
-        setError(errorMsg);
-        addNotification('error', errorMsg);
-        return;
-      }
-
-      // Show warnings if any
-      if (validationResult.warnings.length > 0) {
-        validationResult.warnings.forEach(warning => {
-          addNotification('warning', warning);
-        });
-      }
-
-      // Extract and log file metadata
-      const metadata = extractFileMetadata(file);
-      console.log('File metadata:', metadata);
-
-      // File is validated, now process it automatically
-      await processGpxFile(file);
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'File validation failed';
+    if (!validExtensions.includes(fileExtension)) {
+      const errorMsg = `Please select a GPX file. Received: ${fileExtension}`;
       setError(errorMsg);
       addNotification('error', errorMsg);
+      return;
     }
+
+    // Validate file size (10MB max)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      const errorMsg = `File is too large (${sizeMB}MB). Maximum size is 10MB.`;
+      setError(errorMsg);
+      addNotification('error', errorMsg);
+      return;
+    }
+
+    // File is validated, now process it automatically
+    processGpxFile(file);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,5 +246,3 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
     </div>
   );
 }
-
-export { SimpleGPXUploader };

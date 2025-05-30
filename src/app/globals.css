@@ -229,8 +229,7 @@
   --sidebar-ring: 170 100% 38%; /* #00C2A8 - Vibrant Teal */
 }
 
-@tailwind base;
-@tailwind components;
+@import "tailwindcss/preflight";
 @tailwind utilities;
 
 @layer base {

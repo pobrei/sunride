@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -44,17 +44,17 @@ export default function SimpleRouteControls({
    * Handle start time change
    * @param e - Input change event
    */
-  const handleStartTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const dateValue = e.target.value;
     if (dateValue) {
       setStartTime(new Date(dateValue));
     }
-  }, []);
+  };
 
   /**
    * Handle generate forecast button click
    */
-  const handleGenerateForecast = React.useCallback(() => {
+  const handleGenerateForecast = () => {
     console.log('Generate forecast button clicked');
     console.log('Settings:', { startTime, weatherInterval, avgSpeed });
 
@@ -68,7 +68,7 @@ export default function SimpleRouteControls({
     } else {
       console.warn('No handler provided for forecast generation');
     }
-  }, [startTime, weatherInterval, avgSpeed, onUpdateSettings, onGenerateForecast]);
+  };
 
   /**
    * Format date for datetime-local input
@@ -139,10 +139,7 @@ export default function SimpleRouteControls({
               max={20}
               step={1}
               value={[weatherInterval]}
-              onValueChange={React.useCallback(
-                (value: number[]) => setWeatherInterval(value[0]),
-                []
-              )}
+              onValueChange={value => setWeatherInterval(value[0])}
               className="py-4"
               thumbClassName="border-teal-500/50 dark:border-teal-500/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 rounded-full shadow-sm hover:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-offset-2 transition-all duration-200"
             />
@@ -167,7 +164,7 @@ export default function SimpleRouteControls({
               max={50}
               step={1}
               value={[avgSpeed]}
-              onValueChange={React.useCallback((value: number[]) => setAvgSpeed(value[0]), [])}
+              onValueChange={value => setAvgSpeed(value[0])}
               className="py-4"
               thumbClassName="border-teal-500/50 dark:border-teal-500/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 rounded-full shadow-sm hover:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-offset-2 transition-all duration-200"
             />
