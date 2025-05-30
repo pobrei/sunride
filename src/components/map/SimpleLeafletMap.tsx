@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { GPXData, ForecastPoint } from '@/types';
-import { Locate, Wind, Droplets, CloudRain, Sun, Gauge, Cloud, Layers } from 'lucide-react';
+import { Locate, Wind, Droplets, CloudRain, Sun, Gauge, Cloud } from 'lucide-react';
 import { responsive } from '@/styles/tailwind-utils';
 import './MapStyles.css';
 import './WeatherCardFix.css';
@@ -622,7 +622,7 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
           <div ref={mapContainerRef} className={cn(responsive.mapContainer, 'w-full overflow-hidden animate-fade-in shadow-lg border border-border/20')}></div>
 
           {/* Map control buttons */}
-          <div className="absolute bottom-4 right-4 z-[500] flex flex-col gap-2">
+          <div className="absolute bottom-4 right-4 z-[500]">
             {/* Center map button */}
             <Button
               onClick={centerMap}
@@ -634,25 +634,6 @@ export default function SimpleLeafletMap(props: SimpleLeafletMapProps): React.Re
               title="Center map on route"
             >
               <Locate className="h-4 w-4 text-primary" />
-            </Button>
-
-            {/* Layers button */}
-            <Button
-              onClick={() => {
-                // Toggle layer control
-                const layerControl = document.querySelector('.leaflet-control-layers') as HTMLElement;
-                if (layerControl) {
-                  layerControl.click();
-                }
-              }}
-              size="icon"
-              variant="ghost"
-              data-slot="button"
-              className="map-control-button bg-white/80 dark:bg-card/80 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg button-press rounded-full w-10 h-10 border border-border/20 shadow-sm"
-              aria-label="Map layers"
-              title="Change map style"
-            >
-              <Layers className="h-4 w-4 text-primary" />
             </Button>
           </div>
 
