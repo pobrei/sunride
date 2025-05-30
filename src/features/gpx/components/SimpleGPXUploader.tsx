@@ -8,7 +8,7 @@ import { Upload, AlertCircle } from 'lucide-react';
 import { parseGPX } from '@/features/gpx/utils/gpxParser';
 import { useSimpleNotifications } from '@/features/notifications/context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { handleError, ErrorType } from '@/utils/errorHandlers';
+import { handleError, ErrorType } from '@/utils/errorHandling';
 import { captureException } from '@/features/monitoring';
 import type { GPXData } from '@/features/gpx/types';
 

@@ -13,8 +13,8 @@ const Loading = () => (
   </div>
 );
 
-// Dynamically import the enhanced client-side component with no SSR
-const HomeClient = dynamic(() => import('./page-client-enhanced'), {
+// Dynamically import the main client-side component with no SSR
+const HomeClient = dynamic(() => import('./page-client'), {
   ssr: false,
   loading: () => <Loading />,
 });

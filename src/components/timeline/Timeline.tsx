@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, MapPin, Thermometer, Droplets, Wind, Cloud, CloudRain, CloudSnow, CloudFog, Sun, CloudLightning, HelpCircle, Gauge } from 'lucide-react';
+// Icons are implemented as inline SVGs
 
 import { cn } from '@/lib/utils';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatTemperature, formatWindSpeed } from '@/utils/formatters';
+import { formatTime, formatTemperature } from '@/utils/formatUtils';
 import { responsive } from '@/styles/tailwind-utils';
 
 // Helper function to convert wind direction degrees to cardinal directions
@@ -271,7 +271,7 @@ export function Timeline({
                         </div>
                       </div>
                       <div className="text-xs font-semibold px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-md text-emerald-700 dark:text-emerald-300">
-                        {formatWindSpeed(weather.windSpeed)}
+                        {(weather.windSpeed * 3.6).toFixed(1)} km/h
                       </div>
                     </div>
                   )}
