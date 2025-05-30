@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-// Icons are implemented as inline SVGs
+// Icons are now implemented as inline SVGs for better performance
 
 import { cn } from '@/lib/utils';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatTemperature } from '@/utils/formatUtils';
+import { formatTime, formatTemperature, formatWindSpeed } from '@/utils/formatters';
 import { responsive } from '@/styles/tailwind-utils';
 
 // Helper function to convert wind direction degrees to cardinal directions
@@ -271,7 +271,7 @@ export function Timeline({
                         </div>
                       </div>
                       <div className="text-xs font-semibold px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-md text-emerald-700 dark:text-emerald-300">
-                        {(weather.windSpeed * 3.6).toFixed(1)} km/h
+                        {formatWindSpeed(weather.windSpeed)}
                       </div>
                     </div>
                   )}

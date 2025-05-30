@@ -15,10 +15,8 @@ import {
 } from 'recharts';
 import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance, formatTemperature } from '@/utils/formatUtils';
+import { formatTime, formatDistance, formatTemperature } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
-import { responsive } from '@/styles/tailwind-utils';
-import { cn } from '@/lib/utils';
 import '@/styles/chart-styles.css';
 
 interface TemperatureChartProps {

@@ -77,20 +77,3 @@
 .card-actions {
   @apply flex items-center justify-end gap-2 mt-4;
 }
-
-/* Temperature visualization styles */
-.temp-segment {
-  height: 100%;
-  flex: 1;
-}
-
-.temp-marker {
-  position: absolute;
-  top: -12px;
-  width: 4px;
-  height: 16px;
-  background-color: white;
-  border: 1px solid #9ca3af;
-  border-radius: 2px;
-  transform: translateX(-50%);
-}

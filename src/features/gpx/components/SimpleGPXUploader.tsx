@@ -8,7 +8,7 @@ import { Upload, AlertCircle } from 'lucide-react';
 import { parseGPX } from '@/features/gpx/utils/gpxParser';
 import { useSimpleNotifications } from '@/features/notifications/context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { formatErrorMessage } from '@/utils/errorHandling';
+import { handleError, ErrorType } from '@/utils/errorHandlers';
 import { captureException } from '@/features/monitoring';
 import type { GPXData } from '@/features/gpx/types';
 
@@ -22,7 +22,7 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
   const [error, setError] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [, setSelectedFile] = useState<File | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get notifications context
@@ -65,12 +65,10 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
         );
       } catch (err) {
         // Handle error with our utility
-        const errorMsg = formatErrorMessage(err);
-
-        // Log error details for debugging
-        captureException(err, {
-          tags: { context: 'GPXUploader' },
-          extra: {
+        const errorMsg = handleError(err, {
+          context: 'GPXUploader',
+          errorType: ErrorType.GPX,
+          additionalData: {
             fileName: file.name,
             fileSize: file.size,
             fileType: file.type,
@@ -100,7 +98,6 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
 
     setFileName(file.name);
     setFileSize(file.size);
-    setSelectedFile(file);
     setError(null);
 
     // Validate file type
@@ -217,7 +214,9 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate text-sm">{fileName}</p>
+                    <p className="font-medium truncate text-sm">
+                      {fileName}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {isLoading ? 'Processing...' : `${(fileSize / 1024).toFixed(1)} KB`}
                     </p>
@@ -227,14 +226,9 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
             )}
 
             {error && (
-              <Alert
-                variant="destructive"
-                className="py-4 px-4 rounded-xl bg-red-50 border border-red-200 mt-4"
-              >
+              <Alert variant="destructive" className="py-4 px-4 rounded-xl bg-red-50 border border-red-200 mt-4">
                 <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                <AlertDescription className="text-sm font-medium text-red-700">
-                  {error}
-                </AlertDescription>
+                <AlertDescription className="text-sm font-medium text-red-700">{error}</AlertDescription>
               </Alert>
             )}
 

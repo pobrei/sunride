@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance } from '@/utils/formatUtils';
+import { formatTime, formatDistance } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
 import '@/styles/chart-styles.css';
 
@@ -185,7 +185,7 @@ const UVIndexChart: React.FC<UVIndexChartProps> = ({
               height={36}
               iconType="circle"
               wrapperStyle={{ fontSize: '12px', color: theme.text }}
-              content={({ payload }) => (
+              content={() => (
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-2">
                   <div className="flex items-center">
                     <div className="w-3 h-3 mr-1 rounded-sm bg-[var(--chart-uv-low)]"></div>

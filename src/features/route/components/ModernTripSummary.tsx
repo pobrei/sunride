@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { formatDistance } from '@/utils/formatUtils';
 import { cn } from '@/lib/utils';
+import { chartTheme } from '@/components/charts/chart-theme';
 
 /**
  * Props for the ModernTripSummary component
@@ -41,53 +42,35 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
   weatherData,
   className,
 }): React.ReactElement | null => {
-  // Filter out null weather data first
-  const validWeatherData: WeatherData[] =
-    weatherData?.filter((data): data is WeatherData => data !== null) || [];
+  if (!gpxData || !forecastPoints.length || !weatherData.length) {
+    return null;
+  }
 
-  // Calculate weather statistics
-  const avgTemperature: number =
-    validWeatherData.length > 0
-      ? Math.round(
-          validWeatherData.reduce((sum, data) => sum + data.temperature, 0) /
-            validWeatherData.length
-        )
-      : 15;
+  // Filter out null weather data
+  const validWeatherData: WeatherData[] = weatherData.filter(
+    (data): data is WeatherData => data !== null
+  );
 
-  const maxTemperature: number =
-    validWeatherData.length > 0
-      ? Math.round(Math.max(...validWeatherData.map(data => data.temperature)))
-      : 25;
-
-  const minTemperature: number =
-    validWeatherData.length > 0
-      ? Math.round(Math.min(...validWeatherData.map(data => data.temperature)))
-      : 5;
-
-  // Temperature range visualization data - moved before early returns
-  const temperatureRange = useMemo(() => {
-    const range = maxTemperature - minTemperature;
-    const segments = 10; // Number of segments in the visualization
-    const segmentWidth = range / segments;
-
-    return {
-      range,
-      segments,
-      segmentWidth,
-      min: minTemperature,
-      max: maxTemperature,
-      avg: avgTemperature,
-    };
-  }, [minTemperature, maxTemperature, avgTemperature]);
-
-  // Early returns after hooks
-  if (!gpxData || !forecastPoints.length || !weatherData.length || validWeatherData.length === 0) {
+  if (validWeatherData.length === 0) {
     return null;
   }
 
   // Calculate trip statistics
   const totalDistance: number = gpxData.totalDistance;
   // const estimatedDuration: number = gpxData.estimatedDuration; // Not used currently
+
+  // Calculate weather statistics
+  const avgTemperature: number = Math.round(
+    validWeatherData.reduce((sum, data) => sum + data.temperature, 0) / validWeatherData.length
+  );
+
+  const maxTemperature: number = Math.round(
+    Math.max(...validWeatherData.map(data => data.temperature))
+  );
+
+  const minTemperature: number = Math.round(
+    Math.min(...validWeatherData.map(data => data.temperature))
+  );
 
   const avgHumidity: number = Math.round(
     validWeatherData.reduce((sum, data) => sum + data.humidity, 0) / validWeatherData.length
@@ -105,6 +88,8 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
   const rainChance: number = Math.round((rainyPoints.length / validWeatherData.length) * 100);
 
   const maxUvIndex: number = Math.max(...validWeatherData.map(data => data.uvIndex || 0));
+
+
 
   // Count and categorize weather alerts
   interface WeatherAlerts {
@@ -141,16 +126,32 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
   const elevationGain: number = gpxData.elevation?.gain || gpxData.elevationGain || 0;
   const elevationLoss: number = gpxData.elevation?.loss || gpxData.elevationLoss || 0;
 
+  // Temperature range visualization data
+  const temperatureRange = useMemo(() => {
+    const range = maxTemperature - minTemperature;
+    const segments = 10; // Number of segments in the visualization
+    const segmentWidth = range / segments;
+
+    return {
+      range,
+      segments,
+      segmentWidth,
+      min: minTemperature,
+      max: maxTemperature,
+      avg: avgTemperature
+    };
+  }, [minTemperature, maxTemperature, avgTemperature]);
+
   // Get theme colors (not used currently but kept for potential future use)
   // const isDarkMode = typeof window !== 'undefined' ?
   //   window.matchMedia('(prefers-color-scheme: dark)').matches : false;
   // const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   return (
-    <Card
+    <Card 
       className={cn(
-        'overflow-hidden rounded-xl shadow-sm animate-fade-in',
-        'bg-white/30 dark:bg-card/30 backdrop-blur-sm border border-border/20',
+        "overflow-hidden rounded-xl shadow-sm animate-fade-in",
+        "bg-white/30 dark:bg-card/30 backdrop-blur-sm border border-border/20",
         className
       )}
       variant="glass"
@@ -171,6 +172,8 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
               <p className="font-medium text-sm">{formatDistance(totalDistance * 1000)}</p>
             </div>
           </div>
+
+
 
           {/* Elevation */}
           <div className="flex items-center gap-2">
@@ -210,6 +213,8 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
               </p>
             </div>
           </div>
+
+
 
           {/* Rain Chance */}
           <div className="flex items-center gap-2">
@@ -291,15 +296,15 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
           <div className="flex items-center justify-between mb-1">
             <p className="text-xs text-muted-foreground">Temperature Range</p>
             <p className="text-xs font-medium">
-              <span className="text-blue-500">{minTemperature}°C</span> -
+              <span className="text-blue-500">{minTemperature}°C</span> - 
               <span className="text-rose-500 ml-1">{maxTemperature}°C</span>
             </p>
           </div>
           <div className="h-3 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden flex">
             {Array.from({ length: temperatureRange.segments }).map((_, i) => {
               // Calculate temperature for this segment
-              const segTemp = minTemperature + i * temperatureRange.segmentWidth;
-
+              const segTemp = minTemperature + (i * temperatureRange.segmentWidth);
+              
               // Determine color based on temperature
               let bgColor = '';
               if (segTemp < 0) bgColor = 'bg-blue-500';
@@ -307,28 +312,30 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
               else if (segTemp < 20) bgColor = 'bg-green-400';
               else if (segTemp < 30) bgColor = 'bg-yellow-400';
               else bgColor = 'bg-rose-500';
-
-              const opacity = 0.7 + (i / temperatureRange.segments) * 0.3;
+              
               return (
-                <div
-                  key={`temp-seg-${i}`}
-                  className={`temp-segment ${bgColor}`}
-                  style={{ opacity }}
+                <div 
+                  key={`temp-seg-${i}`} 
+                  className={`h-full flex-1 ${bgColor}`}
+                  style={{ 
+                    opacity: 0.7 + (i / temperatureRange.segments) * 0.3 
+                  }}
                 />
               );
             })}
           </div>
-
+          
           {/* Average temperature marker */}
           <div className="relative h-0">
-            <div
-              className="temp-marker"
-              style={{
+            <div 
+              className="absolute top-[-12px] w-1 h-4 bg-white border border-gray-400 rounded-sm"
+              style={{ 
                 left: `${((avgTemperature - minTemperature) / temperatureRange.range) * 100}%`,
+                transform: 'translateX(-50%)'
               }}
             />
           </div>
-
+          
           <div className="flex justify-between mt-1">
             <span className="text-[10px] text-blue-500 font-medium">Cold</span>
             <span className="text-[10px] text-rose-500 font-medium">Hot</span>

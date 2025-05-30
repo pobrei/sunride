@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance, formatWindSpeed } from '@/utils/formatUtils';
+import { formatTime, formatDistance, formatWindSpeed } from '@/utils/formatters';
 import { chartTheme } from './chart-theme';
 import '@/styles/chart-styles.css';
 

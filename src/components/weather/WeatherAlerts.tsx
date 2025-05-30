@@ -5,10 +5,9 @@ import { ForecastPoint, WeatherData } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-import { Wind, CloudRain, Snowflake, Sun, AlertTriangle, Clock, MapPin } from 'lucide-react';
-import { formatTime } from '@/utils/formatUtils';
+import { Wind, CloudRain, Snowflake, Sun, AlertTriangle, MapPin } from 'lucide-react';
+import { formatTime } from '@/utils/formatters';
 import { cn } from '@/lib/utils';
-import { typography, animation, layout } from '@/styles/tailwind-utils';
 
 interface WeatherAlertsProps {
   /** Forecast points along the route */
@@ -236,7 +235,7 @@ export function WeatherAlerts({
     const typeAlerts = alertsByType[type as keyof typeof alertsByType] || [];
     if (typeAlerts.length === 0) return null;
 
-    const { icon, title, color, bgColor, borderColor } = getAlertTypeDetails(type);
+    const { icon, title, color, borderColor } = getAlertTypeDetails(type);
 
     return (
       <Card key={type} className={cn("overflow-hidden border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 bg-white/95 dark:bg-card stagger-item animate-fade-in", borderColor)}>
