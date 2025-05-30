@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useWeather } from '@/features/weather/context';
-import { SimpleGPXUploader } from '@/features/gpx/components/SimpleGPXUploader';
+import SimpleGPXUploader from '@/features/gpx/components/SimpleGPXUploader';
 import { MapWrapper } from '@/components/map';
 import { ClientSideTimeline } from '@/components/timeline';
-import { ModernTripSummary } from '@/features/route/components/ModernTripSummary';
+import ModernTripSummary from '@/features/route/components/ModernTripSummary';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
