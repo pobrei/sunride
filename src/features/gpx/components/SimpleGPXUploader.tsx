@@ -8,7 +8,7 @@ import { Upload, AlertCircle } from 'lucide-react';
 import { parseGPX } from '@/features/gpx/utils/gpxParser';
 import { useSimpleNotifications } from '@/features/notifications/context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { handleError, ErrorType } from '@/utils/errorHandling';
+import { formatErrorMessage } from '@/utils/errorHandling';
 import { captureException } from '@/features/monitoring';
 import type { GPXData } from '@/features/gpx/types';
 
@@ -65,10 +65,12 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
         );
       } catch (err) {
         // Handle error with our utility
-        const errorMsg = handleError(err, {
-          context: 'GPXUploader',
-          errorType: ErrorType.GPX,
-          additionalData: {
+        const errorMsg = formatErrorMessage(err);
+
+        // Log error details for debugging
+        captureException(err, {
+          tags: { context: 'GPXUploader' },
+          extra: {
             fileName: file.name,
             fileSize: file.size,
             fileType: file.type,
