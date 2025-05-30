@@ -70,14 +70,20 @@ export default function Home() {
 
   // Handle GPX file upload
   const handleGPXLoaded = (data: GPXData) => {
+    console.log('handleGPXLoaded called with data:', data.name, `${data.points.length} points`);
+
     setGpxData(data);
+    console.log('setGpxData completed');
+
     setSelectedMarker(null);
+    console.log('setSelectedMarker completed');
 
     // Show success notification
     addNotification(
       'success',
       `Route loaded successfully: ${data.name || 'Unnamed route'} (${data.points.length} points)`
     );
+    console.log('Success notification added');
 
     // Wait for component to render before animating
     setTimeout(() => {

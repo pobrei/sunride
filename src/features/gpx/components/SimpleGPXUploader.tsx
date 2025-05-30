@@ -31,16 +31,23 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
   const processGpxFile = (file: File) => {
     if (!file) return;
 
+    console.log('Starting GPX file processing:', file.name, `${(file.size / 1024).toFixed(1)} KB`);
+
     const reader = new FileReader();
 
     reader.onload = event => {
       try {
+        console.log('FileReader onload triggered');
+
         if (!event.target?.result) {
           throw new Error('Failed to read file content');
         }
 
         const fileContent = event.target.result as string;
+        console.log('File content read, starting GPX parsing...');
+
         const gpxData = parseGPX(fileContent);
+        console.log('GPX parsing completed successfully');
 
         // Validate parsed data
         if (!gpxData.points || gpxData.points.length === 0) {
@@ -48,7 +55,10 @@ export default function SimpleGPXUploader({ onGPXLoaded, isLoading }: SimpleGPXU
         }
 
         // Success!
+        console.log('Calling onGPXLoaded callback...');
         onGPXLoaded(gpxData);
+        console.log('onGPXLoaded callback completed');
+
         addNotification(
           'success',
           `Successfully loaded ${gpxData.points.length} points from ${file.name}`

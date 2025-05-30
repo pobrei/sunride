@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { generateForecastPoints } from '@/utils/gpxParser';
+import { generateForecastPoints } from '@/features/gpx/utils/gpxParser';
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
 import { fetchWeatherForPoints } from '@/lib/mongodb-api';

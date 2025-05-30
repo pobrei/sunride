@@ -5,7 +5,7 @@ import React, { createContext, useContext, ReactNode } from 'react';
 // Import from features
 import { GPXData } from '@/features/gpx/types';
 import { ForecastPoint, WeatherData } from '@/features/weather/types';
-import { SafeDataContextType } from '../types';
+import { SafeDataContextType, ValidationResult } from '../types';
 import {
   validateGPXData as validateGPXDataWithZod,
   validateForecastPoints as validateForecastPointsWithZod,

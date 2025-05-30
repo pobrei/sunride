@@ -90,6 +90,14 @@ export function parseGPX(gpxString: string): GPXData {
       throw new Error('Empty GPX file content');
     }
 
+    // Check file size to prevent memory issues
+    const fileSizeKB = new Blob([gpxString]).size / 1024;
+    console.log(`Processing GPX file: ${fileSizeKB.toFixed(1)} KB`);
+
+    if (fileSizeKB > 10240) { // 10MB limit
+      throw new Error(`GPX file too large: ${fileSizeKB.toFixed(1)} KB. Maximum size is 10MB.`);
+    }
+
     // Pre-process the XML to handle namespace issues
     // This adds missing namespace declarations to the root element
     const processedGpxString = preprocessGpxNamespaces(gpxString);
@@ -128,6 +136,15 @@ export function parseGPX(gpxString: string): GPXData {
       throw new Error('No track points found in GPX file');
     }
 
+    console.log(`Processing ${trackPoints.length} track points`);
+
+    // Limit the number of points to prevent memory issues
+    const maxPoints = 50000; // Reasonable limit for web processing
+    if (trackPoints.length > maxPoints) {
+      console.warn(`GPX file has ${trackPoints.length} points, limiting to ${maxPoints} for performance`);
+      trackPoints.splice(maxPoints);
+    }
+
     const routePoints: RoutePoint[] = [];
     let totalDistance = 0;
     let prevPoint: { lat: number; lon: number } | null = null;
@@ -136,8 +153,12 @@ export function parseGPX(gpxString: string): GPXData {
     let maxElevation = -Infinity;
     let minElevation = Infinity;
 
-    // Process each track point
+    // Process each track point with progress logging
     trackPoints.forEach((point, index) => {
+      // Log progress for large files
+      if (index % 1000 === 0 && index > 0) {
+        console.log(`Processed ${index}/${trackPoints.length} points (${((index / trackPoints.length) * 100).toFixed(1)}%)`);
+      }
       const lat = parseFloat(point.getAttribute('lat') || '0');
       const lon = parseFloat(point.getAttribute('lon') || '0');
       const elevationElement = point.querySelector('ele');
@@ -177,6 +198,8 @@ export function parseGPX(gpxString: string): GPXData {
 
       prevPoint = { lat, lon };
     });
+
+    console.log(`GPX parsing completed: ${routePoints.length} points, ${totalDistance.toFixed(2)} km total distance`);
 
     return {
       name,
@@ -248,11 +271,34 @@ export function generateForecastPoints(
   try {
     // Validate input parameters
     if (!gpxData || !gpxData.points || gpxData.points.length === 0) {
+      console.log('generateForecastPoints: No GPX data or points');
       return [];
+    }
+
+    // Validate interval to prevent infinite loops
+    if (interval <= 0 || interval > 1000) {
+      console.error('generateForecastPoints: Invalid interval', interval);
+      throw new Error(`Invalid interval: ${interval}. Must be between 0 and 1000 km.`);
+    }
+
+    // Validate speed to prevent infinite loops
+    if (avgSpeed <= 0 || avgSpeed > 200) {
+      console.error('generateForecastPoints: Invalid speed', avgSpeed);
+      throw new Error(`Invalid speed: ${avgSpeed}. Must be between 0 and 200 km/h.`);
     }
 
     const totalDistance = gpxData.totalDistance;
     const points = gpxData.points;
+
+    console.log(`Generating forecast points: ${totalDistance.toFixed(2)} km route, ${interval} km intervals, ${avgSpeed} km/h speed`);
+
+    // Calculate expected number of points to prevent excessive memory usage
+    const expectedPoints = Math.ceil(totalDistance / interval) + 2; // +2 for start and end
+    if (expectedPoints > 1000) {
+      console.warn(`generateForecastPoints: Too many forecast points (${expectedPoints}), limiting interval`);
+      interval = Math.max(interval, totalDistance / 998); // Limit to 998 points + start/end
+    }
+
     const forecastPoints: ForecastPoint[] = [];
 
     // Always include the starting point
@@ -263,8 +309,11 @@ export function generateForecastPoints(
       distance: 0,
     });
 
-    // Calculate points at each interval
-    for (let distance = interval; distance < totalDistance; distance += interval) {
+    // Calculate points at each interval with safety counter
+    let safetyCounter = 0;
+    const maxIterations = 1000; // Safety limit to prevent infinite loops
+
+    for (let distance = interval; distance < totalDistance && safetyCounter < maxIterations; distance += interval, safetyCounter++) {
       // Find the two points that the interval falls between
       let beforeIndex = 0;
       let afterIndex = 0;
@@ -311,6 +360,12 @@ export function generateForecastPoints(
       timestamp: endTimestamp,
       distance: totalDistance,
     });
+
+    console.log(`Generated ${forecastPoints.length} forecast points (safety counter: ${safetyCounter}/${maxIterations})`);
+
+    if (safetyCounter >= maxIterations) {
+      console.warn('generateForecastPoints: Hit safety limit, some points may be missing');
+    }
 
     return forecastPoints;
   } catch (error) {
