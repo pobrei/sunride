@@ -14,7 +14,7 @@ import {
   Clock,
   Mountain,
 } from 'lucide-react';
-import { formatDistance, formatDuration } from '@/utils/formatUtils';
+import { formatDistance } from '@/utils/formatUtils';
 
 /**
  * Props for the TripSummary component
@@ -55,7 +55,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 
   // Calculate trip statistics
   const totalDistance: number = gpxData.totalDistance;
-  const estimatedDuration: number = gpxData.estimatedDuration;
+  // const estimatedDuration: number = gpxData.estimatedDuration; // Not used currently
 
   // Calculate weather statistics
   const avgTemperature: number = Math.round(

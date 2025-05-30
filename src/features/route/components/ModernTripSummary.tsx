@@ -14,7 +14,7 @@ import {
   Clock,
   Mountain,
 } from 'lucide-react';
-import { formatDistance, formatDuration } from '@/utils/formatUtils';
+import { formatDistance } from '@/utils/formatUtils';
 import { cn } from '@/lib/utils';
 import { chartTheme } from '@/components/charts/chart-theme';
 
@@ -57,7 +57,7 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
 
   // Calculate trip statistics
   const totalDistance: number = gpxData.totalDistance;
-  const estimatedDuration: number = gpxData.estimatedDuration;
+  // const estimatedDuration: number = gpxData.estimatedDuration; // Not used currently
 
   // Calculate weather statistics
   const avgTemperature: number = Math.round(
@@ -131,7 +131,7 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
     const range = maxTemperature - minTemperature;
     const segments = 10; // Number of segments in the visualization
     const segmentWidth = range / segments;
-    
+
     return {
       range,
       segments,
@@ -142,10 +142,10 @@ const ModernTripSummary: React.FC<ModernTripSummaryProps> = ({
     };
   }, [minTemperature, maxTemperature, avgTemperature]);
 
-  // Get theme colors
-  const isDarkMode = typeof window !== 'undefined' ? 
-    window.matchMedia('(prefers-color-scheme: dark)').matches : false;
-  const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
+  // Get theme colors (not used currently but kept for potential future use)
+  // const isDarkMode = typeof window !== 'undefined' ?
+  //   window.matchMedia('(prefers-color-scheme: dark)').matches : false;
+  // const theme = isDarkMode ? chartTheme.dark : chartTheme.light;
 
   return (
     <Card 
