@@ -18,10 +18,13 @@ function Slider({
   max = 100,
   ...props
 }: SliderProps) {
-  const _values = React.useMemo(
-    () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
-    [value, defaultValue, min, max]
-  );
+  const fallbackValue = React.useMemo(() => [min, max], [min, max]);
+
+  const _values = React.useMemo(() => {
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(defaultValue)) return defaultValue;
+    return fallbackValue;
+  }, [value, defaultValue, fallbackValue]);
 
   return (
     <SliderPrimitive.Root
@@ -54,7 +57,7 @@ function Slider({
           data-slot="slider-thumb"
           key={index}
           className={cn(
-            "border-primary/50 dark:border-primary/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+            'border-primary/50 dark:border-primary/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
             thumbClassName
           )}
         />

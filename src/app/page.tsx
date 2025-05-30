@@ -51,10 +51,15 @@ export default function Home() {
   );
 
   const handleRouteSettingsUpdate = React.useCallback(
-    (settings: typeof routeSettings) => {
-      setRouteSettings(settings);
+    (settings: { weatherInterval: number; startTime: Date; avgSpeed: number }) => {
+      const newSettings = {
+        intervalKm: settings.weatherInterval,
+        startTime: settings.startTime,
+        averageSpeed: settings.avgSpeed,
+      };
+      setRouteSettings(newSettings);
       if (gpxData) {
-        generateWeatherForecast(settings.intervalKm, settings.startTime, settings.averageSpeed);
+        generateWeatherForecast(settings.weatherInterval, settings.startTime, settings.avgSpeed);
       }
     },
     [gpxData, generateWeatherForecast]
@@ -119,14 +124,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <RouteControls
-                    onUpdateSettings={settings => {
-                      const newSettings = {
-                        intervalKm: settings.weatherInterval,
-                        startTime: settings.startTime,
-                        averageSpeed: settings.avgSpeed,
-                      };
-                      handleRouteSettingsUpdate(newSettings);
-                    }}
+                    onUpdateSettings={handleRouteSettingsUpdate}
                     isGenerating={isGenerating}
                   />
                 </CardContent>

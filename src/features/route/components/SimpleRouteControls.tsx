@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,11 @@ import { RefreshCw, Clock, Cloud, Gauge } from 'lucide-react';
  * Props for the RouteControls component
  */
 interface RouteControlsProps {
-  onUpdateSettings?: (settings: { startTime: Date, weatherInterval: number, avgSpeed: number }) => void;
+  onUpdateSettings?: (settings: {
+    startTime: Date;
+    weatherInterval: number;
+    avgSpeed: number;
+  }) => void;
   onGenerateForecast?: (startTime: Date, weatherInterval: number, avgSpeed: number) => void;
   isGenerating?: boolean;
 }
@@ -19,7 +23,11 @@ interface RouteControlsProps {
 /**
  * A component for controlling route settings
  */
-export default function SimpleRouteControls({ onUpdateSettings, onGenerateForecast, isGenerating = false }: RouteControlsProps) {
+export default function SimpleRouteControls({
+  onUpdateSettings,
+  onGenerateForecast,
+  isGenerating = false,
+}: RouteControlsProps) {
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [weatherInterval, setWeatherInterval] = useState<number>(5);
   const [avgSpeed, setAvgSpeed] = useState<number>(20);
@@ -36,17 +44,17 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
    * Handle start time change
    * @param e - Input change event
    */
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStartTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const dateValue = e.target.value;
     if (dateValue) {
       setStartTime(new Date(dateValue));
     }
-  };
+  }, []);
 
   /**
    * Handle generate forecast button click
    */
-  const handleGenerateForecast = () => {
+  const handleGenerateForecast = React.useCallback(() => {
     console.log('Generate forecast button clicked');
     console.log('Settings:', { startTime, weatherInterval, avgSpeed });
 
@@ -60,7 +68,7 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
     } else {
       console.warn('No handler provided for forecast generation');
     }
-  };
+  }, [startTime, weatherInterval, avgSpeed, onUpdateSettings, onGenerateForecast]);
 
   /**
    * Format date for datetime-local input
@@ -114,7 +122,10 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
 
           <div className="space-y-3 bg-gray-50 dark:bg-gray-800/60 p-3 sm:p-4 rounded-xl border border-gray-200">
             <div className="flex flex-wrap justify-between items-center gap-2">
-              <Label htmlFor="weatherInterval" className="text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+              <Label
+                htmlFor="weatherInterval"
+                className="text-sm font-medium flex items-center gap-1.5 sm:gap-2"
+              >
                 <Cloud className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-500" />
                 Weather Interval
               </Label>
@@ -128,7 +139,10 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
               max={20}
               step={1}
               value={[weatherInterval]}
-              onValueChange={value => setWeatherInterval(value[0])}
+              onValueChange={React.useCallback(
+                (value: number[]) => setWeatherInterval(value[0]),
+                []
+              )}
               className="py-4"
               thumbClassName="border-teal-500/50 dark:border-teal-500/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 rounded-full shadow-sm hover:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-offset-2 transition-all duration-200"
             />
@@ -136,7 +150,10 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
 
           <div className="space-y-3 bg-gray-50 dark:bg-gray-800/60 p-3 sm:p-4 rounded-xl border border-gray-200">
             <div className="flex flex-wrap justify-between items-center gap-2">
-              <Label htmlFor="avgSpeed" className="text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+              <Label
+                htmlFor="avgSpeed"
+                className="text-sm font-medium flex items-center gap-1.5 sm:gap-2"
+              >
                 <Gauge className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-500" />
                 Average Speed
               </Label>
@@ -150,7 +167,7 @@ export default function SimpleRouteControls({ onUpdateSettings, onGenerateForeca
               max={50}
               step={1}
               value={[avgSpeed]}
-              onValueChange={value => setAvgSpeed(value[0])}
+              onValueChange={React.useCallback((value: number[]) => setAvgSpeed(value[0]), [])}
               className="py-4"
               thumbClassName="border-teal-500/50 dark:border-teal-500/50 bg-white dark:bg-slate-800 block size-5 shrink-0 border-2 rounded-full shadow-sm hover:border-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-offset-2 transition-all duration-200"
             />
