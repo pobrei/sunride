@@ -1,28 +1,97 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
-
-import { SimpleLoader } from '@/components/ui/SimpleLoader';
-
-// Loading component with train design
-const Loading = () => (
-  <div className="flex flex-col items-center justify-center h-screen gap-4">
-    <SimpleLoader />
-    <p className="text-lg font-medium">Loading SunRide...</p>
-  </div>
-);
-
-// Dynamically import the enhanced client-side component with no SSR
-const HomeClient = dynamic(() => import('./page-client-enhanced'), {
-  ssr: false,
-  loading: () => <Loading />,
-});
+import { SimpleGPXUploader } from '@/features/gpx/components';
+import { MapWrapper } from '@/features/map/components';
+import { Alerts } from '@/features/weather/components';
+import { Header } from '@/components/layout/header';
+import { useWeather } from '@/features/weather/context';
 
 export default function Home() {
+  const { gpxData, forecastPoints, weatherData } = useWeather();
+
+  const handleGPXUpload = (data: unknown) => {
+    console.log('GPX uploaded:', data);
+  };
+
   return (
-    <Suspense fallback={<Loading />}>
-      <HomeClient />
-    </Suspense>
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header title="SunRide" />
+
+      <div className="container mx-auto px-4 py-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">SunRide Route Analysis</h1>
+            <p className="text-muted-foreground">
+              Upload your GPX file to analyze weather conditions along your route
+            </p>
+          </div>
+
+          {!gpxData ? (
+            <div className="text-center py-12">
+              <h2 className="text-xl font-semibold mb-4">Get Started</h2>
+              <p className="text-muted-foreground mb-8">
+                Upload a GPX file to begin analyzing weather conditions along your route
+              </p>
+              <div className="max-w-md mx-auto">
+                <SimpleGPXUploader onUpload={handleGPXUpload} />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Weather Alerts */}
+              <Alerts forecastPoints={forecastPoints} weatherData={weatherData} />
+
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Map Section */}
+                <div className="space-y-4">
+                  <h2 className="text-lg font-semibold">Route Map</h2>
+                  <div className="rounded-lg border bg-card">
+                    <MapWrapper />
+                  </div>
+                </div>
+
+                {/* Weather Info Section */}
+                <div className="space-y-4">
+                  <h2 className="text-lg font-semibold">Weather Information</h2>
+                  <div className="rounded-lg border bg-card p-4">
+                    {weatherData.length > 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        Weather data loaded for {weatherData.length} points. Click on the map to
+                        view detailed weather information.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Weather information will be displayed here once data is loaded.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Route Summary */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Route Summary</h2>
+                <div className="rounded-lg border bg-card p-4">
+                  <div className="space-y-2">
+                    <p className="text-sm">
+                      <span className="font-medium">Total Points:</span>{' '}
+                      {gpxData.points?.length || 0}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-medium">Route Name:</span>{' '}
+                      {gpxData.name || 'Unnamed Route'}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-medium">Weather Points:</span> {forecastPoints.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

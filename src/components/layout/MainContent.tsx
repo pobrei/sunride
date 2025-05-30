@@ -1,32 +1,23 @@
 'use client';
 
 import React from 'react';
-import { SimpleGPXUploader } from '@/features/gpx/components/SimpleGPXUploader';
+import { SimpleGPXUploader } from '@/features/gpx/components';
 import { MapWrapper } from '@/features/map/components';
-import { WeatherInfoPanel } from '@/features/weather/components';
 import { Alerts } from '@/features/weather/components';
 import type { GPXData } from '@/types';
+import { useWeather } from '@/features/weather/context';
 
 interface MainContentProps {
   gpxData: GPXData | null;
   onGPXUpload: (data: GPXData) => void;
-  onChartClick: (index: number) => void;
-  showDescriptionsOnMobile?: boolean;
-  showLabelsOnMobile?: boolean;
 }
 
 // Memoized components for performance
-const MemoizedWeatherInfo = React.memo(WeatherInfoPanel);
 const MemoizedMapWrapper = React.memo(MapWrapper);
 const MemoizedAlerts = React.memo(Alerts);
 
-const MainContent = React.memo<MainContentProps>(({ 
-  gpxData, 
-  onGPXUpload, 
-  onChartClick,
-  showDescriptionsOnMobile = true,
-  showLabelsOnMobile = true
-}) => {
+const MainContent = React.memo<MainContentProps>(({ gpxData, onGPXUpload }) => {
+  const { forecastPoints, weatherData } = useWeather();
   if (!gpxData) {
     return (
       <div className="space-y-6">
@@ -46,7 +37,7 @@ const MainContent = React.memo<MainContentProps>(({
   return (
     <div className="space-y-6">
       {/* Weather Alerts */}
-      <MemoizedAlerts />
+      <MemoizedAlerts forecastPoints={forecastPoints} weatherData={weatherData} />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -62,7 +53,16 @@ const MainContent = React.memo<MainContentProps>(({
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Weather Information</h2>
           <div className="rounded-lg border bg-card p-4">
-            <MemoizedWeatherInfo />
+            {weatherData.length > 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Weather data loaded for {weatherData.length} points. Click on the map or charts to
+                view detailed weather information.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Weather information will be displayed here once data is loaded.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -71,9 +71,23 @@ const MainContent = React.memo<MainContentProps>(({
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Route Summary</h2>
         <div className="rounded-lg border bg-card p-4">
-          <p className="text-muted-foreground">
-            Route analysis and summary will be displayed here once weather data is loaded.
-          </p>
+          {gpxData ? (
+            <div className="space-y-2">
+              <p className="text-sm">
+                <span className="font-medium">Total Points:</span> {gpxData.points.length}
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Route Name:</span> {gpxData.name || 'Unnamed Route'}
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Weather Points:</span> {forecastPoints.length}
+              </p>
+            </div>
+          ) : (
+            <p className="text-muted-foreground">
+              Route analysis and summary will be displayed here once weather data is loaded.
+            </p>
+          )}
         </div>
       </div>
     </div>
