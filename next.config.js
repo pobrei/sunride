@@ -29,7 +29,12 @@ const nextConfig = {
   serverExternalPackages: ['mongodb'],
 
   // Configure webpack to resolve paths from the new folder structure
-  webpack: (config) => {
+  webpack: (
+    config,
+    {
+      /* isServer */
+    }
+  ) => {
     // Add support for the new folder structure
     config.resolve.alias = {
       ...config.resolve.alias,

@@ -9,5 +9,3 @@ export { default as HumidityChart } from './HumidityChart';
 export { default as PressureChart } from './PressureChart';
 export { default as ElevationChart } from './ElevationChart';
 export { default as UVIndexChart } from './UVIndexChart';
-export { default as ChartCard } from './ChartCard';
-export { ChartInitializer } from './ChartInitializer';

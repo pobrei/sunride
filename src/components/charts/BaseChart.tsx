@@ -3,48 +3,31 @@
 import React from 'react';
 import { ForecastPoint, WeatherData } from '@/types';
 import { cn } from '@/lib/utils';
-import { responsive } from '@/styles/tailwind-utils';
-import '@/styles/chart-styles.css';
 
-export interface BaseChartProps {
-  /** Forecast points along the route */
-  forecastPoints: ForecastPoint[];
-  /** Weather data for each forecast point */
-  weatherData?: (WeatherData | null)[];
-  /** Currently selected marker index */
-  selectedMarker: number | null;
-  /** Callback when a chart point is clicked */
-  onChartClick?: (index: number) => void;
-  /** Additional class names */
-  className?: string;
-  /** Chart title */
+interface BaseChartProps {
   title: string;
-  /** Unit label (e.g., °C, mm, etc.) */
   unitLabel?: string;
+  forecastPoints: ForecastPoint[];
+  weatherData: (WeatherData | null)[];
+  selectedMarker: number | null;
+  onChartClick?: (index: number) => void;
+  children: React.ReactNode;
+  className?: string;
 }
 
 /**
- * Base chart component that provides common functionality for all charts
+ * Base chart component that provides a consistent wrapper for all charts
  */
-const BaseChart: React.FC<BaseChartProps & { children: React.ReactNode }> = ({
-  title,
-  unitLabel,
-  children,
-  className,
-}) => {
+const BaseChart: React.FC<BaseChartProps> = ({ title, unitLabel, children, className }) => {
   return (
-    <div className={cn("w-full max-w-full", className)}>
-      <div className="flex items-center justify-between pb-2 px-2 bg-white dark:bg-zinc-800 border-b border-border">
-        <h2 className="text-sm sm:text-base font-semibold text-zinc-800 dark:text-white">{title}</h2>
-        {unitLabel && (
-          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
-            {unitLabel}
-          </span>
-        )}
+    <div className={cn('w-full h-full bg-transparent', className)}>
+      <div className="mb-2 px-2">
+        <h3 className="text-sm font-medium text-foreground">
+          {title}
+          {unitLabel && <span className="text-muted-foreground ml-1">({unitLabel})</span>}
+        </h3>
       </div>
-      <div className="bg-white dark:bg-zinc-800 p-2 sm:p-3 border border-border overflow-visible h-[350px] sm:h-[380px] md:h-[410px] lg:h-[430px]">
-        {children}
-      </div>
+      <div className="w-full h-[calc(100%-2rem)]">{children}</div>
     </div>
   );
 };

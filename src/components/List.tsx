@@ -52,12 +52,9 @@ export default function List({ items, selectedItem, onItemClick, className }: Li
   };
 
   return (
-    <div 
-      className={cn(
-        "space-y-2 overflow-auto max-h-full",
-        className
-      )} 
-      role="list" 
+    <div
+      className={cn('space-y-2 overflow-auto max-h-full', className)}
+      role="group"
       aria-label="Location list"
     >
       {items.map(item => {
@@ -73,25 +70,28 @@ export default function List({ items, selectedItem, onItemClick, className }: Li
             key={item.id}
             id={getSafeItemId(item.id)}
             className={cn(
-              "p-3 rounded-md border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/50",
-              isSelected 
-                ? "bg-primary/10 border-primary shadow-sm border-l-4" 
-                : "bg-card border-border hover:bg-muted/50",
+              'p-3 rounded-md border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/50',
+              isSelected
+                ? 'bg-primary/10 border-primary shadow-sm border-l-4'
+                : 'bg-card border-border hover:bg-muted/50',
               animation.transition
             )}
-            role="listitem"
+            role="button"
             tabIndex={0}
             onClick={() => onItemClick(item)}
             onKeyDown={e => handleKeyDown(e, item)}
             aria-label={`Location ${safeTitle}`}
+            aria-pressed={isSelected}
           >
-            <h3 className={cn(typography.h6, "mb-2")}>{safeTitle}</h3>
-            <p className={cn(typography.bodySm, "text-muted-foreground")}>{safeDescription}</p>
+            <h3 className={cn(typography.h6, 'mb-2')}>{safeTitle}</h3>
+            <p className={cn(typography.bodySm, 'text-muted-foreground')}>{safeDescription}</p>
             {isSelected && (
-              <div className={cn(
-                "mt-2 text-xs font-medium text-primary flex items-center gap-1",
-                animation.fadeIn
-              )}>
+              <div
+                className={cn(
+                  'mt-2 text-xs font-medium text-primary flex items-center gap-1',
+                  animation.fadeIn
+                )}
+              >
                 <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
                 Selected
               </div>

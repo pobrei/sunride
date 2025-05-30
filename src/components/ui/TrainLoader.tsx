@@ -2,56 +2,66 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import '@/styles/custom-loader.css';
-
-type LoaderSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface TrainLoaderProps {
-  /** Size of the loader */
-  size?: LoaderSize;
-  /** Optional message to display */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   message?: string;
-  /** Optional className for styling */
-  className?: string;
-  /** Whether to center the loader */
-  centered?: boolean;
-  /** Accessibility label (defaults to message or 'Loading') */
   ariaLabel?: string;
+  className?: string;
 }
 
 /**
- * A custom train-shaped loading animation
+ * Train-themed loading component
  */
-export function TrainLoader({
+export const TrainLoader: React.FC<TrainLoaderProps> = ({
   size = 'md',
   message,
+  ariaLabel = 'Loading',
   className,
-  centered = false,
-  ariaLabel,
-}: TrainLoaderProps) {
-  // Determine the accessibility label
-  const accessibilityLabel = ariaLabel || message || 'Loading';
+}) => {
+  const sizeClasses = {
+    sm: 'w-8 h-8',
+    md: 'w-12 h-12',
+    lg: 'w-16 h-16',
+    xl: 'w-20 h-20',
+  };
 
-  // Determine size class
-  const sizeClass = `custom-loader-${size}`;
+  const textSizeClasses = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
+    xl: 'text-lg',
+  };
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center',
-        centered && 'justify-center',
-        className
-      )}
-      data-testid="train-loader"
-      role="status"
-      aria-live="polite"
-      aria-busy="true"
-      aria-label={accessibilityLabel}
-    >
-      <div className="loader" />
+    <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
+      <div
+        className={cn('relative flex items-center justify-center', sizeClasses[size])}
+        role="status"
+        aria-label={ariaLabel}
+      >
+        {/* Train body */}
+        <div className="relative">
+          <div className="w-full h-6 bg-primary rounded-lg animate-pulse">
+            {/* Train windows */}
+            <div className="flex justify-center items-center h-full gap-1">
+              <div className="w-1.5 h-1.5 bg-white rounded-full opacity-80"></div>
+              <div className="w-1.5 h-1.5 bg-white rounded-full opacity-80"></div>
+              <div className="w-1.5 h-1.5 bg-white rounded-full opacity-80"></div>
+            </div>
+          </div>
+
+          {/* Train wheels */}
+          <div className="absolute -bottom-1 left-1 w-2 h-2 bg-muted-foreground rounded-full animate-spin"></div>
+          <div className="absolute -bottom-1 right-1 w-2 h-2 bg-muted-foreground rounded-full animate-spin"></div>
+        </div>
+      </div>
+
       {message && (
-        <p className="text-sm text-muted-foreground font-medium">{message}</p>
+        <p className={cn('text-muted-foreground font-medium animate-pulse', textSizeClasses[size])}>
+          {message}
+        </p>
       )}
     </div>
   );
-}
+};

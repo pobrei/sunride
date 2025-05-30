@@ -3,43 +3,26 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { typography, animation } from '@/styles/tailwind-utils';
 
 interface FormErrorMessageProps {
-  /** The error message to display */
   message: string;
-  /** ID for the error message (for ARIA purposes) */
   id?: string;
-  /** Additional CSS class names */
   className?: string;
 }
 
 /**
- * A reusable error message component for form validation errors
- * with proper accessibility attributes
+ * Form error message component
  */
-export function FormErrorMessage({
-  message,
-  id,
-  className,
-}: FormErrorMessageProps) {
-  if (!message) {
-    return null;
-  }
-
+export const FormErrorMessage: React.FC<FormErrorMessageProps> = ({ message, id, className }) => {
   return (
     <div
       id={id}
-      className={cn(
-        'flex items-center gap-2 text-destructive text-sm mt-2',
-        animation.fadeIn,
-        className
-      )}
+      className={cn('flex items-center gap-1.5 mt-1.5 text-sm text-destructive', className)}
       role="alert"
       aria-live="polite"
     >
-      <AlertCircle className="h-4 w-4" aria-hidden="true" />
+      <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
       <span>{message}</span>
     </div>
   );
-}
+};
