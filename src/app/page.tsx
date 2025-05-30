@@ -5,12 +5,26 @@ import { MapWrapper } from '@/features/map/components';
 import { Alerts } from '@/features/weather/components';
 import { Header } from '@/components/layout/header';
 import { useWeather } from '@/features/weather/context';
+import type { GPXData } from '@/types';
 
 export default function Home() {
-  const { gpxData, forecastPoints, weatherData } = useWeather();
+  const {
+    gpxData,
+    forecastPoints,
+    weatherData,
+    setGpxData,
+    isGenerating,
+    generateWeatherForecast,
+  } = useWeather();
 
-  const handleGPXUpload = (data: unknown) => {
-    console.log('GPX uploaded:', data);
+  const handleGPXLoaded = (data: GPXData) => {
+    console.log('GPX loaded:', data);
+    setGpxData(data);
+
+    // Automatically generate weather forecast with default settings
+    // 5km intervals, starting now, 15 km/h average speed
+    const startTime = new Date();
+    generateWeatherForecast(5, startTime, 15);
   };
 
   return (
@@ -33,7 +47,7 @@ export default function Home() {
                 Upload a GPX file to begin analyzing weather conditions along your route
               </p>
               <div className="max-w-md mx-auto">
-                <SimpleGPXUploader onUpload={handleGPXUpload} />
+                <SimpleGPXUploader onGPXLoaded={handleGPXLoaded} isLoading={isGenerating} />
               </div>
             </div>
           ) : (
