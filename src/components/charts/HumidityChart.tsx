@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import BaseChart from './BaseChart';
 import { ForecastPoint, WeatherData } from '@/types';
-import { formatTime, formatDistance, formatHumidity } from '@/utils/formatters';
+import { formatTime, formatDistance, formatHumidity } from '@/utils/formatUtils';
 import { chartTheme } from './chart-theme';
 import '@/styles/chart-styles.css';
 

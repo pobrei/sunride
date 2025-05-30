@@ -16,7 +16,7 @@ import {
   Sun,
   AlertTriangle,
 } from 'lucide-react';
-import { formatDistance, formatDuration, formatTemperature } from '@/utils/formatters';
+import { formatDistance, formatDuration, formatTemperature } from '@/utils/formatUtils';
 import { cn } from '@/styles/tailwind-utils';
 
 interface TripSummaryProps {

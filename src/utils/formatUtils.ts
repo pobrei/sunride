@@ -162,6 +162,26 @@ export function formatPercentage(value: number): string {
 }
 
 /**
+ * Format humidity to a human-readable string
+ *
+ * @param humidity - Humidity percentage (0-100)
+ * @returns Formatted humidity string
+ */
+export function formatHumidity(humidity: number): string {
+  return `${Math.round(humidity)}%`;
+}
+
+/**
+ * Format wind speed to a human-readable string
+ *
+ * @param windSpeed - Wind speed in m/s
+ * @returns Formatted wind speed string
+ */
+export function formatWindSpeed(windSpeed: number): string {
+  return `${windSpeed.toFixed(1)} m/s`;
+}
+
+/**
  * Format a UV index to a human-readable string with risk level
  *
  * @param uvIndex - UV index value

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { formatTime, formatTemperature } from '@/utils/formatters';
+import { formatTime, formatTemperature } from '@/utils/formatUtils';
 import { ForecastPoint, WeatherData } from '@/types';
 
 // Helper function to convert wind direction degrees to cardinal directions

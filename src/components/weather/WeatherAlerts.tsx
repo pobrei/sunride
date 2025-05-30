@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 import { Wind, CloudRain, Snowflake, Sun, AlertTriangle, Clock, MapPin } from 'lucide-react';
-import { formatTime } from '@/utils/formatters';
+import { formatTime } from '@/utils/formatUtils';
 import { cn } from '@/lib/utils';
 import { typography, animation, layout } from '@/styles/tailwind-utils';
 

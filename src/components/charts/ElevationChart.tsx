@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import BaseChart from './BaseChart';
 import { ForecastPoint, GPXData, WeatherData } from '@/types';
-import { formatDistance } from '@/utils/formatters';
+import { formatDistance } from '@/utils/formatUtils';
 import { chartTheme } from './chart-theme';
 
 interface ElevationChartProps {

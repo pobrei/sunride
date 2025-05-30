@@ -6,12 +6,12 @@ import SimpleGPXUploader from '@/features/gpx/components/SimpleGPXUploader';
 import { ModernMap } from '@/components/map/ModernMap';
 import { ModernTimeline } from '@/components/timeline/ModernTimeline';
 import ModernTripSummary from '@/features/route/components/ModernTripSummary';
-import { ClientSideCharts } from '@/components/charts/ClientSideCharts';
+import ClientSideCharts from '@/components/charts/ClientSideCharts';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { layout, responsive } from '@/styles/tailwind-utils';
-import { ResponsiveLayoutWrapper } from '@/components/layout/ResponsiveLayoutWrapper';
+// import { ResponsiveLayoutWrapper } from '@/components/layout/ResponsiveLayoutWrapper';
 
 /**
  * Main SunRide application component
@@ -56,15 +56,7 @@ export default function SunRideApp(): React.ReactElement {
   };
 
   return (
-    <ResponsiveLayoutWrapper
-      title="SunRide"
-      description="Plan your routes with detailed weather forecasts"
-      showTopNav={false}
-      showBottomNav={false}
-      useContainer={false}
-      fullHeight={true}
-      className="bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-    >
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className={cn(layout.flexCol, 'h-full min-h-screen')}>
         {/* Header */}
         <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-40">
@@ -207,6 +199,8 @@ export default function SunRideApp(): React.ReactElement {
                     gpxData={gpxData}
                     forecastPoints={forecastPoints}
                     weatherData={weatherData}
+                    selectedMarker={selectedTimelineMarker}
+                    onChartClick={handleTimelineClick}
                     className="h-[500px]"
                   />
                 </CardContent>
@@ -249,6 +243,6 @@ export default function SunRideApp(): React.ReactElement {
           )}
         </div>
       </div>
-    </ResponsiveLayoutWrapper>
+    </div>
   );
 }
